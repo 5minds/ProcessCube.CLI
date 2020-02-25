@@ -149,7 +149,7 @@ $ atlas retry <PROCESS_INSTANCE_ID> [[PROCESS_INSTANCE_ID2] ...]
 Listet die deployten Prozes-Modelle (neuste zuerst).
 
 ```shell
-$ atlas list-process-models [--limit LIMIT] [--sort-by-name [DIRECTION]] [--sort-by-age [DIRECTION]] [--filter-by-name NAME] [--filter-by-age AGE]
+$ atlas list-process-models [--limit <LIMIT>] [--sort-by-name [DIRECTION]] [--sort-by-created-at [DIRECTION]] [--filter-by-name <NAME>] [--filter-since <DATE>] [--filter-until <DATE>]
 ```
 
 #### `atlas list-process-instances`
@@ -176,10 +176,38 @@ Listet Correlations (zuletzt gestartete zuerst).
 $ atlas list-correlations [--limit LIMIT]
 ```
 
+#### `atlas show-process-instance <ID> [[<ID2>] ...] [--correlation]`
+
+> Alias: `atlas show`
+
+Zeigt eine oder mehrere Prozess-Instanzen an.
+
+```shell
+$ atlas show-process-instance <ID> [[<ID2>] ...] [--correlation]
+```
+
+Grundsätzlich ist `ID` eine Prozess-Instanz-Id.
+
+```shell
+$ atlas show-process-instance e53e7b37-5fd2-4b1b-9b5f-c249de39bfa4
+```
+
+Aus Komfortgründen ist, wie bei Git, eine partielle Angabe der ID möglich, so dass der Benutzer bspw. nur das erste Glied der UUID kopieren und angeben muss.
+
+```shell
+$ atlas show e53e7b37
+```
+
+Wenn `--correlation` gegeben ist, wird die übergebene `ID` als Correlation-Id interpretiert und es werden die zugehörigen Prozess-Instanzen angezeigt.
+
+```shell
+$ atlas show-process-instance --correlation 43f3f138-f56c-4be4-ac95-9c9444c4b13c
+```
+
 ### JSON-Ausgabe und Piping
 
 Das Standard-Ausgabeformat der Ausgabe ist JSON und kann von einem Kommando zu einem anderen "gepiped" werden:
 
 ```shell
-$ atlas list-correlations --filter-by-state=error | atlas retry
+$ atlas list-process-models --filter-by-id=Maintenance. | atlas list-correlations --filter-by-state=error | atlas retry
 ```
