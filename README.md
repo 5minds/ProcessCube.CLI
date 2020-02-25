@@ -112,7 +112,7 @@ $ atlas remove <PROCESS_MODEL_ID> [[PROCESS_MODEL_ID2] ...]
 
 #### `atlas start`
 
-Startet eine Prozess-Instanz mit der angegebenen Prozessmodell-Id und StartEvent-Id.
+Startet eine Prozess-Instanz anhand der angegebenen Prozessmodell-Id und StartEvent-Id.
 
 ```shell
 $ atlas start <PROCESS_MODEL_ID> <START_EVENT_ID> [[PROCESS_MODEL_ID2 START_EVENT_ID2] ...]
