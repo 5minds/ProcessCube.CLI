@@ -82,7 +82,7 @@ Zeigt Informationen über die aktuell verbundene Engine und die Session an.
 $ atlas info
 ```
 
-Es wird ein Standardsatz an Infos zu aktuellen Laufzeitparametern angezeigt, wie bspw. die letzten 5 gestarteten Prozessinstanzen, Durchsatz, durchschnittliche Durchlaufzeit, etc.
+Es wird ein Standardsatz an Infos zu aktuellen Laufzeitparametern angezeigt, wie bspw. die letzten fünf gestarteten Prozessinstanzen, Durchsatz, durchschnittliche Durchlaufzeit, etc.
 
 `atlas i` ist gewissermaßen das Dashboard der CLI.
 
