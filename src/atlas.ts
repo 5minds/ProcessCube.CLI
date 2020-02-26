@@ -7,6 +7,11 @@ import { logout } from './commands/logout/logout';
 import { printSessionStatus } from './commands/status/status';
 import { listProcessModels } from './commands/list-process-models/list-process-models';
 import { startProcessInstance } from './commands/start-process-instance/start-process-instance';
+import { loadAtlasSession } from './session/atlas_session';
+import { listProcessInstances } from './commands/list-process-instances/list-process-instances';
+import { getPipedDataIfAny } from './cli/piped_data';
+import { stopProcessInstance } from './commands/stop-process-instance/stop-process-instance';
+import { showProcessInstance } from './commands/show-process-instance/show-process-instance';
 
 export const OUTPUT_FORMAT_JSON = 'json';
 export const OUTPUT_FORMAT_TEXT = 'text';
@@ -74,11 +79,19 @@ program
   });
 
 program
-  .command('stop-process-instance <PROCESS_INSTANCE_ID1> [PROCESS_INSTANCE_IDS...]')
+  .command('stop-process-instance [PROCESS_INSTANCE_IDS...]')
   .alias('stop')
   .description('stops instances with the given process instance ids')
-  .action(async (options) => {
-    console.log('TODO: implement me');
+  .action(async (processInstanceIds: string[], options) => {
+    await stopProcessInstance(processInstanceIds, options, options.parent.format);
+  });
+
+program
+  .command('show-process-instance [PROCESS_INSTANCE_IDS...]')
+  .alias('show')
+  .description('shows instances with the given process instance ids')
+  .action(async (processInstanceIds: string[], options) => {
+    await showProcessInstance(processInstanceIds, options, options.parent.format);
   });
 
 program
@@ -106,8 +119,25 @@ program
   .command('list-process-instances')
   .alias('lsi')
   .description('list process instances')
+  .option(
+    '--filter-by-process-model-id <PROCESS_MODEL_ID>',
+    'Filter process instances by PROCESS_MODEL_ID',
+    (value, previous) => previous.concat([value]),
+    []
+  )
+  .option('--filter-created-after <DATETIME>', 'Only include process instances created after <DATETIME>')
+  .option('--filter-created-before <DATETIME>', 'Only include process instances created before <DATETIME>')
+  .option(
+    '--filter-by-state <STATE>',
+    'Filter process instances by STATE (running, finished, error)',
+    (value, previous) => previous.concat([value]),
+    []
+  )
   .action(async (options) => {
-    console.log('TODO: implement me');
+    const pipedData = await getPipedDataIfAny();
+    console.log('lsi: pipedData', pipedData);
+
+    listProcessInstances(options.filterByProcessModelId, options.filterByState, options.parent.format);
   });
 
 program
