@@ -1,0 +1,43 @@
+{
+  "name": "@atlas-engine/cli",
+  "version": "0.1.0",
+  "description": "CLI for AtlasEngine and process-engine.io",
+  "main": "dist/atlas.js",
+  "scripts": {
+    "clean": "rm -rf dist",
+    "build": "npm run clean && tsc",
+    "lint": "eslint \"src/**/*.ts\"",
+    "test": "mocha -r ts-node/register src/**/*.test.ts"
+  },
+  "bin": {
+    "atlas": "./dist/atlas.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:atlas-engine/cli.git"
+  },
+  "author": "5Minds IT-Solutions GmbH & Co. KG",
+  "license": "MIT",
+  "dependencies": {
+    "chalk": "^2.4.2",
+    "commander": "^4.1.1",
+    "compare-versions": "^3.4.0",
+    "glob": "^7.1.4",
+    "mime-types": "^2.1.18",
+    "node-fetch": "^2.6.0",
+    "open": "^7.0.2",
+    "os": "^0.1.1",
+    "shelljs": "^0.8.3"
+  },
+  "devDependencies": {
+    "@essential-projects/eslint-config": "^1.0.6",
+    "@types/mocha": "^5.2.7",
+    "@types/node": "^12.12.28",
+    "eslint": "^5.16.0",
+    "mocha": "^6.1.4",
+    "prettier": "^1.18.2",
+    "ts-node": "^8.1.0",
+    "tsconfig": "^7.0.0",
+    "typescript": "^3.7.5"
+  }
+}
