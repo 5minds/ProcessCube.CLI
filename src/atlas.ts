@@ -2,6 +2,10 @@
 
 import program = require('commander');
 
+import { login } from './commands/login/login';
+import { logout } from './commands/logout/logout';
+import { printSessionStatus } from './commands/status/status';
+
 export const OUTPUT_FORMAT_JSON = 'json';
 export const OUTPUT_FORMAT_TEXT = 'text';
 
@@ -10,11 +14,11 @@ const VERSION = require('../package.json').version;
 program.version(VERSION).option('--format <format>', 'set format', OUTPUT_FORMAT_JSON);
 
 program
-  .command('info')
-  .alias('i')
+  .command('status')
+  .alias('st')
   .description('print info about current session')
   .action(async (options) => {
-    console.log('TODO: implement me');
+    printSessionStatus(options.parent.format);
   });
 
 program
@@ -28,7 +32,14 @@ program
     console.log('  $ deploy login http://localhost:56000');
   })
   .action(async (engineUrl, options) => {
-    console.log('TODO: implement me');
+    await login(engineUrl, options.anonymous, options.parent.format);
+  });
+
+program
+  .command('logout')
+  .description('log out from the current session')
+  .action((options) => {
+    logout(options.parent.format);
   });
 
 program
@@ -63,13 +74,6 @@ program
 program
   .command('retry <PROCESS_INSTANCE_ID1> [PROCESS_INSTANCE_IDS...]')
   .description('restarts failed instances with the given process instance ids')
-  .action((options) => {
-    console.log('TODO: implement me');
-  });
-
-program
-  .command('logout')
-  .description('log out from the current session')
   .action((options) => {
     console.log('TODO: implement me');
   });
