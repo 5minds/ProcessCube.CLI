@@ -19,6 +19,7 @@
   "author": "5Minds IT-Solutions GmbH & Co. KG",
   "license": "MIT",
   "dependencies": {
+    "@process-engine/ci_tools": "3.0.0-alpha.6",
     "chalk": "^2.4.2",
     "commander": "^4.1.1",
     "compare-versions": "^3.4.0",
