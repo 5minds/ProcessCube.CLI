@@ -1,4 +1,7 @@
 import chalk from 'chalk';
+import * as moment from 'moment';
+
+import { DataModels } from '@process-engine/management_api_contracts';
 
 import { AtlasSession, loadAtlasSession } from '../../session/atlas_session';
 import { createResultJson } from '../../cli/result_json';
@@ -7,14 +10,28 @@ import { getProcessModels } from '../list-process-models/list-process-models';
 import { OUTPUT_FORMAT_JSON, OUTPUT_FORMAT_TEXT } from '../../atlas';
 import { toFilterRegexes } from '../../cli/filter_regexes';
 
-export async function listProcessInstances(filterByProcessModelId: string[], filterByState: string[], format: string) {
+type ProcessInstance = DataModels.Correlations.ProcessInstance;
+
+export async function listProcessInstances(
+  createdAfter: string,
+  createdBefore: string,
+  filterByProcessModelId: string[],
+  filterByState: string[],
+  format: string
+) {
   const session = loadAtlasSession();
   if (session == null) {
     console.log(chalk.red('No session found. Aborting.'));
     return;
   }
 
-  const processInstances = await getProcessInstances(session, filterByProcessModelId, filterByState);
+  const processInstances = await getProcessInstances(
+    session,
+    createdAfter,
+    createdBefore,
+    filterByProcessModelId,
+    filterByState
+  );
 
   const resultJson = createResultJson('process-instance-ids', mapToShort(processInstances));
 
@@ -25,11 +42,13 @@ export async function listProcessInstances(filterByProcessModelId: string[], fil
   }
 }
 
-export async function getProcessInstances(
+async function getProcessInstances(
   session: AtlasSession,
+  createdAfter: string,
+  createdBefore: string,
   filterByProcessModelId: string[],
   filterByState: string[]
-): Promise<any[]> {
+): Promise<ProcessInstance[]> {
   const { identity, managementApiClient } = getIdentityAndManagementApiClient(session);
 
   const allProcessModels = await getProcessModels(session);
@@ -49,9 +68,42 @@ export async function getProcessInstances(
     }
   }
 
+  allProcessInstances = filterProcessInstancesDateAfter(allProcessInstances, 'createdAt', createdAfter);
+  allProcessInstances = filterProcessInstancesDateBefore(allProcessInstances, 'createdAt', createdBefore);
+
   const processInstances = filterProcessInstancesByState(allProcessInstances, filterByState);
 
   return processInstances;
+}
+
+export function filterProcessInstancesDateAfter(
+  processInstances: any[],
+  fieldName: string,
+  createdAfter: string
+): any[] {
+  if (createdAfter == null) {
+    return processInstances;
+  }
+
+  // TODO: validation of input
+  const afterDate = moment(createdAfter);
+
+  return processInstances.filter((processInstance: any) => moment(processInstance[fieldName]).isAfter(afterDate));
+}
+
+export function filterProcessInstancesDateBefore(
+  processInstances: any[],
+  fieldName: string,
+  createdBefore: string
+): any[] {
+  if (createdBefore == null) {
+    return processInstances;
+  }
+
+  // TODO: validation of input
+  const beforeDate = moment(createdBefore);
+
+  return processInstances.filter((processInstance: any) => moment(processInstance[fieldName]).isBefore(beforeDate));
 }
 
 export function filterProcessInstancesByState(processInstances: any[], filterByState: string[]): any[] {

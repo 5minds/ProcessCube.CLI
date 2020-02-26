@@ -125,19 +125,25 @@ program
     (value, previous) => previous.concat([value]),
     []
   )
-  .option('--filter-created-after <DATETIME>', 'Only include process instances created after <DATETIME>')
-  .option('--filter-created-before <DATETIME>', 'Only include process instances created before <DATETIME>')
   .option(
     '--filter-by-state <STATE>',
     'Filter process instances by STATE (running, finished, error)',
     (value, previous) => previous.concat([value]),
     []
   )
+  .option('--created-after <DATETIME>', 'Only include process instances created after <DATETIME>')
+  .option('--created-before <DATETIME>', 'Only include process instances created before <DATETIME>')
   .action(async (options) => {
     const pipedData = await getPipedDataIfAny();
     console.log('lsi: pipedData', pipedData);
 
-    listProcessInstances(options.filterByProcessModelId, options.filterByState, options.parent.format);
+    listProcessInstances(
+      options.createdAfter,
+      options.createdBefore,
+      options.filterByProcessModelId,
+      options.filterByState,
+      options.parent.format
+    );
   });
 
 program

@@ -1,4 +1,5 @@
 import chalk from 'chalk';
+import * as moment from 'moment';
 
 import { DataModels } from '@process-engine/management_api_contracts';
 
@@ -7,7 +8,7 @@ import { getIdentityAndManagementApiClient } from '../../client/management_api_c
 import { loadAtlasSession } from '../../session/atlas_session';
 import { OUTPUT_FORMAT_JSON, OUTPUT_FORMAT_TEXT } from '../../atlas';
 
-type ProcessInstance = DataModels.Correlations.ProcessInstance;
+type ProcessInstance = DataModels.Correlations.ProcessInstance & { tokens: DataModels.TokenHistory.TokenHistoryGroup };
 
 export async function showProcessInstance(processInstanceIds: string[], options: any, format: string): Promise<void> {
   const session = loadAtlasSession();
@@ -19,7 +20,9 @@ export async function showProcessInstance(processInstanceIds: string[], options:
 
   const processInstances: ProcessInstance[] = [];
   for (const processInstanceId of processInstanceIds) {
-    const processInstance = await managementApiClient.getProcessInstanceById(identity, processInstanceId);
+    const rawProcessInstance = await managementApiClient.getProcessInstanceById(identity, processInstanceId);
+    const tokens = await managementApiClient.getTokensForProcessInstance(identity, processInstanceId);
+    const processInstance = { ...rawProcessInstance, tokens };
 
     processInstances.push(processInstance);
   }
@@ -31,7 +34,133 @@ export async function showProcessInstance(processInstanceIds: string[], options:
       console.dir(resultJson, { depth: null });
       break;
     case OUTPUT_FORMAT_TEXT:
-      console.table(processInstances, ['createdAt', 'finishedAt', 'processModelId', 'processInstanceId', 'state']);
+      processInstances.forEach((processInstance) => log(processInstance));
+      // console.table(processInstances, ['createdAt', 'finishedAt', 'processModelId', 'processInstanceId', 'state']);
       break;
   }
+}
+
+function log(processInstance: ProcessInstance) {
+  // console.dir(processInstance, { depth: null });
+  console.log('');
+
+  const parentHint =
+    processInstance.parentProcessInstanceId == null ? 'no parent' : `parent ${processInstance.parentProcessInstanceId}`;
+
+  console.log(
+    'Model:     ',
+    chalk.cyan(processInstance.processModelId),
+    chalk.dim(`(Definition: ${processInstance.processDefinitionName})`)
+  );
+  console.log(
+    'Instance:  ',
+    chalk.magentaBright(`${processInstance.processInstanceId}`),
+    chalk.dim(`(Correlation: ${processInstance.correlationId}, ${parentHint})`)
+  );
+
+  const createdAt = moment(processInstance.createdAt);
+  const doneAt = getDoneAt(processInstance);
+  const durationInWords = doneAt.from(processInstance.createdAt).replace('in ', 'took ');
+  const durationHint = `(${durationInWords})`;
+
+  console.log(
+    'Created:   ',
+    createdAt.format('YYYY-MM-DD hh:mm:ss'),
+    chalk.dim(`(${moment(processInstance.createdAt).fromNow()})`)
+  );
+  console.log('Finished:  ', doneAt.format('YYYY-MM-DD hh:mm:ss'), chalk.dim(durationHint));
+  console.log('User:      ', processInstance.identity.userId);
+  console.log('State:     ', stateToColoredString(processInstance.state));
+  logHistory(processInstance);
+  logErrorIfAny(processInstance);
+}
+
+function logHistory(processInstance: ProcessInstance): void {
+  const flowNodeIds = Object.keys(processInstance.tokens).reverse();
+  const firstToken = getToken(processInstance, flowNodeIds[0], 'onEnter');
+  const lastTokenOnExit = getToken(processInstance, flowNodeIds[flowNodeIds.length - 1], 'onExit');
+  const lastTokenOnEnter = getToken(processInstance, flowNodeIds[flowNodeIds.length - 1], 'onEnter');
+
+  console.log('');
+  console.log('=== HISTORY ======================================================================');
+  console.log('');
+  console.log('Token history');
+  console.log('');
+
+  const lastIndex = flowNodeIds.length - 1;
+  flowNodeIds.forEach((flowNodeId: string, index: number) => {
+    const prefix = index === 0 ? '    ' : '    -> ';
+    const suffix = index === lastIndex && processInstance.error != null ? ' (error, see below)' : '';
+    console.log(`${prefix}${flowNodeId}${suffix}`);
+  });
+
+  console.log('');
+  console.log('Start token payload', chalk.dim(`(${firstToken.flowNodeId} @ ${firstToken.tokenEventType})`));
+  console.log('');
+  printMultiLineString(JSON.stringify(firstToken.payload, null, 2), '    ');
+  console.log('');
+
+  if (processInstance.error != null) {
+    console.log('');
+    console.log(
+      'Last token payload',
+      chalk.dim(`(${lastTokenOnEnter.flowNodeId} @ ${lastTokenOnEnter.tokenEventType})`)
+    );
+    console.log('');
+    printMultiLineString(JSON.stringify(lastTokenOnEnter.payload, null, 2), '    ');
+    console.log('');
+  }
+
+  console.log('Last token payload', chalk.dim(`(${lastTokenOnExit.flowNodeId} @ ${lastTokenOnExit.tokenEventType})`));
+  console.log('');
+  printMultiLineString(JSON.stringify(lastTokenOnExit.payload, null, 2), '    ');
+}
+
+function logErrorIfAny(processInstance: ProcessInstance): void {
+  if (processInstance.error != null) {
+    // it seems error contains more info than is mentioned in the types
+    const error = processInstance.error as any;
+    console.log('');
+    console.log('=== ERROR ======================================================================');
+    console.log('');
+    console.log('Code:', error.code);
+    console.log('Name:', error.name);
+    console.log('');
+    console.log(error.additionalInformation);
+    console.log('');
+  }
+}
+
+function stateToColoredString(state: string): string {
+  switch (state) {
+    case 'error':
+      return chalk.redBright(state);
+    case 'finished':
+      return chalk.bold(chalk.greenBright(state));
+    case 'running':
+      return chalk.green(state);
+    default:
+      return state;
+  }
+}
+
+function getToken(processInstance: ProcessInstance, flowNodeId: string, tokenEventType: string): any | null {
+  const tokenHistoryEntries = processInstance.tokens[flowNodeId].tokenHistoryEntries;
+
+  return tokenHistoryEntries.find((entry) => entry.tokenEventType === tokenEventType);
+}
+
+function printMultiLineString(text: string | string[], linePrefix: string = ''): void {
+  const lines = Array.isArray(text) ? text : text.split('\n');
+  lines.forEach((line: string): void => console.log(`${linePrefix}${line}`));
+}
+
+function getDoneAt(processInstance: ProcessInstance): moment.Moment {
+  const flowNodeIds = Object.keys(processInstance.tokens).reverse();
+
+  const lastTokenOnExit =
+    getToken(processInstance, flowNodeIds[flowNodeIds.length - 1], 'onExit') ||
+    getToken(processInstance, flowNodeIds[flowNodeIds.length - 1], 'onEnter');
+
+  return moment(lastTokenOnExit.createdAt);
 }
