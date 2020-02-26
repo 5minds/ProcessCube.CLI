@@ -9,7 +9,7 @@ import { listProcessModels } from './commands/list-process-models/list-process-m
 import { startProcessInstance } from './commands/start-process-instance/start-process-instance';
 import { loadAtlasSession } from './session/atlas_session';
 import { listProcessInstances } from './commands/list-process-instances/list-process-instances';
-import { getPipedDataIfAny } from './cli/piped_data';
+import { getPipedDataIfAny, getPipedProcessInstanceIds, getPipedProcessModelIds } from './cli/piped_data';
 import { stopProcessInstance } from './commands/stop-process-instance/stop-process-instance';
 import { showProcessInstance } from './commands/show-process-instance/show-process-instance';
 
@@ -82,7 +82,9 @@ program
   .command('stop-process-instance [PROCESS_INSTANCE_IDS...]')
   .alias('stop')
   .description('stops instances with the given process instance ids')
-  .action(async (processInstanceIds: string[], options) => {
+  .action(async (givenProcessInstanceIds: string[], options) => {
+    let processInstanceIds = await getPipedProcessInstanceIds(givenProcessInstanceIds);
+
     await stopProcessInstance(processInstanceIds, options, options.parent.format);
   });
 
@@ -90,12 +92,14 @@ program
   .command('show-process-instance [PROCESS_INSTANCE_IDS...]')
   .alias('show')
   .description('shows instances with the given process instance ids')
-  .action(async (processInstanceIds: string[], options) => {
+  .action(async (givenProcessInstanceIds: string[], options) => {
+    let processInstanceIds = await getPipedProcessInstanceIds(givenProcessInstanceIds);
+
     await showProcessInstance(processInstanceIds, options, options.parent.format);
   });
 
 program
-  .command('retry <PROCESS_INSTANCE_ID1> [PROCESS_INSTANCE_IDS...]')
+  .command('retry [PROCESS_INSTANCE_IDS...]')
   .description('restarts failed instances with the given process instance ids')
   .action(async (options) => {
     console.log('TODO: implement me');
@@ -133,15 +137,16 @@ program
   )
   .option('--created-after <DATETIME>', 'Only include process instances created after <DATETIME>')
   .option('--created-before <DATETIME>', 'Only include process instances created before <DATETIME>')
+  .option('--limit <LIMIT>', 'Lists at max <LIMIT> process instances')
   .action(async (options) => {
-    const pipedData = await getPipedDataIfAny();
-    console.log('lsi: pipedData', pipedData);
+    let filterByProcessModelId = await getPipedProcessModelIds(options.filterByProcessModelId);
 
     listProcessInstances(
       options.createdAfter,
       options.createdBefore,
-      options.filterByProcessModelId,
+      filterByProcessModelId,
       options.filterByState,
+      options.limit,
       options.parent.format
     );
   });

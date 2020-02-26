@@ -17,6 +17,7 @@ export async function listProcessInstances(
   createdBefore: string,
   filterByProcessModelId: string[],
   filterByState: string[],
+  limit: number,
   format: string
 ) {
   const session = loadAtlasSession();
@@ -30,13 +31,14 @@ export async function listProcessInstances(
     createdAfter,
     createdBefore,
     filterByProcessModelId,
-    filterByState
+    filterByState,
+    limit
   );
 
-  const resultJson = createResultJson('process-instance-ids', mapToShort(processInstances));
+  const resultJson = createResultJson('process-instances', mapToShort(processInstances));
 
   if (format === OUTPUT_FORMAT_JSON) {
-    console.dir(resultJson, { depth: null });
+    console.log(JSON.stringify(resultJson, null, 2));
   } else if (format === OUTPUT_FORMAT_TEXT) {
     console.table(processInstances, ['createdAt', 'finishedAt', 'processModelId', 'processInstanceId', 'state']);
   }
@@ -47,7 +49,8 @@ async function getProcessInstances(
   createdAfter: string,
   createdBefore: string,
   filterByProcessModelId: string[],
-  filterByState: string[]
+  filterByState: string[],
+  limit: number
 ): Promise<ProcessInstance[]> {
   const { identity, managementApiClient } = getIdentityAndManagementApiClient(session);
 
@@ -72,6 +75,10 @@ async function getProcessInstances(
   allProcessInstances = filterProcessInstancesDateBefore(allProcessInstances, 'createdAt', createdBefore);
 
   const processInstances = filterProcessInstancesByState(allProcessInstances, filterByState);
+
+  if (limit != null && limit > 0) {
+    return processInstances.slice(0, limit);
+  }
 
   return processInstances;
 }

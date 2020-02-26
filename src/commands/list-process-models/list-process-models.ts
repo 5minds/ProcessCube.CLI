@@ -21,7 +21,7 @@ export async function listProcessModels(options: any, format: string) {
 
   switch (format) {
     case OUTPUT_FORMAT_JSON:
-      console.dir(resultJson, { depth: null });
+      console.log(JSON.stringify(resultJson, null, 2));
       break;
     case OUTPUT_FORMAT_TEXT:
       console.table(processModels, ['id', 'startEvents']);

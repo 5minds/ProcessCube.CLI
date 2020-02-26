@@ -34,14 +34,21 @@ export async function showProcessInstance(processInstanceIds: string[], options:
       console.dir(resultJson, { depth: null });
       break;
     case OUTPUT_FORMAT_TEXT:
-      processInstances.forEach((processInstance) => log(processInstance));
+      const multipleInstances = processInstances.length > 1;
+      processInstances.forEach((processInstance, index) => {
+        const showSeparator = multipleInstances && index > 0;
+        log(processInstance, showSeparator);
+      });
       // console.table(processInstances, ['createdAt', 'finishedAt', 'processModelId', 'processInstanceId', 'state']);
       break;
   }
 }
 
-function log(processInstance: ProcessInstance) {
+function log(processInstance: ProcessInstance, showSeparator: boolean = false) {
   // console.dir(processInstance, { depth: null });
+  if (showSeparator) {
+    console.log(chalk.cyan('---------------------------------- >8 ---------------------------------------------'));
+  }
   console.log('');
 
   const parentHint =
@@ -73,6 +80,7 @@ function log(processInstance: ProcessInstance) {
   console.log('State:     ', stateToColoredString(processInstance.state));
   logHistory(processInstance);
   logErrorIfAny(processInstance);
+  console.log('');
 }
 
 function logHistory(processInstance: ProcessInstance): void {
@@ -82,7 +90,7 @@ function logHistory(processInstance: ProcessInstance): void {
   const lastTokenOnEnter = getToken(processInstance, flowNodeIds[flowNodeIds.length - 1], 'onEnter');
 
   console.log('');
-  console.log('=== HISTORY ======================================================================');
+  console.log('--- HISTORY -----------------------------------------------------------------------');
   console.log('');
   console.log('Token history');
   console.log('');
@@ -121,7 +129,7 @@ function logErrorIfAny(processInstance: ProcessInstance): void {
     // it seems error contains more info than is mentioned in the types
     const error = processInstance.error as any;
     console.log('');
-    console.log('=== ERROR ======================================================================');
+    console.log('--- ERROR ----------------------------------------------------------------------');
     console.log('');
     console.log('Code:', error.code);
     console.log('Name:', error.name);
