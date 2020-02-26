@@ -7,6 +7,7 @@ import { createResultJson } from '../../cli/result_json';
 import { getIdentityAndManagementApiClient } from '../../client/management_api_client';
 import { loadAtlasSession } from '../../session/atlas_session';
 import { OUTPUT_FORMAT_JSON, OUTPUT_FORMAT_TEXT } from '../../atlas';
+import { getElementNameByIdFromBpmn } from '../../cli/bpmn';
 
 type ProcessInstance = DataModels.Correlations.ProcessInstance & { tokens: DataModels.TokenHistory.TokenHistoryGroup };
 
@@ -35,16 +36,17 @@ export async function showProcessInstance(processInstanceIds: string[], options:
       break;
     case OUTPUT_FORMAT_TEXT:
       const multipleInstances = processInstances.length > 1;
-      processInstances.forEach((processInstance, index) => {
+      processInstances.forEach(async (processInstance, index) => {
         const showSeparator = multipleInstances && index > 0;
-        log(processInstance, showSeparator);
+        await log(processInstance, showSeparator);
       });
+
       // console.table(processInstances, ['createdAt', 'finishedAt', 'processModelId', 'processInstanceId', 'state']);
       break;
   }
 }
 
-function log(processInstance: ProcessInstance, showSeparator: boolean = false) {
+async function log(processInstance: ProcessInstance, showSeparator: boolean = false) {
   // console.dir(processInstance, { depth: null });
   if (showSeparator) {
     console.log(chalk.cyan('---------------------------------- >8 ---------------------------------------------'));
@@ -78,12 +80,12 @@ function log(processInstance: ProcessInstance, showSeparator: boolean = false) {
   console.log('Finished:  ', doneAt.format('YYYY-MM-DD hh:mm:ss'), chalk.dim(durationHint));
   console.log('User:      ', processInstance.identity.userId);
   console.log('State:     ', stateToColoredString(processInstance.state));
-  logHistory(processInstance);
+  await logHistory(processInstance);
   logErrorIfAny(processInstance);
   console.log('');
 }
 
-function logHistory(processInstance: ProcessInstance): void {
+async function logHistory(processInstance: ProcessInstance): Promise<void> {
   const flowNodeIds = Object.keys(processInstance.tokens).reverse();
   const firstToken = getToken(processInstance, flowNodeIds[0], 'onEnter');
   const lastTokenOnExit = getToken(processInstance, flowNodeIds[flowNodeIds.length - 1], 'onExit');
@@ -95,31 +97,47 @@ function logHistory(processInstance: ProcessInstance): void {
   console.log('Token history');
   console.log('');
 
+  const elementNames = {};
+  for (const flowNodeId of flowNodeIds) {
+    const name = await getElementNameByIdFromBpmn(processInstance.xml, flowNodeId);
+    elementNames[flowNodeId] = name;
+  }
+
   const lastIndex = flowNodeIds.length - 1;
-  flowNodeIds.forEach((flowNodeId: string, index: number) => {
+  flowNodeIds.forEach(async (flowNodeId: string, index: number) => {
     const prefix = index === 0 ? '    ' : '    -> ';
-    const suffix = index === lastIndex && processInstance.error != null ? ' (error, see below)' : '';
-    console.log(`${prefix}${flowNodeId}${suffix}`);
+    const name = elementNames[flowNodeId];
+    const idHint = chalk.dim(`(${flowNodeId})`);
+    const suffix = index === lastIndex && processInstance.error != null ? chalk.redBright(' [error, see below]') : '';
+    console.log(`${prefix}"${name}" ${idHint}${suffix}`);
   });
 
   console.log('');
-  console.log('Start token payload', chalk.dim(`(${firstToken.flowNodeId} @ ${firstToken.tokenEventType})`));
+  console.log(
+    'Input',
+    chalk.cyanBright(`"${elementNames[firstToken.flowNodeId]}"`),
+    chalk.dim(`(${firstToken.flowNodeId})`)
+  );
   console.log('');
   printMultiLineString(JSON.stringify(firstToken.payload, null, 2), '    ');
   console.log('');
 
   if (processInstance.error != null) {
-    console.log('');
     console.log(
-      'Last token payload',
-      chalk.dim(`(${lastTokenOnEnter.flowNodeId} @ ${lastTokenOnEnter.tokenEventType})`)
+      'Input',
+      chalk.cyanBright(`"${elementNames[lastTokenOnEnter.flowNodeId]}"`),
+      chalk.dim(`(${lastTokenOnEnter.flowNodeId})`)
     );
     console.log('');
     printMultiLineString(JSON.stringify(lastTokenOnEnter.payload, null, 2), '    ');
     console.log('');
   }
 
-  console.log('Last token payload', chalk.dim(`(${lastTokenOnExit.flowNodeId} @ ${lastTokenOnExit.tokenEventType})`));
+  console.log(
+    'Output',
+    chalk.cyanBright(`"${elementNames[lastTokenOnExit.flowNodeId]}"`),
+    chalk.dim(`(${lastTokenOnExit.flowNodeId})`)
+  );
   console.log('');
   printMultiLineString(JSON.stringify(lastTokenOnExit.payload, null, 2), '    ');
 }

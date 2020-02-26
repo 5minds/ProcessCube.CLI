@@ -6,12 +6,13 @@ import { login } from './commands/login/login';
 import { logout } from './commands/logout/logout';
 import { printSessionStatus } from './commands/status/status';
 import { listProcessModels } from './commands/list-process-models/list-process-models';
-import { startProcessInstance } from './commands/start-process-instance/start-process-instance';
-import { loadAtlasSession } from './session/atlas_session';
+import { startProcessInstance } from './commands/start-process-model/start-process-model';
 import { listProcessInstances } from './commands/list-process-instances/list-process-instances';
-import { getPipedDataIfAny, getPipedProcessInstanceIds, getPipedProcessModelIds } from './cli/piped_data';
+import { getPipedProcessInstanceIds, getPipedProcessModelIds } from './cli/piped_data';
 import { stopProcessInstance } from './commands/stop-process-instance/stop-process-instance';
 import { showProcessInstance } from './commands/show-process-instance/show-process-instance';
+import { deploy } from './commands/deploy-files/deploy-files';
+import { removeProcessModels } from './commands/remove-process-models/remove-process-models';
 
 export const OUTPUT_FORMAT_JSON = 'json';
 export const OUTPUT_FORMAT_TEXT = 'text';
@@ -36,7 +37,7 @@ program
     console.log('');
     console.log('Examples:');
     console.log('');
-    console.log('  $ deploy login http://localhost:56000');
+    console.log('  $ atlas login http://localhost:56000');
   })
   .action(async (engineUrl, options) => {
     await login(engineUrl, options.anonymous, options.parent.format);
@@ -50,22 +51,23 @@ program
   });
 
 program
-  .command('deploy <FILENAME1> [FILENAMES...]')
+  .command('deploy-files [FILENAMES...]')
+  .alias('deploy')
   .description('deploy process models to the engine')
-  .action(async (options) => {
-    console.log('TODO: implement me');
+  .action(async (filenames: string[], options) => {
+    deploy(filenames, options.parent.format);
   });
 
 program
-  .command('remove <PROCESS_MODEL_ID1> [PROCESS_MODEL_IDS...]')
-  .alias('rm')
+  .command('remove [PROCESS_MODEL_IDS...]')
   .description('remove deployed process models from the engine')
-  .action(async (options) => {
-    console.log('TODO: implement me');
+  .option('-y,--yes', 'do not prompt for confirmation')
+  .action(async (processModelIds: string[], options) => {
+    removeProcessModels(processModelIds, options.yes, options.parent.format);
   });
 
 program
-  .command('start-process-instance <PROCESS_MODEL_ID1> <START_EVENT_ID1> [PROCESS_MODEL_AND_START_EVENT_IDS...]')
+  .command('start-process-model <PROCESS_MODEL_ID1> <START_EVENT_ID1> [PROCESS_MODEL_AND_START_EVENT_IDS...]')
   .alias('start')
   .description('starts an instance of the deployed process models')
   .action(async (processModelId: string, startEventId: string, moreProcessModelAndStartEventIds: string[], options) => {
@@ -102,7 +104,7 @@ program
   .command('retry [PROCESS_INSTANCE_IDS...]')
   .description('restarts failed instances with the given process instance ids')
   .action(async (options) => {
-    console.log('TODO: implement me');
+    console.log('TODO: the engine has to implement this feature');
   });
 
 program

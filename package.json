@@ -22,16 +22,18 @@
     "@essential-projects/http": "^2.5.0",
     "@process-engine/ci_tools": "3.0.0-alpha.6",
     "@process-engine/management_api_client": "^6.2.0",
+    "bpmn-moddle": "^6.0.2",
     "chalk": "^2.4.2",
     "commander": "^4.1.1",
     "compare-versions": "^3.4.0",
     "express": "^4.17.1",
-    "glob": "^7.1.4",
+    "glob": "^7.1.6",
     "mime-types": "^2.1.18",
     "node-fetch": "^2.6.0",
     "open": "^7.0.2",
     "os": "^0.1.1",
-    "shelljs": "^0.8.3"
+    "shelljs": "^0.8.3",
+    "yesno": "^0.3.1"
   },
   "devDependencies": {
     "@essential-projects/eslint-config": "^1.0.6",

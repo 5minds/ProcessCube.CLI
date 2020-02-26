@@ -12,7 +12,6 @@ export async function stopProcessInstance(processInstanceIds: string[], options:
     return;
   }
 
-  // TODO: once we support multiple starts, we have to accumulate an array here
   for (const processInstanceId of processInstanceIds) {
     await stopProcessInstanceViaClient(session, processInstanceId);
   }
@@ -32,14 +31,6 @@ export async function stopProcessInstance(processInstanceIds: string[], options:
 export async function stopProcessInstanceViaClient(session: AtlasSession, processInstanceId: string): Promise<void> {
   const { identity, managementApiClient } = getIdentityAndManagementApiClient(session);
 
-  const processInstanceBefore = await managementApiClient.getProcessInstanceById(identity, processInstanceId);
-
-  console.log('processInstanceBefore', processInstanceBefore);
-
   // TODO: make sure the process instance was "alive" before and is terminated afterwards
   await managementApiClient.terminateProcessInstance(identity, processInstanceId);
-
-  const result = await managementApiClient.getProcessInstanceById(identity, processInstanceId);
-
-  console.log('result', result);
 }
