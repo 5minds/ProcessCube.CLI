@@ -5,6 +5,8 @@ import program = require('commander');
 import { login } from './commands/login/login';
 import { logout } from './commands/logout/logout';
 import { printSessionStatus } from './commands/status/status';
+import { listProcessModels } from './commands/list-process-models/list-process-models';
+import { startProcessInstance } from './commands/start-process-instance/start-process-instance';
 
 export const OUTPUT_FORMAT_JSON = 'json';
 export const OUTPUT_FORMAT_TEXT = 'text';
@@ -16,7 +18,7 @@ program.version(VERSION).option('--format <format>', 'set format', OUTPUT_FORMAT
 program
   .command('status')
   .alias('st')
-  .description('print info about current session')
+  .description('prints status of the current session')
   .action(async (options) => {
     printSessionStatus(options.parent.format);
   });
@@ -38,14 +40,14 @@ program
 program
   .command('logout')
   .description('log out from the current session')
-  .action((options) => {
-    logout(options.parent.format);
+  .action(async (options) => {
+    await logout(options.parent.format);
   });
 
 program
   .command('deploy <FILENAME1> [FILENAMES...]')
   .description('deploy process models to the engine')
-  .action((options) => {
+  .action(async (options) => {
     console.log('TODO: implement me');
   });
 
@@ -53,28 +55,36 @@ program
   .command('remove <PROCESS_MODEL_ID1> [PROCESS_MODEL_IDS...]')
   .alias('rm')
   .description('remove deployed process models from the engine')
-  .action((options) => {
+  .action(async (options) => {
     console.log('TODO: implement me');
   });
 
 program
-  .command('start <PROCESS_MODEL_ID1> <START_EVENT_ID1> [PROCESS_MODEL_AND_START_EVENT_IDS...]')
+  .command('start-process-instance <PROCESS_MODEL_ID1> <START_EVENT_ID1> [PROCESS_MODEL_AND_START_EVENT_IDS...]')
+  .alias('start')
   .description('starts an instance of the deployed process models')
-  .action((options) => {
-    console.log('TODO: implement me');
+  .action(async (processModelId: string, startEventId: string, moreProcessModelAndStartEventIds: string[], options) => {
+    await startProcessInstance(
+      processModelId,
+      startEventId,
+      moreProcessModelAndStartEventIds,
+      options,
+      options.parent.format
+    );
   });
 
 program
-  .command('start <PROCESS_INSTANCE_ID1> [PROCESS_INSTANCE_IDS...]')
+  .command('stop-process-instance <PROCESS_INSTANCE_ID1> [PROCESS_INSTANCE_IDS...]')
+  .alias('stop')
   .description('stops instances with the given process instance ids')
-  .action((options) => {
+  .action(async (options) => {
     console.log('TODO: implement me');
   });
 
 program
   .command('retry <PROCESS_INSTANCE_ID1> [PROCESS_INSTANCE_IDS...]')
   .description('restarts failed instances with the given process instance ids')
-  .action((options) => {
+  .action(async (options) => {
     console.log('TODO: implement me');
   });
 
@@ -82,8 +92,14 @@ program
   .command('list-process-models')
   .alias('lsp')
   .description('list process models')
+  .option(
+    '--filter-by-id <PATTERN>',
+    'Filter process models by PATTERN',
+    (value, previous) => previous.concat([value]),
+    []
+  )
   .action(async (options) => {
-    console.log('TODO: implement me');
+    listProcessModels(options, options.parent.format);
   });
 
 program

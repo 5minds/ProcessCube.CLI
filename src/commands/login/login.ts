@@ -18,7 +18,7 @@ export async function login(givenEngineUrl: string, useAnonymousLogin: boolean, 
   if (engineUrl == null || engineUrl.trim() == '') {
     const oldSession = loadAtlasSession();
     if (oldSession == null) {
-      console.log('Please provide an engine url.');
+      console.log(chalk.red('No session found. Aborting.'));
       return;
     }
 

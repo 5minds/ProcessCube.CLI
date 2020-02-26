@@ -7,7 +7,7 @@ import { startServerToLogoutAndWaitForSessionEnd } from './express_server';
 export async function logout(format: string): Promise<void> {
   const oldSession = loadAtlasSession();
   if (oldSession == null) {
-    console.log(chalk.yellow('No session found.'));
+    console.log(chalk.red('No session found. Aborting.'));
     return;
   }
 
