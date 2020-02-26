@@ -2,7 +2,7 @@ import * as BpmnModdle from 'bpmn-moddle';
 
 export async function getProcessModelIdFromBpmn(xml: string): Promise<string | null> {
   const definitions = await getDefinitionsFromBpmn(xml);
-  const rootElements: Array<any> = definitions.rootElements;
+  const rootElements: any[] = definitions.rootElements;
   const processModel: any = rootElements.find((definition: any) => {
     return definition.$type === 'bpmn:Process';
   });
@@ -31,7 +31,7 @@ async function getDefinitionsFromBpmn(xml: string): Promise<any> {
 
 async function getElementByIdFromBpmn(xml: string, id: string): Promise<any | null> {
   const definitions = await getDefinitionsFromBpmn(xml);
-  const rootElements: Array<any> = definitions.rootElements;
+  const rootElements: any[] = definitions.rootElements;
   const processModel: any = rootElements.find((definition: any) => {
     return definition.$type === 'bpmn:Process';
   });
