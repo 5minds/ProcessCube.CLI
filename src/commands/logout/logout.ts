@@ -16,6 +16,7 @@ export async function logout(format: string): Promise<void> {
     await startServerToLogoutAndWaitForSessionEnd(oldSession.identityServerUrl, oldSession.idToken);
   }
 
-  console.log(chalk.green('You are now logged out.'));
+  console.log('');
+  console.log(chalk.yellow('You are now logged out.'));
   process.exit(0);
 }

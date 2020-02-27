@@ -25,6 +25,13 @@ program
   .command('status')
   .alias('st')
   .description('prints status of the current session')
+  .on('--help', () => {
+    logHelp(`
+    Examples:
+
+      $ atlas status
+    `);
+  })
   .action(async (options) => {
     printSessionStatus(options.parent.format);
   });
@@ -33,11 +40,12 @@ program
   .command('login [engine_url]')
   .description('log in to the given engine')
   .option('--anonymous', 'Try to use anonymous login', () => true, false)
-  .on('--help', function() {
-    console.log('');
-    console.log('Examples:');
-    console.log('');
-    console.log('  $ atlas login http://localhost:56000');
+  .on('--help', () => {
+    logHelp(`
+    Examples:
+
+      $ atlas login http://localhost:56000
+    `);
   })
   .action(async (engineUrl, options) => {
     await login(engineUrl, options.anonymous, options.parent.format);
@@ -46,11 +54,12 @@ program
 program
   .command('logout')
   .description('log out from the current session')
-  .on('--help', function() {
-    console.log('');
-    console.log('Examples:');
-    console.log('');
-    console.log('  $ atlas logout');
+  .on('--help', () => {
+    logHelp(`
+    Examples:
+
+      $ atlas logout
+    `);
   })
   .action(async (options) => {
     await logout(options.parent.format);
@@ -60,17 +69,18 @@ program
   .command('deploy-files [FILENAMES...]')
   .alias('deploy')
   .description('deploy process models to the engine')
-  .on('--help', function() {
-    console.log('');
-    console.log('Examples:');
-    console.log('');
-    console.log('  $ atlas deploy registration_email_coupons.bpmn');
-    console.log('');
-    console.log('The commands takes multiple arguments and supports globs:');
-    console.log('');
-    console.log('  $ atlas deploy registration_email_coupons.bpmn registration_fraud_detection.bpmn');
-    console.log('');
-    console.log('  $ atlas deploy *.bpmn');
+  .on('--help', () => {
+    logHelp(`
+    Examples:
+
+      $ atlas deploy registration_email_coupons.bpmn
+
+    The commands takes multiple arguments and supports globs:
+
+      $ atlas deploy registration_email_coupons.bpmn registration_fraud_detection.bpmn
+
+      $ atlas deploy *.bpmn
+    `);
   })
   .action(async (filenames: string[], options) => {
     deployFiles(filenames, options.parent.format);
@@ -80,15 +90,16 @@ program
   .command('remove [PROCESS_MODEL_IDS...]')
   .description('remove deployed process models from the engine')
   .option('-y,--yes', 'do not prompt for confirmation')
-  .on('--help', function() {
-    console.log('');
-    console.log('Examples:');
-    console.log('');
-    console.log('  $ atlas remove Registration.EmailCoupons');
-    console.log('');
-    console.log("If you don't want to be prompted for confirmation, use `--yes`:");
-    console.log('');
-    console.log('  $ atlas remove Registration.EmailCoupons --yes');
+  .on('--help', () => {
+    logHelp(`
+    Examples:
+
+      $ atlas remove Registration.EmailCoupons
+
+      If you don't want to be prompted for confirmation, use \`--yes\`:
+
+      $ atlas remove Registration.EmailCoupons --yes
+    `);
   })
   .action(async (processModelIds: string[], options) => {
     removeProcessModels(processModelIds, options.yes, options.parent.format);
@@ -98,13 +109,14 @@ program
   .command('start-process-model <PROCESS_MODEL_ID1> <START_EVENT_ID1> [PROCESS_MODEL_AND_START_EVENT_IDS...]')
   .alias('start')
   .description('starts an instance of the deployed process models')
-  .on('--help', function() {
-    console.log('');
-    console.log('Examples:');
-    console.log('');
-    console.log('  $ atlas start-process-model Registration.EmailCoupons StartEvent_1');
-    console.log('');
-    console.log('  $ atlas start Registration.EmailCoupons StartEvent_1');
+  .on('--help', () => {
+    logHelp(`
+    Examples:
+
+      $ atlas start-process-model Registration.EmailCoupons StartEvent_1
+
+      $ atlas start Registration.EmailCoupons StartEvent_1
+    `);
   })
   .action(async (processModelId: string, startEventId: string, moreProcessModelAndStartEventIds: string[], options) => {
     await startProcessInstance(
@@ -120,13 +132,14 @@ program
   .command('stop-process-instance [PROCESS_INSTANCE_IDS...]')
   .alias('stop')
   .description('stops instances with the given process instance ids')
-  .on('--help', function() {
-    console.log('');
-    console.log('Examples:');
-    console.log('');
-    console.log('  $ atlas stop-process-instance 56a89c11-ee0d-4539-b4cb-84a0339262fd');
-    console.log('');
-    console.log('  $ atlas stop 56a89c11-ee0d-4539-b4cb-84a0339262fd');
+  .on('--help', () => {
+    logHelp(`
+    Examples:
+
+      $ atlas stop-process-instance 56a89c11-ee0d-4539-b4cb-84a0339262fd
+
+      $ atlas stop 56a89c11-ee0d-4539-b4cb-84a0339262fd
+    `);
   })
   .action(async (givenProcessInstanceIds: string[], options) => {
     const stdinPipeReader = await StdinPipeReader.create();
@@ -139,13 +152,14 @@ program
   .command('show-process-instance [PROCESS_INSTANCE_IDS...]')
   .alias('show')
   .description('shows instances with the given process instance ids')
-  .on('--help', function() {
-    console.log('');
-    console.log('Examples:');
-    console.log('');
-    console.log('  $ atlas show-process-instance 56a89c11-ee0d-4539-b4cb-84a0339262fd');
-    console.log('');
-    console.log('  $ atlas show 56a89c11-ee0d-4539-b4cb-84a0339262fd');
+  .on('--help', () => {
+    logHelp(`
+    Examples:
+
+      $ atlas show-process-instance 56a89c11-ee0d-4539-b4cb-84a0339262fd
+
+      $ atlas show 56a89c11-ee0d-4539-b4cb-84a0339262fd
+    `);
   })
   .action(async (givenProcessInstanceIds: string[], options) => {
     const stdinPipeReader = await StdinPipeReader.create();
@@ -165,30 +179,39 @@ program
   .command('list-process-models')
   .alias('lsp')
   .description('list process models')
-  .on('--help', function() {
-    console.log('');
-    console.log('Examples:');
-    console.log('');
-    console.log('  $ atlas list-process-models');
-    console.log('');
-    console.log('  $ atlas list-process-models --filter-by-id "Registration"');
-    console.log('');
-    console.log('Filtering also supports regular expressions:');
-    console.log('');
-    console.log('  $ atlas list-process-models --filter-by-id "^Registration.+$"');
-  })
   .option(
     '--filter-by-id <PATTERN>',
     'Filter process models by <PATTERN> (supports regular expressions)',
     (value, previous) => previous.concat([value]),
     []
   )
+  .option(
+    '--reject-by-id <PATTERN>',
+    'Reject process models by <PATTERN> (supports regular expressions)',
+    (value, previous) => previous.concat([value]),
+    []
+  )
+  .on('--help', () => {
+    logHelp(`
+    Examples:
+
+      $ atlas list-process-models
+
+      $ atlas list-process-models --filter-by-id "Registration"
+
+      $ atlas list-process-models --reject-by-id "Internal"
+
+    Filtering/rejecting also supports regular expressions:
+
+      $ atlas list-process-models --filter-by-id "^Registration.+$"
+    `);
+  })
   .action(async (options) => {
     const stdinPipeReader = await StdinPipeReader.create();
     const pipedProcessModelIds =
       stdinPipeReader.getPipedProcessModelIds() || stdinPipeReader.getPipedProcessModelIdsInProcessInstances();
 
-    listProcessModels(pipedProcessModelIds, options, options.parent.format);
+    listProcessModels(pipedProcessModelIds, options.filterById, options.rejectById, options.parent.format);
   });
 
 program
@@ -204,8 +227,20 @@ program
     []
   )
   .option(
+    '--reject-by-process-model-id <PATTERN>',
+    'Reject process instances by <PATTERN> (supports regular expressions)',
+    (value, previous) => previous.concat([value]),
+    []
+  )
+  .option(
     '--filter-by-state <STATE>',
     'Filter process instances by <STATE> (running, finished, error)',
+    (value, previous) => previous.concat([value]),
+    []
+  )
+  .option(
+    '--reject-by-state <STATE>',
+    'Reject process instances by <STATE> (running, finished, error)',
     (value, previous) => previous.concat([value]),
     []
   )
@@ -219,53 +254,50 @@ program
   )
   .option('--sort-by-state [DIRECTION]', 'Sort process instances by their state in DIRECTION (asc, desc)')
   .option('--limit <LIMIT>', 'Lists a maximum of <LIMIT> process instances')
-  .on('--help', function() {
-    console.log('');
-    console.log('Examples:');
-    console.log('');
-    console.log('  $ atlas list-process-instances');
-    console.log('');
-    console.log('  $ atlas list-process-instances --created-after "2020-01-01" --created-before "2020-01-31"');
-    console.log('  $ atlas list-process-instances --filter-by-process-model-id "Registration"');
-    console.log('  $ atlas list-process-instances --filter-by-state error');
-    console.log('');
-    console.log('Filtering by process model id also supports regular expressions:');
-    console.log('');
-    console.log(`  $ atlas list-process-instances --filter-by-process-model-id "^Registration.+$"`);
-    console.log('');
-    console.log('Filter options compound, meaning that they allow to look for more than one pattern:');
-    console.log('');
-    console.log('  $ atlas list-process-instances --filter-by-state error --filter-by-state running');
-    console.log('');
-    console.log('... using the same filter multiple times results in an OR query:');
-    console.log('');
-    console.log(
-      `  $ atlas list-process-instances --filter-by-process-model-id "Registration" --filter-by-process-model-id "Email"`
-    );
-    console.log('');
-    console.log('... piping the result into another execution of list-process-instances leads to an AND query:');
-    console.log('');
-    console.log(
-      `  $ atlas list-process-instances --filter-by-process-model-id "Registration" -format json | atlas list-process-instances --filter-by-process-model-id "Email"`
-    );
-    console.log('');
-    console.log('Combinations of all switches are possible:');
-    console.log('');
-    console.log(
-      `  $ atlas list-process-instances --created-after "2020-01-01" --created-before "2020-01-31" \\
+  .on('--help', () => {
+    logHelp(`
+    Examples:
+
+      $ atlas list-process-instances
+
+      $ atlas list-process-instances --created-after "2020-01-01" --created-before "2020-01-31"
+      $ atlas list-process-instances --filter-by-process-model-id "Registration"
+      $ atlas list-process-instances --filter-by-state error
+
+    Filtering by process model id also supports regular expressions:
+
+      $ atlas list-process-instances --filter-by-process-model-id "^Registration.+$"
+
+    Filter options compound, meaning that they allow to look for more than one pattern:
+
+      $ atlas list-process-instances --filter-by-state error --filter-by-state running
+
+    ... using the same filter multiple times results in an OR query:
+
+      $ atlas list-process-instances --filter-by-process-model-id "Registration" --filter-by-process-model-id "Email"
+
+    ... piping the result into another execution of list-process-instances leads to an AND query:
+
+      $ atlas list-process-instances --filter-by-process-model-id "Registration" --format json | atlas list-process-instances --filter-by-process-model-id "Email"
+
+    Combinations of all switches are possible:
+
+      $ atlas list-process-instances --created-after "2020-01-01" --created-before "2020-01-31" \\
                                   --filter-by-process-model-id "^Registration.+$" \\
+                                  --reject-by-process-model-id "Internal" \\
                                   --filter-by-state error \\
                                   --filter-by-state running \\
                                   --sort-by-process-model-id ASC \\
                                   --sort-by-state DESC \\
-                                  --sort-by-created-at ASC`
-    );
-    console.log('');
-    console.log('The above lists all process instances from January 2020, which were started from a process model');
-    console.log('with the name prefix "Registration." and either resulted in an error or are still running.');
-    console.log('The results are sorted by process model in ascending alphabetical order, within each model section,');
-    console.log('the process instances are grouped by state in the order "running, error" and for each state,');
-    console.log('process instances are listed oldest to newest.');
+                                  --sort-by-created-at ASC
+
+    The above lists all process instances from January 2020, which were started from a process model
+    whose name contains the prefix "Registration.", but does not contain the word "Internal", and either
+    resulted in an error or are still running.
+    The results are sorted by process model in ascending alphabetical order, within each model section,
+    the process instances are grouped by state in the order "running, error" and for each state,
+    process instances are listed oldest to newest.
+    `);
   })
   .action(async (options) => {
     const stdinPipeReader = await StdinPipeReader.create();
@@ -282,7 +314,9 @@ program
       options.createdAfter,
       options.createdBefore,
       options.filterByProcessModelId,
+      options.rejectByProcessModelId,
       options.filterByState,
+      options.rejectByState,
       sortByProcessModelId,
       sortByState,
       sortByCreatedAt,
@@ -298,6 +332,23 @@ program
   .action(async (options) => {
     console.log('TODO: implement me');
   });
+
+function logHelp(text: string): void {
+  console.log('');
+  console.log(removeMultilineIndent(text));
+}
+
+function removeMultilineIndent(text: string): string {
+  const lines = text.split('\n');
+  const firstLine = lines[0] === '' ? lines[1] : lines[0];
+  const indent = firstLine.length - firstLine.trimLeft().length;
+  const removeIndentRegex = new RegExp(`^(\ {${indent}})`);
+
+  return lines
+    .map((line: string) => line.replace(removeIndentRegex, ''))
+    .join('\n')
+    .trim();
+}
 
 async function main() {
   await program.parseAsync(process.argv);

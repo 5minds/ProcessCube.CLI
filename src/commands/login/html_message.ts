@@ -1,4 +1,4 @@
-export function getModalHtml(message: string, terminalCode?: string): string {
+export function getModalHtml(svgHtml: string, message: string, terminalCode?: string): string {
   const messageHtml = message
     .split('\n\n')
     .map((line: string) => `<p>${line}</p>`)
@@ -62,9 +62,6 @@ ${terminalCode
         flex: 0;
         align-self: center;
         margin-bottom: 1.5rem;
-        background: #DCEDC8;
-        border-radius: 50%;
-        padding: 0.25rem;
       }
 
       .modal__text {
@@ -74,8 +71,18 @@ ${terminalCode
       }
 
       .icon {
-        border-radius: 50%;
+        padding: 0.25rem;
+        border-radius: 20%;
+      }
+
+      .icon--login {
+        background: #DCEDC8;
         color: #097b57;
+      }
+
+      .icon--logout {
+        background: #E0E0E0;
+        color: #6a7280;
       }
 
       p {
@@ -111,13 +118,7 @@ ${terminalCode
     <div class="modal__outer">
       <div class="modal">
         <div class="modal__icon">
-          <div class="icon">
-            <svg style="width:48px;height:48px" viewBox="0 0 48 48">
-              <g transform="scale(2)">
-                <path fill="currentColor" d="M12 2C6.5 2 2 6.5 2 12S6.5 22 12 22 22 17.5 22 12 17.5 2 12 2M12 20C7.59 20 4 16.41 4 12S7.59 4 12 4 20 7.59 20 12 16.41 20 12 20M16.59 7.58L10 14.17L7.41 11.59L6 13L10 17L18 9L16.59 7.58Z" />
-              </g>
-            </svg>
-          </div>
+          ${svgHtml}
         </div>
         <div class="modal__text">
           ${messageHtml}

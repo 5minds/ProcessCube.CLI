@@ -9,7 +9,9 @@ import { loadAtlasSession } from '../../session/atlas_session';
 import { OUTPUT_FORMAT_JSON, OUTPUT_FORMAT_TEXT } from '../../atlas';
 import { BpmnDocument } from '../../cli/bpmn_document';
 
-type ProcessInstance = DataModels.Correlations.ProcessInstance & { tokens: DataModels.TokenHistory.TokenHistoryGroup };
+type ProcessInstanceWithTokens = DataModels.Correlations.ProcessInstance & {
+  tokens: DataModels.TokenHistory.TokenHistoryGroup;
+};
 
 export async function showProcessInstance(processInstanceIds: string[], options: any, format: string): Promise<void> {
   const session = loadAtlasSession();
@@ -19,7 +21,7 @@ export async function showProcessInstance(processInstanceIds: string[], options:
   }
   const { identity, managementApiClient } = getIdentityAndManagementApiClient(session);
 
-  const processInstances: ProcessInstance[] = [];
+  const processInstances: ProcessInstanceWithTokens[] = [];
   for (const processInstanceId of processInstanceIds) {
     const rawProcessInstance = await managementApiClient.getProcessInstanceById(identity, processInstanceId);
     const tokens = await managementApiClient.getTokensForProcessInstance(identity, processInstanceId);
@@ -46,7 +48,7 @@ export async function showProcessInstance(processInstanceIds: string[], options:
   }
 }
 
-async function log(processInstance: ProcessInstance, showSeparator: boolean = false) {
+async function log(processInstance: ProcessInstanceWithTokens, showSeparator: boolean = false) {
   // console.dir(processInstance, { depth: null });
   if (showSeparator) {
     console.log(chalk.cyan('---------------------------------- >8 ---------------------------------------------'));
@@ -85,7 +87,7 @@ async function log(processInstance: ProcessInstance, showSeparator: boolean = fa
   console.log('');
 }
 
-async function logHistory(processInstance: ProcessInstance): Promise<void> {
+async function logHistory(processInstance: ProcessInstanceWithTokens): Promise<void> {
   const flowNodeIds = Object.keys(processInstance.tokens).reverse();
   const firstToken = getToken(processInstance, flowNodeIds[0], 'onEnter');
   const lastTokenOnExit = getToken(processInstance, flowNodeIds[flowNodeIds.length - 1], 'onExit');
@@ -139,7 +141,7 @@ async function logHistory(processInstance: ProcessInstance): Promise<void> {
   printMultiLineString(JSON.stringify(lastTokenOnExit.payload, null, 2), '    ');
 }
 
-function logErrorIfAny(processInstance: ProcessInstance): void {
+function logErrorIfAny(processInstance: ProcessInstanceWithTokens): void {
   if (processInstance.error != null) {
     // it seems error contains more info than is mentioned in the types
     const error = processInstance.error as any;
@@ -167,7 +169,7 @@ function stateToColoredString(state: string): string {
   }
 }
 
-function getToken(processInstance: ProcessInstance, flowNodeId: string, tokenEventType: string): any | null {
+function getToken(processInstance: ProcessInstanceWithTokens, flowNodeId: string, tokenEventType: string): any | null {
   const tokenHistoryEntries = processInstance.tokens[flowNodeId].tokenHistoryEntries;
 
   return tokenHistoryEntries.find((entry) => entry.tokenEventType === tokenEventType);
@@ -178,7 +180,7 @@ function printMultiLineString(text: string | string[], linePrefix: string = ''):
   lines.forEach((line: string): void => console.log(`${linePrefix}${line}`));
 }
 
-function getDoneAt(processInstance: ProcessInstance): moment.Moment {
+function getDoneAt(processInstance: ProcessInstanceWithTokens): moment.Moment {
   const flowNodeIds = Object.keys(processInstance.tokens).reverse();
 
   const lastTokenOnExit =

@@ -12,7 +12,9 @@ import { getProcessModels, filterProcessModelsById } from '../list-process-model
 import {
   filterProcessInstancesDateAfter,
   filterProcessInstancesDateBefore,
-  filterProcessInstancesByProcessModelId
+  filterProcessInstancesByProcessModelId,
+  rejectProcessInstancesByProcessModelId,
+  rejectProcessInstancesByState
 } from './filtering';
 import { sortProcessInstances } from './sorting';
 
@@ -24,7 +26,9 @@ export async function listProcessInstances(
   createdAfter: string,
   createdBefore: string,
   filterByProcessModelId: string[],
+  rejectByProcessModelId: string[],
   filterByState: string[],
+  rejectByState: string[],
   sortByProcessModelId: string,
   sortByState: string,
   sortByCreatedAt: string,
@@ -44,7 +48,9 @@ export async function listProcessInstances(
     createdAfter,
     createdBefore,
     filterByProcessModelId,
+    rejectByProcessModelId,
     filterByState,
+    rejectByState,
     sortByProcessModelId,
     sortByState,
     sortByCreatedAt,
@@ -67,13 +73,21 @@ async function getProcessInstances(
   createdAfter: string,
   createdBefore: string,
   filterByProcessModelId: string[],
+  rejectByProcessModelId: string[],
   filterByState: string[],
+  rejectByState: string[],
   sortByProcessModelId: string,
   sortByState: string,
   sortByCreatedAt: string,
   limit: number
 ): Promise<ProcessInstance[]> {
-  let allProcessInstances = await getAllProcessInstances(session, filterByProcessModelId, filterByState);
+  let allProcessInstances = await getAllProcessInstances(
+    session,
+    filterByProcessModelId,
+    rejectByProcessModelId,
+    filterByState,
+    rejectByState
+  );
 
   if (pipedProcessInstanceIds != null) {
     allProcessInstances = allProcessInstances.filter((processInstance: any) =>
@@ -104,13 +118,25 @@ async function getProcessInstances(
 async function getAllProcessInstances(
   session: AtlasSession,
   filterByProcessModelId: string[],
-  filterByState: string[]
+  rejectByProcessModelId: string[],
+  filterByState: string[],
+  rejectByState: string[]
 ): Promise<ProcessInstance[]> {
+  let allProcessInstances: ProcessInstance[];
   if (filterByState.length > 0) {
-    return getAllProcessInstancesViaStateAndFilterByProcessModelId(session, filterByState, filterByProcessModelId);
+    allProcessInstances = await getAllProcessInstancesViaStateAndFilterByProcessModelId(
+      session,
+      filterByState,
+      filterByProcessModelId
+    );
+  } else {
+    allProcessInstances = await getAllProcessInstancesViaAllProcessModels(session, filterByProcessModelId);
   }
 
-  return getAllProcessInstancesViaAllProcessModels(session, filterByProcessModelId);
+  allProcessInstances = rejectProcessInstancesByProcessModelId(allProcessInstances, rejectByProcessModelId);
+  allProcessInstances = rejectProcessInstancesByState(allProcessInstances, rejectByState);
+
+  return allProcessInstances;
 }
 
 async function getAllProcessInstancesViaAllProcessModels(

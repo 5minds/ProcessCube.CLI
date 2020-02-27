@@ -192,12 +192,6 @@ Grundsätzlich ist `ID` eine Prozess-Instanz-Id.
 $ atlas show-process-instance e53e7b37-5fd2-4b1b-9b5f-c249de39bfa4
 ```
 
-Aus Komfortgründen ist, wie bei Git, eine partielle Angabe der ID möglich, so dass der Benutzer bspw. nur das erste Glied der UUID kopieren und angeben muss.
-
-```shell
-$ atlas show e53e7b37
-```
-
 Wenn `--correlation` gegeben ist, wird die übergebene `ID` als Correlation-Id interpretiert und es werden die zugehörigen Prozess-Instanzen angezeigt.
 
 ```shell

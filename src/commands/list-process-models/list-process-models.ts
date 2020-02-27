@@ -6,7 +6,12 @@ import { loadAtlasSession, AtlasSession } from '../../session/atlas_session';
 import { OUTPUT_FORMAT_JSON, OUTPUT_FORMAT_TEXT } from '../../atlas';
 import { toFilterRegexes } from '../../cli/filter_regexes';
 
-export async function listProcessModels(pipedProcessModelIds: string[] | null, options: any, format: string) {
+export async function listProcessModels(
+  pipedProcessModelIds: string[] | null,
+  filterById: string[],
+  rejectById: string[],
+  format: string
+) {
   const session = loadAtlasSession();
   if (session == null) {
     console.log(chalk.red('No session found. Aborting.'));
@@ -15,7 +20,9 @@ export async function listProcessModels(pipedProcessModelIds: string[] | null, o
 
   const allProcessModels = await getProcessModels(session, pipedProcessModelIds);
 
-  const processModels = filterProcessModelsById(allProcessModels, options.filterById);
+  const filteredProcessModels = filterProcessModelsById(allProcessModels, filterById);
+
+  const processModels = rejectProcessModelsById(filteredProcessModels, rejectById);
 
   const resultJson = createResultJson('process-models', mapToShort(processModels));
 
@@ -52,8 +59,21 @@ export function filterProcessModelsById(processModels: any[], filterById: string
   const filterRegexes = toFilterRegexes(filterById);
 
   return processModels.filter((processModel: any) => {
-    const anyFilterMatched = filterRegexes.some((regex: RegExp) => regex.exec(processModel.id) != null);
+    const anyFilterMatched = filterRegexes.some((regex: RegExp) => processModel.id.match(regex) != null);
     return anyFilterMatched;
+  });
+}
+
+export function rejectProcessModelsById(processModels: any[], rejectById: string[]): any[] {
+  if (rejectById.length === 0) {
+    return processModels;
+  }
+
+  const filterRegexes = toFilterRegexes(rejectById);
+
+  return processModels.filter((processModel: any) => {
+    const anyFilterMatched = filterRegexes.some((regex: RegExp) => processModel.id.match(regex) != null);
+    return !anyFilterMatched;
   });
 }
 

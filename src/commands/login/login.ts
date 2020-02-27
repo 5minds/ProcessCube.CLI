@@ -35,6 +35,7 @@ export async function login(givenEngineUrl: string, useAnonymousLogin: boolean, 
   }
   saveAtlasSession(newSession);
 
+  console.log('');
   console.log(chalk.green('You are now logged in.'));
 
   // we're making a hard exit here so we do not wait for the express server to shut down

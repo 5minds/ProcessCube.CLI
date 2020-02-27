@@ -56,6 +56,20 @@ export function filterProcessInstancesByState(
   });
 }
 
+export function rejectProcessInstancesByState(
+  processInstances: FilterableProcessInstance[],
+  rejectByState: string[]
+): any[] {
+  if (rejectByState.length === 0) {
+    return processInstances;
+  }
+
+  return processInstances.filter((processInstance: FilterableProcessInstance) => {
+    const anyFilterMatched = rejectByState.some((state: string) => processInstance.state === state);
+    return !anyFilterMatched;
+  });
+}
+
 export function filterProcessInstancesByProcessModelId(
   processInstances: FilterableProcessInstance[],
   filterByProcessModelId: string[]
@@ -69,6 +83,22 @@ export function filterProcessInstancesByProcessModelId(
   return processInstances.filter((processInstance: FilterableProcessInstance) => {
     const anyFilterMatched = filterRegexes.some((regex: RegExp) => processInstance.processModelId.match(regex) != null);
     return anyFilterMatched;
+  });
+}
+
+export function rejectProcessInstancesByProcessModelId(
+  processInstances: FilterableProcessInstance[],
+  filterByProcessModelId: string[]
+): any[] {
+  if (filterByProcessModelId.length === 0) {
+    return processInstances;
+  }
+
+  const filterRegexes = toFilterRegexes(filterByProcessModelId);
+
+  return processInstances.filter((processInstance: FilterableProcessInstance) => {
+    const anyFilterMatched = filterRegexes.some((regex: RegExp) => processInstance.processModelId.match(regex) != null);
+    return !anyFilterMatched;
   });
 }
 
