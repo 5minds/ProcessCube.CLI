@@ -113,7 +113,7 @@ program
   .description('list process models')
   .option(
     '--filter-by-id <PATTERN>',
-    'Filter process models by PATTERN',
+    'Filter process models by <PATTERN> (supports regular expressions)',
     (value, previous) => previous.concat([value]),
     []
   )
@@ -126,14 +126,14 @@ program
   .alias('lsi')
   .description('list process instances')
   .option(
-    '--filter-by-process-model-id <PROCESS_MODEL_ID>',
-    'Filter process instances by PROCESS_MODEL_ID',
+    '--filter-by-process-model-id <PATTERN>',
+    'Filter process instances by <PATTERN> (supports regular expressions)',
     (value, previous) => previous.concat([value]),
     []
   )
   .option(
     '--filter-by-state <STATE>',
-    'Filter process instances by STATE (running, finished, error)',
+    'Filter process instances by <STATE> (running, finished, error)',
     (value, previous) => previous.concat([value]),
     []
   )

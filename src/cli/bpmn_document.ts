@@ -6,7 +6,7 @@ export class BpmnDocument {
   async loadXml(xml: string): Promise<void> {
     return new Promise((resolve, reject) => {
       const moddle = new BpmnModdle();
-      moddle.fromXML(xml, function(err, definitions) {
+      moddle.fromXML(xml, (err, definitions) => {
         if (err) {
           reject(err);
         }

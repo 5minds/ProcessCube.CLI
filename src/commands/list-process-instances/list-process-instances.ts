@@ -12,7 +12,7 @@ import { getProcessModels, filterProcessModelsById } from '../list-process-model
 import {
   filterProcessInstancesDateAfter,
   filterProcessInstancesDateBefore,
-  filterProcessInstancesByState
+  filterProcessInstancesByProcessModelId
 } from './filtering';
 import {
   sortProcessInstancesByProcessModelId,
@@ -71,6 +71,40 @@ async function getProcessInstances(
   sortByState: string,
   limit: number
 ): Promise<ProcessInstance[]> {
+  let allProcessInstances = await getAllProcessInstances(session, filterByProcessModelId, filterByState);
+
+  allProcessInstances = filterProcessInstancesDateAfter(allProcessInstances, 'createdAt', createdAfter);
+  allProcessInstances = filterProcessInstancesDateBefore(allProcessInstances, 'createdAt', createdBefore);
+
+  allProcessInstances = sortProcessInstancesByCreatedAt(allProcessInstances, sortByCreatedAt);
+  allProcessInstances = sortProcessInstancesByProcessModelId(allProcessInstances, sortByProcessModelId);
+  allProcessInstances = sortProcessInstancesByState(allProcessInstances, sortByState);
+
+  const processInstances = allProcessInstances;
+
+  if (limit != null && limit > 0) {
+    return processInstances.slice(0, limit);
+  }
+
+  return processInstances;
+}
+
+async function getAllProcessInstances(
+  session: AtlasSession,
+  filterByProcessModelId: string[],
+  filterByState: string[]
+): Promise<ProcessInstance[]> {
+  if (filterByState.length > 0) {
+    return getAllProcessInstancesViaStateAndFilterByProcessModelId(session, filterByState, filterByProcessModelId);
+  }
+
+  return getAllProcessInstancesViaAllProcessModels(session, filterByProcessModelId);
+}
+
+async function getAllProcessInstancesViaAllProcessModels(
+  session: AtlasSession,
+  filterByProcessModelId: string[]
+): Promise<ProcessInstance[]> {
   const { identity, managementApiClient } = getIdentityAndManagementApiClient(session);
 
   const allProcessModels = await getProcessModels(session);
@@ -80,6 +114,7 @@ async function getProcessInstances(
   for (const processModel of processModels) {
     try {
       const result = await managementApiClient.getProcessInstancesForProcessModel(identity, processModel.id);
+
       allProcessInstances = allProcessInstances.concat(result.processInstances);
     } catch (e) {
       if (e.message.includes('No ProcessInstances for ProcessModel')) {
@@ -90,19 +125,27 @@ async function getProcessInstances(
     }
   }
 
-  allProcessInstances = filterProcessInstancesDateAfter(allProcessInstances, 'createdAt', createdAfter);
-  allProcessInstances = filterProcessInstancesDateBefore(allProcessInstances, 'createdAt', createdBefore);
-  allProcessInstances = filterProcessInstancesByState(allProcessInstances, filterByState);
+  return allProcessInstances;
+}
 
-  allProcessInstances = sortProcessInstancesByProcessModelId(allProcessInstances, sortByProcessModelId);
-  allProcessInstances = sortProcessInstancesByState(allProcessInstances, sortByState);
-  allProcessInstances = sortProcessInstancesByCreatedAt(allProcessInstances, sortByCreatedAt);
+async function getAllProcessInstancesViaStateAndFilterByProcessModelId(
+  session: AtlasSession,
+  filterByState: string[],
+  filterByProcessModelId: string[]
+): Promise<ProcessInstance[]> {
+  const { identity, managementApiClient } = getIdentityAndManagementApiClient(session);
 
-  const processInstances = allProcessInstances;
+  let allProcessInstances = [];
+  for (const state of filterByState) {
+    const result = await managementApiClient.getProcessInstancesByState(
+      identity,
+      state as DataModels.Correlations.CorrelationState
+    );
 
-  if (limit != null && limit > 0) {
-    return processInstances.slice(0, limit);
+    allProcessInstances = allProcessInstances.concat(result.processInstances);
   }
+
+  const processInstances = filterProcessInstancesByProcessModelId(allProcessInstances, filterByProcessModelId);
 
   return processInstances;
 }

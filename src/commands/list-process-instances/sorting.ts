@@ -1,14 +1,21 @@
-import { ProcessInstance } from './list-process-instances';
+type SortableProcessInstance = {
+  createdAt?: any; // is given as string, but should be a Date according to the management_api_contracts
+  processModelId: string;
+  state: string;
+};
+
+// TODO: `string` seems unnecessary here
+type SortingDirection = 'asc' | 'desc' | string;
 
 export function sortProcessInstancesByProcessModelId(
-  processInstances: ProcessInstance[],
-  sortByProcessModelId: string
+  processInstances: SortableProcessInstance[],
+  sortByProcessModelId: SortingDirection
 ): any[] {
   if (sortByProcessModelId == null) {
     return processInstances;
   }
 
-  const sortByProcessModelIdAscFn = (a: ProcessInstance, b: ProcessInstance) => {
+  const sortByProcessModelIdAscFn = (a: SortableProcessInstance, b: SortableProcessInstance) => {
     if (a.processModelId < b.processModelId) {
       return -1;
     }
@@ -18,7 +25,7 @@ export function sortProcessInstancesByProcessModelId(
     return 0;
   };
 
-  const sortByProcessModelIdDescFn = (a: ProcessInstance, b: ProcessInstance) => {
+  const sortByProcessModelIdDescFn = (a: SortableProcessInstance, b: SortableProcessInstance) => {
     if (a.processModelId > b.processModelId) {
       return -1;
     }
@@ -34,12 +41,15 @@ export function sortProcessInstancesByProcessModelId(
   return processInstances.sort(sortByProcessModelIdFn);
 }
 
-export function sortProcessInstancesByState(processInstances: ProcessInstance[], sortByState: string): any[] {
+export function sortProcessInstancesByState(
+  processInstances: SortableProcessInstance[],
+  sortByState: SortingDirection
+): any[] {
   if (sortByState == null) {
     return processInstances;
   }
 
-  const sortByStateAscFn = (a: ProcessInstance, b: ProcessInstance) => {
+  const sortByStateAscFn = (a: SortableProcessInstance, b: SortableProcessInstance) => {
     if (a.state < b.state) {
       return -1;
     }
@@ -49,7 +59,7 @@ export function sortProcessInstancesByState(processInstances: ProcessInstance[],
     return 0;
   };
 
-  const sortByStateDescFn = (a: ProcessInstance, b: ProcessInstance) => {
+  const sortByStateDescFn = (a: SortableProcessInstance, b: SortableProcessInstance) => {
     if (a.state > b.state) {
       return -1;
     }
@@ -64,12 +74,15 @@ export function sortProcessInstancesByState(processInstances: ProcessInstance[],
   return processInstances.sort(sortByStateFn);
 }
 
-export function sortProcessInstancesByCreatedAt(processInstances: ProcessInstance[], sortByCreatedAt: string): any[] {
+export function sortProcessInstancesByCreatedAt(
+  processInstances: SortableProcessInstance[],
+  sortByCreatedAt: SortingDirection
+): any[] {
   if (sortByCreatedAt == null) {
     return processInstances;
   }
 
-  const sortByCreatedAtAscFn = (a: ProcessInstance, b: ProcessInstance) => {
+  const sortByCreatedAtAscFn = (a: SortableProcessInstance, b: SortableProcessInstance) => {
     if (a.createdAt < b.createdAt) {
       return -1;
     }
@@ -79,7 +92,7 @@ export function sortProcessInstancesByCreatedAt(processInstances: ProcessInstanc
     return 0;
   };
 
-  const sortByCreatedAtDescFn = (a: ProcessInstance, b: ProcessInstance) => {
+  const sortByCreatedAtDescFn = (a: SortableProcessInstance, b: SortableProcessInstance) => {
     if (a.createdAt > b.createdAt) {
       return -1;
     }

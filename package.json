@@ -7,7 +7,7 @@
     "clean": "rm -rf dist",
     "build": "npm run clean && tsc",
     "lint": "eslint \"src/**/*.ts\"",
-    "test": "mocha -r ts-node/register \"src/**/*.test.ts\""
+    "test": "mocha -r ts-node/register -r choma \"src/**/*.test.ts\""
   },
   "bin": {
     "atlas": "./dist/atlas.js"
@@ -39,6 +39,7 @@
     "@essential-projects/eslint-config": "^1.0.6",
     "@types/mocha": "^5.2.7",
     "@types/node": "^12.12.28",
+    "choma": "^1.2.1",
     "eslint": "^5.16.0",
     "mocha": "^6.1.4",
     "prettier": "^1.18.2",
