@@ -11,6 +11,7 @@ import {
 import { startServerToLoginAndWaitForAccessTokenFromIdentityServer } from './express_server';
 
 const ONE_YEAR_IN_MILLISECONDS = 365 * 86400 * 1000;
+const ANONYMOUS_TOKEN_LIFETIME_IN_MILLISECONDS = 99 * ONE_YEAR_IN_MILLISECONDS;
 
 export async function login(givenEngineUrl: string, useAnonymousLogin: boolean, format: string): Promise<void> {
   let engineUrl = givenEngineUrl;
@@ -47,7 +48,7 @@ async function loginViaAnonymousAccess(engineUrl: string): Promise<AtlasSession>
     identityServerUrl: ANONYMOUS_IDENTITY_SERVER_URL,
     idToken: '',
     accessToken: 'ZHVtbXlfdG9rZW4=',
-    expiresAt: Date.now() + ONE_YEAR_IN_MILLISECONDS
+    expiresAt: Date.now() + ANONYMOUS_TOKEN_LIFETIME_IN_MILLISECONDS
   };
 
   return newSession;

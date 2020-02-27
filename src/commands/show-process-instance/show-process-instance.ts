@@ -7,7 +7,7 @@ import { createResultJson } from '../../cli/result_json';
 import { getIdentityAndManagementApiClient } from '../../client/management_api_client';
 import { loadAtlasSession } from '../../session/atlas_session';
 import { OUTPUT_FORMAT_JSON, OUTPUT_FORMAT_TEXT } from '../../atlas';
-import { getElementNameByIdFromBpmn } from '../../cli/bpmn';
+import { BpmnDocument } from '../../cli/bpmn_document';
 
 type ProcessInstance = DataModels.Correlations.ProcessInstance & { tokens: DataModels.TokenHistory.TokenHistoryGroup };
 
@@ -97,16 +97,13 @@ async function logHistory(processInstance: ProcessInstance): Promise<void> {
   console.log('Token history');
   console.log('');
 
-  const elementNames = {};
-  for (const flowNodeId of flowNodeIds) {
-    const name = await getElementNameByIdFromBpmn(processInstance.xml, flowNodeId);
-    elementNames[flowNodeId] = name;
-  }
+  const bpmnDocument = new BpmnDocument();
+  await bpmnDocument.loadXml(processInstance.xml);
 
   const lastIndex = flowNodeIds.length - 1;
   flowNodeIds.forEach(async (flowNodeId: string, index: number) => {
     const prefix = index === 0 ? '    ' : '    -> ';
-    const name = elementNames[flowNodeId];
+    const name = bpmnDocument.getElementNameById(flowNodeId);
     const idHint = chalk.dim(`(${flowNodeId})`);
     const suffix = index === lastIndex && processInstance.error != null ? chalk.redBright(' [error, see below]') : '';
     console.log(`${prefix}"${name}" ${idHint}${suffix}`);
@@ -115,7 +112,7 @@ async function logHistory(processInstance: ProcessInstance): Promise<void> {
   console.log('');
   console.log(
     'Input',
-    chalk.cyanBright(`"${elementNames[firstToken.flowNodeId]}"`),
+    chalk.cyanBright(`"${bpmnDocument.getElementNameById(firstToken.flowNodeId)}"`),
     chalk.dim(`(${firstToken.flowNodeId})`)
   );
   console.log('');
@@ -125,7 +122,7 @@ async function logHistory(processInstance: ProcessInstance): Promise<void> {
   if (processInstance.error != null) {
     console.log(
       'Input',
-      chalk.cyanBright(`"${elementNames[lastTokenOnEnter.flowNodeId]}"`),
+      chalk.cyanBright(`"${bpmnDocument.getElementNameById(lastTokenOnEnter.flowNodeId)}"`),
       chalk.dim(`(${lastTokenOnEnter.flowNodeId})`)
     );
     console.log('');
@@ -135,7 +132,7 @@ async function logHistory(processInstance: ProcessInstance): Promise<void> {
 
   console.log(
     'Output',
-    chalk.cyanBright(`"${elementNames[lastTokenOnExit.flowNodeId]}"`),
+    chalk.cyanBright(`"${bpmnDocument.getElementNameById(lastTokenOnExit.flowNodeId)}"`),
     chalk.dim(`(${lastTokenOnExit.flowNodeId})`)
   );
   console.log('');

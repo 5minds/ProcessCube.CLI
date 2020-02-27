@@ -6,7 +6,7 @@ import { AtlasSession, loadAtlasSession } from '../../session/atlas_session';
 import { createResultJson } from '../../cli/result_json';
 import { getIdentityAndManagementApiClient } from '../../client/management_api_client';
 import { OUTPUT_FORMAT_JSON, OUTPUT_FORMAT_TEXT } from '../../atlas';
-import { getProcessModelIdFromBpmn } from '../../cli/bpmn';
+import { BpmnDocument } from '../../cli/bpmn_document';
 
 export async function deploy(globPatterns: string[], format: string): Promise<void> {
   const session = loadAtlasSession();
@@ -38,10 +38,12 @@ export async function deployFileViaClient(session: AtlasSession, filename: strin
   const { identity, managementApiClient } = getIdentityAndManagementApiClient(session);
 
   const xml = fs.readFileSync(filename).toString();
+  const bpmnDocument = new BpmnDocument();
+  await bpmnDocument.loadXml(xml);
 
-  const name: string = await getProcessModelIdFromBpmn(xml);
+  const name: string = bpmnDocument.getProcessModelId();
   if (name == null) {
-    throw new Error('Unexpected value: `processModel` should not be null here');
+    throw new Error('Unexpected value: `name` should not be null here');
   }
 
   const payload = {
