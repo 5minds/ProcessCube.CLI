@@ -5,47 +5,107 @@ import { DataModels } from '@process-engine/management_api_contracts';
 
 import { createResultJson } from '../../cli/result_json';
 import { getIdentityAndManagementApiClient } from '../../client/management_api_client';
-import { loadAtlasSession } from '../../session/atlas_session';
+import { loadAtlasSession, AtlasSession } from '../../session/atlas_session';
 import { OUTPUT_FORMAT_JSON, OUTPUT_FORMAT_TEXT } from '../../atlas';
 import { BpmnDocument } from '../../cli/bpmn_document';
+import { sortProcessInstances } from '../list-process-instances/sorting';
 
-type ProcessInstanceWithTokens = DataModels.Correlations.ProcessInstance & {
+type ProcessInstance = DataModels.Correlations.ProcessInstance;
+type ProcessInstanceWithTokens = ProcessInstance & {
   tokens: DataModels.TokenHistory.TokenHistoryGroup;
 };
 
-export async function showProcessInstance(processInstanceIds: string[], options: any, format: string): Promise<void> {
+export async function showProcessInstance(
+  processInstanceOrCorrelationIds: string[],
+  isCorrelation: boolean,
+  format: string
+): Promise<void> {
   const session = loadAtlasSession();
   if (session == null) {
     console.log(chalk.red('No session found. Aborting.'));
     return;
   }
-  const { identity, managementApiClient } = getIdentityAndManagementApiClient(session);
 
-  const processInstances: ProcessInstanceWithTokens[] = [];
-  for (const processInstanceId of processInstanceIds) {
-    const rawProcessInstance = await managementApiClient.getProcessInstanceById(identity, processInstanceId);
-    const tokens = await managementApiClient.getTokensForProcessInstance(identity, processInstanceId);
-    const processInstance = { ...rawProcessInstance, tokens };
-
-    processInstances.push(processInstance);
+  let rawProcessInstances: ProcessInstance[] = [];
+  if (isCorrelation) {
+    rawProcessInstances = await getAllProcessInstancesViaCorrelations(session, processInstanceOrCorrelationIds);
+  } else {
+    rawProcessInstances = await getAllProcessInstancesViaIds(session, processInstanceOrCorrelationIds);
   }
 
-  const resultJson = createResultJson('process-instances', processInstances);
+  const sortedProcssInstances = sortProcessInstances(rawProcessInstances, null, null, 'asc');
+
+  const processInstancesWithTokens = await getProcessInstanceWithTokens(session, sortedProcssInstances);
+
+  const resultJson = createResultJson('process-instances', processInstancesWithTokens);
 
   switch (format) {
     case OUTPUT_FORMAT_JSON:
       console.dir(resultJson, { depth: null });
       break;
     case OUTPUT_FORMAT_TEXT:
-      const multipleInstances = processInstances.length > 1;
-      processInstances.forEach(async (processInstance, index) => {
+      const multipleInstances = processInstancesWithTokens.length > 1;
+
+      let index = 0;
+      for (const processInstance of processInstancesWithTokens) {
         const showSeparator = multipleInstances && index > 0;
         await log(processInstance, showSeparator);
-      });
+        index++;
+      }
 
       // console.table(processInstances, ['createdAt', 'finishedAt', 'processModelId', 'processInstanceId', 'state']);
       break;
   }
+}
+
+async function getProcessInstanceWithTokens(
+  session: AtlasSession,
+  rawProcessInstances: ProcessInstance[]
+): Promise<ProcessInstanceWithTokens[]> {
+  const { identity, managementApiClient } = getIdentityAndManagementApiClient(session);
+
+  const processInstancesWithTokens: ProcessInstanceWithTokens[] = [];
+  for (const rawProcessInstance of rawProcessInstances) {
+    const tokens = await managementApiClient.getTokensForProcessInstance(
+      identity,
+      rawProcessInstance.processInstanceId
+    );
+    const processInstance = { ...rawProcessInstance, tokens };
+
+    processInstancesWithTokens.push(processInstance);
+  }
+
+  return processInstancesWithTokens;
+}
+
+async function getAllProcessInstancesViaCorrelations(
+  session: AtlasSession,
+  correlationIds: string[]
+): Promise<ProcessInstance[]> {
+  const { identity, managementApiClient } = getIdentityAndManagementApiClient(session);
+
+  let allProcessInstances = [];
+  for (const correlationId of correlationIds) {
+    const result = await managementApiClient.getProcessInstancesForCorrelation(identity, correlationId);
+    allProcessInstances = allProcessInstances.concat(result.processInstances);
+  }
+
+  return allProcessInstances;
+}
+
+async function getAllProcessInstancesViaIds(
+  session: AtlasSession,
+  processInstanceIds: string[]
+): Promise<ProcessInstance[]> {
+  const { identity, managementApiClient } = getIdentityAndManagementApiClient(session);
+
+  let allProcessInstances = [];
+  for (const processInstanceId of processInstanceIds) {
+    const rawProcessInstance = await managementApiClient.getProcessInstanceById(identity, processInstanceId);
+    allProcessInstances.push(rawProcessInstance);
+  }
+
+  return allProcessInstances;
 }
 
 async function log(processInstance: ProcessInstanceWithTokens, showSeparator: boolean = false) {

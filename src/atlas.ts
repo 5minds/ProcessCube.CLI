@@ -152,6 +152,7 @@ program
   .command('show-process-instance [PROCESS_INSTANCE_IDS...]')
   .alias('show')
   .description('shows instances with the given process instance ids')
+  .option('-c,--correlation', 'all given ids are correlation ids')
   .on('--help', () => {
     logHelp(`
     Examples:
@@ -159,13 +160,15 @@ program
       $ atlas show-process-instance 56a89c11-ee0d-4539-b4cb-84a0339262fd
 
       $ atlas show 56a89c11-ee0d-4539-b4cb-84a0339262fd
+
+      $ atlas show --correlation e552acfe-8446-42c0-a76b-5cd65bf110ac
     `);
   })
   .action(async (givenProcessInstanceIds: string[], options) => {
     const stdinPipeReader = await StdinPipeReader.create();
     let processInstanceIds = stdinPipeReader.getPipedProcessInstanceIds() || givenProcessInstanceIds;
 
-    await showProcessInstance(processInstanceIds, options, options.parent.format);
+    await showProcessInstance(processInstanceIds, options.correlation, options.parent.format);
   });
 
 program
@@ -220,6 +223,12 @@ program
   .description('list process instances')
   .option('--created-after <DATETIME>', 'Only include process instances created after <DATETIME>')
   .option('--created-before <DATETIME>', 'Only include process instances created before <DATETIME>')
+  .option(
+    '--filter-by-correlation-id <CORRELATION_ID>',
+    'Filter process instances by <CORRELATION_ID>',
+    (value, previous) => previous.concat([value]),
+    []
+  )
   .option(
     '--filter-by-process-model-id <PATTERN>',
     'Filter process instances by <PATTERN> (supports regular expressions)',
@@ -313,6 +322,7 @@ program
       pipedProcessModelIds,
       options.createdAfter,
       options.createdBefore,
+      options.filterByCorrelationId,
       options.filterByProcessModelId,
       options.rejectByProcessModelId,
       options.filterByState,

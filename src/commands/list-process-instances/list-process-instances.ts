@@ -14,7 +14,8 @@ import {
   filterProcessInstancesDateBefore,
   filterProcessInstancesByProcessModelId,
   rejectProcessInstancesByProcessModelId,
-  rejectProcessInstancesByState
+  rejectProcessInstancesByState,
+  filterProcessInstancesByState
 } from './filtering';
 import { sortProcessInstances } from './sorting';
 
@@ -25,6 +26,7 @@ export async function listProcessInstances(
   pipedProcessModelIds: string[] | null,
   createdAfter: string,
   createdBefore: string,
+  filterByCorrelationId: string[],
   filterByProcessModelId: string[],
   rejectByProcessModelId: string[],
   filterByState: string[],
@@ -47,6 +49,7 @@ export async function listProcessInstances(
     pipedProcessModelIds,
     createdAfter,
     createdBefore,
+    filterByCorrelationId,
     filterByProcessModelId,
     rejectByProcessModelId,
     filterByState,
@@ -62,7 +65,14 @@ export async function listProcessInstances(
   if (format === OUTPUT_FORMAT_JSON) {
     console.log(JSON.stringify(resultJson, null, 2));
   } else if (format === OUTPUT_FORMAT_TEXT) {
-    console.table(processInstances, ['createdAt', 'finishedAt', 'processModelId', 'processInstanceId', 'state']);
+    console.table(processInstances, [
+      'createdAt',
+      'finishedAt',
+      'processModelId',
+      'processInstanceId',
+      'state',
+      'correlationId'
+    ]);
   }
 }
 
@@ -72,6 +82,7 @@ async function getProcessInstances(
   pipedProcessModelIds: string[] | null,
   createdAfter: string,
   createdBefore: string,
+  filterByCorrelationId: string[],
   filterByProcessModelId: string[],
   rejectByProcessModelId: string[],
   filterByState: string[],
@@ -83,6 +94,7 @@ async function getProcessInstances(
 ): Promise<ProcessInstance[]> {
   let allProcessInstances = await getAllProcessInstances(
     session,
+    filterByCorrelationId,
     filterByProcessModelId,
     rejectByProcessModelId,
     filterByState,
@@ -117,13 +129,16 @@ async function getProcessInstances(
 
 async function getAllProcessInstances(
   session: AtlasSession,
+  filterByCorrelationId: string[],
   filterByProcessModelId: string[],
   rejectByProcessModelId: string[],
   filterByState: string[],
   rejectByState: string[]
 ): Promise<ProcessInstance[]> {
   let allProcessInstances: ProcessInstance[];
-  if (filterByState.length > 0) {
+  if (filterByCorrelationId.length > 0) {
+    allProcessInstances = await getAllProcessInstancesViaCorrelations(session, filterByCorrelationId);
+  } else if (filterByState.length > 0) {
     allProcessInstances = await getAllProcessInstancesViaStateAndFilterByProcessModelId(
       session,
       filterByState,
@@ -133,8 +148,25 @@ async function getAllProcessInstances(
     allProcessInstances = await getAllProcessInstancesViaAllProcessModels(session, filterByProcessModelId);
   }
 
+  allProcessInstances = filterProcessInstancesByProcessModelId(allProcessInstances, filterByProcessModelId);
+  allProcessInstances = filterProcessInstancesByState(allProcessInstances, filterByState);
   allProcessInstances = rejectProcessInstancesByProcessModelId(allProcessInstances, rejectByProcessModelId);
   allProcessInstances = rejectProcessInstancesByState(allProcessInstances, rejectByState);
+
+  return allProcessInstances;
+}
+
+async function getAllProcessInstancesViaCorrelations(
+  session: AtlasSession,
+  correlationIds: string[]
+): Promise<ProcessInstance[]> {
+  const { identity, managementApiClient } = getIdentityAndManagementApiClient(session);
+
+  let allProcessInstances = [];
+  for (const correlationId of correlationIds) {
+    const result = await managementApiClient.getProcessInstancesForCorrelation(identity, correlationId);
+    allProcessInstances = allProcessInstances.concat(result.processInstances);
+  }
 
   return allProcessInstances;
 }
@@ -183,9 +215,7 @@ async function getAllProcessInstancesViaStateAndFilterByProcessModelId(
     allProcessInstances = allProcessInstances.concat(result.processInstances);
   }
 
-  const processInstances = filterProcessInstancesByProcessModelId(allProcessInstances, filterByProcessModelId);
-
-  return processInstances;
+  return allProcessInstances;
 }
 
 function mapToShort(list: any): string[] {
