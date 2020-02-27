@@ -33,7 +33,7 @@ export function startServerToLogoutAndWaitForSessionEnd(
 
     app.get('/signout-oidc', (req, res) => {
       res.set('Connection', 'close');
-      res.send(getModalHtml('You can close this browser tab now and continue your session in the terminal.'));
+      res.send(getModalHtml(`You can close this browser tab now.`));
 
       resolve();
     });

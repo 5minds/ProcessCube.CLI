@@ -1,4 +1,31 @@
-export function getModalHtml(message: string): string {
+export function getModalHtml(message: string, terminalCode?: string): string {
+  const messageHtml = message
+    .split('\n\n')
+    .map((line: string) => `<p>${line}</p>`)
+    .join('\n');
+  const terminalCodeHtml =
+    terminalCode == null
+      ? ''
+      : `
+<pre>
+${terminalCode
+  .split('\n')
+  .map((splitLine: string) => {
+    const line = splitLine.trim();
+    if (line.startsWith('#')) {
+      return `<span class="comment">${line}</span>`;
+    }
+    if (line.startsWith('$ atlas --')) {
+      return `<span class="shell-prompt">$ atlas</span> <span class="shell-option">--${line.substr(10)}</span>`;
+    }
+    if (line.startsWith('$ atlas')) {
+      return `<span class="shell-prompt">$ atlas</span>${line.substr(7)}`;
+    }
+    return line;
+  })
+  .join('\n')}
+</pre>
+  `;
   return `
   <html>
   <head>
@@ -19,8 +46,9 @@ export function getModalHtml(message: string): string {
 
       .modal {
         display: flex;
+        flex-direction: column;
         align-self: center;
-        width: 30rem;
+        width: 25rem;
         padding: 1.5rem;
         border: 0 solid #d2d6dc;
         border-radius: 0.5rem;
@@ -32,17 +60,50 @@ export function getModalHtml(message: string): string {
 
       .modal__icon {
         flex: 0;
+        align-self: center;
+        margin-bottom: 1.5rem;
+        background: #DCEDC8;
+        border-radius: 50%;
+        padding: 0.25rem;
       }
 
       .modal__text {
         flex: 1;
         align-self: center;
-        margin-left: 1.5rem;
+        text-align: center;
       }
 
       .icon {
         border-radius: 50%;
         color: #097b57;
+      }
+
+      p {
+        margin: 0;
+        margin-bottom: 1rem;
+        padding: 0;
+      }
+
+      pre {
+        background: #262822;
+        color: #f5f5f5;
+        padding: 0 1.5rem;
+        border-radius: 0.5rem;
+        font-size: 1.125rem;
+        margin: 0;
+        margin-top: 0.5rem;
+      }
+
+      .comment {
+        color: #9E9E9E;
+      }
+
+      .shell-prompt {
+        color: #FF9800;
+      }
+
+      .shell-option {
+        color: #9dd52e;
       }
     </style>
   </head>
@@ -59,8 +120,9 @@ export function getModalHtml(message: string): string {
           </div>
         </div>
         <div class="modal__text">
-          ${message}
+          ${messageHtml}
         </div>
+        ${terminalCodeHtml == null ? '' : terminalCodeHtml}
       </div>
     </div>
   </body>

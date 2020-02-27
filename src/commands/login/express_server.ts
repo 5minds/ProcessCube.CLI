@@ -65,7 +65,23 @@ export function startServerToLoginAndWaitForAccessTokenFromIdentityServer(
       const expiresAt = Date.now() + expiresInSeconds * 1000;
 
       res.set('Connection', 'close');
-      res.send(getModalHtml('You can close this browser tab now and continue your session in the terminal.'));
+      res.send(
+        getModalHtml(
+          `
+        <b>You can close this browser tab now.</b>
+
+        Continue this session in your terminal.`,
+          `
+        # You are now logged in!
+
+        $ atlas list-process-models
+
+        $ atlas list-process-instances
+
+        $ atlas --help
+        `
+        )
+      );
 
       resolve({ accessToken, idToken, expiresAt });
     });

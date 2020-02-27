@@ -6,14 +6,14 @@ import { loadAtlasSession, AtlasSession } from '../../session/atlas_session';
 import { OUTPUT_FORMAT_JSON, OUTPUT_FORMAT_TEXT } from '../../atlas';
 import { toFilterRegexes } from '../../cli/filter_regexes';
 
-export async function listProcessModels(options: any, format: string) {
+export async function listProcessModels(pipedProcessModelIds: string[] | null, options: any, format: string) {
   const session = loadAtlasSession();
   if (session == null) {
     console.log(chalk.red('No session found. Aborting.'));
     return;
   }
 
-  const allProcessModels = await getProcessModels(session);
+  const allProcessModels = await getProcessModels(session, pipedProcessModelIds);
 
   const processModels = filterProcessModelsById(allProcessModels, options.filterById);
 
@@ -24,15 +24,22 @@ export async function listProcessModels(options: any, format: string) {
       console.log(JSON.stringify(resultJson, null, 2));
       break;
     case OUTPUT_FORMAT_TEXT:
-      console.table(processModels, ['id', 'startEvents']);
+      console.table(resultJson.result, ['id', 'startEventIds']);
       break;
   }
 }
 
-export async function getProcessModels(session: AtlasSession): Promise<any[]> {
+export async function getProcessModels(
+  session: AtlasSession,
+  pipedProcessModelIds: string[] | null = null
+): Promise<any[]> {
   const { identity, managementApiClient } = getIdentityAndManagementApiClient(session);
 
   const result = await managementApiClient.getProcessModels(identity);
+
+  if (pipedProcessModelIds != null) {
+    return result.processModels.filter((processModel: any) => pipedProcessModelIds.includes(processModel.id));
+  }
 
   return result.processModels;
 }
@@ -52,6 +59,6 @@ export function filterProcessModelsById(processModels: any[], filterById: string
 
 function mapToShort(list: any): string[] {
   return list.map((model: any) => {
-    return { ...model, xml: '...' };
+    return { ...model, xml: '...', startEventIds: model.startEvents.map((event: any) => event.id) };
   });
 }

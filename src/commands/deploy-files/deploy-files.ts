@@ -8,7 +8,7 @@ import { getIdentityAndManagementApiClient } from '../../client/management_api_c
 import { OUTPUT_FORMAT_JSON, OUTPUT_FORMAT_TEXT } from '../../atlas';
 import { BpmnDocument } from '../../cli/bpmn_document';
 
-export async function deploy(globPatterns: string[], format: string): Promise<void> {
+export async function deployFiles(globPatterns: string[], format: string): Promise<void> {
   const session = loadAtlasSession();
   if (session == null) {
     console.log(chalk.red('No session found. Aborting.'));

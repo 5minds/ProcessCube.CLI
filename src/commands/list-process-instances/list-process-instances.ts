@@ -19,6 +19,8 @@ import { sortProcessInstances } from './sorting';
 export type ProcessInstance = DataModels.Correlations.ProcessInstance;
 
 export async function listProcessInstances(
+  pipedProcessInstanceIds: string[] | null,
+  pipedProcessModelIds: string[] | null,
   createdAfter: string,
   createdBefore: string,
   filterByProcessModelId: string[],
@@ -37,6 +39,8 @@ export async function listProcessInstances(
 
   const processInstances = await getProcessInstances(
     session,
+    pipedProcessInstanceIds,
+    pipedProcessModelIds,
     createdAfter,
     createdBefore,
     filterByProcessModelId,
@@ -58,6 +62,8 @@ export async function listProcessInstances(
 
 async function getProcessInstances(
   session: AtlasSession,
+  pipedProcessInstanceIds: string[] | null,
+  pipedProcessModelIds: string[] | null,
   createdAfter: string,
   createdBefore: string,
   filterByProcessModelId: string[],
@@ -68,6 +74,18 @@ async function getProcessInstances(
   limit: number
 ): Promise<ProcessInstance[]> {
   let allProcessInstances = await getAllProcessInstances(session, filterByProcessModelId, filterByState);
+
+  if (pipedProcessInstanceIds != null) {
+    allProcessInstances = allProcessInstances.filter((processInstance: any) =>
+      pipedProcessInstanceIds.includes(processInstance.processInstanceId)
+    );
+  }
+
+  if (pipedProcessModelIds != null) {
+    allProcessInstances = allProcessInstances.filter((processInstance: any) =>
+      pipedProcessModelIds.includes(processInstance.processModelId)
+    );
+  }
 
   allProcessInstances = filterProcessInstancesDateAfter(allProcessInstances, 'createdAt', createdAfter);
   allProcessInstances = filterProcessInstancesDateBefore(allProcessInstances, 'createdAt', createdBefore);

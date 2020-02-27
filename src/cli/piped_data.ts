@@ -1,54 +1,77 @@
 import chalk from 'chalk';
 
-export async function getPipedDataIfAny(): Promise<any | null> {
-  if (isReceivingPipedStdin() === false) {
+export class StdinPipeReader {
+  private pipedData: any | null;
+
+  private constructor() {}
+
+  static async create(): Promise<StdinPipeReader> {
+    const stdinPipeReader = new StdinPipeReader();
+    await stdinPipeReader.initialize();
+
+    return stdinPipeReader;
+  }
+
+  getPipedProcessInstanceIds(): string[] | null {
+    if (this.pipedData?.result_type === 'process-instances') {
+      const pipedProcessInstances = this.pipedData.result.map((item: any) => item.processInstanceId);
+
+      return pipedProcessInstances;
+    }
+
     return null;
   }
-  const content = await readPipedDataIfAny();
 
-  try {
-    return JSON.parse(content);
-  } catch (error) {
-    console.error(chalk.red('Could not parse piped JSON from STDIN. Aborting.'));
-    process.exit(1);
+  getPipedProcessModelIds(): string[] | null {
+    if (this.pipedData?.result_type === 'process-models') {
+      const pipedProcessModelIds = this.pipedData.result.map((item: any) => item.id);
+
+      return pipedProcessModelIds;
+    }
+
+    return null;
   }
-}
 
-export async function readPipedDataIfAny(): Promise<string | null> {
-  return new Promise((resolve, reject) => {
-    const self = process.openStdin();
-    let receivedData = '';
-    self.on('data', function(chunk) {
-      receivedData += chunk;
+  getPipedProcessModelIdsInProcessInstances(): string[] | null {
+    if (this.pipedData?.result_type === 'process-instances') {
+      const pipedProcessModelIds = this.pipedData.result.map((item: any) => item.processModelId);
+
+      return pipedProcessModelIds;
+    }
+
+    return null;
+  }
+
+  private async initialize(): Promise<void> {
+    if (isReceivingPipedStdin() === false) {
+      this.pipedData = null;
+      return;
+    }
+
+    const content = await this.readPipedDataIfAny();
+
+    try {
+      this.pipedData = JSON.parse(content);
+    } catch (error) {
+      console.error(chalk.red('Could not parse piped JSON from STDIN. Aborting.'));
+      process.exit(1);
+    }
+  }
+
+  private async readPipedDataIfAny(): Promise<string | null> {
+    return new Promise((resolve, reject) => {
+      const self = process.openStdin();
+      let receivedData = '';
+      self.on('data', function(chunk) {
+        receivedData += chunk;
+      });
+      self.on('end', function() {
+        resolve(receivedData);
+      });
     });
-    self.on('end', function() {
-      resolve(receivedData);
-    });
-  });
+  }
 }
 
 function isReceivingPipedStdin(): boolean {
   return !Boolean(process.stdin.isTTY);
-}
-
-export async function getPipedProcessInstanceIds(givenProcessInstanceIds: string[]): Promise<string[]> {
-  const pipedData = await getPipedDataIfAny();
-  if (pipedData?.result_type === 'process-instances') {
-    const pipedProcessInstances = pipedData.result.map((item: any) => item.processInstanceId);
-
-    return pipedProcessInstances;
-  }
-
-  return givenProcessInstanceIds;
-}
-
-export async function getPipedProcessModelIds(givenProcessModelIds: string[]): Promise<string[]> {
-  const pipedData = await getPipedDataIfAny();
-  if (pipedData?.result_type === 'process-models') {
-    const pipedProcessInstances = pipedData.result.map((item: any) => item.id);
-
-    return pipedProcessInstances;
-  }
-
-  return givenProcessModelIds;
 }
