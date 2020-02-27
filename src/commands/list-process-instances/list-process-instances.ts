@@ -14,11 +14,7 @@ import {
   filterProcessInstancesDateBefore,
   filterProcessInstancesByProcessModelId
 } from './filtering';
-import {
-  sortProcessInstancesByProcessModelId,
-  sortProcessInstancesByState,
-  sortProcessInstancesByCreatedAt
-} from './sorting';
+import { sortProcessInstances } from './sorting';
 
 export type ProcessInstance = DataModels.Correlations.ProcessInstance;
 
@@ -27,9 +23,9 @@ export async function listProcessInstances(
   createdBefore: string,
   filterByProcessModelId: string[],
   filterByState: string[],
-  sortByCreatedAt: string,
   sortByProcessModelId: string,
   sortByState: string,
+  sortByCreatedAt: string,
   limit: number,
   format: string
 ) {
@@ -45,9 +41,9 @@ export async function listProcessInstances(
     createdBefore,
     filterByProcessModelId,
     filterByState,
-    sortByCreatedAt,
     sortByProcessModelId,
     sortByState,
+    sortByCreatedAt,
     limit
   );
 
@@ -66,9 +62,9 @@ async function getProcessInstances(
   createdBefore: string,
   filterByProcessModelId: string[],
   filterByState: string[],
-  sortByCreatedAt: string,
   sortByProcessModelId: string,
   sortByState: string,
+  sortByCreatedAt: string,
   limit: number
 ): Promise<ProcessInstance[]> {
   let allProcessInstances = await getAllProcessInstances(session, filterByProcessModelId, filterByState);
@@ -76,9 +72,7 @@ async function getProcessInstances(
   allProcessInstances = filterProcessInstancesDateAfter(allProcessInstances, 'createdAt', createdAfter);
   allProcessInstances = filterProcessInstancesDateBefore(allProcessInstances, 'createdAt', createdBefore);
 
-  allProcessInstances = sortProcessInstancesByCreatedAt(allProcessInstances, sortByCreatedAt);
-  allProcessInstances = sortProcessInstancesByProcessModelId(allProcessInstances, sortByProcessModelId);
-  allProcessInstances = sortProcessInstancesByState(allProcessInstances, sortByState);
+  allProcessInstances = sortProcessInstances(allProcessInstances, sortByProcessModelId, sortByState, sortByCreatedAt);
 
   const processInstances = allProcessInstances;
 

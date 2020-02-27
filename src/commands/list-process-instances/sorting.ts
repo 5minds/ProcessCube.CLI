@@ -7,102 +7,90 @@ type SortableProcessInstance = {
 // TODO: `string` seems unnecessary here
 type SortingDirection = 'asc' | 'desc' | string;
 
-export function sortProcessInstancesByProcessModelId(
+export function sortProcessInstances(
   processInstances: SortableProcessInstance[],
-  sortByProcessModelId: SortingDirection
+  sortByProcessModelId: SortingDirection | null,
+  sortByState: SortingDirection | null,
+  sortByCreatedAt: SortingDirection | null
 ): any[] {
-  if (sortByProcessModelId == null) {
-    return processInstances;
+  const compareFns = [];
+  if (sortByProcessModelId != null) {
+    compareFns.push(sortByProcessModelId === 'asc' ? sortByProcessModelIdAscFn : sortByProcessModelIdDescFn);
   }
+  if (sortByState != null) {
+    compareFns.push(sortByState === 'asc' ? sortByStateAscFn : sortByStateDescFn);
+  }
+  compareFns.push(sortByCreatedAt === 'asc' ? sortByCreatedAtAscFn : sortByCreatedAtDescFn);
 
-  const sortByProcessModelIdAscFn = (a: SortableProcessInstance, b: SortableProcessInstance) => {
-    if (a.processModelId < b.processModelId) {
-      return -1;
-    }
-    if (a.processModelId > b.processModelId) {
-      return 1;
-    }
-    return 0;
-  };
-
-  const sortByProcessModelIdDescFn = (a: SortableProcessInstance, b: SortableProcessInstance) => {
-    if (a.processModelId > b.processModelId) {
-      return -1;
-    }
-    if (a.processModelId < b.processModelId) {
-      return 1;
+  const metaCompareFn = (a: SortableProcessInstance, b: SortableProcessInstance) => {
+    for (const compareFn of compareFns) {
+      const result = compareFn(a, b);
+      if (result != 0) {
+        return result;
+      }
     }
     return 0;
   };
 
-  const sortByProcessModelIdFn =
-    sortByProcessModelId.toLowerCase() === 'asc' ? sortByProcessModelIdAscFn : sortByProcessModelIdDescFn;
-
-  return processInstances.sort(sortByProcessModelIdFn);
+  return processInstances.sort(metaCompareFn);
 }
 
-export function sortProcessInstancesByState(
-  processInstances: SortableProcessInstance[],
-  sortByState: SortingDirection
-): any[] {
-  if (sortByState == null) {
-    return processInstances;
+const sortByProcessModelIdAscFn = (a: SortableProcessInstance, b: SortableProcessInstance) => {
+  if (a.processModelId < b.processModelId) {
+    return -1;
   }
-
-  const sortByStateAscFn = (a: SortableProcessInstance, b: SortableProcessInstance) => {
-    if (a.state < b.state) {
-      return -1;
-    }
-    if (a.state > b.state) {
-      return 1;
-    }
-    return 0;
-  };
-
-  const sortByStateDescFn = (a: SortableProcessInstance, b: SortableProcessInstance) => {
-    if (a.state > b.state) {
-      return -1;
-    }
-    if (a.state < b.state) {
-      return 1;
-    }
-    return 0;
-  };
-
-  const sortByStateFn = sortByState.toLowerCase() === 'asc' ? sortByStateAscFn : sortByStateDescFn;
-
-  return processInstances.sort(sortByStateFn);
-}
-
-export function sortProcessInstancesByCreatedAt(
-  processInstances: SortableProcessInstance[],
-  sortByCreatedAt: SortingDirection
-): any[] {
-  if (sortByCreatedAt == null) {
-    return processInstances;
+  if (a.processModelId > b.processModelId) {
+    return 1;
   }
+  return 0;
+};
 
-  const sortByCreatedAtAscFn = (a: SortableProcessInstance, b: SortableProcessInstance) => {
-    if (a.createdAt < b.createdAt) {
-      return -1;
-    }
-    if (a.createdAt > b.createdAt) {
-      return 1;
-    }
-    return 0;
-  };
+const sortByProcessModelIdDescFn = (a: SortableProcessInstance, b: SortableProcessInstance) => {
+  if (a.processModelId > b.processModelId) {
+    return -1;
+  }
+  if (a.processModelId < b.processModelId) {
+    return 1;
+  }
+  return 0;
+};
 
-  const sortByCreatedAtDescFn = (a: SortableProcessInstance, b: SortableProcessInstance) => {
-    if (a.createdAt > b.createdAt) {
-      return -1;
-    }
-    if (a.createdAt < b.createdAt) {
-      return 1;
-    }
-    return 0;
-  };
+const sortByStateAscFn = (a: SortableProcessInstance, b: SortableProcessInstance) => {
+  if (a.state < b.state) {
+    return -1;
+  }
+  if (a.state > b.state) {
+    return 1;
+  }
+  return 0;
+};
 
-  const sortByCreatedAtFn = sortByCreatedAt.toLowerCase() === 'asc' ? sortByCreatedAtAscFn : sortByCreatedAtDescFn;
+const sortByStateDescFn = (a: SortableProcessInstance, b: SortableProcessInstance) => {
+  if (a.state > b.state) {
+    return -1;
+  }
+  if (a.state < b.state) {
+    return 1;
+  }
+  return 0;
+};
 
-  return processInstances.sort(sortByCreatedAtFn);
-}
+const sortByCreatedAtAscFn = (a: SortableProcessInstance, b: SortableProcessInstance) => {
+  if (a.createdAt < b.createdAt) {
+    return -1;
+  }
+  if (a.createdAt > b.createdAt) {
+    return 1;
+  }
+  return 0;
+};
+
+const sortByCreatedAtDescFn = (a: SortableProcessInstance, b: SortableProcessInstance) => {
+  if (a.createdAt > b.createdAt) {
+    return -1;
+  }
+  if (a.createdAt < b.createdAt) {
+    return 1;
+  }
+  return 0;
+};

@@ -160,9 +160,9 @@ program
       options.createdBefore,
       filterByProcessModelId,
       options.filterByState,
-      sortByCreatedAt,
       sortByProcessModelId,
       sortByState,
+      sortByCreatedAt,
       options.limit,
       options.parent.format
     );
