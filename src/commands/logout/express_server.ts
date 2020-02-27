@@ -1,5 +1,6 @@
 import * as express from 'express';
 import open = require('open');
+import { getModalHtml } from '../login/html_message';
 
 export type AccessTokenAndExpiresAt = {
   accessToken: string;
@@ -32,7 +33,7 @@ export function startServerToLogoutAndWaitForSessionEnd(
 
     app.get('/signout-oidc', (req, res) => {
       res.set('Connection', 'close');
-      res.send(`You can close this browser tab now and continue your session in the terminal.`);
+      res.send(getModalHtml('You can close this browser tab now and continue your session in the terminal.'));
 
       resolve();
     });

@@ -1,5 +1,6 @@
 import * as express from 'express';
 import open = require('open');
+import { getModalHtml } from './html_message';
 
 export type IdTokenAccessTokenAndExpiresAt = {
   accessToken: string;
@@ -52,8 +53,6 @@ export function startServerToLoginAndWaitForAccessTokenFromIdentityServer(
             return pair.startsWith('expires_in=')
           }).replace(/^expires_in=/, '');
 
-          document.write(\`Yeah! $\{accessToken}\`);
-
           window.location.href = '/signin-oidc-done/'+expiresIn+'/'+accessToken+'/'+idToken;
         </script>
       `);
@@ -66,7 +65,7 @@ export function startServerToLoginAndWaitForAccessTokenFromIdentityServer(
       const expiresAt = Date.now() + expiresInSeconds * 1000;
 
       res.set('Connection', 'close');
-      res.send(`You can close this browser tab now and continue your session in the terminal.`);
+      res.send(getModalHtml('You can close this browser tab now and continue your session in the terminal.'));
 
       resolve({ accessToken, idToken, expiresAt });
     });
