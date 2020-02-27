@@ -139,15 +139,30 @@ program
   )
   .option('--created-after <DATETIME>', 'Only include process instances created after <DATETIME>')
   .option('--created-before <DATETIME>', 'Only include process instances created before <DATETIME>')
+  .option(
+    '--sort-by-created-at [DIRECTION]',
+    'Sort process instances by their created at timestamp in DIRECTION (asc, desc)'
+  )
+  .option(
+    '--sort-by-process-model-id [DIRECTION]',
+    'Sort process instances by their process model id in DIRECTION (asc, desc)'
+  )
+  .option('--sort-by-state [DIRECTION]', 'Sort process instances by their state in DIRECTION (asc, desc)')
   .option('--limit <LIMIT>', 'Lists at max <LIMIT> process instances')
   .action(async (options) => {
     let filterByProcessModelId = await getPipedProcessModelIds(options.filterByProcessModelId);
+    let sortByCreatedAt = options.sortByCreatedAt === true ? 'asc' : options.sortByCreatedAt;
+    let sortByProcessModelId = options.sortByProcessModelId === true ? 'asc' : options.sortByProcessModelId;
+    let sortByState = options.sortByState === true ? 'asc' : options.sortByState;
 
     listProcessInstances(
       options.createdAfter,
       options.createdBefore,
       filterByProcessModelId,
       options.filterByState,
+      sortByCreatedAt,
+      sortByProcessModelId,
+      sortByState,
       options.limit,
       options.parent.format
     );

@@ -1,22 +1,35 @@
 import chalk from 'chalk';
-import * as moment from 'moment';
 
 import { DataModels } from '@process-engine/management_api_contracts';
 
 import { AtlasSession, loadAtlasSession } from '../../session/atlas_session';
 import { createResultJson } from '../../cli/result_json';
 import { getIdentityAndManagementApiClient } from '../../client/management_api_client';
-import { getProcessModels } from '../list-process-models/list-process-models';
 import { OUTPUT_FORMAT_JSON, OUTPUT_FORMAT_TEXT } from '../../atlas';
-import { toFilterRegexes } from '../../cli/filter_regexes';
 
-type ProcessInstance = DataModels.Correlations.ProcessInstance;
+import { getProcessModels, filterProcessModelsById } from '../list-process-models/list-process-models';
+
+import {
+  filterProcessInstancesDateAfter,
+  filterProcessInstancesDateBefore,
+  filterProcessInstancesByState
+} from './filtering';
+import {
+  sortProcessInstancesByProcessModelId,
+  sortProcessInstancesByState,
+  sortProcessInstancesByCreatedAt
+} from './sorting';
+
+export type ProcessInstance = DataModels.Correlations.ProcessInstance;
 
 export async function listProcessInstances(
   createdAfter: string,
   createdBefore: string,
   filterByProcessModelId: string[],
   filterByState: string[],
+  sortByCreatedAt: string,
+  sortByProcessModelId: string,
+  sortByState: string,
   limit: number,
   format: string
 ) {
@@ -32,6 +45,9 @@ export async function listProcessInstances(
     createdBefore,
     filterByProcessModelId,
     filterByState,
+    sortByCreatedAt,
+    sortByProcessModelId,
+    sortByState,
     limit
   );
 
@@ -50,6 +66,9 @@ async function getProcessInstances(
   createdBefore: string,
   filterByProcessModelId: string[],
   filterByState: string[],
+  sortByCreatedAt: string,
+  sortByProcessModelId: string,
+  sortByState: string,
   limit: number
 ): Promise<ProcessInstance[]> {
   const { identity, managementApiClient } = getIdentityAndManagementApiClient(session);
@@ -73,8 +92,13 @@ async function getProcessInstances(
 
   allProcessInstances = filterProcessInstancesDateAfter(allProcessInstances, 'createdAt', createdAfter);
   allProcessInstances = filterProcessInstancesDateBefore(allProcessInstances, 'createdAt', createdBefore);
+  allProcessInstances = filterProcessInstancesByState(allProcessInstances, filterByState);
 
-  const processInstances = filterProcessInstancesByState(allProcessInstances, filterByState);
+  allProcessInstances = sortProcessInstancesByProcessModelId(allProcessInstances, sortByProcessModelId);
+  allProcessInstances = sortProcessInstancesByState(allProcessInstances, sortByState);
+  allProcessInstances = sortProcessInstancesByCreatedAt(allProcessInstances, sortByCreatedAt);
+
+  const processInstances = allProcessInstances;
 
   if (limit != null && limit > 0) {
     return processInstances.slice(0, limit);
@@ -83,62 +107,8 @@ async function getProcessInstances(
   return processInstances;
 }
 
-export function filterProcessInstancesDateAfter(
-  processInstances: any[],
-  fieldName: string,
-  createdAfter: string
-): any[] {
-  if (createdAfter == null) {
-    return processInstances;
-  }
-
-  // TODO: validation of input
-  const afterDate = moment(createdAfter);
-
-  return processInstances.filter((processInstance: any) => moment(processInstance[fieldName]).isAfter(afterDate));
-}
-
-export function filterProcessInstancesDateBefore(
-  processInstances: any[],
-  fieldName: string,
-  createdBefore: string
-): any[] {
-  if (createdBefore == null) {
-    return processInstances;
-  }
-
-  // TODO: validation of input
-  const beforeDate = moment(createdBefore);
-
-  return processInstances.filter((processInstance: any) => moment(processInstance[fieldName]).isBefore(beforeDate));
-}
-
-export function filterProcessInstancesByState(processInstances: any[], filterByState: string[]): any[] {
-  if (filterByState.length === 0) {
-    return processInstances;
-  }
-
-  return processInstances.filter((processInstance: any) => {
-    const anyFilterMatched = filterByState.some((state: string) => processInstance.state === state);
-    return anyFilterMatched;
-  });
-}
-
-export function filterProcessModelsById(processModels: any[], filterById: string[]): any[] {
-  if (filterById.length === 0) {
-    return processModels;
-  }
-
-  const filterRegexes = toFilterRegexes(filterById);
-
-  return processModels.filter((processModel: any) => {
-    const anyFilterMatched = filterRegexes.some((regex: RegExp) => regex.exec(processModel.id) != null);
-    return anyFilterMatched;
-  });
-}
-
 function mapToShort(list: any): string[] {
   return list.map((processInstance: any) => {
-    return { ...processInstance, xml: '...' };
+    return { ...processInstance, xml: '...', identity: '...' };
   });
 }
