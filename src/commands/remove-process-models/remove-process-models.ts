@@ -1,4 +1,3 @@
-import chalk from 'chalk';
 import * as yesno from 'yesno';
 
 import { AtlasSession, loadAtlasSession } from '../../session/atlas_session';

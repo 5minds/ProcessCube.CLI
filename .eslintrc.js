@@ -34,7 +34,7 @@ module.exports = {
         message: '`with` is disallowed in strict mode because it makes code impossible to predict and optimize.'
       }
     ],
-    'no-underscore-dangle': ['error', { allowAfterThis: true }],
+    'no-underscore-dangle': ['warn', { allowAfterThis: true }],
     radix: ['error', 'as-needed'],
 
     '@typescript-eslint/array-type': ['error', { default: 'array' }],

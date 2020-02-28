@@ -1,5 +1,3 @@
-import chalk from 'chalk';
-
 import { createResultJson } from '../../cli/result_json';
 import { getIdentityAndManagementApiClient } from '../../client/management_api_client';
 import { loadAtlasSession, AtlasSession } from '../../session/atlas_session';

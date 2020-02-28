@@ -8,13 +8,11 @@ export type AccessTokenAndExpiresAt = {
 };
 
 const DEFAULT_PORT = 9000; // 56073;
-const DEFAULT_CLIENT_ID = 'bpmn_studio';
 
 export function startServerToLogoutAndWaitForSessionEnd(
   identityServerUrl: string,
   idToken: string,
-  givenPort?: number,
-  givenClientId?: number
+  givenPort?: number
 ): Promise<AccessTokenAndExpiresAt | null> {
   return new Promise((resolve: Function, reject: Function) => {
     const app = express();

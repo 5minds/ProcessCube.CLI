@@ -143,7 +143,7 @@ program
     const stdinPipeReader = await StdinPipeReader.create();
     let processInstanceIds = stdinPipeReader.getPipedProcessInstanceIds() || givenProcessInstanceIds;
 
-    await stopProcessInstance(processInstanceIds, options, options.parent.output);
+    await stopProcessInstance(processInstanceIds, options.parent.output);
   });
 
 program

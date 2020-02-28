@@ -1,5 +1,3 @@
-import chalk from 'chalk';
-
 import { DataModels } from '@process-engine/management_api_contracts';
 
 import { AtlasSession, loadAtlasSession } from '../../session/atlas_session';
