@@ -11,19 +11,12 @@ type StartedProcessInstanceInfo = DataModels.ProcessModels.ProcessStartResponseP
 export async function startProcessInstance(
   processModelId: string,
   startEventId: string,
-  moreProcessModelAndStartEventIds: string[],
-  options: any,
   format: string
 ): Promise<void> {
   const session = loadAtlasSession();
   if (session == null) {
     console.log(chalk.red('No session found. Aborting.'));
     return;
-  }
-
-  if (moreProcessModelAndStartEventIds.length > 0) {
-    console.log(chalk.yellow('Multiple ProcessModel+StartEvent id pairs are not yet supported. Aborting.'));
-    process.exit(1);
   }
 
   // TODO: once we support multiple starts, we have to accumulate an array here

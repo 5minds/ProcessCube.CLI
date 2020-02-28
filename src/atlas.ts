@@ -106,7 +106,7 @@ program
   });
 
 program
-  .command('start-process-model <PROCESS_MODEL_ID1> <START_EVENT_ID1> [PROCESS_MODEL_AND_START_EVENT_IDS...]')
+  .command('start-process-model <PROCESS_MODEL_ID1> <START_EVENT_ID1>')
   .alias('start')
   .description('starts an instance of the deployed process models')
   .on('--help', () => {
@@ -119,13 +119,7 @@ program
     `);
   })
   .action(async (processModelId: string, startEventId: string, moreProcessModelAndStartEventIds: string[], options) => {
-    await startProcessInstance(
-      processModelId,
-      startEventId,
-      moreProcessModelAndStartEventIds,
-      options,
-      options.parent.format
-    );
+    await startProcessInstance(processModelId, startEventId, options.parent.format);
   });
 
 program
@@ -152,7 +146,7 @@ program
   .command('show-process-instance [PROCESS_INSTANCE_IDS...]')
   .alias('show')
   .description('shows instances with the given process instance ids')
-  .option('-c,--correlation', 'all given ids are correlation ids')
+  .option('-c,--correlation', 'all given ids are interpreted as correlation ids')
   .on('--help', () => {
     logHelp(`
     Examples:
