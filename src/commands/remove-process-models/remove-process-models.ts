@@ -7,7 +7,11 @@ import { createResultJson } from '../../cli/result_json';
 import { OUTPUT_FORMAT_JSON, OUTPUT_FORMAT_TEXT } from '../../atlas';
 import { logError } from '../../cli/logging';
 
-export async function removeProcessModels(processModelIds: string[], autoYes: boolean, format: string): Promise<void> {
+export async function removeProcessModels(
+  processModelIds: string[],
+  autoYes: boolean,
+  outputFormat: string
+): Promise<void> {
   const session = loadAtlasSession();
   if (session == null) {
     logError('No session found. Aborting.');
@@ -35,7 +39,7 @@ export async function removeProcessModels(processModelIds: string[], autoYes: bo
 
   const resultJson = createResultJson('removed-process-model-ids', removedProcessModelIds);
 
-  switch (format) {
+  switch (outputFormat) {
     case OUTPUT_FORMAT_JSON:
       console.log(JSON.stringify(resultJson, null, 2));
       break;

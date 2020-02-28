@@ -10,7 +10,7 @@ type StartedProcessInstanceInfo = DataModels.ProcessModels.ProcessStartResponseP
 export async function startProcessInstance(
   processModelId: string,
   startEventId: string,
-  format: string
+  outputFormat: string
 ): Promise<void> {
   const session = loadAtlasSession();
   if (session == null) {
@@ -23,7 +23,7 @@ export async function startProcessInstance(
   const processInstances = [result];
   const resultJson = createResultJson('process-instances', processInstances);
 
-  switch (format) {
+  switch (outputFormat) {
     case OUTPUT_FORMAT_JSON:
       console.dir(resultJson, { depth: null });
       break;

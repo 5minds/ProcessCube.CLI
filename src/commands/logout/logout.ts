@@ -5,7 +5,7 @@ import { removeAtlasSession, loadAtlasSession, ANONYMOUS_IDENTITY_SERVER_URL } f
 import { startServerToLogoutAndWaitForSessionEnd } from './express_server';
 import { logError } from '../../cli/logging';
 
-export async function logout(format: string): Promise<void> {
+export async function logout(outputFormat: string): Promise<void> {
   const oldSession = loadAtlasSession();
   if (oldSession == null) {
     logError('No session found. Aborting.');
@@ -13,11 +13,15 @@ export async function logout(format: string): Promise<void> {
   }
 
   removeAtlasSession();
-  if (oldSession.identityServerUrl !== ANONYMOUS_IDENTITY_SERVER_URL) {
+  if (oldSession.identityServerUrl === ANONYMOUS_IDENTITY_SERVER_URL) {
+    console.log('');
+    console.log(chalk.yellow('You were logged out from anonymous root login. No further steps required.'));
+  } else {
     await startServerToLogoutAndWaitForSessionEnd(oldSession.identityServerUrl, oldSession.idToken);
+    console.log('');
+    console.log(chalk.green('You are now logged out.'));
   }
 
-  console.log('');
-  console.log(chalk.yellow('You are now logged out.'));
+  // TODO: this is currently required to kill the express server. we should shut it down gracefully!
   process.exit(0);
 }

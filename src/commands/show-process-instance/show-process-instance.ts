@@ -19,7 +19,7 @@ type ProcessInstanceWithTokens = ProcessInstance & {
 export async function showProcessInstance(
   processInstanceOrCorrelationIds: string[],
   isCorrelation: boolean,
-  format: string
+  outputFormat: string
 ): Promise<void> {
   const session = loadAtlasSession();
   if (session == null) {
@@ -40,7 +40,7 @@ export async function showProcessInstance(
 
   const resultJson = createResultJson('process-instances', processInstancesWithTokens);
 
-  switch (format) {
+  switch (outputFormat) {
     case OUTPUT_FORMAT_JSON:
       console.dir(resultJson, { depth: null });
       break;

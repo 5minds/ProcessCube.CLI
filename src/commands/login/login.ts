@@ -14,7 +14,11 @@ import { logError } from '../../cli/logging';
 const ONE_YEAR_IN_MILLISECONDS = 365 * 86400 * 1000;
 const ANONYMOUS_TOKEN_LIFETIME_IN_MILLISECONDS = 99 * ONE_YEAR_IN_MILLISECONDS;
 
-export async function login(givenEngineUrl: string, useAnonymousLogin: boolean, format: string): Promise<void> {
+export async function login(
+  givenEngineUrl: string,
+  tryAnonymousRootLogin: boolean,
+  outputFormat: string
+): Promise<void> {
   let engineUrl = givenEngineUrl;
 
   if (engineUrl == null || engineUrl.trim() == '') {
@@ -29,8 +33,11 @@ export async function login(givenEngineUrl: string, useAnonymousLogin: boolean, 
   }
 
   let newSession: AtlasSession;
-  if (useAnonymousLogin) {
-    newSession = await loginViaAnonymousAccess(engineUrl);
+  if (tryAnonymousRootLogin) {
+    newSession = await loginViaAnonymousRootAccess(engineUrl);
+
+    console.log('');
+    console.log(chalk.yellow('Anonymous root login successful. No further steps required.'));
   } else {
     newSession = await loginViaIdentityServer(engineUrl);
   }
@@ -39,11 +46,11 @@ export async function login(givenEngineUrl: string, useAnonymousLogin: boolean, 
   console.log('');
   console.log(chalk.green('You are now logged in.'));
 
-  // we're making a hard exit here so we do not wait for the express server to shut down
+  // TODO: this is currently required to kill the express server. we should shut it down gracefully!
   process.exit(0);
 }
 
-async function loginViaAnonymousAccess(engineUrl: string): Promise<AtlasSession> {
+async function loginViaAnonymousRootAccess(engineUrl: string): Promise<AtlasSession> {
   const newSession: AtlasSession = {
     type: 'session',
     engineUrl: engineUrl,

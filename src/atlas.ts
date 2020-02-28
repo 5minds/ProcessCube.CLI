@@ -21,7 +21,7 @@ export const OUTPUT_FORMAT_TEXT = 'text';
 
 const VERSION = require('../package.json').version;
 
-program.version(VERSION).option('--format <format>', 'set format', OUTPUT_FORMAT_JSON);
+program.version(VERSION).option('-o, --output <output>', 'set output', OUTPUT_FORMAT_TEXT);
 
 program
   .command('status')
@@ -35,22 +35,24 @@ program
     `);
   })
   .action(async (options) => {
-    printSessionStatus(options.parent.format);
+    printSessionStatus(options.parent.output);
   });
 
 program
   .command('login [engine_url]')
   .description('log in to the given engine')
-  .option('--anonymous', 'Try to use anonymous login', () => true, false)
+  .option('--root', 'Try to use anonymous root login', () => true, false)
   .on('--help', () => {
     logHelp(`
     Examples:
 
       $ atlas login http://localhost:56000
+
+      $ atlas login http://localhost:56000 --root
     `);
   })
   .action(async (engineUrl, options) => {
-    await login(engineUrl, options.anonymous, options.parent.format);
+    await login(engineUrl, options.root, options.parent.output);
   });
 
 program
@@ -64,7 +66,7 @@ program
     `);
   })
   .action(async (options) => {
-    await logout(options.parent.format);
+    await logout(options.parent.output);
   });
 
 program
@@ -85,7 +87,7 @@ program
     `);
   })
   .action(async (filenames: string[], options) => {
-    deployFiles(filenames, options.parent.format);
+    deployFiles(filenames, options.parent.output);
   });
 
 program
@@ -104,7 +106,7 @@ program
     `);
   })
   .action(async (processModelIds: string[], options) => {
-    removeProcessModels(processModelIds, options.yes, options.parent.format);
+    removeProcessModels(processModelIds, options.yes, options.parent.output);
   });
 
 program
@@ -121,7 +123,7 @@ program
     `);
   })
   .action(async (processModelId: string, startEventId: string, moreProcessModelAndStartEventIds: string[], options) => {
-    await startProcessInstance(processModelId, startEventId, options.parent.format);
+    await startProcessInstance(processModelId, startEventId, options.parent.output);
   });
 
 program
@@ -141,7 +143,7 @@ program
     const stdinPipeReader = await StdinPipeReader.create();
     let processInstanceIds = stdinPipeReader.getPipedProcessInstanceIds() || givenProcessInstanceIds;
 
-    await stopProcessInstance(processInstanceIds, options, options.parent.format);
+    await stopProcessInstance(processInstanceIds, options, options.parent.output);
   });
 
 program
@@ -164,7 +166,7 @@ program
     const stdinPipeReader = await StdinPipeReader.create();
     let processInstanceIds = stdinPipeReader.getPipedProcessInstanceIds() || givenProcessInstanceIds;
 
-    await showProcessInstance(processInstanceIds, options.correlation, options.parent.format);
+    await showProcessInstance(processInstanceIds, options.correlation, options.parent.output);
   });
 
 program
@@ -210,7 +212,7 @@ program
     const pipedProcessModelIds =
       stdinPipeReader.getPipedProcessModelIds() || stdinPipeReader.getPipedProcessModelIdsInProcessInstances();
 
-    listProcessModels(pipedProcessModelIds, options.filterById, options.rejectById, options.parent.format);
+    listProcessModels(pipedProcessModelIds, options.filterById, options.rejectById, options.parent.output);
   });
 
 program
@@ -283,7 +285,7 @@ program
 
     ... piping the result into another execution of list-process-instances leads to an AND query:
 
-      $ atlas list-process-instances --filter-by-process-model-id "Registration" --format json | atlas list-process-instances --filter-by-process-model-id "Email"
+      $ atlas list-process-instances --filter-by-process-model-id "Registration" --output json | atlas list-process-instances --filter-by-process-model-id "Email"
 
     Combinations of all switches are possible:
 
@@ -327,7 +329,7 @@ program
       sortByState,
       sortByCreatedAt,
       options.limit,
-      options.parent.format
+      options.parent.output
     );
   });
 

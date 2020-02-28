@@ -36,7 +36,7 @@ export async function listProcessInstances(
   sortByState: string,
   sortByCreatedAt: string,
   limit: number,
-  format: string
+  outputFormat: string
 ) {
   const session = loadAtlasSession();
   if (session == null) {
@@ -63,9 +63,9 @@ export async function listProcessInstances(
 
   const resultJson = createResultJson('process-instances', mapToShort(processInstances));
 
-  if (format === OUTPUT_FORMAT_JSON) {
+  if (outputFormat === OUTPUT_FORMAT_JSON) {
     console.log(JSON.stringify(resultJson, null, 2));
-  } else if (format === OUTPUT_FORMAT_TEXT) {
+  } else if (outputFormat === OUTPUT_FORMAT_TEXT) {
     console.table(processInstances, [
       'createdAt',
       'finishedAt',

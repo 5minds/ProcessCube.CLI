@@ -9,7 +9,7 @@ import { OUTPUT_FORMAT_JSON, OUTPUT_FORMAT_TEXT } from '../../atlas';
 import { BpmnDocument } from '../../cli/bpmn_document';
 import { logError } from '../../cli/logging';
 
-export async function deployFiles(globPatterns: string[], format: string): Promise<void> {
+export async function deployFiles(globPatterns: string[], outputFormat: string): Promise<void> {
   const session = loadAtlasSession();
   if (session == null) {
     logError('No session found. Aborting.');

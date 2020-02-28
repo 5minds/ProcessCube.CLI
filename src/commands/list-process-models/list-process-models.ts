@@ -11,7 +11,7 @@ export async function listProcessModels(
   pipedProcessModelIds: string[] | null,
   filterById: string[],
   rejectById: string[],
-  format: string
+  outputFormat: string
 ) {
   const session = loadAtlasSession();
   if (session == null) {
@@ -27,7 +27,7 @@ export async function listProcessModels(
 
   const resultJson = createResultJson('process-models', mapToShort(processModels));
 
-  switch (format) {
+  switch (outputFormat) {
     case OUTPUT_FORMAT_JSON:
       console.log(JSON.stringify(resultJson, null, 2));
       break;
