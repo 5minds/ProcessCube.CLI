@@ -5,7 +5,7 @@ import { createResultJson } from '../../cli/result_json';
 import { getIdentityAndManagementApiClient } from '../../client/management_api_client';
 import { OUTPUT_FORMAT_JSON, OUTPUT_FORMAT_TEXT } from '../../atlas';
 
-import { getProcessModels, filterProcessModelsById } from '../list-process-models/list-process-models';
+import { filterProcessModelsById } from '../list-process-models/list-process-models';
 
 import {
   filterProcessInstancesDateAfter,
@@ -17,6 +17,7 @@ import {
 } from './filtering';
 import { sortProcessInstances } from './sorting';
 import { logError } from '../../cli/logging';
+import { ApiClient } from '../../client/api_client';
 
 export type ProcessInstance = DataModels.Correlations.ProcessInstance;
 
@@ -176,7 +177,9 @@ async function getAllProcessInstancesViaAllProcessModels(
 ): Promise<ProcessInstance[]> {
   const { identity, managementApiClient } = getIdentityAndManagementApiClient(session);
 
-  const allProcessModels = await getProcessModels(session);
+  const apiClient = new ApiClient(session);
+  const allProcessModels = await apiClient.getProcessModels();
+
   const processModels = filterProcessModelsById(allProcessModels, filterByProcessModelId);
 
   let allProcessInstances = [];

@@ -1,9 +1,10 @@
-import { AtlasSession, loadAtlasSession } from '../../session/atlas_session';
+import { ApiClient } from '../../client/api_client';
 import { createResultJson } from '../../cli/result_json';
-import { getIdentityAndManagementApiClient } from '../../client/management_api_client';
+import { loadAtlasSession } from '../../session/atlas_session';
 import { logError } from '../../cli/logging';
 
 import { OUTPUT_FORMAT_JSON, OUTPUT_FORMAT_TEXT } from '../../atlas';
+import { StoppedProcessInstanceInfo } from '../../contracts/api_client_types';
 
 export async function stopProcessInstance(processInstanceIds: string[], outputFormat: string): Promise<void> {
   const session = loadAtlasSession();
@@ -12,25 +13,22 @@ export async function stopProcessInstance(processInstanceIds: string[], outputFo
     return;
   }
 
+  const apiClient = new ApiClient(session);
+
+  const results: StoppedProcessInstanceInfo[] = [];
   for (const processInstanceId of processInstanceIds) {
-    await stopProcessInstanceViaClient(session, processInstanceId);
+    const result = await apiClient.stopProcessInstance(processInstanceId);
+    results.push(result);
   }
 
-  const resultJson = createResultJson('process-instance-ids', processInstanceIds);
+  const resultJson = createResultJson('process-instances', results);
 
   switch (outputFormat) {
     case OUTPUT_FORMAT_JSON:
-      console.dir(resultJson, { depth: null });
+      console.log(JSON.stringify(resultJson, null, 2));
       break;
     case OUTPUT_FORMAT_TEXT:
-      console.table(processInstanceIds, ['processInstanceId', 'correlationId']);
+      console.table(results, ['success', 'processInstanceId', 'correlationId', 'error']);
       break;
   }
-}
-
-export async function stopProcessInstanceViaClient(session: AtlasSession, processInstanceId: string): Promise<void> {
-  const { identity, managementApiClient } = getIdentityAndManagementApiClient(session);
-
-  // TODO: make sure the process instance was "alive" before and is terminated afterwards
-  await managementApiClient.terminateProcessInstance(identity, processInstanceId);
 }

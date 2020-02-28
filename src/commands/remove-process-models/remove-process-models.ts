@@ -1,10 +1,10 @@
 import * as yesno from 'yesno';
 
-import { AtlasSession, loadAtlasSession } from '../../session/atlas_session';
-import { getIdentityAndManagementApiClient } from '../../client/management_api_client';
+import { loadAtlasSession } from '../../session/atlas_session';
 import { createResultJson } from '../../cli/result_json';
 import { OUTPUT_FORMAT_JSON, OUTPUT_FORMAT_TEXT } from '../../atlas';
 import { logError } from '../../cli/logging';
+import { ApiClient } from '../../client/api_client';
 
 export async function removeProcessModels(
   processModelIds: string[],
@@ -23,40 +23,28 @@ export async function removeProcessModels(
     });
 
     if (yes !== true) {
-      console.log('User cancelled operation.');
-      return;
+      console.log('User cancelled operation. Aborting.');
+      process.exit(255);
     }
   }
 
-  const removedProcessModelIds = [];
+  const apiClient = new ApiClient(session);
+
+  const results = [];
   for (const processModelId of processModelIds) {
-    const success = await removeProcessModelViaClient(session, processModelId);
-    if (success) {
-      removedProcessModelIds.push(processModelId);
-    }
+    const result = await apiClient.removeProcessModel(processModelId);
+
+    results.push(result);
   }
 
-  const resultJson = createResultJson('removed-process-model-ids', removedProcessModelIds);
+  const resultJson = createResultJson('removed-process-model-ids', results);
 
   switch (outputFormat) {
     case OUTPUT_FORMAT_JSON:
       console.log(JSON.stringify(resultJson, null, 2));
       break;
     case OUTPUT_FORMAT_TEXT:
-      console.table(removedProcessModelIds, ['processInstanceId', 'correlationId']);
+      console.table(results, ['success', 'processModelId', 'error']);
       break;
-  }
-}
-
-export async function removeProcessModelViaClient(session: AtlasSession, processModelId: string): Promise<boolean> {
-  const { identity, managementApiClient } = getIdentityAndManagementApiClient(session);
-
-  try {
-    await managementApiClient.deleteProcessDefinitionsByProcessModelId(identity, processModelId);
-
-    return true;
-  } catch (error) {
-    console.error(error);
-    return false;
   }
 }

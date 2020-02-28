@@ -113,6 +113,7 @@ program
   .command('start-process-model <PROCESS_MODEL_ID1> <START_EVENT_ID1>')
   .alias('start')
   .description('starts an instance of the deployed process models')
+  .option('--wait', 'wait for the resulting process instance to finish execution and report the result')
   .on('--help', () => {
     logHelp(`
     Examples:
@@ -122,8 +123,8 @@ program
       $ atlas start Registration.EmailCoupons StartEvent_1
     `);
   })
-  .action(async (processModelId: string, startEventId: string, moreProcessModelAndStartEventIds: string[], options) => {
-    await startProcessInstance(processModelId, startEventId, options.parent.output);
+  .action(async (processModelId: string, startEventId: string, options) => {
+    await startProcessInstance(processModelId, startEventId, options.wait, options.parent.output);
   });
 
 program

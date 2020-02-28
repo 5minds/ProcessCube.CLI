@@ -172,17 +172,19 @@ async function logHistory(processInstance: ProcessInstanceWithTokens): Promise<v
     console.log(`${prefix}"${name}" ${idHint}${suffix}`);
   });
 
-  console.log('');
-  console.log(
-    'Input',
-    chalk.cyanBright(`"${bpmnDocument.getElementNameById(firstToken.flowNodeId)}"`),
-    chalk.dim(`(${firstToken.flowNodeId})`)
-  );
-  console.log('');
-  printMultiLineString(JSON.stringify(firstToken.payload, null, 2), '    ');
-  console.log('');
+  if (firstToken != null) {
+    console.log('');
+    console.log(
+      'Input',
+      chalk.cyanBright(`"${bpmnDocument.getElementNameById(firstToken.flowNodeId)}"`),
+      chalk.dim(`(${firstToken.flowNodeId})`)
+    );
+    console.log('');
+    printMultiLineString(JSON.stringify(firstToken.payload, null, 2), '    ');
+  }
 
   if (processInstance.error != null) {
+    console.log('');
     console.log(
       'Input',
       chalk.cyanBright(`"${bpmnDocument.getElementNameById(lastTokenOnEnter.flowNodeId)}"`),
@@ -193,13 +195,15 @@ async function logHistory(processInstance: ProcessInstanceWithTokens): Promise<v
     console.log('');
   }
 
-  console.log(
-    'Output',
-    chalk.cyanBright(`"${bpmnDocument.getElementNameById(lastTokenOnExit.flowNodeId)}"`),
-    chalk.dim(`(${lastTokenOnExit.flowNodeId})`)
-  );
-  console.log('');
-  printMultiLineString(JSON.stringify(lastTokenOnExit.payload, null, 2), '    ');
+  if (lastTokenOnExit != null) {
+    console.log(
+      'Output',
+      chalk.cyanBright(`"${bpmnDocument.getElementNameById(lastTokenOnExit.flowNodeId)}"`),
+      chalk.dim(`(${lastTokenOnExit.flowNodeId})`)
+    );
+    console.log('');
+    printMultiLineString(JSON.stringify(lastTokenOnExit.payload, null, 2), '    ');
+  }
 }
 
 function logErrorIfAny(processInstance: ProcessInstanceWithTokens): void {
@@ -212,8 +216,7 @@ function logErrorIfAny(processInstance: ProcessInstanceWithTokens): void {
     console.log('Code:', error.code);
     console.log('Name:', error.name);
     console.log('');
-    console.log(error.additionalInformation);
-    console.log('');
+    console.log(error.additionalInformation || 'No additional information.');
   }
 }
 

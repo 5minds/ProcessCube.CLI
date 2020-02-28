@@ -1,9 +1,10 @@
+import { ApiClient } from '../../client/api_client';
 import { createResultJson } from '../../cli/result_json';
-import { getIdentityAndManagementApiClient } from '../../client/management_api_client';
-import { loadAtlasSession, AtlasSession } from '../../session/atlas_session';
-import { OUTPUT_FORMAT_JSON, OUTPUT_FORMAT_TEXT } from '../../atlas';
-import { toFilterRegexes } from '../../cli/filter_regexes';
+import { loadAtlasSession } from '../../session/atlas_session';
 import { logError } from '../../cli/logging';
+import { toFilterRegexes } from '../../cli/filter_regexes';
+
+import { OUTPUT_FORMAT_JSON, OUTPUT_FORMAT_TEXT } from '../../atlas';
 
 export async function listProcessModels(
   pipedProcessModelIds: string[] | null,
@@ -17,7 +18,14 @@ export async function listProcessModels(
     return;
   }
 
-  const allProcessModels = await getProcessModels(session, pipedProcessModelIds);
+  const apiClient = new ApiClient(session);
+
+  let allProcessModels;
+  if (pipedProcessModelIds != null) {
+    allProcessModels = await apiClient.getProcessModelsByIds(pipedProcessModelIds);
+  } else {
+    allProcessModels = await apiClient.getProcessModels();
+  }
 
   const filteredProcessModels = filterProcessModelsById(allProcessModels, filterById);
 
@@ -33,21 +41,6 @@ export async function listProcessModels(
       console.table(resultJson.result, ['id', 'startEventIds']);
       break;
   }
-}
-
-export async function getProcessModels(
-  session: AtlasSession,
-  pipedProcessModelIds: string[] | null = null
-): Promise<any[]> {
-  const { identity, managementApiClient } = getIdentityAndManagementApiClient(session);
-
-  const result = await managementApiClient.getProcessModels(identity);
-
-  if (pipedProcessModelIds != null) {
-    return result.processModels.filter((processModel: any) => pipedProcessModelIds.includes(processModel.id));
-  }
-
-  return result.processModels;
 }
 
 export function filterProcessModelsById(processModels: any[], filterById: string[]): any[] {
