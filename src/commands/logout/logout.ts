@@ -3,11 +3,12 @@ import chalk from 'chalk';
 import { removeAtlasSession, loadAtlasSession, ANONYMOUS_IDENTITY_SERVER_URL } from '../../session/atlas_session';
 
 import { startServerToLogoutAndWaitForSessionEnd } from './express_server';
+import { logError } from '../../cli/logging';
 
 export async function logout(format: string): Promise<void> {
   const oldSession = loadAtlasSession();
   if (oldSession == null) {
-    console.log(chalk.red('No session found. Aborting.'));
+    logError('No session found. Aborting.');
     return;
   }
 

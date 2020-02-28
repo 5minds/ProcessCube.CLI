@@ -5,6 +5,7 @@ import { getIdentityAndManagementApiClient } from '../../client/management_api_c
 import { loadAtlasSession, AtlasSession } from '../../session/atlas_session';
 import { OUTPUT_FORMAT_JSON, OUTPUT_FORMAT_TEXT } from '../../atlas';
 import { toFilterRegexes } from '../../cli/filter_regexes';
+import { logError } from '../../cli/logging';
 
 export async function listProcessModels(
   pipedProcessModelIds: string[] | null,
@@ -14,7 +15,7 @@ export async function listProcessModels(
 ) {
   const session = loadAtlasSession();
   if (session == null) {
-    console.log(chalk.red('No session found. Aborting.'));
+    logError('No session found. Aborting.');
     return;
   }
 

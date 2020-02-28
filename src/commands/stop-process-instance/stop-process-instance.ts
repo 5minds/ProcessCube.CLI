@@ -4,11 +4,12 @@ import { AtlasSession, loadAtlasSession } from '../../session/atlas_session';
 import { createResultJson } from '../../cli/result_json';
 import { getIdentityAndManagementApiClient } from '../../client/management_api_client';
 import { OUTPUT_FORMAT_JSON, OUTPUT_FORMAT_TEXT } from '../../atlas';
+import { logError } from '../../cli/logging';
 
 export async function stopProcessInstance(processInstanceIds: string[], options: any, format: string): Promise<void> {
   const session = loadAtlasSession();
   if (session == null) {
-    console.log(chalk.red('No session found. Aborting.'));
+    logError('No session found. Aborting.');
     return;
   }
 

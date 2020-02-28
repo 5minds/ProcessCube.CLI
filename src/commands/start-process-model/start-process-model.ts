@@ -1,10 +1,9 @@
-import chalk from 'chalk';
-
 import { DataModels } from '@process-engine/management_api_contracts';
 
 import { AtlasSession, loadAtlasSession } from '../../session/atlas_session';
 import { getIdentityAndManagementApiClient } from '../../client/management_api_client';
 import { OUTPUT_FORMAT_JSON, OUTPUT_FORMAT_TEXT } from '../../atlas';
+import { logError } from '../../cli/logging';
 
 type StartedProcessInstanceInfo = DataModels.ProcessModels.ProcessStartResponsePayload;
 
@@ -15,7 +14,7 @@ export async function startProcessInstance(
 ): Promise<void> {
   const session = loadAtlasSession();
   if (session == null) {
-    console.log(chalk.red('No session found. Aborting.'));
+    logError('No session found. Aborting.');
     return;
   }
 

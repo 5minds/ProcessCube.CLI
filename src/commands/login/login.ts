@@ -9,6 +9,7 @@ import {
 } from '../../session/atlas_session';
 
 import { startServerToLoginAndWaitForAccessTokenFromIdentityServer } from './express_server';
+import { logError } from '../../cli/logging';
 
 const ONE_YEAR_IN_MILLISECONDS = 365 * 86400 * 1000;
 const ANONYMOUS_TOKEN_LIFETIME_IN_MILLISECONDS = 99 * ONE_YEAR_IN_MILLISECONDS;
@@ -19,7 +20,7 @@ export async function login(givenEngineUrl: string, useAnonymousLogin: boolean, 
   if (engineUrl == null || engineUrl.trim() == '') {
     const oldSession = loadAtlasSession();
     if (oldSession == null) {
-      console.log(chalk.red('No session found. Aborting.'));
+      logError('No session found. Aborting.');
       return;
     }
 

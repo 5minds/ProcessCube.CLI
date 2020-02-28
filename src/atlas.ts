@@ -13,6 +13,8 @@ import { stopProcessInstance } from './commands/stop-process-instance/stop-proce
 import { showProcessInstance } from './commands/show-process-instance/show-process-instance';
 import { deployFiles } from './commands/deploy-files/deploy-files';
 import { removeProcessModels } from './commands/remove-process-models/remove-process-models';
+import { logHelp, logWarning } from './cli/logging';
+import { performWildcard } from './commands/wildcard/wildcard';
 
 export const OUTPUT_FORMAT_JSON = 'json';
 export const OUTPUT_FORMAT_TEXT = 'text';
@@ -169,7 +171,7 @@ program
   .command('retry [PROCESS_INSTANCE_IDS...]')
   .description('restarts failed instances with the given process instance ids')
   .action(async (options) => {
-    console.log('TODO: the engine has to implement this feature');
+    logWarning('TODO: the engine has to implement this feature');
   });
 
 program
@@ -334,25 +336,12 @@ program
   .alias('lsc')
   .description('list correlations')
   .action(async (options) => {
-    console.log('TODO: implement me');
+    logWarning('TODO: implement me');
   });
 
-function logHelp(text: string): void {
-  console.log('');
-  console.log(removeMultilineIndent(text));
-}
-
-function removeMultilineIndent(text: string): string {
-  const lines = text.split('\n');
-  const firstLine = lines[0] === '' ? lines[1] : lines[0];
-  const indent = firstLine.length - firstLine.trimLeft().length;
-  const removeIndentRegex = new RegExp(`^(\ {${indent}})`);
-
-  return lines
-    .map((line: string) => line.replace(removeIndentRegex, ''))
-    .join('\n')
-    .trim();
-}
+program.command('*').action((parentCommand, givenCommandName, arg3) => {
+  performWildcard(program, givenCommandName);
+});
 
 async function main() {
   await program.parseAsync(process.argv);

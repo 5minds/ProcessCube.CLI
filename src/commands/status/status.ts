@@ -1,12 +1,11 @@
-import chalk from 'chalk';
-
 import { loadAtlasSession } from '../../session/atlas_session';
+import { logWarning } from '../../cli/logging';
 
 export async function printSessionStatus(format: string): Promise<void> {
   const session = loadAtlasSession();
 
   if (session == null) {
-    console.log(chalk.yellow('No session found.'));
+    logWarning('No session found.');
     return;
   }
 

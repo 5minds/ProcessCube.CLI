@@ -9,6 +9,7 @@ import { loadAtlasSession, AtlasSession } from '../../session/atlas_session';
 import { OUTPUT_FORMAT_JSON, OUTPUT_FORMAT_TEXT } from '../../atlas';
 import { BpmnDocument } from '../../cli/bpmn_document';
 import { sortProcessInstances } from '../list-process-instances/sorting';
+import { logError } from '../../cli/logging';
 
 type ProcessInstance = DataModels.Correlations.ProcessInstance;
 type ProcessInstanceWithTokens = ProcessInstance & {
@@ -22,7 +23,7 @@ export async function showProcessInstance(
 ): Promise<void> {
   const session = loadAtlasSession();
   if (session == null) {
-    console.log(chalk.red('No session found. Aborting.'));
+    logError('No session found. Aborting.');
     return;
   }
 
