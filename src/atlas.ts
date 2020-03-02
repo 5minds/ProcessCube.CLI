@@ -27,7 +27,8 @@ program
   .option('help', {
     alias: 'h',
     description: 'Show help',
-    type: 'boolean'
+    type: 'boolean',
+    default: false
   })
   .option('output', {
     alias: 'o',
@@ -299,7 +300,8 @@ program
         .option('correlation', {
           alias: 'c',
           description: 'all given ids are interpreted as correlation ids',
-          type: 'string'
+          type: 'array',
+          default: []
         });
     },
     async (argv: any) => {
@@ -345,11 +347,13 @@ program
       yargs
         .option('--filter-by-id', {
           description: 'Filter process models by <PATTERN> (supports regular expressions)',
-          type: 'string'
+          type: 'array',
+          default: []
         })
         .option('--reject-by-id', {
           description: 'Reject process models by <PATTERN> (supports regular expressions)',
-          type: 'string'
+          type: 'array',
+          default: []
         });
     },
     async (argv: any) => {
@@ -394,23 +398,28 @@ program
         })
         .option('filter-by-correlation-id', {
           description: 'Filter process instances by <CORRELATION_ID>',
-          type: 'array'
+          type: 'array',
+          default: []
         })
         .option('filter-by-process-model-id', {
           description: 'Filter process instances by <PATTERN> (supports regular expressions)',
-          type: 'string'
+          type: 'array',
+          default: []
         })
         .option('reject-by-process-model-id', {
           description: 'Reject process instances by <PATTERN> (supports regular expressions)',
-          type: 'string'
+          type: 'array',
+          default: []
         })
         .option('filter-by-state', {
           description: 'Filter process instances by <STATE> (running, finished, error)',
-          type: 'string'
+          type: 'array',
+          default: []
         })
         .option('reject-by-state', {
           description: 'Reject process instances by <STATE> (running, finished, error)',
-          type: 'string'
+          type: 'array',
+          default: []
         })
         .option('sort-by-created-at', {
           description: 'Sort process instances by their created at timestamp in DIRECTION (asc, desc)',
