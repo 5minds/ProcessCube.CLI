@@ -26,7 +26,7 @@ program
 
   .option('help', {
     alias: 'h',
-    description: 'Show help',
+    description: 'show help',
     type: 'boolean',
     default: false
   })
