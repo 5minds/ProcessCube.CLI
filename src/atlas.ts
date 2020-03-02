@@ -294,7 +294,8 @@ program
       yargs
         .positional('process_instance_ids', {
           description: 'ids of ProcessInstances to show',
-          type: 'string'
+          type: 'string',
+          default: []
         })
 
         .option('correlation', {
