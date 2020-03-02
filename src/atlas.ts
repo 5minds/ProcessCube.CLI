@@ -61,7 +61,6 @@ program
     (yargs) => {
       yargs.positional('engine_url', {
         describe: 'url of engine to connect to',
-        default: 'http://localhost:8000'
       });
 
       yargs.option('root', {
