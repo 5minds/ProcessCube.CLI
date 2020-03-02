@@ -23,6 +23,7 @@ const VERSION = require('../package.json').version;
 
 program
   .version(VERSION)
+
   .option('help', {
     alias: 'h',
     type: 'boolean',
@@ -62,6 +63,11 @@ program
         describe: 'url of engine to connect to',
         default: 'http://localhost:8000'
       });
+
+      yargs.option('root', {
+        description: 'Try to use anonymous root login',
+        type: 'boolean'
+      });
     },
     async (argv: any) => {
       if (argv.help) {
@@ -79,10 +85,6 @@ program
       await login(argv.engine_url, argv.root, argv.output);
     }
   )
-  .option('root', {
-    description: 'Try to use anonymous root login',
-    type: 'boolean'
-  })
 
   .command(
     'logout',
@@ -135,7 +137,13 @@ program
   .command(
     'remove [PROCESS_MODEL_IDS...]',
     'remove deployed process models from the engine',
-    (yargs) => {},
+    (yargs) => {
+      yargs.option('yes', {
+        alias: 'y',
+        type: 'boolean',
+        description: 'do not prompt for confirmation'
+      });
+    },
     (argv: any) => {
       if (argv.help) {
         logHelp(`
@@ -154,16 +162,33 @@ program
       removeProcessModels(argv.processModelIds, argv.yes, argv.output);
     }
   )
-  .option('yes', {
-    alias: 'y',
-    type: 'boolean',
-    description: 'do not prompt for confirmation'
-  })
 
   .command(
     ['start-process-model <PROCESS_MODEL_ID1> <START_EVENT_ID1>', 'start <PROCESS_MODEL_ID1> <START_EVENT_ID1>'],
     'starts an instance of the deployed process models',
-    () => {},
+    (yargs) => {
+      yargs
+        .option('wait', {
+          description: 'wait for the started process instance to finish execution and report the result',
+          type: 'boolean'
+        })
+        .option('correlation-id', {
+          description: 'set a predefined correlation id for the process instance',
+          type: 'string'
+        })
+        .option('input-values', {
+          description: 'set input values for the process instance',
+          type: 'string'
+        })
+        .option('input-values-from-stdin', {
+          description: 'read input values as JSON from STDIN',
+          type: 'boolean'
+        })
+        .option('input-values-from-file', {
+          description: 'read input values as JSON from FILE',
+          type: 'string'
+        });
+    },
     async (argv: any) => {
       if (argv.help) {
         logHelp(`
@@ -212,26 +237,6 @@ program
       );
     }
   )
-  .option('wait', {
-    description: 'wait for the started process instance to finish execution and report the result',
-    type: 'boolean'
-  })
-  .option('correlation-id', {
-    description: 'set a predefined correlation id for the process instance',
-    type: 'string'
-  })
-  .option('input-values', {
-    description: 'set input values for the process instance',
-    type: 'string'
-  })
-  .option('input-values-from-stdin', {
-    description: 'read input values as JSON from STDIN',
-    type: 'boolean'
-  })
-  .option('input-values-from-file', {
-    description: 'read input values as JSON from FILE',
-    type: 'string'
-  })
 
   .command(
     ['stop-process-instance [PROCESS_INSTANCE_IDS...]', 'stop [PROCESS_INSTANCE_IDS...]'],
@@ -260,7 +265,13 @@ program
   .command(
     ['show-process-instance [PROCESS_INSTANCE_IDS...]', 'show'],
     'shows instances with the given process instance ids',
-    (yargs) => {},
+    (yargs) => {
+      yargs.option('correlation', {
+        alias: 'c',
+        description: 'all given ids are interpreted as correlation ids',
+        type: 'string'
+      });
+    },
     async (argv: any) => {
       if (argv.help) {
         logHelp(`
@@ -282,11 +293,6 @@ program
       await showProcessInstance(processInstanceIds, argv.correlation, argv.output);
     }
   )
-  .option('correlation', {
-    alias: 'c',
-    description: 'all given ids are interpreted as correlation ids',
-    type: 'string'
-  })
 
   .command(
     'retry [PROCESS_INSTANCE_IDS...]',
@@ -300,7 +306,17 @@ program
   .command(
     ['list-process-models', 'lsp'],
     'list process models',
-    (yargs) => {},
+    (yargs) => {
+      yargs
+        .option('--filter-by-id', {
+          description: 'Filter process models by <PATTERN> (supports regular expressions)',
+          type: 'string'
+        })
+        .option('--reject-by-id', {
+          description: 'Reject process models by <PATTERN> (supports regular expressions)',
+          type: 'string'
+        });
+    },
     async (argv: any) => {
       if (argv.help) {
         logHelp(`
@@ -327,19 +343,57 @@ program
       listProcessModels(pipedProcessModelIds, argv.filterById, argv.rejectById, argv.output);
     }
   )
-  .option('--filter-by-id', {
-    description: 'Filter process models by <PATTERN> (supports regular expressions)',
-    type: 'string'
-  })
-  .option('--reject-by-id', {
-    description: 'Reject process models by <PATTERN> (supports regular expressions)',
-    type: 'string'
-  })
 
   .command(
     ['list-process-instances', 'lsi'],
     'list process instances',
-    (yargs) => {},
+    (yargs) => {
+      yargs
+        .option('created-after', {
+          description: 'Only include process instances created after <DATETIME>',
+          type: 'string'
+        })
+        .option('created-before', {
+          description: 'Only include process instances created before <DATETIME>',
+          type: 'string'
+        })
+        .option('filter-by-correlation-id', {
+          description: 'Filter process instances by <CORRELATION_ID>',
+          type: 'array'
+        })
+        .option('filter-by-process-model-id', {
+          description: 'Filter process instances by <PATTERN> (supports regular expressions)',
+          type: 'string'
+        })
+        .option('reject-by-process-model-id', {
+          description: 'Reject process instances by <PATTERN> (supports regular expressions)',
+          type: 'string'
+        })
+        .option('filter-by-state', {
+          description: 'Filter process instances by <STATE> (running, finished, error)',
+          type: 'string'
+        })
+        .option('reject-by-state', {
+          description: 'Reject process instances by <STATE> (running, finished, error)',
+          type: 'string'
+        })
+        .option('sort-by-created-at', {
+          description: 'Sort process instances by their created at timestamp in DIRECTION (asc, desc)',
+          type: 'string'
+        })
+        .option('sort-by-process-model-id', {
+          description: 'Sort process instances by their process model id in DIRECTION (asc, desc)',
+          type: 'string'
+        })
+        .option('sort-by-state', {
+          description: 'Sort process instances by their state in DIRECTION (asc, desc)',
+          type: 'string'
+        })
+        .option('limit', {
+          description: 'Lists a maximum of <LIMIT> process instances',
+          type: 'number'
+        });
+    },
     async (argv: any) => {
       if (argv.help) {
         logHelp(`
@@ -415,50 +469,6 @@ program
       );
     }
   )
-  .option('created-after', {
-    description: 'Only include process instances created after <DATETIME>',
-    type: 'string'
-  })
-  .option('created-before', {
-    description: 'Only include process instances created before <DATETIME>',
-    type: 'string'
-  })
-  .option('filter-by-correlation-id', {
-    description: 'Filter process instances by <CORRELATION_ID>',
-    type: 'array'
-  })
-  .option('filter-by-process-model-id', {
-    description: 'Filter process instances by <PATTERN> (supports regular expressions)',
-    type: 'string'
-  })
-  .option('reject-by-process-model-id', {
-    description: 'Reject process instances by <PATTERN> (supports regular expressions)',
-    type: 'string'
-  })
-  .option('filter-by-state', {
-    description: 'Filter process instances by <STATE> (running, finished, error)',
-    type: 'string'
-  })
-  .option('reject-by-state', {
-    description: 'Reject process instances by <STATE> (running, finished, error)',
-    type: 'string'
-  })
-  .option('sort-by-created-at', {
-    description: 'Sort process instances by their created at timestamp in DIRECTION (asc, desc)',
-    type: 'string'
-  })
-  .option('sort-by-process-model-id', {
-    description: 'Sort process instances by their process model id in DIRECTION (asc, desc)',
-    type: 'string'
-  })
-  .option('sort-by-state', {
-    description: 'Sort process instances by their state in DIRECTION (asc, desc)',
-    type: 'string'
-  })
-  .option('limit', {
-    description: 'Lists a maximum of <LIMIT> process instances',
-    type: 'number'
-  })
 
   .command(
     ['list-correlations', 'lsc'],
