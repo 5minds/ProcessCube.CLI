@@ -111,6 +111,7 @@ program
     (yargs) => {
       yargs.positional('filenames', {
         describe: 'files to deploy'
+        type: 'string'
       });
     },
     (argv: any) => {
@@ -140,6 +141,7 @@ program
     (yargs) => {
       yargs.positional('processModelIds', {
         describe: 'ids of ProcessModels to remove'
+        type: 'string'
       });
 
       yargs.option('yes', {
@@ -257,6 +259,7 @@ program
     (yargs) => {
       yargs.positional('processInstanceIds', {
         describe: 'ids of ProcessInstances to stop'
+        type: 'string'
       });
     },
     async (argv: any) => {
@@ -286,6 +289,7 @@ program
       yargs
         .positional('processInstanceIds', {
           describe: 'ids of ProcessInstances to show'
+          type: 'string'
         })
 
         .option('correlation', {
@@ -322,6 +326,7 @@ program
     (yargs) => {
       yargs.positional('processInstanceIds', {
         describe: 'ids of ProcessInstances to restart'
+        type: 'string'
       });
     },
     (argv) => {
