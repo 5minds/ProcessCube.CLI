@@ -61,6 +61,7 @@ program
     (yargs) => {
       yargs.positional('engine_url', {
         describe: 'url of engine to connect to',
+        type: 'string'
       });
 
       yargs.option('root', {
@@ -108,7 +109,7 @@ program
     ['deploy-files [FILENAMES...]', 'deploy [FILENAMES...]'],
     'deploy process models to the engine',
     (yargs) => {
-      yargs.positional('filenmes', {
+      yargs.positional('filenames', {
         describe: 'files to deploy'
       });
     },
