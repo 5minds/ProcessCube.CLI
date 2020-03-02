@@ -175,15 +175,15 @@ program
   )
 
   .command(
-    ['start-process-model <PROCESS_MODEL_ID1> <START_EVENT_ID1>', 'start <PROCESS_MODEL_ID1> <START_EVENT_ID1>'],
+    ['start-process-model <PROCESS_MODEL_ID> <START_EVENT_ID>', 'start <PROCESS_MODEL_ID> <START_EVENT_ID>'],
     'starts an instance of the deployed process models',
     (yargs) => {
       yargs
-        .positional('processModelId', {
+        .positional('PROCESS_MODEL_ID', {
           description: 'id of ProcessModel to start',
           type: 'string'
         })
-        .positional('startEventId', {
+        .positional('START_EVENT_ID', {
           description: 'id of StartEvent to trigger',
           type: 'string'
         })
@@ -248,8 +248,8 @@ program
       }
 
       await startProcessInstance(
-        argv.processModelId,
-        argv.startEventId,
+        argv.PROCESS_MODEL_ID,
+        argv.START_EVENT_ID,
         argv.correlationId,
         inputValues,
         argv.wait,
