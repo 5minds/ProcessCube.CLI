@@ -138,6 +138,10 @@ program
     'remove [PROCESS_MODEL_IDS...]',
     'remove deployed process models from the engine',
     (yargs) => {
+      yargs.positional('processModelIds', {
+        describe: 'ids of ProcessModels to remove'
+      });
+
       yargs.option('yes', {
         alias: 'y',
         type: 'boolean',
@@ -168,6 +172,15 @@ program
     'starts an instance of the deployed process models',
     (yargs) => {
       yargs
+        .positional('processModelId', {
+          describe: 'id of ProcessModel to start',
+          type: 'string'
+        })
+        .positional('startEventId', {
+          describe: 'id of StartEvent to trigger',
+          type: 'string'
+        })
+
         .option('wait', {
           description: 'wait for the started process instance to finish execution and report the result',
           type: 'boolean'
@@ -241,7 +254,11 @@ program
   .command(
     ['stop-process-instance [PROCESS_INSTANCE_IDS...]', 'stop [PROCESS_INSTANCE_IDS...]'],
     'stops instances with the given process instance ids',
-    (yargs) => {},
+    (yargs) => {
+      yargs.positional('processInstanceIds', {
+        describe: 'ids of ProcessInstances to stop'
+      });
+    },
     async (argv: any) => {
       if (argv.help) {
         logHelp(`
@@ -266,11 +283,16 @@ program
     ['show-process-instance [PROCESS_INSTANCE_IDS...]', 'show'],
     'shows instances with the given process instance ids',
     (yargs) => {
-      yargs.option('correlation', {
-        alias: 'c',
-        description: 'all given ids are interpreted as correlation ids',
-        type: 'string'
-      });
+      yargs
+        .positional('processInstanceIds', {
+          describe: 'ids of ProcessInstances to show'
+        })
+
+        .option('correlation', {
+          alias: 'c',
+          description: 'all given ids are interpreted as correlation ids',
+          type: 'string'
+        });
     },
     async (argv: any) => {
       if (argv.help) {
@@ -297,7 +319,11 @@ program
   .command(
     'retry [PROCESS_INSTANCE_IDS...]',
     'restarts failed instances with the given process instance ids',
-    (yargs) => {},
+    (yargs) => {
+      yargs.positional('processInstanceIds', {
+        describe: 'ids of ProcessInstances to restart'
+      });
+    },
     (argv) => {
       logWarning('TODO: the engine has to implement this feature');
     }
