@@ -14,7 +14,6 @@ import { showProcessInstance } from './commands/show-process-instance/show-proce
 import { deployFiles } from './commands/deploy-files/deploy-files';
 import { removeProcessModels } from './commands/remove-process-models/remove-process-models';
 import { logHelp, logWarning } from './cli/logging';
-import { performWildcard } from './commands/wildcard/wildcard';
 import { readFileSync } from 'fs';
 
 export const OUTPUT_FORMAT_JSON = 'json';
