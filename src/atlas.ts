@@ -131,6 +131,10 @@ program
         return;
       }
 
+      if (argv.filenames == null) {
+        return;
+      }
+
       deployFiles(argv.filenames, argv.output);
     }
   )
