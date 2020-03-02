@@ -143,7 +143,7 @@ program
     'remove [PROCESS_MODEL_IDS...]',
     'remove deployed process models from the engine',
     (yargs) => {
-      yargs.positional('processModelIds', {
+      yargs.positional('process_model_ids', {
         description: 'ids of ProcessModels to remove',
         type: 'string'
       });
@@ -169,7 +169,7 @@ program
         return;
       }
 
-      removeProcessModels(argv.processModelIds, argv.yes, argv.output);
+      removeProcessModels(argv.process_model_ids, argv.yes, argv.output);
     }
   )
 
@@ -291,7 +291,7 @@ program
     'shows instances with the given process instance ids',
     (yargs) => {
       yargs
-        .positional('processInstanceIds', {
+        .positional('process_instance_ids', {
           description: 'ids of ProcessInstances to show',
           type: 'string'
         })
@@ -318,7 +318,7 @@ program
       }
 
       const stdinPipeReader = await StdinPipeReader.create();
-      let processInstanceIds = stdinPipeReader.getPipedProcessInstanceIds() || argv.processInstanceIds;
+      let processInstanceIds = stdinPipeReader.getPipedProcessInstanceIds() || argv.process_instance_ids;
 
       await showProcessInstance(processInstanceIds, argv.correlation, argv.output);
     }
@@ -328,7 +328,7 @@ program
     'retry [PROCESS_INSTANCE_IDS...]',
     'restarts failed instances with the given process instance ids',
     (yargs) => {
-      yargs.positional('processInstanceIds', {
+      yargs.positional('process_instance_ids', {
         description: 'ids of ProcessInstances to restart',
         type: 'string'
       });
