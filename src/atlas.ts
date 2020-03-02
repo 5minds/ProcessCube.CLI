@@ -15,6 +15,7 @@ import { deployFiles } from './commands/deploy-files/deploy-files';
 import { removeProcessModels } from './commands/remove-process-models/remove-process-models';
 import { logHelp, logWarning } from './cli/logging';
 import { performWildcard } from './commands/wildcard/wildcard';
+import { readFileSync } from 'fs';
 
 export const OUTPUT_FORMAT_JSON = 'json';
 export const OUTPUT_FORMAT_TEXT = 'text';
@@ -113,9 +114,11 @@ program
   .command('start-process-model <PROCESS_MODEL_ID1> <START_EVENT_ID1>')
   .alias('start')
   .description('starts an instance of the deployed process models')
-  .option('--wait', 'wait for the resulting process instance to finish execution and report the result')
+  .option('--wait', 'wait for the started process instance to finish execution and report the result')
   .option('--correlation-id <CORRELATION_ID>', 'set a predefined correlation id for the process instance')
   .option('--input-values <JSON_STRING>', 'set input values for the process instance')
+  .option('--input-values-from-stdin', 'read input values as JSON from STDIN')
+  .option('--input-values-from-file <STDIN>', 'read input values as JSON from FILE')
   .on('--help', () => {
     logHelp(`
     Examples:
@@ -123,10 +126,33 @@ program
       $ atlas start-process-model Registration.EmailCoupons StartEvent_1
 
       $ atlas start Registration.EmailCoupons StartEvent_1
+
+      $ atlas start Registration.EmailCoupons StartEvent_1 --correlation-id "my-correlation-id-1234"
+
+      $ atlas start Registration.EmailCoupons StartEvent_1 --wait
+
+      $ atlas start Registration.EmailCoupons StartEvent_1 --input-values '{"answer": 42, "email": "jobs@5minds.de"}'
+
+      $ atlas start Registration.EmailCoupons StartEvent_1 --input-values-from-file input.json
+
+      $ cat input.json | atlas start Registration.EmailCoupons StartEvent_1
+
     `);
   })
   .action(async (processModelId: string, startEventId: string, options) => {
-    const inputValues = options.inputValues == null ? undefined : JSON.parse(options.inputValues);
+    let inputValues: any;
+
+    if (options.inputValuesFromStdin === true) {
+      const stdinPipeReader = await StdinPipeReader.create();
+      inputValues = stdinPipeReader.getPipedData();
+    }
+    if (options.inputValuesFromFile != null) {
+      const contents = readFileSync(options.inputValuesFromFile);
+      inputValues = JSON.parse(contents.toString());
+    }
+    if (options.inputValues != null) {
+      inputValues = JSON.parse(options.inputValues);
+    }
 
     await startProcessInstance(
       processModelId,

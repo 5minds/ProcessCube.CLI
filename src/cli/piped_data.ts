@@ -12,6 +12,10 @@ export class StdinPipeReader {
     return stdinPipeReader;
   }
 
+  getPipedData(): any | null {
+    return this.pipedData;
+  }
+
   getPipedProcessInstanceIds(): string[] | null {
     if (this.pipedData?.result_type === 'process-instances') {
       const pipedProcessInstances = this.pipedData.result.map((item: any) => item.processInstanceId);

@@ -1,8 +1,9 @@
-import { loadAtlasSession } from '../../session/atlas_session';
-import { OUTPUT_FORMAT_JSON, OUTPUT_FORMAT_TEXT } from '../../atlas';
-import { logError } from '../../cli/logging';
 import { ApiClient } from '../../client/api_client';
 import { createResultJson } from '../../cli/result_json';
+import { loadAtlasSession } from '../../session/atlas_session';
+import { logError } from '../../cli/logging';
+
+import { OUTPUT_FORMAT_JSON, OUTPUT_FORMAT_TEXT } from '../../atlas';
 
 export async function startProcessInstance(
   processModelId: string,
@@ -20,15 +21,14 @@ export async function startProcessInstance(
 
   const apiClient = new ApiClient(session);
 
-  // TODO: once we support multiple starts, we have to accumulate an array here
   const startRequestPayload = { correlationId, inputValues };
-  const result = await apiClient.startProcessInstance(
+  const processInstance = await apiClient.startProcessModel(
     processModelId,
     startEventId,
     startRequestPayload,
     waitForProcessToFinish
   );
-  const processInstances = [result];
+  const processInstances = [processInstance];
 
   const resultJson = createResultJson('process-instances', processInstances);
 

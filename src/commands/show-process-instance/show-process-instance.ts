@@ -132,7 +132,8 @@ async function log(processInstance: ProcessInstanceWithTokens, showSeparator: bo
 
   const createdAt = moment(processInstance.createdAt);
   const doneAt = getDoneAt(processInstance);
-  const durationInWords = doneAt.from(processInstance.createdAt).replace('in ', 'took ');
+  const doneAtFormatted = doneAt == null ? '' : doneAt.format('YYYY-MM-DD hh:mm:ss');
+  const durationInWords = doneAt == null ? '' : doneAt.from(processInstance.createdAt).replace('in ', 'took ');
   const durationHint = `(${durationInWords})`;
 
   console.log(
@@ -140,7 +141,7 @@ async function log(processInstance: ProcessInstanceWithTokens, showSeparator: bo
     createdAt.format('YYYY-MM-DD hh:mm:ss'),
     chalk.dim(`(${moment(processInstance.createdAt).fromNow()})`)
   );
-  console.log('Finished:  ', doneAt.format('YYYY-MM-DD hh:mm:ss'), chalk.dim(durationHint));
+  console.log('Finished:  ', doneAtFormatted, chalk.dim(durationHint));
   console.log('User:      ', processInstance.identity.userId);
   console.log('State:     ', stateToColoredString(processInstance.state));
   await logHistory(processInstance);
@@ -234,7 +235,11 @@ function stateToColoredString(state: string): string {
 }
 
 function getToken(processInstance: ProcessInstanceWithTokens, flowNodeId: string, tokenEventType: string): any | null {
-  const tokenHistoryEntries = processInstance.tokens[flowNodeId].tokenHistoryEntries;
+  const token = processInstance.tokens[flowNodeId];
+  if (token == null) {
+    return null;
+  }
+  const tokenHistoryEntries = token.tokenHistoryEntries;
 
   return tokenHistoryEntries.find((entry) => entry.tokenEventType === tokenEventType);
 }
@@ -244,12 +249,16 @@ function printMultiLineString(text: string | string[], linePrefix: string = ''):
   lines.forEach((line: string): void => console.log(`${linePrefix}${line}`));
 }
 
-function getDoneAt(processInstance: ProcessInstanceWithTokens): moment.Moment {
+function getDoneAt(processInstance: ProcessInstanceWithTokens): moment.Moment | null {
   const flowNodeIds = Object.keys(processInstance.tokens).reverse();
 
   const lastTokenOnExit =
     getToken(processInstance, flowNodeIds[flowNodeIds.length - 1], 'onExit') ||
     getToken(processInstance, flowNodeIds[flowNodeIds.length - 1], 'onEnter');
+
+  if (lastTokenOnExit == null) {
+    return null;
+  }
 
   return moment(lastTokenOnExit.createdAt);
 }

@@ -44,10 +44,10 @@ type StartedProcessModelInfo_Success = {
   processModelId: string;
   startEventId: string;
 
-  correlationId: string;
   processInstanceId?: string;
+  correlationId: string;
+  inputValues: any;
   endEventId?: string;
-  tokenPayload?: string;
 };
 
 type StartedProcessModelInfo_Failure = {

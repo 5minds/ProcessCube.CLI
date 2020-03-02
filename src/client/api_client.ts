@@ -62,7 +62,7 @@ export class ApiClient {
     }
   }
 
-  async startProcessInstance(
+  async startProcessModel(
     processModelId: string,
     startEventId: string,
     payload: any = {},
@@ -82,10 +82,12 @@ export class ApiClient {
 
       return {
         success: true,
-        processModelId,
-        startEventId,
+        processModelId: processModelId,
+        startEventId: startEventId,
         processInstanceId: result.processInstanceId,
-        correlationId: result.correlationId
+        correlationId: result.correlationId,
+        inputValues: payload.inputValues,
+        endEventId: result.endEventId
       };
     } catch (error) {
       return { success: false, processModelId, startEventId, error };
