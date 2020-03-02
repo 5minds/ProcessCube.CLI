@@ -7,6 +7,8 @@ import { createResultJson } from '../../cli/result_json';
 export async function startProcessInstance(
   processModelId: string,
   startEventId: string,
+  correlationId: string,
+  inputValues: any,
   waitForProcessToFinish: boolean,
   outputFormat: string
 ): Promise<void> {
@@ -19,11 +21,11 @@ export async function startProcessInstance(
   const apiClient = new ApiClient(session);
 
   // TODO: once we support multiple starts, we have to accumulate an array here
-  const inputValues = {};
+  const startRequestPayload = { correlationId, inputValues };
   const result = await apiClient.startProcessInstance(
     processModelId,
     startEventId,
-    inputValues,
+    startRequestPayload,
     waitForProcessToFinish
   );
   const processInstances = [result];

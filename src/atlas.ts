@@ -114,6 +114,8 @@ program
   .alias('start')
   .description('starts an instance of the deployed process models')
   .option('--wait', 'wait for the resulting process instance to finish execution and report the result')
+  .option('--correlation-id <CORRELATION_ID>', 'set a predefined correlation id for the process instance')
+  .option('--input-values <JSON_STRING>', 'set input values for the process instance')
   .on('--help', () => {
     logHelp(`
     Examples:
@@ -124,7 +126,16 @@ program
     `);
   })
   .action(async (processModelId: string, startEventId: string, options) => {
-    await startProcessInstance(processModelId, startEventId, options.wait, options.parent.output);
+    const inputValues = options.inputValues == null ? undefined : JSON.parse(options.inputValues);
+
+    await startProcessInstance(
+      processModelId,
+      startEventId,
+      options.correlationId,
+      inputValues,
+      options.wait,
+      options.parent.output
+    );
   });
 
 program
