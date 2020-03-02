@@ -26,13 +26,13 @@ program
 
   .option('help', {
     alias: 'h',
-    type: 'boolean',
-    description: 'Show help'
+    description: 'Show help',
+    type: 'boolean'
   })
   .option('output', {
     alias: 'o',
-    type: 'string',
     description: 'set output',
+    type: 'string',
     default: OUTPUT_FORMAT_TEXT
   })
 
@@ -60,7 +60,7 @@ program
     'log in to the given engine',
     (yargs) => {
       yargs.positional('engine_url', {
-        describe: 'url of engine to connect to',
+        description: 'url of engine to connect to',
         type: 'string'
       });
 
@@ -110,7 +110,7 @@ program
     'deploy process models to the engine',
     (yargs) => {
       yargs.positional('filenames', {
-        describe: 'files to deploy'
+        description: 'files to deploy',
         type: 'string'
       });
     },
@@ -140,14 +140,14 @@ program
     'remove deployed process models from the engine',
     (yargs) => {
       yargs.positional('processModelIds', {
-        describe: 'ids of ProcessModels to remove'
+        description: 'ids of ProcessModels to remove',
         type: 'string'
       });
 
       yargs.option('yes', {
         alias: 'y',
-        type: 'boolean',
-        description: 'do not prompt for confirmation'
+        description: 'do not prompt for confirmation',
+        type: 'boolean'
       });
     },
     (argv: any) => {
@@ -175,11 +175,11 @@ program
     (yargs) => {
       yargs
         .positional('processModelId', {
-          describe: 'id of ProcessModel to start',
+          description: 'id of ProcessModel to start',
           type: 'string'
         })
         .positional('startEventId', {
-          describe: 'id of StartEvent to trigger',
+          description: 'id of StartEvent to trigger',
           type: 'string'
         })
 
@@ -258,7 +258,7 @@ program
     'stops instances with the given process instance ids',
     (yargs) => {
       yargs.positional('processInstanceIds', {
-        describe: 'ids of ProcessInstances to stop'
+        description: 'ids of ProcessInstances to stop',
         type: 'string'
       });
     },
@@ -288,7 +288,7 @@ program
     (yargs) => {
       yargs
         .positional('processInstanceIds', {
-          describe: 'ids of ProcessInstances to show'
+          description: 'ids of ProcessInstances to show',
           type: 'string'
         })
 
@@ -325,7 +325,7 @@ program
     'restarts failed instances with the given process instance ids',
     (yargs) => {
       yargs.positional('processInstanceIds', {
-        describe: 'ids of ProcessInstances to restart'
+        description: 'ids of ProcessInstances to restart',
         type: 'string'
       });
     },
