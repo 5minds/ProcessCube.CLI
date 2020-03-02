@@ -262,7 +262,7 @@ program
     ['stop-process-instance [PROCESS_INSTANCE_IDS...]', 'stop [PROCESS_INSTANCE_IDS...]'],
     'stops instances with the given process instance ids',
     (yargs) => {
-      yargs.positional('processInstanceIds', {
+      yargs.positional('process_instance_ids', {
         description: 'ids of ProcessInstances to stop',
         type: 'string'
       });
