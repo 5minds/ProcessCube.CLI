@@ -43,10 +43,10 @@ program
     (yargs) => {
       return yargs.epilog(
         removeMultilineIndent(`
-        Examples:
+          Examples:
 
-          $ atlas status
-      `)
+            $ atlas status
+        `)
       );
     },
     (argv: any) => {
@@ -77,9 +77,7 @@ program
 
               $ atlas login http://localhost:56000 --root
           `)
-        )
-
-        .demandOption('engine_url');
+        );
     },
     async (argv: any) => {
       await login(argv.engine_url, argv.root, argv.output);
@@ -92,10 +90,10 @@ program
     (yargs) => {
       return yargs.epilog(
         removeMultilineIndent(`
-        Examples:
+          Examples:
 
-          $ atlas logout
-      `)
+            $ atlas logout
+        `)
       );
     },
     async (argv: any) => {
@@ -104,12 +102,13 @@ program
   )
 
   .command(
-    ['deploy-files [FILENAMES...]', 'deploy [FILENAMES...]'],
+    ['deploy-files [filenames...]', 'deploy [filenames...]'],
     'deploy process models to the engine',
     (yargs) => {
       return yargs
         .positional('filenames', {
-          description: 'files to deploy'
+          description: 'files to deploy',
+          demandOption: true
         })
 
         .epilog(
@@ -124,9 +123,7 @@ program
 
               $ atlas deploy *.bpmn
           `)
-        )
-
-        .demandOption('filenames');
+        );
     },
     (argv: any) => {
       deployFiles(argv.filenames, argv.output);
@@ -134,7 +131,7 @@ program
   )
 
   .command(
-    'remove [PROCESS_MODEL_IDS...]',
+    'remove [process_model_ids...]',
     'remove deployed process models from the engine',
     (yargs) => {
       return yargs
@@ -158,9 +155,7 @@ program
 
               $ atlas remove Registration.EmailCoupons --yes
           `)
-        )
-
-        .demandOption('process_model_ids');
+        );
     },
     (argv: any) => {
       removeProcessModels(argv.process_model_ids, argv.yes, argv.output);
@@ -168,17 +163,19 @@ program
   )
 
   .command(
-    ['start-process-model <PROCESS_MODEL_ID> <START_EVENT_ID>', 'start <PROCESS_MODEL_ID> <START_EVENT_ID>'],
-    'starts an instance of the deployed process models',
+    ['start-process-model <process_model_id> <start_event_id>', 'start <process_model_id> <start_event_id>'],
+    'starts an instance of a deployed process model',
     (yargs) => {
       return yargs
-        .positional('PROCESS_MODEL_ID', {
+        .positional('process_model_id', {
           description: 'id of process model to start',
-          type: 'string'
+          type: 'string',
+          demandOption: true
         })
-        .positional('START_EVENT_ID', {
+        .positional('start_event_id', {
           description: 'id of StartEvent to trigger',
-          type: 'string'
+          type: 'string',
+          demandOption: true
         })
 
         .option('wait', {
@@ -190,7 +187,7 @@ program
           type: 'string'
         })
         .option('input-values', {
-          description: 'set input values for the process instance',
+          description: 'set input values for the process instance from <json> string',
           type: 'string'
         })
         .option('input-values-from-stdin', {
@@ -198,7 +195,7 @@ program
           type: 'boolean'
         })
         .option('input-values-from-file', {
-          description: 'read input values as JSON from FILE',
+          description: 'read input values as JSON from <file>',
           type: 'string'
         })
 
@@ -220,10 +217,7 @@ program
 
               $ cat input.json | atlas start Registration.EmailCoupons StartEvent_1s
           `)
-        )
-
-        .demandOption('process_model_id')
-        .demandOption('start_event_id');
+        );
     },
     async (argv: any) => {
       let inputValues: any;
@@ -241,8 +235,8 @@ program
       }
 
       await startProcessInstance(
-        argv.PROCESS_MODEL_ID,
-        argv.START_EVENT_ID,
+        argv.process_model_id,
+        argv.start_event_id,
         argv.correlationId,
         inputValues,
         argv.wait,
@@ -252,7 +246,7 @@ program
   )
 
   .command(
-    ['stop-process-instance [PROCESS_INSTANCE_IDS...]', 'stop [PROCESS_INSTANCE_IDS...]'],
+    ['stop-process-instance [process_instance_ids...]', 'stop [process_instance_ids...]'],
     'stops instances with the given process instance ids',
     (yargs) => {
       return yargs
@@ -268,9 +262,7 @@ program
 
               $ atlas stop 56a89c11-ee0d-4539-b4cb-84a0339262fd
           `)
-        )
-
-        .demandOption('process_instance_ids');
+        );
     },
     async (argv: any) => {
       const stdinPipeReader = await StdinPipeReader.create();
@@ -281,7 +273,7 @@ program
   )
 
   .command(
-    ['show-process-instance [PROCESS_INSTANCE_IDS...]', 'show'],
+    ['show-process-instance [process_instance_ids...]', 'show'],
     'shows instances with the given process instance ids',
     (yargs) => {
       return yargs
@@ -291,7 +283,7 @@ program
 
         .option('correlation', {
           alias: 'c',
-          description: 'all given ids are interpreted as correlation ids',
+          description: 'all given <process_instance_ids> are interpreted as correlation ids',
           type: 'boolean',
           default: false
         })
@@ -306,9 +298,7 @@ program
 
               $ atlas show --correlation e552acfe-8446-42c0-a76b-5cd65bf110ac
           `)
-        )
-
-        .demandOption('process_instance_ids');
+        );
     },
     async (argv: any) => {
       const stdinPipeReader = await StdinPipeReader.create();
@@ -319,15 +309,12 @@ program
   )
 
   .command(
-    'retry [PROCESS_INSTANCE_IDS...]',
+    'retry [process_instance_ids...]',
     'restarts failed instances with the given process instance ids',
     (yargs) => {
-      return yargs
-        .positional('process_instance_ids', {
-          description: 'ids of process instances to restart'
-        })
-
-        .demandOption('process_instance_ids');
+      return yargs.positional('process_instance_ids', {
+        description: 'ids of process instances to restart'
+      });
     },
     (argv) => {
       logWarning('TODO: the engine has to implement this feature');
@@ -340,12 +327,12 @@ program
     (yargs) => {
       return yargs
         .option('filter-by-id', {
-          description: 'Filter process models by <PATTERN> (supports regular expressions)',
+          description: 'Filter process models by <pattern> (supports regular expressions)',
           type: 'array',
           default: []
         })
         .option('reject-by-id', {
-          description: 'Reject process models by <PATTERN> (supports regular expressions)',
+          description: 'Reject process models by <pattern> (supports regular expressions)',
           type: 'array',
           default: []
         })
@@ -381,61 +368,57 @@ program
     (yargs) => {
       return yargs
         .option('created-after', {
-          description: 'Only include process instances created after <DATETIME>',
+          description: 'Only include process instances created after <datetime>',
           type: 'string'
         })
         .option('created-before', {
-          description: 'Only include process instances created before <DATETIME>',
+          description: 'Only include process instances created before <datetime>',
           type: 'string'
         })
         .option('filter-by-correlation-id', {
-          description: 'Filter process instances by <CORRELATION_ID>',
+          description: 'Filter process instances by <correlation_id>',
           type: 'array',
           default: []
         })
         .option('filter-by-process-model-id', {
-          description: 'Filter process instances by <PATTERN> (supports regular expressions)',
+          description: 'Filter process instances by <pattern> (supports regular expressions)',
           type: 'array',
           default: []
         })
         .option('reject-by-process-model-id', {
-          description: 'Reject process instances by <PATTERN> (supports regular expressions)',
+          description: 'Reject process instances by <pattern> (supports regular expressions)',
           type: 'array',
           default: []
         })
         .option('filter-by-state', {
-          description: 'Filter process instances by <STATE> (running, finished, error)',
+          description: 'Filter process instances by <state> (running, finished, error)',
           type: 'array',
           default: []
         })
         .option('reject-by-state', {
-          description: 'Reject process instances by <STATE> (running, finished, error)',
+          description: 'Reject process instances by <state> (running, finished, error)',
           type: 'array',
           default: []
         })
         .option('sort-by-created-at', {
-          description: 'Sort process instances by their created at timestamp in DIRECTION (asc, desc)',
+          description: 'Sort process instances by their created at timestamp in <direction> (asc, desc)',
           type: 'string',
           choices: ['asc', 'desc']
         })
         .option('sort-by-process-model-id', {
-          description: 'Sort process instances by their process model id in DIRECTION (asc, desc)',
+          description: 'Sort process instances by their process model id in <direction> (asc, desc)',
           type: 'string',
           choices: ['asc', 'desc']
         })
         .option('sort-by-state', {
-          description: 'Sort process instances by their state in DIRECTION (asc, desc)',
+          description: 'Sort process instances by their state in <direction> (asc, desc)',
           type: 'string',
           choices: ['asc', 'desc']
         })
         .option('limit', {
-          description: 'Lists a maximum of <LIMIT> process instances',
+          description: 'List a maximum of <limit> process instances',
           type: 'number'
         })
-
-        .conflicts('sort-by-created-at', 'sort-by-process-model-id')
-        .conflicts('sort-by-created-at', 'sort-by-state')
-        .conflicts('sort-by-process-model-id', 'sort-by-state')
 
         .epilog(
           removeMultilineIndent(`
