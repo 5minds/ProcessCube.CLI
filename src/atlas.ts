@@ -289,9 +289,7 @@ program
     (yargs) => {
       yargs
         .positional('process_instance_ids', {
-          description: 'ids of ProcessInstances to show',
-          type: 'string',
-          default: []
+          description: 'ids of ProcessInstances to show'
         })
 
         .option('correlation', {
