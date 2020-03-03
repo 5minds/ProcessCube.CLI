@@ -415,15 +415,18 @@ program
         })
         .option('sort-by-created-at', {
           description: 'Sort process instances by their created at timestamp in DIRECTION (asc, desc)',
-          type: 'string'
+          type: 'string',
+          choices: ['asc', 'desc']
         })
         .option('sort-by-process-model-id', {
           description: 'Sort process instances by their process model id in DIRECTION (asc, desc)',
-          type: 'string'
+          type: 'string',
+          choices: ['asc', 'desc']
         })
         .option('sort-by-state', {
           description: 'Sort process instances by their state in DIRECTION (asc, desc)',
-          type: 'string'
+          type: 'string',
+          choices: ['asc', 'desc']
         })
         .option('limit', {
           description: 'Lists a maximum of <LIMIT> process instances',
