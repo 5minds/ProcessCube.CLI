@@ -139,7 +139,7 @@ program
     (yargs) => {
       yargs
         .positional('process_model_ids', {
-          description: 'ids of ProcessModels to remove'
+          description: 'ids of process models to remove'
         })
 
         .option('yes', {
@@ -173,7 +173,7 @@ program
     (yargs) => {
       yargs
         .positional('PROCESS_MODEL_ID', {
-          description: 'id of ProcessModel to start',
+          description: 'id of process model to start',
           type: 'string'
         })
         .positional('START_EVENT_ID', {
@@ -257,7 +257,7 @@ program
     (yargs) => {
       yargs
         .positional('process_instance_ids', {
-          description: 'ids of ProcessInstances to stop'
+          description: 'ids of process instances to stop'
         })
 
         .epilog(
@@ -286,7 +286,7 @@ program
     (yargs) => {
       yargs
         .positional('process_instance_ids', {
-          description: 'ids of ProcessInstances to show'
+          description: 'ids of process instances to show'
         })
 
         .option('correlation', {
@@ -324,7 +324,7 @@ program
     (yargs) => {
       yargs
         .positional('process_instance_ids', {
-          description: 'ids of ProcessInstances to restart'
+          description: 'ids of process instances to restart'
         })
 
         .demandOption('process_instance_ids');
