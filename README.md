@@ -46,10 +46,8 @@ COMMANDS:
   remove                      removes one or more files from the engine
   start                       starts one or more process instances
   stop                        stops one or more process instances
-  retry                       retries one or more process instances
   list-process-models         lists process models
   list-process-instances      lists process instances
-  list-correlations           lists correlations
 ```
 
 #### `atlas login`
@@ -132,14 +130,6 @@ $ atlas stop <PROCESS_INSTANCE_ID> [[PROCESS_INSTANCE_ID2] ...]
 }
 ```
 
-#### `atlas retry`
-
-Setzt die Prozess-Instanz mit der angegebenen Prozess-Instanz-Id an der Activity fort, an der die Prozess-Instanz gescheitert ist.
-
-```shell
-$ atlas retry <PROCESS_INSTANCE_ID> [[PROCESS_INSTANCE_ID2] ...]
-```
-
 ### Abfragen von Prozess-Modellen und Prozess-Instanzen
 
 #### `atlas list-process-models`
@@ -164,16 +154,6 @@ $ atlas list-process-instances [--limit LIMIT]
   "result_type": "process-instances",
   "result": ["1", "2"]
 }
-```
-
-#### `atlas list-correlations`
-
-> Alias: `atlas lsc`
-
-Listet Correlations (zuletzt gestartete zuerst).
-
-```shell
-$ atlas list-correlations [--limit LIMIT]
 ```
 
 #### `atlas show-process-instance <ID> [[<ID2>] ...] [--correlation]`
