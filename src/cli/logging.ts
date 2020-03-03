@@ -4,6 +4,10 @@ export function logError(error: string): void {
   console.warn(chalk.redBright.bold(`** (Atlas) ${error}`));
 }
 
+export function logNoValidSessionError(): void {
+  logError('No session found. Please use `atlas login <engine_url>` to log in.');
+}
+
 export function logWarning(warning: string): void {
   console.warn(chalk.yellowBright(`** (Atlas) ${warning}`));
 }
@@ -22,4 +26,20 @@ export function removeMultilineIndent(text: string): string {
     .map((line: string) => line.replace(removeIndentRegex, ''))
     .join('\n')
     .trim();
+}
+
+export function heading(text: string) {
+  return chalk.bold(`${text}\n`);
+}
+
+export function shellExample(text: string) {
+  return chalk.bold(`${text}\n`);
+}
+
+export function formatHelpText(originalText: string): string {
+  let text = removeMultilineIndent(originalText);
+
+  return text.replace(/^EXAMPLES\n/, heading('EXAMPLES')).replace(/(\s+)(\$ )(atlas \S+)/gim, (...args) => {
+    return `${args[1]}${chalk.greenBright(args[2])}${args[3]}`;
+  });
 }

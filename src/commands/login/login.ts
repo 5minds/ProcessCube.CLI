@@ -22,7 +22,7 @@ export async function login(
   let engineUrl = givenEngineUrl;
 
   if (engineUrl == null || engineUrl.trim() == '') {
-    const oldSession = loadAtlasSession();
+    const oldSession = loadAtlasSession(true);
     if (oldSession == null) {
       logError('No session found. Aborting.');
       return;

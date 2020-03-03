@@ -22,7 +22,7 @@ type ExpireInfo = {
 
 export const ANONYMOUS_IDENTITY_SERVER_URL = '<anonymous>';
 
-export function loadAtlasSession(): AtlasSession | null {
+export function loadAtlasSession(returnInvalidSession: boolean = false): AtlasSession | null {
   const filename = getSessionStorageFilename();
 
   if (!existsSync(filename)) {
@@ -37,11 +37,15 @@ export function loadAtlasSession(): AtlasSession | null {
   try {
     const rawSession = JSON.parse(contents);
 
-    return { ...rawSession, expiresIn: getExpiresIn(rawSession) };
+    const session: AtlasSession = { ...rawSession, expiresIn: getExpiresIn(rawSession) };
+    if (isValidSession(session) || returnInvalidSession) {
+      return session;
+    }
   } catch (e) {
     console.error(`Error while loading ${filename}`, e);
-    return null;
   }
+
+  return null;
 }
 
 export function saveAtlasSession(session: AtlasSession): void {
@@ -77,4 +81,8 @@ export function getExpiresIn(session: AtlasSession): ExpireInfo {
     seconds: seconds,
     inWords: moment(session.expiresAt).fromNow()
   };
+}
+
+export function isValidSession(session: AtlasSession | null): boolean {
+  return session?.expiresIn?.seconds > 0;
 }

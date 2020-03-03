@@ -16,7 +16,7 @@ import {
   filterProcessInstancesByState
 } from './filtering';
 import { sortProcessInstances } from './sorting';
-import { logError } from '../../cli/logging';
+import { logError, logNoValidSessionError } from '../../cli/logging';
 import { ApiClient } from '../../client/api_client';
 
 export type ProcessInstance = DataModels.Correlations.ProcessInstance;
@@ -39,7 +39,7 @@ export async function listProcessInstances(
 ) {
   const session = loadAtlasSession();
   if (session == null) {
-    logError('No session found. Aborting.');
+    logNoValidSessionError();
     return;
   }
 

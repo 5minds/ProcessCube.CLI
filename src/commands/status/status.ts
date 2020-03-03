@@ -7,8 +7,7 @@ import { logWarning } from '../../cli/logging';
 import { OUTPUT_FORMAT_JSON, OUTPUT_FORMAT_TEXT } from '../../atlas';
 
 export async function printSessionStatus(outputFormat: string): Promise<void> {
-  const session = loadAtlasSession();
-
+  const session = loadAtlasSession(true);
   if (session == null) {
     logWarning('No session found.');
     return;
