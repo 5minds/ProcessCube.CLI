@@ -8,11 +8,6 @@ export function logWarning(warning: string): void {
   console.warn(chalk.yellowBright(`** (Atlas) ${warning}`));
 }
 
-export function logHelp(text: string): void {
-  console.log('');
-  logMultiline(text);
-}
-
 export function logMultiline(text: string): void {
   console.log(removeMultilineIndent(text));
 }

@@ -13,7 +13,7 @@ import { stopProcessInstance } from './commands/stop-process-instance/stop-proce
 import { showProcessInstance } from './commands/show-process-instance/show-process-instance';
 import { deployFiles } from './commands/deploy-files/deploy-files';
 import { removeProcessModels } from './commands/remove-process-models/remove-process-models';
-import { logHelp, logWarning, removeMultilineIndent } from './cli/logging';
+import { logWarning, removeMultilineIndent } from './cli/logging';
 import { readFileSync } from 'fs';
 
 export const OUTPUT_FORMAT_JSON = 'json';
