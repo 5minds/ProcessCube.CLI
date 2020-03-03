@@ -339,12 +339,12 @@ program
     'list process models',
     (yargs) => {
       return yargs
-        .option('--filter-by-id', {
+        .option('filter-by-id', {
           description: 'Filter process models by <PATTERN> (supports regular expressions)',
           type: 'array',
           default: []
         })
-        .option('--reject-by-id', {
+        .option('reject-by-id', {
           description: 'Reject process models by <PATTERN> (supports regular expressions)',
           type: 'array',
           default: []
