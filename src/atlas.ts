@@ -77,7 +77,9 @@ program
 
               $ atlas login http://localhost:56000 --root
           `)
-        );
+        )
+
+        .demandOption('engine_url');
     },
     async (argv: any) => {
       await login(argv.engine_url, argv.root, argv.output);
@@ -123,13 +125,11 @@ program
 
               $ atlas deploy *.bpmn
           `)
-        );
+        )
+
+        .demandOption('filenames');
     },
     (argv: any) => {
-      if (argv.filenames == null) {
-        return;
-      }
-
       deployFiles(argv.filenames, argv.output);
     }
   )
@@ -160,7 +160,9 @@ program
 
               $ atlas remove Registration.EmailCoupons --yes
           `)
-        );
+        )
+
+        .demandOption('process_model_ids');
     },
     (argv: any) => {
       removeProcessModels(argv.process_model_ids, argv.yes, argv.output);
@@ -220,7 +222,10 @@ program
 
               $ cat input.json | atlas start Registration.EmailCoupons StartEvent_1s
           `)
-        );
+        )
+
+        .demandOption('process_model_id')
+        .demandOption('start_event_id');
     },
     async (argv: any) => {
       let inputValues: any;
@@ -266,7 +271,9 @@ program
 
               $ atlas stop 56a89c11-ee0d-4539-b4cb-84a0339262fd
           `)
-        );
+        )
+
+        .demandOption('process_instance_ids');
     },
     async (argv: any) => {
       const stdinPipeReader = await StdinPipeReader.create();
@@ -304,7 +311,9 @@ program
 
               $ atlas show --correlation e552acfe-8446-42c0-a76b-5cd65bf110ac
           `)
-        );
+        )
+
+        .demandOption('process_instance_ids');
     },
     async (argv: any) => {
       const stdinPipeReader = await StdinPipeReader.create();
@@ -318,10 +327,13 @@ program
     'retry [PROCESS_INSTANCE_IDS...]',
     'restarts failed instances with the given process instance ids',
     (yargs) => {
-      yargs.positional('process_instance_ids', {
-        description: 'ids of ProcessInstances to restart',
-        type: 'string'
-      });
+      yargs
+        .positional('process_instance_ids', {
+          description: 'ids of ProcessInstances to restart',
+          type: 'string'
+        })
+
+        .demandOption('process_instance_ids');
     },
     (argv) => {
       logWarning('TODO: the engine has to implement this feature');
