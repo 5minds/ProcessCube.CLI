@@ -109,8 +109,7 @@ program
     (yargs) => {
       yargs
         .positional('filenames', {
-          description: 'files to deploy',
-          type: 'string'
+          description: 'files to deploy'
         })
 
         .epilog(
@@ -140,8 +139,7 @@ program
     (yargs) => {
       yargs
         .positional('process_model_ids', {
-          description: 'ids of ProcessModels to remove',
-          type: 'string'
+          description: 'ids of ProcessModels to remove'
         })
 
         .option('yes', {
@@ -259,8 +257,7 @@ program
     (yargs) => {
       yargs
         .positional('process_instance_ids', {
-          description: 'ids of ProcessInstances to stop',
-          type: 'string'
+          description: 'ids of ProcessInstances to stop'
         })
 
         .epilog(
@@ -327,8 +324,7 @@ program
     (yargs) => {
       yargs
         .positional('process_instance_ids', {
-          description: 'ids of ProcessInstances to restart',
-          type: 'string'
+          description: 'ids of ProcessInstances to restart'
         })
 
         .demandOption('process_instance_ids');
