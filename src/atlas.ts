@@ -295,8 +295,8 @@ program
         .option('correlation', {
           alias: 'c',
           description: 'all given ids are interpreted as correlation ids',
-          type: 'array',
-          default: []
+          type: 'boolean',
+          default: false
         })
 
         .epilog(
