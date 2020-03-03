@@ -430,6 +430,10 @@ program
           type: 'number'
         })
 
+        .conflicts('sort-by-created-at', 'sort-by-process-model-id')
+        .conflicts('sort-by-created-at', 'sort-by-state')
+        .conflicts('sort-by-process-model-id', 'sort-by-state')
+
         .epilog(
           removeMultilineIndent(`
             Examples:
