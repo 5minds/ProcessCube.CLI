@@ -13,7 +13,7 @@ import { stopProcessInstance } from './commands/stop-process-instance/stop-proce
 import { showProcessInstance } from './commands/show-process-instance/show-process-instance';
 import { deployFiles } from './commands/deploy-files/deploy-files';
 import { removeProcessModels } from './commands/remove-process-models/remove-process-models';
-import { logHelp, logWarning } from './cli/logging';
+import { logHelp, logWarning, removeMultilineIndent } from './cli/logging';
 import { readFileSync } from 'fs';
 
 export const OUTPUT_FORMAT_JSON = 'json';
@@ -40,18 +40,16 @@ program
   .command(
     ['status', 'st'],
     'prints status of the current session',
-    (yargs) => {},
+    (yargs) => {
+      yargs.epilog(
+        removeMultilineIndent(`
+        Examples:
+
+          $ atlas status
+      `)
+      );
+    },
     (argv: any) => {
-      if (argv.help) {
-        logHelp(`
-      Examples:
-
-        $ atlas status
-      `);
-
-        return;
-      }
-
       printSessionStatus(argv.output);
     }
   )
@@ -60,29 +58,28 @@ program
     'login [engine_url]',
     'log in to the given engine',
     (yargs) => {
-      yargs.positional('engine_url', {
-        description: 'url of engine to connect to',
-        type: 'string'
-      });
+      yargs
+        .positional('engine_url', {
+          description: 'url of engine to connect to',
+          type: 'string'
+        })
 
-      yargs.option('root', {
-        description: 'Try to use anonymous root login',
-        type: 'boolean'
-      });
+        .option('root', {
+          description: 'Try to use anonymous root login',
+          type: 'boolean'
+        })
+
+        .epilog(
+          removeMultilineIndent(`
+            Examples:
+
+              $ atlas login http://localhost:56000
+
+              $ atlas login http://localhost:56000 --root
+          `)
+        );
     },
     async (argv: any) => {
-      if (argv.help) {
-        logHelp(`
-      Examples:
-
-        $ atlas login http://localhost:56000
-
-        $ atlas login http://localhost:56000 --root
-      `);
-
-        return;
-      }
-
       await login(argv.engine_url, argv.root, argv.output);
     }
   )
@@ -90,18 +87,16 @@ program
   .command(
     'logout',
     'log out from the current session',
-    (yargs) => {},
+    (yargs) => {
+      yargs.epilog(
+        removeMultilineIndent(`
+        Examples:
+
+          $ atlas logout
+      `)
+      );
+    },
     async (argv: any) => {
-      if (argv.help) {
-        logHelp(`
-      Examples:
-
-        $ atlas logout
-      `);
-
-        return;
-      }
-
       await logout(argv.output);
     }
   )
@@ -110,28 +105,27 @@ program
     ['deploy-files [FILENAMES...]', 'deploy [FILENAMES...]'],
     'deploy process models to the engine',
     (yargs) => {
-      yargs.positional('filenames', {
-        description: 'files to deploy',
-        type: 'string'
-      });
+      yargs
+        .positional('filenames', {
+          description: 'files to deploy',
+          type: 'string'
+        })
+
+        .epilog(
+          removeMultilineIndent(`
+            Examples:
+
+              $ atlas deploy registration_email_coupons.bpmn
+
+            The commands takes multiple arguments and supports globs:
+
+              $ atlas deploy registration_email_coupons.bpmn registration_fraud_detection.bpmn
+
+              $ atlas deploy *.bpmn
+          `)
+        );
     },
     (argv: any) => {
-      if (argv.help) {
-        logHelp(`
-      Examples:
-
-        $ atlas deploy registration_email_coupons.bpmn
-
-      The commands takes multiple arguments and supports globs:
-
-        $ atlas deploy registration_email_coupons.bpmn registration_fraud_detection.bpmn
-
-        $ atlas deploy *.bpmn
-      `);
-
-        return;
-      }
-
       if (argv.filenames == null) {
         return;
       }
@@ -144,32 +138,31 @@ program
     'remove [PROCESS_MODEL_IDS...]',
     'remove deployed process models from the engine',
     (yargs) => {
-      yargs.positional('process_model_ids', {
-        description: 'ids of ProcessModels to remove',
-        type: 'string'
-      });
+      yargs
+        .positional('process_model_ids', {
+          description: 'ids of ProcessModels to remove',
+          type: 'string'
+        })
 
-      yargs.option('yes', {
-        alias: 'y',
-        description: 'do not prompt for confirmation',
-        type: 'boolean'
-      });
+        .option('yes', {
+          alias: 'y',
+          description: 'do not prompt for confirmation',
+          type: 'boolean'
+        })
+
+        .epilog(
+          removeMultilineIndent(`
+            Examples:
+
+              $ atlas remove Registration.EmailCoupons
+
+            If you don't want to be prompted for confirmation, use \`--yes\`:
+
+              $ atlas remove Registration.EmailCoupons --yes
+          `)
+        );
     },
     (argv: any) => {
-      if (argv.help) {
-        logHelp(`
-      Examples:
-
-        $ atlas remove Registration.EmailCoupons
-
-        If you don't want to be prompted for confirmation, use \`--yes\`:
-
-        $ atlas remove Registration.EmailCoupons --yes
-      `);
-
-        return;
-      }
-
       removeProcessModels(argv.process_model_ids, argv.yes, argv.output);
     }
   )
@@ -207,32 +200,29 @@ program
         .option('input-values-from-file', {
           description: 'read input values as JSON from FILE',
           type: 'string'
-        });
+        })
+
+        .epilog(
+          removeMultilineIndent(`
+            Examples:
+
+              $ atlas start-process-model Registration.EmailCoupons StartEvent_1
+
+              $ atlas start Registration.EmailCoupons StartEvent_1
+
+              $ atlas start Registration.EmailCoupons StartEvent_1 --correlation-id "my-correlation-id-1234"
+
+              $ atlas start Registration.EmailCoupons StartEvent_1 --wait
+
+              $ atlas start Registration.EmailCoupons StartEvent_1 --input-values '{"answer": 42, "email": "jobs@5minds.de"}'
+
+              $ atlas start Registration.EmailCoupons StartEvent_1 --input-values-from-file input.json
+
+              $ cat input.json | atlas start Registration.EmailCoupons StartEvent_1s
+          `)
+        );
     },
     async (argv: any) => {
-      if (argv.help) {
-        logHelp(`
-      Examples:
-
-        $ atlas start-process-model Registration.EmailCoupons StartEvent_1
-
-        $ atlas start Registration.EmailCoupons StartEvent_1
-
-        $ atlas start Registration.EmailCoupons StartEvent_1 --correlation-id "my-correlation-id-1234"
-
-        $ atlas start Registration.EmailCoupons StartEvent_1 --wait
-
-        $ atlas start Registration.EmailCoupons StartEvent_1 --input-values '{"answer": 42, "email": "jobs@5minds.de"}'
-
-        $ atlas start Registration.EmailCoupons StartEvent_1 --input-values-from-file input.json
-
-        $ cat input.json | atlas start Registration.EmailCoupons StartEvent_1
-
-      `);
-
-        return;
-      }
-
       let inputValues: any;
 
       if (argv.inputValuesFromStdin === true) {
@@ -262,24 +252,23 @@ program
     ['stop-process-instance [PROCESS_INSTANCE_IDS...]', 'stop [PROCESS_INSTANCE_IDS...]'],
     'stops instances with the given process instance ids',
     (yargs) => {
-      yargs.positional('process_instance_ids', {
-        description: 'ids of ProcessInstances to stop',
-        type: 'string'
-      });
+      yargs
+        .positional('process_instance_ids', {
+          description: 'ids of ProcessInstances to stop',
+          type: 'string'
+        })
+
+        .epilog(
+          removeMultilineIndent(`
+            Examples:
+
+              $ atlas stop-process-instance 56a89c11-ee0d-4539-b4cb-84a0339262fd
+
+              $ atlas stop 56a89c11-ee0d-4539-b4cb-84a0339262fd
+          `)
+        );
     },
     async (argv: any) => {
-      if (argv.help) {
-        logHelp(`
-      Examples:
-
-        $ atlas stop-process-instance 56a89c11-ee0d-4539-b4cb-84a0339262fd
-
-        $ atlas stop 56a89c11-ee0d-4539-b4cb-84a0339262fd
-      `);
-
-        return;
-      }
-
       const stdinPipeReader = await StdinPipeReader.create();
       let processInstanceIds = stdinPipeReader.getPipedProcessInstanceIds() || argv.process_instance_ids;
 
@@ -303,23 +292,21 @@ program
           description: 'all given ids are interpreted as correlation ids',
           type: 'array',
           default: []
-        });
+        })
+
+        .epilog(
+          removeMultilineIndent(`
+            Examples:
+
+              $ atlas show-process-instance 56a89c11-ee0d-4539-b4cb-84a0339262fd
+
+              $ atlas show 56a89c11-ee0d-4539-b4cb-84a0339262fd
+
+              $ atlas show --correlation e552acfe-8446-42c0-a76b-5cd65bf110ac
+          `)
+        );
     },
     async (argv: any) => {
-      if (argv.help) {
-        logHelp(`
-      Examples:
-
-        $ atlas show-process-instance 56a89c11-ee0d-4539-b4cb-84a0339262fd
-
-        $ atlas show 56a89c11-ee0d-4539-b4cb-84a0339262fd
-
-        $ atlas show --correlation e552acfe-8446-42c0-a76b-5cd65bf110ac
-      `);
-
-        return;
-      }
-
       const stdinPipeReader = await StdinPipeReader.create();
       let processInstanceIds = stdinPipeReader.getPipedProcessInstanceIds() || argv.process_instance_ids;
 
@@ -355,27 +342,25 @@ program
           description: 'Reject process models by <PATTERN> (supports regular expressions)',
           type: 'array',
           default: []
-        });
+        })
+
+        .epilog(
+          removeMultilineIndent(`
+            Examples:
+
+              $ atlas list-process-models
+
+              $ atlas list-process-models --filter-by-id "Registration"
+
+              $ atlas list-process-models --reject-by-id "Internal"
+
+            Filtering/rejecting also supports regular expressions:
+
+              $ atlas list-process-models --filter-by-id "^Registration.+$"
+          `)
+        );
     },
     async (argv: any) => {
-      if (argv.help) {
-        logHelp(`
-      Examples:
-
-        $ atlas list-process-models
-
-        $ atlas list-process-models --filter-by-id "Registration"
-
-        $ atlas list-process-models --reject-by-id "Internal"
-
-      Filtering/rejecting also supports regular expressions:
-
-        $ atlas list-process-models --filter-by-id "^Registration.+$"
-      `);
-
-        return;
-      }
-
       const stdinPipeReader = await StdinPipeReader.create();
       const pipedProcessModelIds =
         stdinPipeReader.getPipedProcessModelIds() || stdinPipeReader.getPipedProcessModelIdsInProcessInstances();
@@ -437,57 +422,55 @@ program
         .option('limit', {
           description: 'Lists a maximum of <LIMIT> process instances',
           type: 'number'
-        });
+        })
+
+        .epilog(
+          removeMultilineIndent(`
+            Examples:
+
+              $ atlas list-process-instances
+
+              $ atlas list-process-instances --created-after "2020-01-01" --created-before "2020-01-31"
+              $ atlas list-process-instances --filter-by-process-model-id "Registration"
+              $ atlas list-process-instances --filter-by-state error
+
+            Filtering by process model id also supports regular expressions:
+
+              $ atlas list-process-instances --filter-by-process-model-id "^Registration.+$"
+
+            Filter options compound, meaning that they allow to look for more than one pattern:
+
+              $ atlas list-process-instances --filter-by-state error --filter-by-state running
+
+            ... using the same filter multiple times results in an OR query:
+
+              $ atlas list-process-instances --filter-by-process-model-id "Registration" --filter-by-process-model-id "Email"
+
+            ... piping the result into another execution of list-process-instances leads to an AND query:
+
+              $ atlas list-process-instances --filter-by-process-model-id "Registration" --output json | atlas list-process-instances --filter-by-process-model-id "Email"
+
+            Combinations of all switches are possible:
+
+              $ atlas list-process-instances --created-after "2020-01-01" --created-before "2020-01-31" \\
+                                          --filter-by-process-model-id "^Registration.+$" \\
+                                          --reject-by-process-model-id "Internal" \\
+                                          --filter-by-state error \\
+                                          --filter-by-state running \\
+                                          --sort-by-process-model-id ASC \\
+                                          --sort-by-state DESC \\
+                                          --sort-by-created-at ASC
+
+            The above lists all process instances from January 2020, which were started from a process model
+            whose name contains the prefix "Registration.", but does not contain the word "Internal", and either
+            resulted in an error or are still running.
+            The results are sorted by process model in ascending alphabetical order, within each model section,
+            the process instances are grouped by state in the order "running, error" and for each state,
+            process instances are listed oldest to newest.
+          `)
+        );
     },
     async (argv: any) => {
-      if (argv.help) {
-        logHelp(`
-      Examples:
-
-        $ atlas list-process-instances
-
-        $ atlas list-process-instances --created-after "2020-01-01" --created-before "2020-01-31"
-        $ atlas list-process-instances --filter-by-process-model-id "Registration"
-        $ atlas list-process-instances --filter-by-state error
-
-      Filtering by process model id also supports regular expressions:
-
-        $ atlas list-process-instances --filter-by-process-model-id "^Registration.+$"
-
-      Filter options compound, meaning that they allow to look for more than one pattern:
-
-        $ atlas list-process-instances --filter-by-state error --filter-by-state running
-
-      ... using the same filter multiple times results in an OR query:
-
-        $ atlas list-process-instances --filter-by-process-model-id "Registration" --filter-by-process-model-id "Email"
-
-      ... piping the result into another execution of list-process-instances leads to an AND query:
-
-        $ atlas list-process-instances --filter-by-process-model-id "Registration" --output json | atlas list-process-instances --filter-by-process-model-id "Email"
-
-      Combinations of all switches are possible:
-
-        $ atlas list-process-instances --created-after "2020-01-01" --created-before "2020-01-31" \\
-                                    --filter-by-process-model-id "^Registration.+$" \\
-                                    --reject-by-process-model-id "Internal" \\
-                                    --filter-by-state error \\
-                                    --filter-by-state running \\
-                                    --sort-by-process-model-id ASC \\
-                                    --sort-by-state DESC \\
-                                    --sort-by-created-at ASC
-
-      The above lists all process instances from January 2020, which were started from a process model
-      whose name contains the prefix "Registration.", but does not contain the word "Internal", and either
-      resulted in an error or are still running.
-      The results are sorted by process model in ascending alphabetical order, within each model section,
-      the process instances are grouped by state in the order "running, error" and for each state,
-      process instances are listed oldest to newest.
-      `);
-
-        return;
-      }
-
       const stdinPipeReader = await StdinPipeReader.create();
       const pipedProcessInstanceIds = stdinPipeReader.getPipedProcessInstanceIds();
       const pipedProcessModelIds = stdinPipeReader.getPipedProcessModelIds();

@@ -17,7 +17,7 @@ export function logMultiline(text: string): void {
   console.log(removeMultilineIndent(text));
 }
 
-function removeMultilineIndent(text: string): string {
+export function removeMultilineIndent(text: string): string {
   const lines = text.split('\n');
   const firstLine = lines[0] === '' ? lines[1] : lines[0];
   const indent = firstLine.length - firstLine.trimLeft().length;
