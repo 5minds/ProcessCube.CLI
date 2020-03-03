@@ -41,7 +41,7 @@ program
     ['status', 'st'],
     'prints status of the current session',
     (yargs) => {
-      yargs.epilog(
+      return yargs.epilog(
         removeMultilineIndent(`
         Examples:
 
@@ -58,7 +58,7 @@ program
     'login [engine_url]',
     'log in to the given engine',
     (yargs) => {
-      yargs
+      return yargs
         .positional('engine_url', {
           description: 'url of engine to connect to',
           type: 'string'
@@ -90,7 +90,7 @@ program
     'logout',
     'log out from the current session',
     (yargs) => {
-      yargs.epilog(
+      return yargs.epilog(
         removeMultilineIndent(`
         Examples:
 
@@ -107,7 +107,7 @@ program
     ['deploy-files [FILENAMES...]', 'deploy [FILENAMES...]'],
     'deploy process models to the engine',
     (yargs) => {
-      yargs
+      return yargs
         .positional('filenames', {
           description: 'files to deploy'
         })
@@ -137,7 +137,7 @@ program
     'remove [PROCESS_MODEL_IDS...]',
     'remove deployed process models from the engine',
     (yargs) => {
-      yargs
+      return yargs
         .positional('process_model_ids', {
           description: 'ids of process models to remove'
         })
@@ -171,7 +171,7 @@ program
     ['start-process-model <PROCESS_MODEL_ID> <START_EVENT_ID>', 'start <PROCESS_MODEL_ID> <START_EVENT_ID>'],
     'starts an instance of the deployed process models',
     (yargs) => {
-      yargs
+      return yargs
         .positional('PROCESS_MODEL_ID', {
           description: 'id of process model to start',
           type: 'string'
@@ -255,7 +255,7 @@ program
     ['stop-process-instance [PROCESS_INSTANCE_IDS...]', 'stop [PROCESS_INSTANCE_IDS...]'],
     'stops instances with the given process instance ids',
     (yargs) => {
-      yargs
+      return yargs
         .positional('process_instance_ids', {
           description: 'ids of process instances to stop'
         })
@@ -284,7 +284,7 @@ program
     ['show-process-instance [PROCESS_INSTANCE_IDS...]', 'show'],
     'shows instances with the given process instance ids',
     (yargs) => {
-      yargs
+      return yargs
         .positional('process_instance_ids', {
           description: 'ids of process instances to show'
         })
@@ -322,7 +322,7 @@ program
     'retry [PROCESS_INSTANCE_IDS...]',
     'restarts failed instances with the given process instance ids',
     (yargs) => {
-      yargs
+      return yargs
         .positional('process_instance_ids', {
           description: 'ids of process instances to restart'
         })
@@ -338,7 +338,7 @@ program
     ['list-process-models', 'lsp'],
     'list process models',
     (yargs) => {
-      yargs
+      return yargs
         .option('--filter-by-id', {
           description: 'Filter process models by <PATTERN> (supports regular expressions)',
           type: 'array',
@@ -379,7 +379,7 @@ program
     ['list-process-instances', 'lsi'],
     'list process instances',
     (yargs) => {
-      yargs
+      return yargs
         .option('created-after', {
           description: 'Only include process instances created after <DATETIME>',
           type: 'string'
