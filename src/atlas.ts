@@ -470,9 +470,9 @@ program
                                           --reject-by-process-model-id "Internal" \\
                                           --filter-by-state error \\
                                           --filter-by-state running \\
-                                          --sort-by-process-model-id ASC \\
-                                          --sort-by-state DESC \\
-                                          --sort-by-created-at ASC
+                                          --sort-by-process-model-id asc \\
+                                          --sort-by-state desc \\
+                                          --sort-by-created-at asc
 
             The above lists all process instances from January 2020, which were started from a process model
             whose name contains the prefix "Registration.", but does not contain the word "Internal", and either
