@@ -53,11 +53,17 @@ export class StdinPipeReader {
     }
 
     const content = await this.readPipedDataIfAny();
+    if (content === '') {
+      this.pipedData = null;
+      return;
+    }
 
     try {
       this.pipedData = JSON.parse(content);
     } catch (error) {
-      console.error(chalk.red('Could not parse piped JSON from STDIN. Aborting.'));
+      console.error(chalk.red('Could not parse piped JSON from STDIN\n'));
+      console.dir(content);
+      console.error(chalk.red('\nAborting.'));
       process.exit(1);
     }
   }

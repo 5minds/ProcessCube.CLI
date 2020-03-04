@@ -16,6 +16,7 @@ jobs:
         image: 5minds/process_engine_runtime:9.4.1
         ports:
         - 8000:8000
+        options: --health-cmd true --health-interval 10s --health-timeout 5s --health-retries 5
 
     steps:
     - uses: actions/checkout@v1
@@ -36,7 +37,7 @@ jobs:
       run: npm run build
 
     - name: 'Run unit tests'
-      run: npm test:unit
+      run: npm run test:unit
 
     - name: 'Run smoke tests'
       run: ./test/integration/smoke.test.sh
