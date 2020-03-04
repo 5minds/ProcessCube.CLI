@@ -138,7 +138,7 @@ program
   )
 
   .command(
-    'remove [process_model_ids...]',
+    ['remove-process-models [process_model_ids...]', 'remove [process_model_ids...]'],
     'Remove deployed process models from the engine',
     (yargs) => {
       return yargs
