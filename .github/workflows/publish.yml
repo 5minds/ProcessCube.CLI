@@ -11,6 +11,13 @@ jobs:
   build_test_and_publish_linux:
     runs-on: ubuntu-latest
 
+    services:
+      process_engine:
+        image: 5minds/process_engine_runtime:9.4.1
+        ports:
+        - 8000:8000
+        options: --health-cmd "curl -sSf http://localhost:8000" --health-interval 10s --health-timeout 5s --health-retries 5
+
     steps:
     - uses: actions/checkout@v1
 
@@ -29,8 +36,11 @@ jobs:
     - name: 'Build sources'
       run: npm run build
 
-    - name: 'Run tests'
-      run: npm test
+    - name: 'Run unit tests'
+      run: npm test:unit
+
+    - name: 'Run smoke tests'
+      run: ./test/integration/smoke.test.sh
 
     - name: 'Lint sources'
       run: npm run lint

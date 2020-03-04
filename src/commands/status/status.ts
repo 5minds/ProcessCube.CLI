@@ -15,7 +15,7 @@ export async function printSessionStatus(outputFormat: string): Promise<void> {
 
   switch (outputFormat) {
     case OUTPUT_FORMAT_JSON:
-      console.dir(sanitizeSensibleInformation(session), { depth: null });
+      console.log(JSON.stringify(sanitizeSensibleInformation(session), null, 2));
       break;
     case OUTPUT_FORMAT_TEXT:
       log(session);
