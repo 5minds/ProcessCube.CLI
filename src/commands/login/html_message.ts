@@ -92,13 +92,13 @@ ${terminalCode
       }
 
       pre {
-        background: #262822;
-        color: #f5f5f5;
         padding: 0 1.5rem;
-        border-radius: 0.5rem;
         font-size: 1.125rem;
         margin: 0;
         margin-top: 0.5rem;
+        border-radius: 0.5rem;
+        background: #262822;
+        color: #f5f5f5;
       }
 
       .comment {

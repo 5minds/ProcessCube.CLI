@@ -72,7 +72,7 @@ export class ApiClient {
       const callbackType = waitForProcessToFinish
         ? DataModels.ProcessModels.StartCallbackType.CallbackOnProcessInstanceFinished
         : DataModels.ProcessModels.StartCallbackType.CallbackOnProcessInstanceCreated;
-      const result = await this.managementApiClient.startProcessInstance(
+      const response = await this.managementApiClient.startProcessInstance(
         this.identity,
         processModelId,
         payload,
@@ -80,18 +80,50 @@ export class ApiClient {
         startEventId
       );
 
-      return {
+      const result: StartedProcessModelInfo = {
         success: true,
         processModelId: processModelId,
         startEventId: startEventId,
-        processInstanceId: result.processInstanceId,
-        correlationId: result.correlationId,
+        processInstanceId: response.processInstanceId,
+        correlationId: response.correlationId,
         inputValues: payload.inputValues,
-        endEventId: result.endEventId
+        endEventId: response.endEventId
       };
+
+      if (waitForProcessToFinish === true) {
+        const tokenHistoryGroup = await this.managementApiClient.getTokensForProcessInstance(
+          this.identity,
+          response.processInstanceId
+        );
+
+        const token = this.getToken(tokenHistoryGroup, -1, 'onExit');
+
+        return { ...result, payload: token.payload };
+      }
+
+      return result;
     } catch (error) {
       return { success: false, processModelId, startEventId, error };
     }
+  }
+
+  private getToken(
+    tokenHistoryGroup: DataModels.TokenHistory.TokenHistoryGroup,
+    index: number,
+    tokenEventType: string
+  ): any | null {
+    console.dir(tokenHistoryGroup, { depth: null });
+
+    const flowNodeIds = Object.keys(tokenHistoryGroup).reverse();
+    const tokenIndex = index >= 0 ? index : flowNodeIds.length + index;
+    const flowNodeId: string = flowNodeIds[tokenIndex];
+    const token = tokenHistoryGroup[flowNodeId];
+    if (token == null) {
+      return null;
+    }
+    const tokenHistoryEntries = token.tokenHistoryEntries;
+
+    return tokenHistoryEntries.find((entry) => entry.tokenEventType === tokenEventType);
   }
 
   async stopProcessInstance(processInstanceId: string): Promise<StoppedProcessInstanceInfo> {

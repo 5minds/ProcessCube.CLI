@@ -33,14 +33,17 @@
       <bpmn:incoming>SequenceFlow_1ncza35</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1w64v3q</bpmn:outgoing>
       <bpmn:script>var seconds = token.history.StartEvent_1.seconds || 0;
+
 var ms = seconds * 1000;
 var start = new Date().getTime();
-   var end = start;
-   while(end &lt; start + ms) {
-     end = new Date().getTime();
-  }
+var end = start;
+var iterations = 0;
+while(end &lt; start + ms) {
+  iterations++;
+  end = new Date().getTime();
+}
 
-return token.history.StartEvent_1.sleepInSeconds;</bpmn:script>
+return {iterations: iterations};</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:endEvent id="EndEvent_00hkafj" name="End">
       <bpmn:extensionElements>

@@ -48,6 +48,7 @@ type StartedProcessModelInfo_Success = {
   correlationId: string;
   inputValues: any;
   endEventId?: string;
+  payload?: any;
 };
 
 type StartedProcessModelInfo_Failure = {
