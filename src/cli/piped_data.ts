@@ -63,7 +63,7 @@ export class StdinPipeReader {
     } catch (error) {
       console.error(chalk.red('Could not parse piped JSON from STDIN\n'));
       console.dir(content);
-      console.error(chalk.red('\nAborting.'));
+      console.error(chalk.redBright.bold('\nDid you forget to use `--output json` before piping?'));
       process.exit(1);
     }
   }

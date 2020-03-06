@@ -193,10 +193,10 @@ async function logHistory(processInstance: ProcessInstanceWithTokens): Promise<v
     );
     console.log('');
     printMultiLineString(JSON.stringify(lastTokenOnEnter.payload, null, 2), '    ');
-    console.log('');
   }
 
   if (lastTokenOnExit != null) {
+    console.log('');
     console.log(
       'Output',
       chalk.cyanBright(`"${bpmnDocument.getElementNameById(lastTokenOnExit.flowNodeId)}"`),

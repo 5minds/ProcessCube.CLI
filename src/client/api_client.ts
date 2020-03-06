@@ -112,8 +112,6 @@ export class ApiClient {
     index: number,
     tokenEventType: string
   ): any | null {
-    console.dir(tokenHistoryGroup, { depth: null });
-
     const flowNodeIds = Object.keys(tokenHistoryGroup).reverse();
     const tokenIndex = index >= 0 ? index : flowNodeIds.length + index;
     const flowNodeId: string = flowNodeIds[tokenIndex];

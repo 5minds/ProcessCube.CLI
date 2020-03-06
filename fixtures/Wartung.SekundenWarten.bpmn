@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definition_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="1.15.1">
+  <bpmn:collaboration id="Collaboration_1cidyxu" name="">
+    <bpmn:participant id="Participant_0px403d" name="Wartung.SekundenWarten" processRef="Wartung.SekundenWarten">
+      <bpmn:extensionElements>
+        <camunda:executionListener class="" event="" />
+      </bpmn:extensionElements>
+    </bpmn:participant>
+  </bpmn:collaboration>
+  <bpmn:process id="Wartung.SekundenWarten" name="call_activity_subprocess" isExecutable="true">
+    <bpmn:laneSet>
+      <bpmn:lane id="Lane_1xzf0d3" name="Default_Test_Lane">
+        <bpmn:extensionElements>
+          <camunda:executionListener class="" event="" />
+        </bpmn:extensionElements>
+        <bpmn:flowNodeRef>StartEvent_1</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Task_1izpajn</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>EndEvent_00hkafj</bpmn:flowNodeRef>
+      </bpmn:lane>
+    </bpmn:laneSet>
+    <bpmn:sequenceFlow id="SequenceFlow_1ncza35" sourceRef="StartEvent_1" targetRef="Task_1izpajn" />
+    <bpmn:sequenceFlow id="SequenceFlow_1w64v3q" sourceRef="Task_1izpajn" targetRef="EndEvent_00hkafj" />
+    <bpmn:startEvent id="StartEvent_1" name="Prozess-Start">
+      <bpmn:extensionElements>
+        <camunda:executionListener class="" event="" />
+      </bpmn:extensionElements>
+      <bpmn:outgoing>SequenceFlow_1ncza35</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:scriptTask id="Task_1izpajn" name="X Sekunden warten">
+      <bpmn:extensionElements>
+        <camunda:executionListener class="" event="" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_1ncza35</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1w64v3q</bpmn:outgoing>
+      <bpmn:script>var seconds = token.history.StartEvent_1.seconds || 0;
+
+var ms = seconds * 1000;
+var start = new Date().getTime();
+var end = start;
+var iterations = 0;
+while(end &lt; start + ms) {
+  iterations++;
+  end = new Date().getTime();
+}
+
+return {iterations: iterations};</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:endEvent id="EndEvent_00hkafj" name="Sekunden gewartet">
+      <bpmn:extensionElements>
+        <camunda:executionListener class="" event="" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_1w64v3q</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:textAnnotation id="TextAnnotation_1sczo6u">
+      <bpmn:text>StartToken: {
+"seconds": 5
+}</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_0e22aaw" sourceRef="StartEvent_1" targetRef="TextAnnotation_1sczo6u" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_1cidyxu">
+      <bpmndi:BPMNShape id="Participant_0px403d_di" bpmnElement="Participant_0px403d" isHorizontal="true">
+        <dc:Bounds x="5" y="-75" width="361" height="247" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="77" y="65" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="63" y="101" width="67" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_1xzf0d3_di" bpmnElement="Lane_1xzf0d3" isHorizontal="true">
+        <dc:Bounds x="35" y="-75" width="331" height="247" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1ncza35_di" bpmnElement="SequenceFlow_1ncza35">
+        <di:waypoint x="113" y="83" />
+        <di:waypoint x="164" y="83" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="93.5" y="61.5" width="90" height="13" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ScriptTask_1ilrt4l_di" bpmnElement="Task_1izpajn">
+        <dc:Bounds x="164" y="43" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_00hkafj_di" bpmnElement="EndEvent_00hkafj">
+        <dc:Bounds x="310" y="65" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="304" y="104" width="50" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1w64v3q_di" bpmnElement="SequenceFlow_1w64v3q">
+        <di:waypoint x="264" y="83" />
+        <di:waypoint x="310" y="83" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="242" y="61.5" width="90" height="13" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="TextAnnotation_1sczo6u_di" bpmnElement="TextAnnotation_1sczo6u">
+        <dc:Bounds x="113" y="-15" width="100" height="54" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Association_0e22aaw_di" bpmnElement="Association_0e22aaw">
+        <di:waypoint x="107" y="70" />
+        <di:waypoint x="137" y="39" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

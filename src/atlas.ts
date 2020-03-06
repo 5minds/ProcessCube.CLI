@@ -29,6 +29,7 @@ const usageString = (commandName: string, synopsis: string): string => {
 
 program
   .version(VERSION)
+  .scriptName('atlas')
 
   .option('help', {
     alias: 'h',
@@ -40,7 +41,8 @@ program
     alias: 'o',
     description: 'Set output',
     type: 'string',
-    default: OUTPUT_FORMAT_TEXT
+    default: OUTPUT_FORMAT_TEXT,
+    choices: [OUTPUT_FORMAT_TEXT, OUTPUT_FORMAT_JSON]
   })
 
   .command(
@@ -239,7 +241,7 @@ program
 
                 $ atlas start Registration.EmailCoupons StartEvent_1 --input-values-from-file input.json
 
-              $ cat input.json | atlas start Registration.EmailCoupons StartEvent_1s
+                $ cat input.json | atlas start Registration.EmailCoupons StartEvent_1s
           `)
         );
     },
@@ -382,6 +384,7 @@ program
           type: 'array',
           default: []
         })
+        .strict()
 
         .group(['filter-by-id', 'reject-by-id'], heading('FILTERING OPTIONS'))
 
@@ -565,13 +568,6 @@ program
     }
   )
 
-  .fail((message: string, error: Error, yargs) => {
-    if (message.startsWith('Did you mean ')) {
-      logError(message);
-    } else {
-      console.error(chalk.red(message));
-    }
-  })
   .showHelpOnFail(false)
   .usage(
     heading('USAGE') +
