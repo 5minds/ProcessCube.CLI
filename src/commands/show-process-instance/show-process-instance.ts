@@ -5,7 +5,7 @@ import { DataModels } from '@process-engine/management_api_contracts';
 
 import { createResultJson } from '../../cli/result_json';
 import { getIdentityAndManagementApiClient } from '../../client/management_api_client';
-import { loadAtlasSession, AtlasSession } from '../../session/atlas_session';
+import { AtlasSession, loadAtlasSession } from '../../session/atlas_session';
 import { OUTPUT_FORMAT_JSON, OUTPUT_FORMAT_TEXT } from '../../atlas';
 import { BpmnDocument } from '../../cli/bpmn_document';
 import { sortProcessInstances } from '../list-process-instances/sorting';

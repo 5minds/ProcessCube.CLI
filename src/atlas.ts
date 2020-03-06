@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 
+import chalk from 'chalk';
+
 import program = require('yargs');
 
 import { login } from './commands/login/login';
@@ -13,13 +15,17 @@ import { stopProcessInstance } from './commands/stop-process-instance/stop-proce
 import { showProcessInstance } from './commands/show-process-instance/show-process-instance';
 import { deployFiles } from './commands/deploy-files/deploy-files';
 import { removeProcessModels } from './commands/remove-process-models/remove-process-models';
-import { logWarning, formatHelpText, heading } from './cli/logging';
+import { formatHelpText, heading, logError, logWarning } from './cli/logging';
 import { readFileSync } from 'fs';
 
 export const OUTPUT_FORMAT_JSON = 'json';
 export const OUTPUT_FORMAT_TEXT = 'text';
 
 const VERSION = require('../package.json').version;
+
+const usageString = (commandName: string, synopsis: string): string => {
+  return heading('USAGE') + `\n  $0 ${commandName} [options]\n\n` + heading('SYNOPSIS') + `\n  ${synopsis}`;
+};
 
 program
   .version(VERSION)
@@ -41,7 +47,7 @@ program
     ['session-status', 'st'],
     'Show status of the current session',
     (yargs) => {
-      return yargs.epilog(
+      return yargs.usage(usageString('session-status', 'Shows status of the current session.')).epilog(
         formatHelpText(`
           EXAMPLES
 
@@ -59,6 +65,7 @@ program
     'Log in to the given engine',
     (yargs) => {
       return yargs
+        .usage(usageString('login', 'Starts or renews a session with the given engine.'))
         .positional('engine_url', {
           description: 'URL of engine to connect to',
           type: 'string'
@@ -90,7 +97,7 @@ program
     'logout',
     'Log out from the current session',
     (yargs) => {
-      return yargs.epilog(
+      return yargs.usage(usageString('logout', 'Logs out from the current session.')).epilog(
         formatHelpText(`
           EXAMPLES
 
@@ -108,6 +115,7 @@ program
     'Deploy BPMN files to the engine',
     (yargs) => {
       return yargs
+        .usage(usageString('deploy-files', 'Deploys BPMN files to the connected engine.'))
         .positional('filenames', {
           description: 'Files to deploy',
           demandOption: true
@@ -142,6 +150,7 @@ program
     'Remove deployed process models from the engine',
     (yargs) => {
       return yargs
+        .usage(usageString('remove-process-models', 'Removes deployed process models from the connected engine.'))
         .positional('process_model_ids', {
           description: 'Ids of process models to remove'
         })
@@ -179,6 +188,9 @@ program
     'Start an instance of a deployed process model',
     (yargs) => {
       return yargs
+        .usage(
+          usageString('start-process-model', 'Starts an instance of a deployed process model on the connected engine.')
+        )
         .positional('process_model_id', {
           description: 'ID of process model to start',
           type: 'string',
@@ -262,6 +274,12 @@ program
     'Stop instances with the given process instance IDs',
     (yargs) => {
       return yargs
+        .usage(
+          usageString(
+            'stop-process-instance',
+            'Stops instances with the given process instance IDs on the connected engine.'
+          )
+        )
         .positional('process_instance_ids', {
           description: 'IDs of process instances to stop'
         })
@@ -289,6 +307,12 @@ program
     'Show detailed information about individual process instances or correlations',
     (yargs) => {
       return yargs
+        .usage(
+          usageString(
+            'show-process-instance',
+            'Shows detailed information about individual process instances or correlations from the connected engine.'
+          )
+        )
         .positional('process_instance_ids', {
           description: 'IDs of process instances to show'
         })
@@ -324,9 +348,16 @@ program
     'retry [process_instance_ids...]',
     'Restart failed process instances with the given process instance IDs',
     (yargs) => {
-      return yargs.positional('process_instance_ids', {
-        description: 'IDs of process instances to restart'
-      });
+      return yargs
+        .usage(
+          usageString(
+            'retry',
+            'Restarts failed process instances with the given process instance IDs on the connected engine.'
+          )
+        )
+        .positional('process_instance_ids', {
+          description: 'IDs of process instances to restart'
+        });
     },
     (argv) => {
       logWarning('TODO: the engine has to implement this feature');
@@ -338,6 +369,9 @@ program
     'List, sort and filter process models by ID',
     (yargs) => {
       return yargs
+        .usage(
+          usageString('list-process-models', 'Lists, sorts and filters process models by ID from the connected engine.')
+        )
         .option('filter-by-id', {
           description: 'Filter process models by <pattern> (supports regular expressions)',
           type: 'array',
@@ -381,6 +415,12 @@ program
     'List, sort and filter process instances by date, state, process model and/or correlation',
     (yargs) => {
       return yargs
+        .usage(
+          usageString(
+            'list-process-instances',
+            'Lists, sorts and filters process instances by date, state, process model and/or correlation from the connected engine.'
+          )
+        )
         .option('created-after', {
           description: 'Only include process instances created after <datetime>',
           type: 'string'
@@ -525,15 +565,20 @@ program
     }
   )
 
-  .command(
-    ['list-correlations', 'lsc'],
-    'list correlations',
-    (yargs) => {},
-    (argv: any) => {
-      logWarning('TODO: implement me');
+  .fail((message: string, error: Error, yargs) => {
+    if (message.startsWith('Did you mean ')) {
+      logError(message);
+    } else {
+      console.error(chalk.red(message));
     }
+  })
+  .showHelpOnFail(false)
+  .usage(
+    heading('USAGE') +
+      '\n  $0 <command> [options]\n\n' +
+      heading('SYNOPSIS') +
+      '\n  Atlas CLI provides a rich interface to deploy and start process models as well as manage and inspect process instances and correlations for both ProcesEngine and AtlasEngine.'
   )
-
   .locale('en')
   .updateStrings({
     'Commands:': heading('COMMANDS'),
