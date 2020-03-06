@@ -2,6 +2,7 @@
 
 ## Vorbedingungen
 
+* Atlas CLI: `npm install -g @atlas-engine/cli`
 * BPMN Studio: Es muss eine Stable-Version des Studios laufen, das seine interne ProcessEngine erfolgreich auf Port 56000 gestartet hat: http://localhost:56000
 * IdentityServer: Hier sollte man ausgeloggt sein, um den Login-Prozess nachvollziehbar demonstrieren zu können: http://localhost:5000/account/logout
 
