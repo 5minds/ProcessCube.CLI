@@ -144,7 +144,7 @@ Insbesondere die Hilfe zum Kommando `list-process-instances` ist lesenswert.
 atlas list-process-instances --help
 ```
 
-Eine ÜBersicht aller Kommandos findet sich selbstverständlicherweise unter:
+Eine Übersicht aller Kommandos findet sich selbstverständlicherweise unter:
 
 ```shell
 atlas --help
