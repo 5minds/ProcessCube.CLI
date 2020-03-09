@@ -1,11 +1,11 @@
 import chalk from 'chalk';
-import fetch from 'node-fetch';
+import fetch, { FetchError } from 'node-fetch';
 
 import {
+  ANONYMOUS_IDENTITY_SERVER_URL,
   AtlasSession,
-  saveAtlasSession,
   loadAtlasSession,
-  ANONYMOUS_IDENTITY_SERVER_URL
+  saveAtlasSession
 } from '../../session/atlas_session';
 
 import { startServerToLoginAndWaitForAccessTokenFromIdentityServer } from './express_server';
@@ -40,6 +40,11 @@ export async function login(
     console.log(chalk.yellow('Anonymous root login successful. No further steps required.'));
   } else {
     newSession = await loginViaIdentityServer(engineUrl);
+
+    if (newSession == null) {
+      logError(`Could not connect to ${engineUrl}`);
+      process.exit(1);
+    }
   }
   saveAtlasSession(newSession);
 
@@ -63,8 +68,11 @@ async function loginViaAnonymousRootAccess(engineUrl: string): Promise<AtlasSess
   return newSession;
 }
 
-async function loginViaIdentityServer(engineUrl: string): Promise<AtlasSession> {
+async function loginViaIdentityServer(engineUrl: string): Promise<AtlasSession | null> {
   const identityServerUrl = await getIdentityServerUrlForEngine(engineUrl);
+  if (identityServerUrl == null) {
+    return null;
+  }
 
   const { accessToken, idToken, expiresAt } = await startServerToLoginAndWaitForAccessTokenFromIdentityServer(
     identityServerUrl
@@ -86,16 +94,18 @@ async function getIdentityServerUrlForEngine(engineUrl: string): Promise<string>
   let result = null;
 
   try {
-    // const versionResponse = await fetch(`${engineUrl}/process_engine`);
-    // const versionJson = await versionResponse.json();
-    // const version = versionJson.version;
     const authorityResponse = await fetch(`${engineUrl}/process_engine/security/authority`);
     const authorityJson = await authorityResponse.json();
     const authority = authorityJson.authority;
 
     result = authority;
   } catch (error) {
-    console.error(error);
+    switch (error.constructor) {
+      case FetchError:
+        return null;
+      default:
+        console.error(error);
+    }
   }
 
   return result;
