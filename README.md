@@ -32,22 +32,22 @@ Blendet eine Hilfe ein.
 
 ```shell
 $ atlas --help
-atlas.js [command]
+atlas [command]
 
 COMMANDS
 
-  atlas.js session-status                                           Show status of the current session  [aliases: st]
-  atlas.js login [engine_url]                                       Log in to the given engine
-  atlas.js logout                                                   Log out from the current session
-  atlas.js deploy-files [filenames...]                              Deploy BPMN files to the engine  [aliases: deploy]
-  atlas.js remove [process_model_ids...]                            Remove deployed process models from the engine
-  atlas.js start-process-model <process_model_id> <start_event_id>  Start an instance of a deployed process model  [aliases: start]
-  atlas.js stop-process-instance [process_instance_ids...]          Stop instances with the given process instance IDs  [aliases: stop]
-  atlas.js show-process-instance [process_instance_ids...]          Show detailed information about individual process instances or correlations  [aliases: show]
-  atlas.js retry [process_instance_ids...]                          Restart failed process instances with the given process instance IDs
-  atlas.js list-process-models                                      List, sort and filter process models by ID  [aliases: lsp]
-  atlas.js list-process-instances                                   List, sort and filter process instances by date, state, process model and/or correlation  [aliases: lsi]
-  atlas.js list-correlations                                        list correlations  [aliases: lsc]
+  atlas session-status                                           Show status of the current session  [aliases: st]
+  atlas login [engine_url]                                       Log in to the given engine
+  atlas logout                                                   Log out from the current session
+  atlas deploy-files [filenames...]                              Deploy BPMN files to the engine  [aliases: deploy]
+  atlas remove [process_model_ids...]                            Remove deployed process models from the engine
+  atlas start-process-model <process_model_id> <start_event_id>  Start an instance of a deployed process model  [aliases: start]
+  atlas stop-process-instance [process_instance_ids...]          Stop instances with the given process instance IDs  [aliases: stop]
+  atlas show-process-instance [process_instance_ids...]          Show detailed information about individual process instances or correlations  [aliases: show]
+  atlas retry [process_instance_ids...]                          Restart failed process instances with the given process instance IDs
+  atlas list-process-models                                      List, sort and filter process models by ID  [aliases: lsp]
+  atlas list-process-instances                                   List, sort and filter process instances by date, state, process model and/or correlation  [aliases: lsi]
+  atlas list-correlations                                        list correlations  [aliases: lsc]
 
 GENERAL OPTIONS
 
