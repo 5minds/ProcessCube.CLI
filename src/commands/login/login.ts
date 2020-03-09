@@ -8,8 +8,9 @@ import {
   saveAtlasSession
 } from '../../session/atlas_session';
 
+import { isUrlAvailable } from '../../client/is_url_available';
+import { logError, logWarning } from '../../cli/logging';
 import { startServerToLoginAndWaitForAccessTokenFromIdentityServer } from './express_server';
-import { logError } from '../../cli/logging';
 
 const ONE_YEAR_IN_MILLISECONDS = 365 * 86400 * 1000;
 const ANONYMOUS_TOKEN_LIFETIME_IN_MILLISECONDS = 99 * ONE_YEAR_IN_MILLISECONDS;
@@ -29,7 +30,21 @@ export async function login(
     }
 
     engineUrl = oldSession.engineUrl;
-    console.warn(chalk.yellowBright(`Using engine url from previous session: ${engineUrl}`));
+    logWarning(chalk.yellowBright(`Using engine url from previous session: ${engineUrl}`));
+  }
+
+  if (engineUrl.match(/:\/\//) == null) {
+    const isAvailableViaHttps = await isUrlAvailable(`https://${engineUrl}`);
+    if (isAvailableViaHttps) {
+      engineUrl = `https://${engineUrl}`;
+      logWarning(chalk.yellowBright(`No protocol specified, using HTTPS url: ${engineUrl}`));
+    } else {
+      const isAvailableViaHttp = await isUrlAvailable(`http://${engineUrl}`);
+      if (isAvailableViaHttp) {
+        engineUrl = `http://${engineUrl}`;
+        logWarning(chalk.yellowBright(`No protocol specified, using HTTP url: ${engineUrl}`));
+      }
+    }
   }
 
   let newSession: AtlasSession;

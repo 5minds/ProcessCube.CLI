@@ -1,19 +1,21 @@
 import * as express from 'express';
 import open = require('open');
-import { getModalHtml } from '../login/html_message';
 
-export type AccessTokenAndExpiresAt = {
-  accessToken: string;
-  expiresAt: number;
-};
+import { getModalHtml } from '../login/html_message';
+import { isUrlAvailable } from '../../client/is_url_available';
 
 const DEFAULT_PORT = 9000; // 56073;
 
-export function startServerToLogoutAndWaitForSessionEnd(
+export async function startServerToLogoutAndWaitForSessionEnd(
   identityServerUrl: string,
   idToken: string,
   givenPort?: number
-): Promise<AccessTokenAndExpiresAt | null> {
+): Promise<boolean> {
+  const isAvailable = await isUrlAvailable(identityServerUrl);
+  if (isAvailable === false) {
+    return false;
+  }
+
   return new Promise((resolve: Function, reject: Function) => {
     const app = express();
     const port = givenPort ?? DEFAULT_PORT;
