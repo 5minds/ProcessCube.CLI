@@ -1,6 +1,8 @@
 import * as assert from 'assert';
 import { exec } from 'child_process';
 
+import * as JSON5 from 'json5';
+
 const ATLAS_EXECUTABLE = 'node ./dist/atlas.js';
 
 async function execAsJson(cmd: string): Promise<any> {
@@ -9,7 +11,7 @@ async function execAsJson(cmd: string): Promise<any> {
   console.log(`>>> ${output}`);
 
   try {
-    return JSON.parse(output);
+    return JSON5.parse(output);
   } catch (error) {
     assert.ok(false, `Could not parse output from \`${cmd}\` as json:\n\n${output}`);
   }

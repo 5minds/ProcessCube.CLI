@@ -1,4 +1,5 @@
 import chalk from 'chalk';
+import * as JSON5 from 'json5';
 
 export class StdinPipeReader {
   private pipedData: any | null;
@@ -59,7 +60,7 @@ export class StdinPipeReader {
     }
 
     try {
-      this.pipedData = JSON.parse(content);
+      this.pipedData = JSON5.parse(content);
     } catch (error) {
       console.error(chalk.red('Could not parse piped JSON from STDIN\n'));
       console.dir(content);

@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import chalk from 'chalk';
+import * as JSON5 from 'json5';
 
 import program = require('yargs');
 
@@ -15,7 +15,7 @@ import { stopProcessInstance } from './commands/stop-process-instance/stop-proce
 import { showProcessInstance } from './commands/show-process-instance/show-process-instance';
 import { deployFiles } from './commands/deploy-files/deploy-files';
 import { removeProcessModels } from './commands/remove-process-models/remove-process-models';
-import { formatHelpText, heading, logError, logWarning } from './cli/logging';
+import { formatHelpText, heading, logWarning } from './cli/logging';
 import { readFileSync } from 'fs';
 
 export const OUTPUT_FORMAT_JSON = 'json';
@@ -254,10 +254,10 @@ program
       }
       if (argv.inputValuesFromFile != null) {
         const contents = readFileSync(argv.inputValuesFromFile);
-        inputValues = JSON.parse(contents.toString());
+        inputValues = JSON5.parse(contents.toString());
       }
       if (argv.inputValues != null) {
-        inputValues = JSON.parse(argv.inputValues);
+        inputValues = JSON5.parse(argv.inputValues);
       }
 
       await startProcessInstance(

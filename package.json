@@ -29,6 +29,7 @@
     "compare-versions": "^3.4.0",
     "express": "^4.17.1",
     "glob": "^7.1.6",
+    "json5": "^2.1.1",
     "mime-types": "^2.1.18",
     "node-fetch": "^2.6.0",
     "open": "^7.0.2",
