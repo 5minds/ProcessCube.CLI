@@ -8,15 +8,15 @@ import { OUTPUT_FORMAT_JSON, OUTPUT_FORMAT_TEXT } from '../../atlas';
 import { filterProcessModelsById } from '../list-process-models/list-process-models';
 
 import {
+  filterProcessInstancesByProcessModelId,
+  filterProcessInstancesByState,
   filterProcessInstancesDateAfter,
   filterProcessInstancesDateBefore,
-  filterProcessInstancesByProcessModelId,
   rejectProcessInstancesByProcessModelId,
-  rejectProcessInstancesByState,
-  filterProcessInstancesByState
+  rejectProcessInstancesByState
 } from './filtering';
 import { sortProcessInstances } from './sorting';
-import { logError, logNoValidSessionError } from '../../cli/logging';
+import { logError, logJsonResult, logNoValidSessionError } from '../../cli/logging';
 import { ApiClient } from '../../client/api_client';
 
 export type ProcessInstance = DataModels.Correlations.ProcessInstance;
@@ -63,7 +63,7 @@ export async function listProcessInstances(
   const resultJson = createResultJson('process-instances', mapToShort(processInstances));
 
   if (outputFormat === OUTPUT_FORMAT_JSON) {
-    console.log(JSON.stringify(resultJson, null, 2));
+    logJsonResult(resultJson);
   } else if (outputFormat === OUTPUT_FORMAT_TEXT) {
     console.table(processInstances, [
       'createdAt',

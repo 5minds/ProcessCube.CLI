@@ -1,5 +1,9 @@
 import chalk from 'chalk';
 
+export function logJsonResult(result: any): void {
+  console.log(JSON.stringify(result, null, 2));
+}
+
 export function logError(error: string): void {
   console.warn(chalk.redBright.bold(`** (Atlas) ${error}`));
 }

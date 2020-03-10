@@ -3,7 +3,7 @@ import * as yesno from 'yesno';
 import { loadAtlasSession } from '../../session/atlas_session';
 import { createResultJson } from '../../cli/result_json';
 import { OUTPUT_FORMAT_JSON, OUTPUT_FORMAT_TEXT } from '../../atlas';
-import { logError } from '../../cli/logging';
+import { logError, logJsonResult } from '../../cli/logging';
 import { ApiClient } from '../../client/api_client';
 
 export async function removeProcessModels(
@@ -41,7 +41,7 @@ export async function removeProcessModels(
 
   switch (outputFormat) {
     case OUTPUT_FORMAT_JSON:
-      console.log(JSON.stringify(resultJson, null, 2));
+      logJsonResult(resultJson);
       break;
     case OUTPUT_FORMAT_TEXT:
       console.table(results, ['success', 'processModelId', 'error']);

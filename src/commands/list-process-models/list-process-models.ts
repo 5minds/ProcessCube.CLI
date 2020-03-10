@@ -1,7 +1,7 @@
 import { ApiClient } from '../../client/api_client';
 import { createResultJson } from '../../cli/result_json';
 import { loadAtlasSession } from '../../session/atlas_session';
-import { logError } from '../../cli/logging';
+import { logError, logJsonResult } from '../../cli/logging';
 import { toFilterRegexes } from '../../cli/filter_regexes';
 
 import { OUTPUT_FORMAT_JSON, OUTPUT_FORMAT_TEXT } from '../../atlas';
@@ -35,7 +35,7 @@ export async function listProcessModels(
 
   switch (outputFormat) {
     case OUTPUT_FORMAT_JSON:
-      console.log(JSON.stringify(resultJson, null, 2));
+      logJsonResult(resultJson);
       break;
     case OUTPUT_FORMAT_TEXT:
       console.table(resultJson.result, ['id', 'startEventIds']);
