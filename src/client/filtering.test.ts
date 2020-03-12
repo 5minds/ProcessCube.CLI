@@ -1,18 +1,18 @@
 import * as assert from 'assert';
 
-import { filterProcessInstancesByState, filterProcessInstancesByProcessModelId } from './filtering';
+import { filterProcessInstancesByProcessModelId, filterProcessInstancesByState } from './filtering';
 
 import {
-  getMockedProcessInstances,
   PROCESS_A_createdAt_01_error,
   PROCESS_A_createdAt_02_error,
   PROCESS_A_createdAt_03_finished,
   PROCESS_B_createdAt_04_running,
+  PROCESS_B_createdAt_07_finished,
   PROCESS_C_createdAt_05_finished,
   PROCESS_C_createdAt_06_error,
-  PROCESS_B_createdAt_07_finished,
+  getMockedProcessInstances,
   mapIds
-} from './test-mocks.test';
+} from '../commands/list-process-instances/test-mocks.test';
 
 describe('filtering', () => {
   describe('filterProcessInstancesDateBefore()', () => {

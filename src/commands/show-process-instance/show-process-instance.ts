@@ -4,12 +4,12 @@ import * as moment from 'moment';
 import { DataModels } from '@process-engine/management_api_contracts';
 
 import { createResultJson } from '../../cli/result_json';
-import { getIdentityAndManagementApiClient } from '../../client/management_api_client';
-import { AtlasSession, loadAtlasSession } from '../../session/atlas_session';
+import { loadAtlasSession } from '../../session/atlas_session';
 import { OUTPUT_FORMAT_JSON, OUTPUT_FORMAT_TEXT } from '../../atlas';
 import { BpmnDocument } from '../../cli/bpmn_document';
 import { sortProcessInstances } from '../list-process-instances/sorting';
 import { logError } from '../../cli/logging';
+import { ApiClient } from '../../client/api_client';
 
 type ProcessInstance = DataModels.Correlations.ProcessInstance;
 type ProcessInstanceWithTokens = ProcessInstance & {
@@ -27,16 +27,23 @@ export async function showProcessInstance(
     return;
   }
 
+  const apiClient = new ApiClient(session);
+
   let rawProcessInstances: ProcessInstance[] = [];
   if (isCorrelation) {
-    rawProcessInstances = await getAllProcessInstancesViaCorrelations(session, processInstanceOrCorrelationIds);
+    rawProcessInstances = await apiClient.getAllProcessInstancesViaCorrelations(processInstanceOrCorrelationIds);
   } else {
-    rawProcessInstances = await getAllProcessInstancesViaIds(session, processInstanceOrCorrelationIds);
+    if (processInstanceOrCorrelationIds.length === 0) {
+      const latestProcessInstance = await apiClient.getLatestProcessInstance();
+      rawProcessInstances = [latestProcessInstance];
+    } else {
+      rawProcessInstances = await apiClient.getAllProcessInstancesViaIds(processInstanceOrCorrelationIds);
+    }
   }
 
   const sortedProcssInstances = sortProcessInstances(rawProcessInstances, null, null, 'asc');
 
-  const processInstancesWithTokens = await getProcessInstanceWithTokens(session, sortedProcssInstances);
+  const processInstancesWithTokens = await apiClient.addTokensToProcessInstances(sortedProcssInstances);
 
   const resultJson = createResultJson('process-instances', processInstancesWithTokens);
 
@@ -50,7 +57,7 @@ export async function showProcessInstance(
       let index = 0;
       for (const processInstance of processInstancesWithTokens) {
         const showSeparator = multipleInstances && index > 0;
-        await log(processInstance, showSeparator);
+        await logProcessInstanceAsText(processInstance, showSeparator);
         index++;
       }
 
@@ -59,57 +66,7 @@ export async function showProcessInstance(
   }
 }
 
-async function getProcessInstanceWithTokens(
-  session: AtlasSession,
-  rawProcessInstances: ProcessInstance[]
-): Promise<ProcessInstanceWithTokens[]> {
-  const { identity, managementApiClient } = getIdentityAndManagementApiClient(session);
-
-  const processInstancesWithTokens: ProcessInstanceWithTokens[] = [];
-  for (const rawProcessInstance of rawProcessInstances) {
-    const tokens = await managementApiClient.getTokensForProcessInstance(
-      identity,
-      rawProcessInstance.processInstanceId
-    );
-    const processInstance = { ...rawProcessInstance, tokens };
-
-    processInstancesWithTokens.push(processInstance);
-  }
-
-  return processInstancesWithTokens;
-}
-
-async function getAllProcessInstancesViaCorrelations(
-  session: AtlasSession,
-  correlationIds: string[]
-): Promise<ProcessInstance[]> {
-  const { identity, managementApiClient } = getIdentityAndManagementApiClient(session);
-
-  let allProcessInstances = [];
-  for (const correlationId of correlationIds) {
-    const result = await managementApiClient.getProcessInstancesForCorrelation(identity, correlationId);
-    allProcessInstances = allProcessInstances.concat(result.processInstances);
-  }
-
-  return allProcessInstances;
-}
-
-async function getAllProcessInstancesViaIds(
-  session: AtlasSession,
-  processInstanceIds: string[]
-): Promise<ProcessInstance[]> {
-  const { identity, managementApiClient } = getIdentityAndManagementApiClient(session);
-
-  let allProcessInstances = [];
-  for (const processInstanceId of processInstanceIds) {
-    const rawProcessInstance = await managementApiClient.getProcessInstanceById(identity, processInstanceId);
-    allProcessInstances.push(rawProcessInstance);
-  }
-
-  return allProcessInstances;
-}
-
-async function log(processInstance: ProcessInstanceWithTokens, showSeparator: boolean = false) {
+async function logProcessInstanceAsText(processInstance: ProcessInstanceWithTokens, showSeparator: boolean = false) {
   // console.dir(processInstance, { depth: null });
   if (showSeparator) {
     console.log(chalk.cyan('---------------------------------- >8 ---------------------------------------------'));
@@ -151,9 +108,9 @@ async function log(processInstance: ProcessInstanceWithTokens, showSeparator: bo
 
 async function logHistory(processInstance: ProcessInstanceWithTokens): Promise<void> {
   const flowNodeIds = Object.keys(processInstance.tokens).reverse();
-  const firstToken = getToken(processInstance, flowNodeIds[0], 'onEnter');
-  const lastTokenOnExit = getToken(processInstance, flowNodeIds[flowNodeIds.length - 1], 'onExit');
-  const lastTokenOnEnter = getToken(processInstance, flowNodeIds[flowNodeIds.length - 1], 'onEnter');
+  const firstToken = findToken(processInstance, flowNodeIds[0], 'onEnter');
+  const lastTokenOnExit = findToken(processInstance, flowNodeIds[flowNodeIds.length - 1], 'onExit');
+  const lastTokenOnEnter = findToken(processInstance, flowNodeIds[flowNodeIds.length - 1], 'onEnter');
 
   console.log('');
   console.log('--- HISTORY -----------------------------------------------------------------------');
@@ -234,7 +191,7 @@ function stateToColoredString(state: string): string {
   }
 }
 
-function getToken(processInstance: ProcessInstanceWithTokens, flowNodeId: string, tokenEventType: string): any | null {
+function findToken(processInstance: ProcessInstanceWithTokens, flowNodeId: string, tokenEventType: string): any | null {
   const token = processInstance.tokens[flowNodeId];
   if (token == null) {
     return null;
@@ -253,8 +210,8 @@ function getDoneAt(processInstance: ProcessInstanceWithTokens): moment.Moment | 
   const flowNodeIds = Object.keys(processInstance.tokens).reverse();
 
   const lastTokenOnExit =
-    getToken(processInstance, flowNodeIds[flowNodeIds.length - 1], 'onExit') ||
-    getToken(processInstance, flowNodeIds[flowNodeIds.length - 1], 'onEnter');
+    findToken(processInstance, flowNodeIds[flowNodeIds.length - 1], 'onExit') ||
+    findToken(processInstance, flowNodeIds[flowNodeIds.length - 1], 'onEnter');
 
   if (lastTokenOnExit == null) {
     return null;
