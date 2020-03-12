@@ -1,4 +1,8 @@
 import chalk from 'chalk';
+import * as marked from 'marked';
+import { MarkdownRenderer } from './MarkdownRenderer';
+
+const HTML_ENTITY_REGEX = /&(#(?:\d+)|(?:#x[0-9A-Fa-f]+)|(?:\w+));?/gi;
 
 export function logJsonResult(result: any): void {
   console.log(JSON.stringify(result, null, 2));
@@ -32,18 +36,45 @@ export function removeMultilineIndent(text: string): string {
     .trim();
 }
 
-export function heading(text: string) {
+export function padLeftMultiline(text: string, padText: string): string {
+  return text
+    .split('\n')
+    .map((line) => `${padText}${line}`)
+    .join('\n');
+}
+
+export function heading(text: string): string {
   return chalk.bold(`${text}\n`);
 }
 
-export function shellExample(text: string) {
+export function shellExample(text: string): string {
   return chalk.bold(`${text}\n`);
 }
 
 export function formatHelpText(originalText: string): string {
-  let text = removeMultilineIndent(originalText);
+  const text = removeMultilineIndent(originalText);
 
-  return text.replace(/^EXAMPLES\n/, heading('EXAMPLES')).replace(/(\s+)(\$ )(atlas \S+)/gim, (...args) => {
-    return `${args[1]}${chalk.greenBright(args[2])}${args[3]}`;
+  return formatMarkdown(text);
+}
+
+function formatMarkdown(text: string): string {
+  const stillContainingSomeHtml = marked(text, { renderer: new MarkdownRenderer() });
+
+  return unescapeHtmlEntities(stillContainingSomeHtml);
+}
+
+function unescapeHtmlEntities(html: string): string {
+  // explicitly match decimal, hex, and named HTML entities
+  return html.replace(HTML_ENTITY_REGEX, (_, n) => {
+    n = n.toLowerCase();
+    if (n === 'colon') {
+      return ':';
+    }
+    if (n.charAt(0) === '#') {
+      return n.charAt(1) === 'x'
+        ? String.fromCharCode(parseInt(n.substring(2), 16))
+        : String.fromCharCode(+n.substring(1));
+    }
+    return '';
   });
 }

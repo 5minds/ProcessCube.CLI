@@ -51,7 +51,7 @@ program
     (yargs) => {
       return yargs.usage(usageString('session-status', 'Shows status of the current session.')).epilog(
         formatHelpText(`
-          EXAMPLES
+          ## EXAMPLES
 
               $ atlas status
         `)
@@ -67,7 +67,7 @@ program
     'Log in to the given engine',
     (yargs) => {
       return yargs
-        .usage(usageString('login', 'Starts or renews a session with the given engine.'))
+        .usage(usageString('login [engine_url]', 'Starts or renews a session with the given engine.'))
         .positional('engine_url', {
           description: 'URL of engine to connect to',
           type: 'string'
@@ -80,11 +80,11 @@ program
 
         .epilog(
           formatHelpText(`
-            EXAMPLES
+            ## EXAMPLES
 
                 $ atlas login http://localhost:56000
 
-            Engines meant for development are often configured to allow anonymous root access (this is, of course, not recommended for production use!).
+            Engines meant for development can be configured to allow anonymous root access (this is, of course, not recommended for production use!).
 
                 $ atlas login http://localhost:56000 --root
           `)
@@ -101,7 +101,7 @@ program
     (yargs) => {
       return yargs.usage(usageString('logout', 'Logs out from the current session.')).epilog(
         formatHelpText(`
-          EXAMPLES
+          ## EXAMPLES
 
               $ atlas logout
         `)
@@ -117,7 +117,7 @@ program
     'Deploy BPMN files to the engine',
     (yargs) => {
       return yargs
-        .usage(usageString('deploy-files', 'Deploys BPMN files to the connected engine.'))
+        .usage(usageString('deploy-files [filenames...]', 'Deploys BPMN files to the connected engine.'))
         .positional('filenames', {
           description: 'Files to deploy',
           demandOption: true
@@ -125,15 +125,19 @@ program
 
         .epilog(
           formatHelpText(`
-            EXAMPLES
+            ## EXAMPLES
 
-                $ atlas deploy registration_email_coupons.bpmn
+            Deploy a file by giving its filename:
 
-            The commands takes multiple arguments and supports globs:
+                $ atlas deploy-files registration_email_coupons.bpmn
 
-                $ atlas deploy registration_email_coupons.bpmn registration_fraud_detection.bpmn
+            Use multiple arguments to deploy multiple files at once:
 
-                $ atlas deploy *.bpmn
+                $ atlas deploy-files registration_email_coupons.bpmn registration_fraud_detection.bpmn
+
+            Globs such as \`*.bpmn\` are also supported:
+
+                $ atlas deploy-files *.bpmn
           `)
         );
     },
@@ -152,9 +156,14 @@ program
     'Remove deployed process models from the engine',
     (yargs) => {
       return yargs
-        .usage(usageString('remove-process-models', 'Removes deployed process models from the connected engine.'))
+        .usage(
+          usageString(
+            'remove-process-models [process_model_ids...]',
+            'Removes deployed process models from the connected engine.'
+          )
+        )
         .positional('process_model_ids', {
-          description: 'Ids of process models to remove'
+          description: 'IDs of process models to remove'
         })
 
         .option('yes', {
@@ -165,7 +174,7 @@ program
 
         .epilog(
           formatHelpText(`
-            EXAMPLES
+            ## EXAMPLES
 
                 $ atlas remove Registration.EmailCoupons
 
@@ -191,7 +200,10 @@ program
     (yargs) => {
       return yargs
         .usage(
-          usageString('start-process-model', 'Starts an instance of a deployed process model on the connected engine.')
+          usageString(
+            'start-process-model <process_model_id> <start_event_id>',
+            'Starts an instance of a deployed process model on the connected engine.'
+          )
         )
         .positional('process_model_id', {
           description: 'ID of process model to start',
@@ -227,7 +239,7 @@ program
 
         .epilog(
           formatHelpText(`
-            EXAMPLES
+            ## EXAMPLES
 
                 $ atlas start-process-model Registration.EmailCoupons StartEvent_1
 
@@ -278,7 +290,7 @@ program
       return yargs
         .usage(
           usageString(
-            'stop-process-instance',
+            'stop-process-instance [process_instance_ids...]',
             'Stops instances with the given process instance IDs on the connected engine.'
           )
         )
@@ -288,7 +300,7 @@ program
 
         .epilog(
           formatHelpText(`
-            EXAMPLES
+            ## EXAMPLES
 
                 $ atlas stop-process-instance 56a89c11-ee0d-4539-b4cb-84a0339262fd
 
@@ -311,7 +323,7 @@ program
       return yargs
         .usage(
           usageString(
-            'show-process-instance',
+            'show-process-instance [process_instance_ids...]',
             'Shows detailed information about individual process instances or correlations from the connected engine.'
           )
         )
@@ -328,7 +340,7 @@ program
 
         .epilog(
           formatHelpText(`
-            EXAMPLES
+            ## EXAMPLES
 
             To show information about a specific process instance, provide its ID:
 
@@ -363,7 +375,7 @@ program
       return yargs
         .usage(
           usageString(
-            'retry',
+            'retry [process_instance_ids...]',
             'Restarts failed process instances with the given process instance IDs on the connected engine.'
           )
         )
@@ -400,7 +412,7 @@ program
 
         .epilog(
           formatHelpText(`
-            EXAMPLES
+            ## EXAMPLES
 
                 $ atlas list-process-models
 
@@ -502,7 +514,7 @@ program
 
         .epilog(
           formatHelpText(`
-            EXAMPLES
+            ## EXAMPLES
 
                 $ atlas list-process-instances
 
@@ -588,6 +600,7 @@ program
   .locale('en')
   .updateStrings({
     'Commands:': heading('COMMANDS'),
+    'Positionals:': heading('ARGUMENTS'),
     'Options:': heading('GENERAL OPTIONS')
   })
   .wrap(null)
