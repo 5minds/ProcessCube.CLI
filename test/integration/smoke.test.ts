@@ -18,7 +18,7 @@ async function execAsJson(cmd: string): Promise<any> {
 }
 
 async function execAsText(cmd: string): Promise<any> {
-  const output = await sh(`${ATLAS_EXECUTABLE} ${cmd} --output text`);
+  await sh(`${ATLAS_EXECUTABLE} ${cmd} --output text`);
 }
 
 async function sh(cmd: string): Promise<string> {
