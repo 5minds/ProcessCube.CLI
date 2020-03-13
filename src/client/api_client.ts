@@ -198,7 +198,6 @@ export class ApiClient {
   async getAllProcessInstancesViaIds(processInstanceIds: string[]): Promise<ProcessInstance[]> {
     let allProcessInstances = [];
     for (const processInstanceId of processInstanceIds) {
-      console.log(`Trying to get process instance via ID: ${processInstanceId}`);
       const rawProcessInstance = await this.managementApiClient.getProcessInstanceById(
         this.identity,
         processInstanceId

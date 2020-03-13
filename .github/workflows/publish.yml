@@ -39,8 +39,8 @@ jobs:
     - name: 'Run unit tests'
       run: npm run test:unit
 
-    - name: 'Run smoke tests'
-      run: ./test/integration/smoke.test.sh
+    - name: 'Run integration tests'
+      run: npm run test:integration
 
     - name: 'Lint sources'
       run: npm run lint

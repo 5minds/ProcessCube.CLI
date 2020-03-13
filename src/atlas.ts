@@ -6,7 +6,7 @@ import program = require('yargs');
 
 import { login } from './commands/login/login';
 import { logout } from './commands/logout/logout';
-import { printSessionStatus } from './commands/status/status';
+import { printSessionStatus } from './commands/session-status/session-status';
 import { listProcessModels } from './commands/list-process-models/list-process-models';
 import { startProcessInstance } from './commands/start-process-model/start-process-model';
 import { listProcessInstances } from './commands/list-process-instances/list-process-instances';

@@ -8,7 +8,7 @@ import { loadAtlasSession } from '../../session/atlas_session';
 import { OUTPUT_FORMAT_JSON, OUTPUT_FORMAT_TEXT } from '../../atlas';
 import { BpmnDocument } from '../../cli/bpmn_document';
 import { sortProcessInstances } from '../list-process-instances/sorting';
-import { logError } from '../../cli/logging';
+import { logError, logJsonResult } from '../../cli/logging';
 import { ApiClient } from '../../client/api_client';
 
 type ProcessInstance = DataModels.Correlations.ProcessInstance;
@@ -49,7 +49,7 @@ export async function showProcessInstance(
 
   switch (outputFormat) {
     case OUTPUT_FORMAT_JSON:
-      console.dir(resultJson, { depth: null });
+      logJsonResult(resultJson);
       break;
     case OUTPUT_FORMAT_TEXT:
       const multipleInstances = processInstancesWithTokens.length > 1;
@@ -67,7 +67,6 @@ export async function showProcessInstance(
 }
 
 async function logProcessInstanceAsText(processInstance: ProcessInstanceWithTokens, showSeparator: boolean = false) {
-  // console.dir(processInstance, { depth: null });
   if (showSeparator) {
     console.log(chalk.cyan('---------------------------------- >8 ---------------------------------------------'));
   }

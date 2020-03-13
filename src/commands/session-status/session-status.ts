@@ -1,7 +1,7 @@
 import chalk from 'chalk';
 import * as moment from 'moment';
 
-import { loadAtlasSession, AtlasSession } from '../../session/atlas_session';
+import { AtlasSession, loadAtlasSession } from '../../session/atlas_session';
 import { logWarning } from '../../cli/logging';
 
 import { OUTPUT_FORMAT_JSON, OUTPUT_FORMAT_TEXT } from '../../atlas';
@@ -9,7 +9,14 @@ import { OUTPUT_FORMAT_JSON, OUTPUT_FORMAT_TEXT } from '../../atlas';
 export async function printSessionStatus(outputFormat: string): Promise<void> {
   const session = loadAtlasSession(true);
   if (session == null) {
-    logWarning('No session found.');
+    switch (outputFormat) {
+      case OUTPUT_FORMAT_JSON:
+        console.log(JSON.stringify({}, null, 2));
+        break;
+      case OUTPUT_FORMAT_TEXT:
+        logWarning('No session found.');
+        break;
+    }
     return;
   }
 
