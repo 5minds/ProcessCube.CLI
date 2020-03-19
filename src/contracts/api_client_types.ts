@@ -77,3 +77,21 @@ type StoppedProcessInstanceInfo_Failure = {
 
   error: Error;
 };
+
+//
+
+export type RetriedProcessInstanceInfo = RetriedProcessInstanceInfo_Success | RetriedProcessInstanceInfo_Failure;
+
+type RetriedProcessInstanceInfo_Success = {
+  success: true;
+
+  processInstanceId: string;
+};
+
+type RetriedProcessInstanceInfo_Failure = {
+  success: false;
+
+  processInstanceId: string;
+
+  error: Error;
+};

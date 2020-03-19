@@ -1,5 +1,5 @@
 import { DataModels } from '@process-engine/management_api_contracts';
-
+import { AdminDomainHttpClient } from '@atlas-engine/atlas_engine_admin_client';
 import * as fs from 'fs';
 
 import { getIdentityAndManagementApiClient } from './management_api_client';
@@ -32,12 +32,14 @@ type ProcessInstanceWithTokens = ProcessInstance & {
 export class ApiClient {
   private identity: Identity;
   private managementApiClient: ManagementApiClient;
+  private adminDomainHttpClient: AdminDomainHttpClient;
 
   constructor(session: AtlasSession) {
     const { identity, managementApiClient } = getIdentityAndManagementApiClient(session);
 
     this.identity = identity;
     this.managementApiClient = managementApiClient;
+    this.adminDomainHttpClient = new AdminDomainHttpClient(session.engineUrl, this.identity);
   }
 
   async deployFile(filename: string): Promise<DeployedProcessModelInfo> {
@@ -149,6 +151,19 @@ export class ApiClient {
     }
   }
 
+  async retryProcessInstance(processInstanceId: string): Promise<StoppedProcessInstanceInfo> {
+    try {
+      await this.adminDomainHttpClient.processInstances.retryProcessInstance(processInstanceId);
+
+      return {
+        success: true,
+        processInstanceId
+      };
+    } catch (error) {
+      return { success: false, processInstanceId, error };
+    }
+  }
+
   async getProcessModels(offset?: number, limit?: number): Promise<any[]> {
     const result = await this.managementApiClient.getProcessModels(this.identity, offset, limit);
 
@@ -209,7 +224,7 @@ export class ApiClient {
   }
 
   async getLatestProcessInstance(): Promise<ProcessInstance> {
-    const sortByCreatedAtDescFn = (a: ProcessInstance, b: ProcessInstance) => {
+    const sortByCreatedAtDescFn = (a: any, b: any) => {
       if (a.createdAt > b.createdAt) {
         return -1;
       }
@@ -219,11 +234,8 @@ export class ApiClient {
       return 0;
     };
 
-    const correlationResult = await this.managementApiClient.getAllCorrelations(this.identity, 0, 1);
-    if (correlationResult.correlations.length !== 1) {
-      throw new Error(`Unexpected value: Expected to get 1 correlation, got ${correlationResult.correlations.length}`);
-    }
-    const latestCorrelation = correlationResult.correlations[0];
+    const correlationResult = await this.managementApiClient.getAllCorrelations(this.identity);
+    const latestCorrelation = correlationResult.correlations.sort(sortByCreatedAtDescFn)[0];
     const processInstances = latestCorrelation.processInstances;
 
     return processInstances.sort(sortByCreatedAtDescFn)[0];
@@ -261,7 +273,11 @@ export class ApiClient {
 
         allProcessInstances = allProcessInstances.concat(result.processInstances);
       } catch (e) {
-        if (e.message.includes('No ProcessInstances for ProcessModel') || e.message.includes('not found')) {
+        if (
+          e.message.includes('No ProcessInstances for ProcessModel') ||
+          e.message.includes('No ProcessIntances for ProcessModel') ||
+          e.message.includes('not found')
+        ) {
           // OMG, why are we using errors for normal control-flow?
         } else {
           throw e;

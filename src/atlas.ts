@@ -17,6 +17,7 @@ import { deployFiles } from './commands/deploy-files/deploy-files';
 import { removeProcessModels } from './commands/remove-process-models/remove-process-models';
 import { formatHelpText, heading, logWarning } from './cli/logging';
 import { readFileSync } from 'fs';
+import { retryProcessInstance } from './commands/retry-process-instance/retry-process-instance';
 
 export const OUTPUT_FORMAT_JSON = 'json';
 export const OUTPUT_FORMAT_TEXT = 'text';
@@ -346,7 +347,7 @@ program
 
                 $ atlas show-process-instance 56a89c11-ee0d-4539-b4cb-84a0339262fd
 
-            The ID can be omitted  to show the latest process instance that was started:
+            The ID can be omitted to show the latest process instance that was started:
 
                 $ atlas show-process-instance
 
@@ -369,7 +370,7 @@ program
   )
 
   .command(
-    'retry [process_instance_ids...]',
+    ['retry-process-instance [process_instance_ids...]', 'retry'],
     'Restart failed process instances with the given process instance IDs',
     (yargs) => {
       return yargs
@@ -381,10 +382,31 @@ program
         )
         .positional('process_instance_ids', {
           description: 'IDs of process instances to restart'
-        });
+        })
+
+        .epilog(
+          formatHelpText(`
+            ## EXAMPLES
+
+
+            To retry a process instance, simply provide its ID:
+
+                $ atlas retry-process-instance 56a89c11-ee0d-4539-b4cb-84a0339262fd
+
+            Alternatively, use the convenience alias \`retry\`:
+
+                $ atlas retry 56a89c11-ee0d-4539-b4cb-84a0339262fd
+
+            This command will restart that process instance at the task at which it failed, using the same input which caused it to fail the last time.
+            Retrying a process instance this way preserves the original process instance ID.
+          `)
+        );
     },
-    (argv) => {
-      logWarning('TODO: the engine has to implement this feature');
+    async (argv: any) => {
+      const stdinPipeReader = await StdinPipeReader.create();
+      let processInstanceIds = stdinPipeReader.getPipedProcessInstanceIds() || argv.process_instance_ids;
+
+      await retryProcessInstance(processInstanceIds, argv.output);
     }
   )
 

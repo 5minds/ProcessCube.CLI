@@ -100,13 +100,15 @@ async function logProcessInstanceAsText(processInstance: ProcessInstanceWithToke
   console.log('Finished:  ', doneAtFormatted, chalk.dim(durationHint));
   console.log('User:      ', processInstance.identity.userId);
   console.log('State:     ', stateToColoredString(processInstance.state));
+
   await logHistory(processInstance);
+
   logErrorIfAny(processInstance);
   console.log('');
 }
 
 async function logHistory(processInstance: ProcessInstanceWithTokens): Promise<void> {
-  const flowNodeIds = Object.keys(processInstance.tokens).reverse();
+  const flowNodeIds = getFlowNodeIdsInChronologicalOrder(processInstance);
   const firstToken = findToken(processInstance, flowNodeIds[0], 'onEnter');
   const lastTokenOnExit = findToken(processInstance, flowNodeIds[flowNodeIds.length - 1], 'onExit');
   const lastTokenOnEnter = findToken(processInstance, flowNodeIds[flowNodeIds.length - 1], 'onEnter');
@@ -125,7 +127,8 @@ async function logHistory(processInstance: ProcessInstanceWithTokens): Promise<v
     const prefix = index === 0 ? '    ' : '    -> ';
     const name = bpmnDocument.getElementNameById(flowNodeId);
     const idHint = chalk.dim(`(${flowNodeId})`);
-    const suffix = index === lastIndex && processInstance.error != null ? chalk.redBright(' [error, see below]') : '';
+    const suffix =
+      index === lastIndex && processInstance.state === 'error' ? chalk.redBright(' [error, see below]') : '';
     console.log(`${prefix}"${name}" ${idHint}${suffix}`);
   });
 
@@ -163,8 +166,28 @@ async function logHistory(processInstance: ProcessInstanceWithTokens): Promise<v
   }
 }
 
+function getFlowNodeIdsInChronologicalOrder(processInstance: ProcessInstanceWithTokens): string[] {
+  const tokens = processInstance.tokens;
+  const flowNodeIds = Object.keys(tokens);
+
+  const sortFlowNodeIdsChronologically = (a: string, b: string) => {
+    const createdAtA = tokens[a].tokenHistoryEntries[0]?.createdAt;
+    const createdAtB = tokens[b].tokenHistoryEntries[0]?.createdAt;
+
+    if (createdAtA < createdAtB) {
+      return -1;
+    }
+    if (createdAtA > createdAtB) {
+      return 1;
+    }
+    return 0;
+  };
+
+  return flowNodeIds.sort(sortFlowNodeIdsChronologically);
+}
+
 function logErrorIfAny(processInstance: ProcessInstanceWithTokens): void {
-  if (processInstance.error != null) {
+  if (processInstance.state === 'error') {
     // it seems error contains more info than is mentioned in the types
     const error = processInstance.error as any;
     console.log('');
