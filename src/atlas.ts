@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 import * as JSON5 from 'json5';
+import 'reflect-metadata';
 
 import program = require('yargs');
 

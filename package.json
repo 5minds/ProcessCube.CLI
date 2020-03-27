@@ -36,6 +36,7 @@
     "node-fetch": "^2.6.0",
     "open": "^7.0.2",
     "os": "^0.1.1",
+    "reflect-metadata": "^0.1.13",
     "shelljs": "^0.8.3",
     "yargs": "^15.1.0",
     "yesno": "^0.3.1"
