@@ -15,12 +15,16 @@ describe('atlas', () => {
 
     execAsJson('list-process-instances');
 
+    execAsJson('list-process-instances --all-fields');
+
     execAsJson(`stop-process-instance ${processInstanceId}`);
 
     execAsJson(`show-process-instance ${processInstanceId}`);
 
     const processModelResult = execAsJson('list-process-models');
     assert.ok(processModelResult.result.length > 0, 'There should be process models.');
+
+    execAsJson('list-process-models --all-fields');
 
     execAsJson('remove wait_demo --yes');
 
@@ -48,11 +52,15 @@ describe('atlas', () => {
 
     execAsText('list-process-instances');
 
+    execAsText('list-process-instances --all-fields');
+
     execAsText(`stop-process-instance ${processInstanceId}`);
 
     execAsText(`show-process-instance ${processInstanceId}`);
 
     execAsText('list-process-models');
+
+    execAsText('list-process-models --all-fields');
 
     execAsText('remove wait_demo --yes');
 
