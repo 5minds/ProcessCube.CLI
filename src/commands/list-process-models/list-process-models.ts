@@ -10,6 +10,7 @@ export async function listProcessModels(
   pipedProcessModelIds: string[] | null,
   filterById: string[],
   rejectById: string[],
+  showAllFields: boolean,
   outputFormat: string
 ) {
   const session = loadAtlasSession();
@@ -31,7 +32,14 @@ export async function listProcessModels(
 
   const processModels = rejectProcessModelsById(filteredProcessModels, rejectById);
 
-  const resultJson = createResultJson('process-models', mapToShort(processModels));
+  let resultProcessModels;
+  if (showAllFields) {
+    resultProcessModels = mapToLong(processModels);
+  } else {
+    resultProcessModels = mapToShort(processModels);
+  }
+
+  const resultJson = createResultJson('process-models', resultProcessModels);
 
   switch (outputFormat) {
     case OUTPUT_FORMAT_JSON:
@@ -69,8 +77,18 @@ export function rejectProcessModelsById(processModels: any[], rejectById: string
   });
 }
 
-function mapToShort(list: any): string[] {
+function mapToShort(list: any): any[] {
+  return addStartEventIds(list).map((model: any) => {
+    return { ...model, xml: '...' };
+  });
+}
+
+function mapToLong(list: any): any[] {
+  return addStartEventIds(list);
+}
+
+function addStartEventIds(list: any): any[] {
   return list.map((model: any) => {
-    return { ...model, xml: '...', startEventIds: model.startEvents.map((event: any) => event.id) };
+    return { ...model, startEventIds: model.startEvents.map((event: any) => event.id) };
   });
 }

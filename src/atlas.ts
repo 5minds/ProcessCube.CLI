@@ -428,6 +428,12 @@ program
           type: 'array',
           default: []
         })
+        .option('all-fields', {
+          alias: 'F',
+          description: 'Show all fields',
+          type: 'boolean',
+          default: false
+        })
         .strict()
 
         .group(['filter-by-id', 'reject-by-id'], heading('FILTERING OPTIONS'))
@@ -453,7 +459,7 @@ program
       const pipedProcessModelIds =
         stdinPipeReader.getPipedProcessModelIds() || stdinPipeReader.getPipedProcessModelIdsInProcessInstances();
 
-      listProcessModels(pipedProcessModelIds, argv.filterById, argv.rejectById, argv.output);
+      listProcessModels(pipedProcessModelIds, argv.filterById, argv.rejectById, argv.allFields, argv.output);
     }
   )
 
