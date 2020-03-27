@@ -24,6 +24,7 @@ export async function listProcessInstances(
   sortByState: string,
   sortByCreatedAt: string,
   limit: number,
+  showAllFields: boolean,
   outputFormat: string
 ) {
   const session = loadAtlasSession();
@@ -49,7 +50,14 @@ export async function listProcessInstances(
     limit
   );
 
-  const resultJson = createResultJson('process-instances', mapToShort(processInstances));
+  let resultProcessInstances;
+  if (showAllFields) {
+    resultProcessInstances = mapToLong(processInstances);
+  } else {
+    resultProcessInstances = mapToShort(processInstances);
+  }
+
+  const resultJson = createResultJson('process-instances', resultProcessInstances);
 
   if (outputFormat === OUTPUT_FORMAT_JSON) {
     logJsonResult(resultJson);
@@ -117,8 +125,14 @@ async function getProcessInstances(
   return processInstances;
 }
 
-function mapToShort(list: any): string[] {
+function mapToLong(list: any): any[] {
+  return list;
+}
+
+function mapToShort(list: any): any[] {
   return list.map((processInstance: any) => {
-    return { ...processInstance, xml: '...', identity: '...' };
+    const identity = { ...processInstance.identity, token: '...' };
+
+    return { ...processInstance, xml: '...', identity: identity };
   });
 }

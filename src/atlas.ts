@@ -526,6 +526,12 @@ program
           description: 'List a maximum of <limit> process instances',
           type: 'number'
         })
+        .option('all-fields', {
+          alias: 'F',
+          description: 'Show all fields',
+          type: 'boolean',
+          default: false
+        })
         .group(
           [
             'created-after',
@@ -613,6 +619,7 @@ program
         sortByState,
         sortByCreatedAt,
         argv.limit,
+        argv.allFields,
         argv.output
       );
     }
