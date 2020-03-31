@@ -7,7 +7,7 @@ import { OUTPUT_FORMAT_JSON, OUTPUT_FORMAT_TEXT } from '../../atlas';
 
 export async function startProcessInstance(
   processModelId: string,
-  startEventId: string,
+  givenStartEventId: string,
   correlationId: string,
   inputValues: any,
   waitForProcessToFinish: boolean,
@@ -20,6 +20,16 @@ export async function startProcessInstance(
   }
 
   const apiClient = new ApiClient(session);
+
+  let startEventId: string = givenStartEventId;
+  if (startEventId == null) {
+    startEventId = await getSingleStartEventIdOrNull(apiClient, processModelId);
+
+    if (startEventId == null) {
+      logError('You have to specific a start event, since there is more than one.');
+      process.exit(1);
+    }
+  }
 
   const startRequestPayload = { correlationId, inputValues };
   const processInstance = await apiClient.startProcessModel(
@@ -47,4 +57,14 @@ export async function startProcessInstance(
       ]);
       break;
   }
+}
+
+async function getSingleStartEventIdOrNull(apiClient: ApiClient, processModelId: string): Promise<string | null> {
+  const processModels = await apiClient.getProcessModelsByIds([processModelId]);
+  const processModel = processModels[0];
+  if (processModel.startEvents.length === 1) {
+    return processModel.startEvents[0].id;
+  }
+
+  return null;
 }
