@@ -9,6 +9,8 @@ const AUTO_GENERATED_FROM_A_MARKDOWN_FILE =
 `
 ## EXAMPLES
 
+To list all process instances of a connected engine, simply type:
+
     $ atlas list-process-instances
 
 Filtering by date:

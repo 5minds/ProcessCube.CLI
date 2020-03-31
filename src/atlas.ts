@@ -16,7 +16,7 @@ import { stopProcessInstance } from './commands/stop-process-instance/stop-proce
 import { showProcessInstance } from './commands/show-process-instance/show-process-instance';
 import { deployFiles } from './commands/deploy-files/deploy-files';
 import { removeProcessModels } from './commands/remove-process-models/remove-process-models';
-import { formatHelpText, heading, logWarning } from './cli/logging';
+import { formatHelpText, heading } from './cli/logging';
 import { readFileSync } from 'fs';
 import { retryProcessInstance } from './commands/retry-process-instance/retry-process-instance';
 
@@ -334,6 +334,7 @@ program
         })
         .strict()
         .group(['filter-by-id', 'reject-by-id'], heading('FILTERING OPTIONS'))
+        .group(['all-fields', 'output'], heading('OUTPUT OPTIONS'))
         .epilog(formatHelpText(epilogSnippetListProcessModels));
     },
     async (argv: any) => {
@@ -427,6 +428,7 @@ program
           heading('FILTERING OPTIONS')
         )
         .group(['sort-by-created-at', 'sort-by-process-model-id', 'sort-by-state', 'limit'], heading('SORTING OPTIONS'))
+        .group(['all-fields', 'output'], heading('OUTPUT OPTIONS'))
         .epilog(formatHelpText(epilogSnippetListProcessInstances));
     },
     async (argv: any) => {

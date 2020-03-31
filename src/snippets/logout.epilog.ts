@@ -9,6 +9,8 @@ const AUTO_GENERATED_FROM_A_MARKDOWN_FILE =
 `
 ## EXAMPLES
 
+Logging out is simple:
+
     $ atlas logout
 `;
 //

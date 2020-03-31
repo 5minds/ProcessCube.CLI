@@ -1,5 +1,7 @@
 ## EXAMPLES
 
+To list all process instances of a connected engine, simply type:
+
     $ atlas list-process-instances
 
 Filtering by date:

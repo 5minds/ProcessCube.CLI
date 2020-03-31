@@ -9,6 +9,8 @@ const AUTO_GENERATED_FROM_A_MARKDOWN_FILE =
 `
 ## EXAMPLES
 
+To display the current session status:
+
     $ atlas session-status
 `;
 //
