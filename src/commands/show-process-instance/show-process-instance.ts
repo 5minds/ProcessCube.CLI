@@ -3,7 +3,7 @@ import * as moment from 'moment';
 
 import { DataModels } from '@process-engine/management_api_contracts';
 
-import { createResultJson } from '../../cli/result_json';
+import { addJsonPipingHintToResultJson, createResultJson } from '../../cli/result_json';
 import { loadAtlasSession } from '../../session/atlas_session';
 import { OUTPUT_FORMAT_JSON, OUTPUT_FORMAT_TEXT } from '../../atlas';
 import { BpmnDocument } from '../../cli/bpmn_document';
@@ -45,7 +45,8 @@ export async function showProcessInstance(
 
   const processInstancesWithTokens = await apiClient.addTokensToProcessInstances(sortedProcssInstances);
 
-  const resultJson = createResultJson('process-instances', processInstancesWithTokens);
+  let resultJson = createResultJson('process-instances', processInstancesWithTokens);
+  resultJson = addJsonPipingHintToResultJson(resultJson);
 
   switch (outputFormat) {
     case OUTPUT_FORMAT_JSON:
@@ -61,7 +62,6 @@ export async function showProcessInstance(
         index++;
       }
 
-      // console.table(processInstances, ['createdAt', 'finishedAt', 'processModelId', 'processInstanceId', 'state']);
       break;
   }
 }

@@ -4,7 +4,7 @@ import * as glob from 'glob';
 import { DeployedProcessModelInfo } from '../../contracts/api_client_types';
 
 import { ApiClient } from '../../client/api_client';
-import { createResultJson } from '../../cli/result_json';
+import { addJsonPipingHintToResultJson, createResultJson } from '../../cli/result_json';
 import { loadAtlasSession } from '../../session/atlas_session';
 import { logError, logJsonResult } from '../../cli/logging';
 import { OUTPUT_FORMAT_JSON, OUTPUT_FORMAT_TEXT } from '../../atlas';
@@ -31,7 +31,8 @@ export async function deployFiles(globPatterns: string[], outputFormat: string):
 
   const anyFailure = results.some((result) => result.success === false);
 
-  const resultJson = createResultJson('deployed-files', results);
+  let resultJson = createResultJson('deployed-files', results);
+  resultJson = addJsonPipingHintToResultJson(resultJson);
 
   switch (outputFormat) {
     case OUTPUT_FORMAT_JSON:

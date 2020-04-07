@@ -1,5 +1,5 @@
 import { ApiClient } from '../../client/api_client';
-import { createResultJson } from '../../cli/result_json';
+import { addJsonPipingHintToResultJson, createResultJson } from '../../cli/result_json';
 import { loadAtlasSession } from '../../session/atlas_session';
 import { logError, logJsonResult } from '../../cli/logging';
 
@@ -21,7 +21,8 @@ export async function stopProcessInstance(processInstanceIds: string[], outputFo
     results.push(result);
   }
 
-  const resultJson = createResultJson('process-instances', results);
+  let resultJson = createResultJson('process-instances', results);
+  resultJson = addJsonPipingHintToResultJson(resultJson);
 
   switch (outputFormat) {
     case OUTPUT_FORMAT_JSON:

@@ -2,7 +2,7 @@ import { DataModels } from '@process-engine/management_api_contracts';
 
 import { ApiClient } from '../../client/api_client';
 import { AtlasSession, loadAtlasSession } from '../../session/atlas_session';
-import { createResultJson } from '../../cli/result_json';
+import { addJsonPipingHintToResultJson, createResultJson } from '../../cli/result_json';
 import { filterProcessInstancesDateAfter, filterProcessInstancesDateBefore } from '../../client/filtering';
 import { logJsonResult, logNoValidSessionError } from '../../cli/logging';
 import { OUTPUT_FORMAT_JSON, OUTPUT_FORMAT_TEXT } from '../../atlas';
@@ -50,14 +50,15 @@ export async function listProcessInstances(
     limit
   );
 
-  let resultProcessInstances;
+  let resultProcessInstances: any[];
   if (showAllFields) {
     resultProcessInstances = mapToLong(processInstances);
   } else {
     resultProcessInstances = mapToShort(processInstances);
   }
 
-  const resultJson = createResultJson('process-instances', resultProcessInstances);
+  let resultJson = createResultJson('process-instances', resultProcessInstances);
+  resultJson = addJsonPipingHintToResultJson(resultJson);
 
   if (outputFormat === OUTPUT_FORMAT_JSON) {
     logJsonResult(resultJson);

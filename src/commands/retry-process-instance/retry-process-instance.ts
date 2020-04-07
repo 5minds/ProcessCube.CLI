@@ -1,6 +1,6 @@
 import { RetriedProcessInstanceInfo } from '../../contracts/api_client_types';
 
-import { createResultJson } from '../../cli/result_json';
+import { addJsonPipingHintToResultJson, createResultJson } from '../../cli/result_json';
 import { loadAtlasSession } from '../../session/atlas_session';
 import { OUTPUT_FORMAT_JSON, OUTPUT_FORMAT_TEXT } from '../../atlas';
 import { logError, logJsonResult } from '../../cli/logging';
@@ -21,7 +21,8 @@ export async function retryProcessInstance(processInstanceIds: string[], outputF
     results.push(result);
   }
 
-  const resultJson = createResultJson('process-instances', results);
+  let resultJson = createResultJson('process-instances', results);
+  resultJson = addJsonPipingHintToResultJson(resultJson);
 
   switch (outputFormat) {
     case OUTPUT_FORMAT_JSON:
