@@ -6,7 +6,8 @@ import { logError, logJsonResult } from '../../cli/logging';
 import { OUTPUT_FORMAT_JSON, OUTPUT_FORMAT_TEXT } from '../../atlas';
 
 export async function startProcessInstance(
-  processModelId: string,
+  pipedProcessModelIds: string[] | null,
+  givenProcessModelId: string,
   givenStartEventId: string,
   correlationId: string,
   inputValues: any,
@@ -16,6 +17,12 @@ export async function startProcessInstance(
   const session = loadAtlasSession();
   if (session == null) {
     logError('No session found. Aborting.');
+    return;
+  }
+
+  let processModelId: string = Array.isArray(pipedProcessModelIds) ? pipedProcessModelIds[0] : givenProcessModelId;
+  if (processModelId == null) {
+    logError('No argument `process_model_id`. Aborting.');
     return;
   }
 

@@ -160,20 +160,19 @@ program
   )
 
   .command(
-    ['start-process-model <process_model_id> [start_event_id]', 'start <process_model_id> [start_event_id]'],
+    ['start-process-model [process_model_id] [start_event_id]', 'start [process_model_id] [start_event_id]'],
     'Start an instance of a deployed process model',
     (yargs) => {
       return yargs
         .usage(
           usageString(
-            'start-process-model <process_model_id> [start_event_id]',
+            'start-process-model [process_model_id] [start_event_id]',
             'Starts an instance of a deployed process model on the connected engine.'
           )
         )
         .positional('process_model_id', {
           description: 'ID of process model to start',
-          type: 'string',
-          demandOption: true
+          type: 'string'
         })
         .positional('start_event_id', {
           description: 'ID of start event to trigger',
@@ -200,10 +199,13 @@ program
           description: 'Read input values as JSON from <file>',
           type: 'string'
         })
-
         .epilog(formatHelpText(epilogSnippetStartProcessModel));
     },
     async (argv: any) => {
+      const stdinPipeReader = await StdinPipeReader.create();
+      const pipedProcessModelIds =
+        stdinPipeReader.getPipedProcessModelIds() || stdinPipeReader.getPipedProcessModelIdsInDeployedFiles();
+
       let inputValues: any;
 
       if (argv.inputValuesFromStdin === true) {
@@ -219,6 +221,7 @@ program
       }
 
       await startProcessInstance(
+        pipedProcessModelIds,
         argv.process_model_id,
         argv.start_event_id,
         argv.correlationId,
