@@ -20,6 +20,7 @@ import { formatHelpText, heading } from './cli/logging';
 import { readFileSync } from 'fs';
 import { retryProcessInstance } from './commands/retry-process-instance/retry-process-instance';
 
+import epilogSnippetAtlas from './snippets/atlas.epilog';
 import epilogSnippetDeployFiles from './snippets/deploy-files.epilog';
 import epilogSnippetListProcessInstances from './snippets/list-process-instances.epilog';
 import epilogSnippetListProcessModels from './snippets/list-process-models.epilog';
@@ -469,6 +470,7 @@ program
       heading('SYNOPSIS') +
       '\n  Atlas CLI provides a rich interface to deploy and start process models as well as manage and inspect process instances and correlations for both ProcesEngine and AtlasEngine.'
   )
+  .epilog(formatHelpText(epilogSnippetAtlas))
   .locale('en')
   .updateStrings({
     'Commands:': heading('COMMANDS'),
