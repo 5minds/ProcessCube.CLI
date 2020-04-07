@@ -19,6 +19,7 @@ type ProcessInstanceWithTokens = ProcessInstance & {
 export async function showProcessInstance(
   processInstanceOrCorrelationIds: string[],
   isCorrelation: boolean,
+  showAllFields: boolean,
   outputFormat: string
 ): Promise<void> {
   const session = loadAtlasSession();
@@ -42,10 +43,16 @@ export async function showProcessInstance(
   }
 
   const sortedProcssInstances = sortProcessInstances(rawProcessInstances, null, null, 'asc');
-
   const processInstancesWithTokens = await apiClient.addTokensToProcessInstances(sortedProcssInstances);
 
-  let resultJson = createResultJson('process-instances', processInstancesWithTokens);
+  let resultProcessInstances: any[];
+  if (showAllFields) {
+    resultProcessInstances = mapToLong(processInstancesWithTokens);
+  } else {
+    resultProcessInstances = mapToShort(processInstancesWithTokens);
+  }
+
+  let resultJson = createResultJson('process-instances', resultProcessInstances);
   resultJson = addJsonPipingHintToResultJson(resultJson);
 
   switch (outputFormat) {
@@ -240,4 +247,16 @@ function getDoneAt(processInstance: ProcessInstanceWithTokens): moment.Moment | 
   }
 
   return moment(lastTokenOnExit.createdAt);
+}
+
+function mapToLong(list: any): any[] {
+  return list;
+}
+
+function mapToShort(list: any): any[] {
+  return list.map((processInstance: any) => {
+    const identity = { ...processInstance.identity, token: '...' };
+
+    return { ...processInstance, xml: '...', identity: identity };
+  });
 }

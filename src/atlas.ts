@@ -277,13 +277,19 @@ program
           type: 'boolean',
           default: false
         })
+        .option('all-fields', {
+          alias: 'F',
+          description: 'Show all fields',
+          type: 'boolean',
+          default: false
+        })
         .epilog(formatHelpText(epilogSnippetShowProcessInstance));
     },
     async (argv: any) => {
       const stdinPipeReader = await StdinPipeReader.create();
       let processInstanceIds = stdinPipeReader.getPipedProcessInstanceIds() || argv.process_instance_ids;
 
-      await showProcessInstance(processInstanceIds, argv.correlation, argv.output);
+      await showProcessInstance(processInstanceIds, argv.correlation, argv.allFields, argv.output);
     }
   )
 
