@@ -14,7 +14,7 @@ The resulting JSON can be used to chain commands.
 
 ### Example
 
-Deploy a process model, start it, await its completion and inspect the resulting payload:
+Deploy a process model, start it, await its completion and show the resulting process instance and payload:
 
     $ atlas deploy-files fixtures/Maintenance.ReverseString.bpmn --output json \\
         | atlas start-process-model --wait --output json \\
