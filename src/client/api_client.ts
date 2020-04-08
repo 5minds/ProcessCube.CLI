@@ -1,6 +1,8 @@
+import * as fs from 'fs';
+
+import chalk from 'chalk';
 import { DataModels } from '@process-engine/management_api_contracts';
 import { AdminDomainHttpClient } from '@atlas-engine/atlas_engine_admin_client';
-import * as fs from 'fs';
 
 import { getIdentityAndManagementApiClient } from './management_api_client';
 import { ManagementApiClient } from '@process-engine/management_api_client';
@@ -20,6 +22,8 @@ import {
   rejectProcessInstancesByProcessModelId,
   rejectProcessInstancesByState
 } from './filtering';
+import { logError } from '../cli/logging';
+import { isUrlAvailable } from './is_url_available';
 
 // TODO: missing IIdentity here
 type Identity = any;
@@ -30,11 +34,13 @@ type ProcessInstanceWithTokens = ProcessInstance & {
 };
 
 export class ApiClient {
+  private engineUrl: string;
   private identity: Identity;
   private managementApiClient: ManagementApiClient;
   private adminDomainHttpClient: AdminDomainHttpClient;
 
   constructor(session: AtlasSession) {
+    this.engineUrl = session.engineUrl;
     const { identity, managementApiClient } = getIdentityAndManagementApiClient(session);
 
     this.identity = identity;
@@ -60,6 +66,8 @@ export class ApiClient {
     try {
       await this.managementApiClient.updateProcessDefinitionsByName(this.identity, processModelId, payload);
     } catch (error) {
+      this.warnAndExitIfEnginerUrlNotAvailable();
+
       return { success: false, filename, processModelId, error };
     }
 
@@ -72,6 +80,8 @@ export class ApiClient {
 
       return { success: true, processModelId };
     } catch (error) {
+      this.warnAndExitIfEnginerUrlNotAvailable();
+
       return { success: false, processModelId, error };
     }
   }
@@ -117,6 +127,8 @@ export class ApiClient {
 
       return result;
     } catch (error) {
+      this.warnAndExitIfEnginerUrlNotAvailable();
+
       return { success: false, processModelId, startEventId, error };
     }
   }
@@ -147,6 +159,8 @@ export class ApiClient {
         processInstanceId
       };
     } catch (error) {
+      this.warnAndExitIfEnginerUrlNotAvailable();
+
       return { success: false, processInstanceId, error };
     }
   }
@@ -160,6 +174,8 @@ export class ApiClient {
         processInstanceId
       };
     } catch (error) {
+      this.warnAndExitIfEnginerUrlNotAvailable();
+
       return { success: false, processInstanceId, error };
     }
   }
@@ -184,12 +200,18 @@ export class ApiClient {
     rejectByState: string[]
   ): Promise<ProcessInstance[]> {
     let allProcessInstances: ProcessInstance[];
-    if (filterByCorrelationId.length > 0) {
-      allProcessInstances = await this.getAllProcessInstancesViaCorrelations(filterByCorrelationId);
-    } else if (filterByState.length > 0) {
-      allProcessInstances = await this.getAllProcessInstancesViaState(filterByState);
-    } else {
-      allProcessInstances = await this.getAllProcessInstancesViaAllProcessModels(filterByProcessModelId);
+
+    try {
+      if (filterByCorrelationId.length > 0) {
+        allProcessInstances = await this.getAllProcessInstancesViaCorrelations(filterByCorrelationId);
+      } else if (filterByState.length > 0) {
+        allProcessInstances = await this.getAllProcessInstancesViaState(filterByState);
+      } else {
+        allProcessInstances = await this.getAllProcessInstancesViaAllProcessModels(filterByProcessModelId);
+      }
+    } catch (error) {
+      this.warnAndExitIfEnginerUrlNotAvailable();
+      throw error;
     }
 
     allProcessInstances = filterProcessInstancesByProcessModelId(allProcessInstances, filterByProcessModelId);
@@ -300,5 +322,12 @@ export class ApiClient {
     }
 
     return allProcessInstances;
+  }
+
+  private warnAndExitIfEnginerUrlNotAvailable(): void {
+    if (!isUrlAvailable(this.engineUrl)) {
+      logError(`Could not connect to engine: Please make sure it is running.`);
+      process.exit(1);
+    }
   }
 }
