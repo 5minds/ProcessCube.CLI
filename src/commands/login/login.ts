@@ -9,7 +9,7 @@ import {
 } from '../../session/atlas_session';
 
 import { isUrlAvailable } from '../../client/is_url_available';
-import { logError, logWarning, removeMultilineIndent } from '../../cli/logging';
+import { logError, logWarning } from '../../cli/logging';
 import { startServerToLoginAndWaitForAccessTokenFromIdentityServer } from './express_server';
 
 const ONE_YEAR_IN_MILLISECONDS = 365 * 86400 * 1000;
