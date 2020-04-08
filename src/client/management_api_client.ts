@@ -20,7 +20,7 @@ export function getIdentityAndManagementApiClient(session: AtlasSession): Identi
 
   const identity = {
     // TODO: do we need a user id? what for?
-    userId: 'atlas-cli',
+    userId: session.idToken,
     token: session.accessToken
   };
 
