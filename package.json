@@ -1,11 +1,12 @@
 {
   "name": "@atlas-engine/cli",
-  "version": "0.1.0-beta.1",
+  "version": "0.2.0-alpha.15",
   "description": "CLI for AtlasEngine and process-engine.io",
   "main": "dist/atlas.js",
   "scripts": {
     "clean": "rm -rf dist",
-    "build": "npm run clean && tsc",
+    "build": "npm run clean && npm run build:md-snippets && tsc",
+    "build:md-snippets": "ts-node convert-md-files-to-typescript.ts \"src/**/snippets/*.md\"",
     "lint": "eslint \"src/**/*.ts\"",
     "test": "npm run test:unit",
     "test:unit": "mocha -r ts-node/register -r choma \"src/**/*.test.ts\"",
@@ -21,6 +22,7 @@
   "author": "5Minds IT-Solutions GmbH & Co. KG",
   "license": "MIT",
   "dependencies": {
+    "@atlas-engine/atlas_engine_admin_client": "0.2.5-alpha.1",
     "@essential-projects/http": "^2.5.0",
     "@process-engine/management_api_client": "^6.2.0",
     "bpmn-moddle": "^6.0.2",
@@ -29,10 +31,13 @@
     "compare-versions": "^3.4.0",
     "express": "^4.17.1",
     "glob": "^7.1.6",
+    "json5": "^2.1.1",
+    "marked": "^0.8.0",
     "mime-types": "^2.1.18",
     "node-fetch": "^2.6.0",
     "open": "^7.0.2",
     "os": "^0.1.1",
+    "reflect-metadata": "^0.1.13",
     "shelljs": "^0.8.3",
     "yargs": "^15.1.0",
     "yesno": "^0.3.1"

@@ -1,5 +1,5 @@
 import { HttpClient } from '@essential-projects/http';
-import { ManagementApiClient, ExternalAccessor } from '@process-engine/management_api_client';
+import { ExternalAccessor, ManagementApiClient } from '@process-engine/management_api_client';
 
 import { AtlasSession } from '../session/atlas_session';
 
@@ -20,7 +20,7 @@ export function getIdentityAndManagementApiClient(session: AtlasSession): Identi
 
   const identity = {
     // TODO: do we need a user id? what for?
-    userId: 'atlas-cli',
+    userId: session.idToken,
     token: session.accessToken
   };
 

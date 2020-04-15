@@ -13,7 +13,7 @@ jobs:
 
     services:
       process_engine:
-        image: 5minds/process_engine_runtime:9.4.1
+        image: 5minds/process_engine_runtime:9
         ports:
         - 8000:8000
         options: --health-cmd true --health-interval 10s --health-timeout 5s --health-retries 5
@@ -39,8 +39,8 @@ jobs:
     - name: 'Run unit tests'
       run: npm run test:unit
 
-    - name: 'Run smoke tests'
-      run: ./test/integration/smoke.test.sh
+    - name: 'Run integration tests'
+      run: npm run test:integration
 
     - name: 'Lint sources'
       run: npm run lint

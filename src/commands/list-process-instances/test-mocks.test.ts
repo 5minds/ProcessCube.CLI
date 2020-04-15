@@ -1,3 +1,5 @@
+import * as JSON5 from 'json5';
+
 export const PROCESS_A_createdAt_01_error = {
   id: 'PROCESS_A_createdAt_01_error',
   createdAt: '2019-06-06T11:12:53.252Z',
@@ -56,7 +58,7 @@ export const PROCESS_INSTANCES = [
 ];
 
 export function getMockedProcessInstances() {
-  return JSON.parse(JSON.stringify(PROCESS_INSTANCES));
+  return JSON5.parse(JSON.stringify(PROCESS_INSTANCES));
 }
 
 export function mapIds(list: any): string[] {

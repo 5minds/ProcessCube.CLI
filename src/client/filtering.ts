@@ -1,6 +1,6 @@
 import * as moment from 'moment';
 
-import { toFilterRegexes } from '../../cli/filter_regexes';
+import { toFilterRegexes } from '../cli/filter_regexes';
 
 type FilterableProcessInstance = {
   createdAt?: any; // is given as string, but should be a Date according to the management_api_contracts

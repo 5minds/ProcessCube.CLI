@@ -1,13 +1,14 @@
 import { ApiClient } from '../../client/api_client';
-import { createResultJson } from '../../cli/result_json';
+import { addJsonPipingHintToResultJson, createResultJson } from '../../cli/result_json';
 import { loadAtlasSession } from '../../session/atlas_session';
-import { logError } from '../../cli/logging';
+import { logError, logJsonResult } from '../../cli/logging';
 
 import { OUTPUT_FORMAT_JSON, OUTPUT_FORMAT_TEXT } from '../../atlas';
 
 export async function startProcessInstance(
-  processModelId: string,
-  startEventId: string,
+  pipedProcessModelIds: string[] | null,
+  givenProcessModelId: string,
+  givenStartEventId: string,
   correlationId: string,
   inputValues: any,
   waitForProcessToFinish: boolean,
@@ -19,7 +20,23 @@ export async function startProcessInstance(
     return;
   }
 
+  let processModelId: string = Array.isArray(pipedProcessModelIds) ? pipedProcessModelIds[0] : givenProcessModelId;
+  if (processModelId == null) {
+    logError('No argument `process_model_id`. Aborting.');
+    return;
+  }
+
   const apiClient = new ApiClient(session);
+
+  let startEventId: string = givenStartEventId;
+  if (startEventId == null) {
+    startEventId = await getSingleStartEventIdOrNull(apiClient, processModelId);
+
+    if (startEventId == null) {
+      logError('You have to specific a start event, since there is more than one.');
+      process.exit(1);
+    }
+  }
 
   const startRequestPayload = { correlationId, inputValues };
   const processInstance = await apiClient.startProcessModel(
@@ -30,11 +47,12 @@ export async function startProcessInstance(
   );
   const processInstances = [processInstance];
 
-  const resultJson = createResultJson('process-instances', processInstances);
+  let resultJson = createResultJson('process-instances', processInstances);
+  resultJson = addJsonPipingHintToResultJson(resultJson);
 
   switch (outputFormat) {
     case OUTPUT_FORMAT_JSON:
-      console.log(JSON.stringify(resultJson, null, 2));
+      logJsonResult(resultJson);
       break;
     case OUTPUT_FORMAT_TEXT:
       console.table(processInstances, [
@@ -47,4 +65,14 @@ export async function startProcessInstance(
       ]);
       break;
   }
+}
+
+async function getSingleStartEventIdOrNull(apiClient: ApiClient, processModelId: string): Promise<string | null> {
+  const processModels = await apiClient.getProcessModelsByIds([processModelId]);
+  const processModel = processModels[0];
+  if (processModel.startEvents.length === 1) {
+    return processModel.startEvents[0].id;
+  }
+
+  return null;
 }
