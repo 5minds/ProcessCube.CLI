@@ -36,16 +36,24 @@ export async function login(
 
   engineUrl = engineUrl.replace(/\/$/, '');
 
-  const isMissingSchemeSeparator = engineUrl.match(/:\/\//) == null;
+  const engineUrlIsJustPort = engineUrl.match(/^:\d+$/) != null;
+  if (engineUrlIsJustPort) {
+    engineUrl = `localhost${engineUrl}`;
+    logWarning(chalk.yellowBright(`No host specified, using host: ${engineUrl}`));
+  }
 
-  if (isMissingSchemeSeparator) {
-    const isAvailableViaHttps = await isUrlAvailable(`https://${engineUrl}`);
-    if (isAvailableViaHttps) {
+  const engineUrlIsMissingSchemeSeparator = engineUrl.match(/:\/\//) == null;
+
+  if (engineUrlIsMissingSchemeSeparator) {
+    const engineUrlIsAvailableViaHttps = await isUrlAvailable(`https://${engineUrl}`);
+
+    if (engineUrlIsAvailableViaHttps) {
       engineUrl = `https://${engineUrl}`;
       logWarning(chalk.yellowBright(`No protocol specified, using HTTPS url: ${engineUrl}`));
     } else {
-      const isAvailableViaHttp = await isUrlAvailable(`http://${engineUrl}`);
-      if (isAvailableViaHttp) {
+      const engineUrlIsAvailableViaHttp = await isUrlAvailable(`http://${engineUrl}`);
+
+      if (engineUrlIsAvailableViaHttp) {
         engineUrl = `http://${engineUrl}`;
         logWarning(chalk.yellowBright(`No protocol specified, using HTTP url: ${engineUrl}`));
       }
