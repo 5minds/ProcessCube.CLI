@@ -1,12 +1,13 @@
 #!/usr/bin/env node
 
-import chalk from 'chalk';
+import * as JSON5 from 'json5';
+import 'reflect-metadata';
 
 import program = require('yargs');
 
 import { login } from './commands/login/login';
 import { logout } from './commands/logout/logout';
-import { printSessionStatus } from './commands/status/status';
+import { printSessionStatus } from './commands/session-status/session-status';
 import { listProcessModels } from './commands/list-process-models/list-process-models';
 import { startProcessInstance } from './commands/start-process-model/start-process-model';
 import { listProcessInstances } from './commands/list-process-instances/list-process-instances';
@@ -15,8 +16,22 @@ import { stopProcessInstance } from './commands/stop-process-instance/stop-proce
 import { showProcessInstance } from './commands/show-process-instance/show-process-instance';
 import { deployFiles } from './commands/deploy-files/deploy-files';
 import { removeProcessModels } from './commands/remove-process-models/remove-process-models';
-import { formatHelpText, heading, logError, logWarning } from './cli/logging';
+import { formatHelpText, heading } from './cli/logging';
 import { readFileSync } from 'fs';
+import { retryProcessInstance } from './commands/retry-process-instance/retry-process-instance';
+
+import epilogSnippetAtlas from './snippets/atlas.epilog';
+import epilogSnippetDeployFiles from './snippets/deploy-files.epilog';
+import epilogSnippetListProcessInstances from './snippets/list-process-instances.epilog';
+import epilogSnippetListProcessModels from './snippets/list-process-models.epilog';
+import epilogSnippetLogin from './snippets/login.epilog';
+import epilogSnippetLogout from './snippets/logout.epilog';
+import epilogSnippetRemoveProcessModels from './snippets/remove-process-models.epilog';
+import epilogSnippetRetryProcessInstance from './snippets/retry-process-instance.epilog';
+import epilogSnippetShowProcessInstance from './snippets/show-process-instance.epilog';
+import epilogSnippetStartProcessModel from './snippets/start-process-model.epilog';
+import epilogSnippetStopProcessInstance from './snippets/stop-process-instance.epilog';
+import epilogSnippetSessionStatus from './snippets/session-status.epilog';
 
 export const OUTPUT_FORMAT_JSON = 'json';
 export const OUTPUT_FORMAT_TEXT = 'text';
@@ -49,13 +64,9 @@ program
     ['session-status', 'st'],
     'Show status of the current session',
     (yargs) => {
-      return yargs.usage(usageString('session-status', 'Shows status of the current session.')).epilog(
-        formatHelpText(`
-          EXAMPLES
-
-              $ atlas status
-        `)
-      );
+      return yargs
+        .usage(usageString('session-status', 'Shows status of the current session.'))
+        .epilog(formatHelpText(epilogSnippetSessionStatus));
     },
     (argv: any) => {
       printSessionStatus(argv.output);
@@ -67,28 +78,16 @@ program
     'Log in to the given engine',
     (yargs) => {
       return yargs
-        .usage(usageString('login', 'Starts or renews a session with the given engine.'))
+        .usage(usageString('login [engine_url]', 'Starts or renews a session with the given engine.'))
         .positional('engine_url', {
           description: 'URL of engine to connect to',
           type: 'string'
         })
-
         .option('root', {
           description: 'Try to use anonymous root login',
           type: 'boolean'
         })
-
-        .epilog(
-          formatHelpText(`
-            EXAMPLES
-
-                $ atlas login http://localhost:56000
-
-            Engines meant for development are often configured to allow anonymous root access (this is, of course, not recommended for production use!).
-
-                $ atlas login http://localhost:56000 --root
-          `)
-        );
+        .epilog(formatHelpText(epilogSnippetLogin));
     },
     async (argv: any) => {
       await login(argv.engine_url, argv.root, argv.output);
@@ -99,13 +98,9 @@ program
     'logout',
     'Log out from the current session',
     (yargs) => {
-      return yargs.usage(usageString('logout', 'Logs out from the current session.')).epilog(
-        formatHelpText(`
-          EXAMPLES
-
-              $ atlas logout
-        `)
-      );
+      return yargs
+        .usage(usageString('logout', 'Logs out from the current session.'))
+        .epilog(formatHelpText(epilogSnippetLogout));
     },
     async (argv: any) => {
       await logout(argv.output);
@@ -117,25 +112,12 @@ program
     'Deploy BPMN files to the engine',
     (yargs) => {
       return yargs
-        .usage(usageString('deploy-files', 'Deploys BPMN files to the connected engine.'))
+        .usage(usageString('deploy-files [filenames...]', 'Deploys BPMN files to the connected engine.'))
         .positional('filenames', {
           description: 'Files to deploy',
           demandOption: true
         })
-
-        .epilog(
-          formatHelpText(`
-            EXAMPLES
-
-                $ atlas deploy registration_email_coupons.bpmn
-
-            The commands takes multiple arguments and supports globs:
-
-                $ atlas deploy registration_email_coupons.bpmn registration_fraud_detection.bpmn
-
-                $ atlas deploy *.bpmn
-          `)
-        );
+        .epilog(formatHelpText(epilogSnippetDeployFiles));
     },
     (argv: any) => {
       if (argv.filenames?.length === 0) {
@@ -152,28 +134,21 @@ program
     'Remove deployed process models from the engine',
     (yargs) => {
       return yargs
-        .usage(usageString('remove-process-models', 'Removes deployed process models from the connected engine.'))
+        .usage(
+          usageString(
+            'remove-process-models [process_model_ids...]',
+            'Removes deployed process models from the connected engine.'
+          )
+        )
         .positional('process_model_ids', {
-          description: 'Ids of process models to remove'
+          description: 'IDs of process models to remove'
         })
-
         .option('yes', {
           alias: 'y',
           description: 'Do not prompt for confirmation',
           type: 'boolean'
         })
-
-        .epilog(
-          formatHelpText(`
-            EXAMPLES
-
-                $ atlas remove Registration.EmailCoupons
-
-            If you don't want to be prompted for confirmation, use \`--yes\`:
-
-                $ atlas remove Registration.EmailCoupons --yes
-          `)
-        );
+        .epilog(formatHelpText(epilogSnippetRemoveProcessModels));
     },
     (argv: any) => {
       if (argv.process_model_ids?.length === 0) {
@@ -186,22 +161,23 @@ program
   )
 
   .command(
-    ['start-process-model <process_model_id> <start_event_id>', 'start <process_model_id> <start_event_id>'],
+    ['start-process-model [process_model_id] [start_event_id]', 'start [process_model_id] [start_event_id]'],
     'Start an instance of a deployed process model',
     (yargs) => {
       return yargs
         .usage(
-          usageString('start-process-model', 'Starts an instance of a deployed process model on the connected engine.')
+          usageString(
+            'start-process-model [process_model_id] [start_event_id]',
+            'Starts an instance of a deployed process model on the connected engine.'
+          )
         )
         .positional('process_model_id', {
           description: 'ID of process model to start',
-          type: 'string',
-          demandOption: true
+          type: 'string'
         })
         .positional('start_event_id', {
-          description: 'ID of StartEvent to trigger',
-          type: 'string',
-          demandOption: true
+          description: 'ID of start event to trigger',
+          type: 'string'
         })
 
         .option('wait', {
@@ -224,28 +200,13 @@ program
           description: 'Read input values as JSON from <file>',
           type: 'string'
         })
-
-        .epilog(
-          formatHelpText(`
-            EXAMPLES
-
-                $ atlas start-process-model Registration.EmailCoupons StartEvent_1
-
-                $ atlas start Registration.EmailCoupons StartEvent_1
-
-                $ atlas start Registration.EmailCoupons StartEvent_1 --correlation-id "my-correlation-id-1234"
-
-                $ atlas start Registration.EmailCoupons StartEvent_1 --wait
-
-                $ atlas start Registration.EmailCoupons StartEvent_1 --input-values '{"answer": 42, "email": "jobs@5minds.de"}'
-
-                $ atlas start Registration.EmailCoupons StartEvent_1 --input-values-from-file input.json
-
-                $ cat input.json | atlas start Registration.EmailCoupons StartEvent_1s
-          `)
-        );
+        .epilog(formatHelpText(epilogSnippetStartProcessModel));
     },
     async (argv: any) => {
+      const stdinPipeReader = await StdinPipeReader.create();
+      const pipedProcessModelIds =
+        stdinPipeReader.getPipedProcessModelIds() || stdinPipeReader.getPipedProcessModelIdsInDeployedFiles();
+
       let inputValues: any;
 
       if (argv.inputValuesFromStdin === true) {
@@ -254,13 +215,14 @@ program
       }
       if (argv.inputValuesFromFile != null) {
         const contents = readFileSync(argv.inputValuesFromFile);
-        inputValues = JSON.parse(contents.toString());
+        inputValues = JSON5.parse(contents.toString());
       }
       if (argv.inputValues != null) {
-        inputValues = JSON.parse(argv.inputValues);
+        inputValues = JSON5.parse(argv.inputValues);
       }
 
       await startProcessInstance(
+        pipedProcessModelIds,
         argv.process_model_id,
         argv.start_event_id,
         argv.correlationId,
@@ -278,23 +240,14 @@ program
       return yargs
         .usage(
           usageString(
-            'stop-process-instance',
+            'stop-process-instance [process_instance_ids...]',
             'Stops instances with the given process instance IDs on the connected engine.'
           )
         )
         .positional('process_instance_ids', {
           description: 'IDs of process instances to stop'
         })
-
-        .epilog(
-          formatHelpText(`
-            EXAMPLES
-
-                $ atlas stop-process-instance 56a89c11-ee0d-4539-b4cb-84a0339262fd
-
-                $ atlas stop 56a89c11-ee0d-4539-b4cb-84a0339262fd
-          `)
-        );
+        .epilog(formatHelpText(epilogSnippetStopProcessInstance));
     },
     async (argv: any) => {
       const stdinPipeReader = await StdinPipeReader.create();
@@ -311,58 +264,56 @@ program
       return yargs
         .usage(
           usageString(
-            'show-process-instance',
+            'show-process-instance [process_instance_ids...]',
             'Shows detailed information about individual process instances or correlations from the connected engine.'
           )
         )
         .positional('process_instance_ids', {
-          description: 'IDs of process instances to show'
+          description: 'IDs of process instances to show; if omitted, the latest process instance is shown'
         })
-
         .option('correlation', {
           alias: 'c',
           description: 'All given <process_instance_ids> are interpreted as correlation ids',
           type: 'boolean',
           default: false
         })
-
-        .epilog(
-          formatHelpText(`
-            EXAMPLES
-
-                $ atlas show-process-instance 56a89c11-ee0d-4539-b4cb-84a0339262fd
-
-                $ atlas show 56a89c11-ee0d-4539-b4cb-84a0339262fd
-
-                $ atlas show --correlation e552acfe-8446-42c0-a76b-5cd65bf110ac
-          `)
-        );
+        .option('all-fields', {
+          alias: 'F',
+          description: 'Show all fields',
+          type: 'boolean',
+          default: false
+        })
+        .epilog(formatHelpText(epilogSnippetShowProcessInstance));
     },
     async (argv: any) => {
       const stdinPipeReader = await StdinPipeReader.create();
       let processInstanceIds = stdinPipeReader.getPipedProcessInstanceIds() || argv.process_instance_ids;
 
-      await showProcessInstance(processInstanceIds, argv.correlation, argv.output);
+      await showProcessInstance(processInstanceIds, argv.correlation, argv.allFields, argv.output);
     }
   )
 
   .command(
-    'retry [process_instance_ids...]',
+    ['retry-process-instance [process_instance_ids...]', 'retry'],
     'Restart failed process instances with the given process instance IDs',
     (yargs) => {
       return yargs
         .usage(
           usageString(
-            'retry',
+            'retry [process_instance_ids...]',
             'Restarts failed process instances with the given process instance IDs on the connected engine.'
           )
         )
         .positional('process_instance_ids', {
           description: 'IDs of process instances to restart'
-        });
+        })
+        .epilog(formatHelpText(epilogSnippetRetryProcessInstance));
     },
-    (argv) => {
-      logWarning('TODO: the engine has to implement this feature');
+    async (argv: any) => {
+      const stdinPipeReader = await StdinPipeReader.create();
+      let processInstanceIds = stdinPipeReader.getPipedProcessInstanceIds() || argv.process_instance_ids;
+
+      await retryProcessInstance(processInstanceIds, argv.output);
     }
   )
 
@@ -384,32 +335,23 @@ program
           type: 'array',
           default: []
         })
+        .option('all-fields', {
+          alias: 'F',
+          description: 'Show all fields',
+          type: 'boolean',
+          default: false
+        })
         .strict()
-
         .group(['filter-by-id', 'reject-by-id'], heading('FILTERING OPTIONS'))
-
-        .epilog(
-          formatHelpText(`
-            EXAMPLES
-
-                $ atlas list-process-models
-
-                $ atlas list-process-models --filter-by-id "Registration"
-
-                $ atlas list-process-models --reject-by-id "Internal"
-
-            Filtering/rejecting also supports regular expressions:
-
-                $ atlas list-process-models --filter-by-id "^Registration.+$"
-          `)
-        );
+        .group(['all-fields', 'output'], heading('OUTPUT OPTIONS'))
+        .epilog(formatHelpText(epilogSnippetListProcessModels));
     },
     async (argv: any) => {
       const stdinPipeReader = await StdinPipeReader.create();
       const pipedProcessModelIds =
         stdinPipeReader.getPipedProcessModelIds() || stdinPipeReader.getPipedProcessModelIdsInProcessInstances();
 
-      listProcessModels(pipedProcessModelIds, argv.filterById, argv.rejectById, argv.output);
+      listProcessModels(pipedProcessModelIds, argv.filterById, argv.rejectById, argv.allFields, argv.output);
     }
   )
 
@@ -476,6 +418,12 @@ program
           description: 'List a maximum of <limit> process instances',
           type: 'number'
         })
+        .option('all-fields', {
+          alias: 'F',
+          description: 'Show all fields',
+          type: 'boolean',
+          default: false
+        })
         .group(
           [
             'created-after',
@@ -489,56 +437,8 @@ program
           heading('FILTERING OPTIONS')
         )
         .group(['sort-by-created-at', 'sort-by-process-model-id', 'sort-by-state', 'limit'], heading('SORTING OPTIONS'))
-
-        .epilog(
-          formatHelpText(`
-            EXAMPLES
-
-                $ atlas list-process-instances
-
-            Filtering by date:
-
-                $ atlas list-process-instances --created-after "2020-01-01" --created-before "2020-01-31"
-
-            Filtering by process model ID:
-
-                $ atlas list-process-instances --filter-by-process-model-id "Registration"
-
-            Filtering by state (error, running, finished):
-
-                $ atlas list-process-instances --filter-by-state error
-
-            Filtering by process model ID also supports regular expressions:
-
-                $ atlas list-process-instances --filter-by-process-model-id "^Registration.+$"
-
-            Filter options compound, meaning that they allow to look for more than one pattern:
-
-                $ atlas list-process-instances --filter-by-state error --filter-by-state running
-
-            ... i.e. using the same filter multiple times results in an OR query:
-
-                $ atlas list-process-instances --filter-by-process-model-id "Registration" --filter-by-process-model-id "Email"
-
-            ... piping the result into another execution of list-process-instances leads to an AND query:
-
-                $ atlas list-process-instances --filter-by-process-model-id "Registration" --output json | atlas list-process-instances --filter-by-process-model-id "Email"
-
-            Combinations of all switches are possible:
-
-                $ atlas list-process-instances --created-after "2020-01-01" --created-before "2020-01-31" \\
-                                                --filter-by-process-model-id "^Registration.+$" \\
-                                                --reject-by-process-model-id "Internal" \\
-                                                --filter-by-state error \\
-                                                --filter-by-state running \\
-                                                --sort-by-process-model-id asc \\
-                                                --sort-by-state desc \\
-                                                --sort-by-created-at asc
-
-            The above lists all process instances from January 2020, which were started from a process model whose name contains the prefix "Registration.", but does not contain the word "Internal", and which are either still running or resulted in an error.
-            The results are sorted by process model in ascending alphabetical order, within each model section, the process instances are grouped by state in the order "running, error" and for each state, process instances are listed oldest to newest.
-          `)
-        );
+        .group(['all-fields', 'output'], heading('OUTPUT OPTIONS'))
+        .epilog(formatHelpText(epilogSnippetListProcessInstances));
     },
     async (argv: any) => {
       const stdinPipeReader = await StdinPipeReader.create();
@@ -563,6 +463,7 @@ program
         sortByState,
         sortByCreatedAt,
         argv.limit,
+        argv.allFields,
         argv.output
       );
     }
@@ -575,9 +476,11 @@ program
       heading('SYNOPSIS') +
       '\n  Atlas CLI provides a rich interface to deploy and start process models as well as manage and inspect process instances and correlations for both ProcesEngine and AtlasEngine.'
   )
+  .epilog(formatHelpText(epilogSnippetAtlas))
   .locale('en')
   .updateStrings({
     'Commands:': heading('COMMANDS'),
+    'Positionals:': heading('ARGUMENTS'),
     'Options:': heading('GENERAL OPTIONS')
   })
   .wrap(null)

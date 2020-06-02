@@ -1,23 +1,12 @@
 import { DataModels } from '@process-engine/management_api_contracts';
 
-import { AtlasSession, loadAtlasSession } from '../../session/atlas_session';
-import { createResultJson } from '../../cli/result_json';
-import { getIdentityAndManagementApiClient } from '../../client/management_api_client';
-import { OUTPUT_FORMAT_JSON, OUTPUT_FORMAT_TEXT } from '../../atlas';
-
-import { filterProcessModelsById } from '../list-process-models/list-process-models';
-
-import {
-  filterProcessInstancesDateAfter,
-  filterProcessInstancesDateBefore,
-  filterProcessInstancesByProcessModelId,
-  rejectProcessInstancesByProcessModelId,
-  rejectProcessInstancesByState,
-  filterProcessInstancesByState
-} from './filtering';
-import { sortProcessInstances } from './sorting';
-import { logError, logNoValidSessionError } from '../../cli/logging';
 import { ApiClient } from '../../client/api_client';
+import { AtlasSession, loadAtlasSession } from '../../session/atlas_session';
+import { addJsonPipingHintToResultJson, createResultJson } from '../../cli/result_json';
+import { filterProcessInstancesDateAfter, filterProcessInstancesDateBefore } from '../../client/filtering';
+import { logJsonResult, logNoValidSessionError } from '../../cli/logging';
+import { OUTPUT_FORMAT_JSON, OUTPUT_FORMAT_TEXT } from '../../atlas';
+import { sortProcessInstances } from './sorting';
 
 export type ProcessInstance = DataModels.Correlations.ProcessInstance;
 
@@ -35,6 +24,7 @@ export async function listProcessInstances(
   sortByState: string,
   sortByCreatedAt: string,
   limit: number,
+  showAllFields: boolean,
   outputFormat: string
 ) {
   const session = loadAtlasSession();
@@ -60,10 +50,18 @@ export async function listProcessInstances(
     limit
   );
 
-  const resultJson = createResultJson('process-instances', mapToShort(processInstances));
+  let resultProcessInstances: any[];
+  if (showAllFields) {
+    resultProcessInstances = mapToLong(processInstances);
+  } else {
+    resultProcessInstances = mapToShort(processInstances);
+  }
+
+  let resultJson = createResultJson('process-instances', resultProcessInstances);
+  resultJson = addJsonPipingHintToResultJson(resultJson);
 
   if (outputFormat === OUTPUT_FORMAT_JSON) {
-    console.log(JSON.stringify(resultJson, null, 2));
+    logJsonResult(resultJson);
   } else if (outputFormat === OUTPUT_FORMAT_TEXT) {
     console.table(processInstances, [
       'createdAt',
@@ -92,8 +90,9 @@ async function getProcessInstances(
   sortByCreatedAt: string,
   limit: number
 ): Promise<ProcessInstance[]> {
-  let allProcessInstances = await getAllProcessInstances(
-    session,
+  const apiClient = new ApiClient(session);
+
+  let allProcessInstances = await apiClient.getAllProcessInstances(
     filterByCorrelationId,
     filterByProcessModelId,
     rejectByProcessModelId,
@@ -127,101 +126,14 @@ async function getProcessInstances(
   return processInstances;
 }
 
-async function getAllProcessInstances(
-  session: AtlasSession,
-  filterByCorrelationId: string[],
-  filterByProcessModelId: string[],
-  rejectByProcessModelId: string[],
-  filterByState: string[],
-  rejectByState: string[]
-): Promise<ProcessInstance[]> {
-  let allProcessInstances: ProcessInstance[];
-  if (filterByCorrelationId.length > 0) {
-    allProcessInstances = await getAllProcessInstancesViaCorrelations(session, filterByCorrelationId);
-  } else if (filterByState.length > 0) {
-    allProcessInstances = await getAllProcessInstancesViaStateAndFilterByProcessModelId(
-      session,
-      filterByState,
-      filterByProcessModelId
-    );
-  } else {
-    allProcessInstances = await getAllProcessInstancesViaAllProcessModels(session, filterByProcessModelId);
-  }
-
-  allProcessInstances = filterProcessInstancesByProcessModelId(allProcessInstances, filterByProcessModelId);
-  allProcessInstances = filterProcessInstancesByState(allProcessInstances, filterByState);
-  allProcessInstances = rejectProcessInstancesByProcessModelId(allProcessInstances, rejectByProcessModelId);
-  allProcessInstances = rejectProcessInstancesByState(allProcessInstances, rejectByState);
-
-  return allProcessInstances;
+function mapToLong(list: any): any[] {
+  return list;
 }
 
-async function getAllProcessInstancesViaCorrelations(
-  session: AtlasSession,
-  correlationIds: string[]
-): Promise<ProcessInstance[]> {
-  const { identity, managementApiClient } = getIdentityAndManagementApiClient(session);
-
-  let allProcessInstances = [];
-  for (const correlationId of correlationIds) {
-    const result = await managementApiClient.getProcessInstancesForCorrelation(identity, correlationId);
-    allProcessInstances = allProcessInstances.concat(result.processInstances);
-  }
-
-  return allProcessInstances;
-}
-
-async function getAllProcessInstancesViaAllProcessModels(
-  session: AtlasSession,
-  filterByProcessModelId: string[]
-): Promise<ProcessInstance[]> {
-  const { identity, managementApiClient } = getIdentityAndManagementApiClient(session);
-
-  const apiClient = new ApiClient(session);
-  const allProcessModels = await apiClient.getProcessModels();
-
-  const processModels = filterProcessModelsById(allProcessModels, filterByProcessModelId);
-
-  let allProcessInstances = [];
-  for (const processModel of processModels) {
-    try {
-      const result = await managementApiClient.getProcessInstancesForProcessModel(identity, processModel.id);
-
-      allProcessInstances = allProcessInstances.concat(result.processInstances);
-    } catch (e) {
-      if (e.message.includes('No ProcessInstances for ProcessModel')) {
-        // OMG, why are we using errors for normal control-flow?
-      } else {
-        throw e;
-      }
-    }
-  }
-
-  return allProcessInstances;
-}
-
-async function getAllProcessInstancesViaStateAndFilterByProcessModelId(
-  session: AtlasSession,
-  filterByState: string[],
-  filterByProcessModelId: string[]
-): Promise<ProcessInstance[]> {
-  const { identity, managementApiClient } = getIdentityAndManagementApiClient(session);
-
-  let allProcessInstances = [];
-  for (const state of filterByState) {
-    const result = await managementApiClient.getProcessInstancesByState(
-      identity,
-      state as DataModels.Correlations.CorrelationState
-    );
-
-    allProcessInstances = allProcessInstances.concat(result.processInstances);
-  }
-
-  return allProcessInstances;
-}
-
-function mapToShort(list: any): string[] {
+function mapToShort(list: any): any[] {
   return list.map((processInstance: any) => {
-    return { ...processInstance, xml: '...', identity: '...' };
+    const identity = { ...processInstance.identity, token: '...' };
+
+    return { ...processInstance, xml: '...', identity: identity };
   });
 }

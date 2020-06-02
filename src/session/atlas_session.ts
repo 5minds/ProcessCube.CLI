@@ -1,7 +1,9 @@
 const moment = require('moment');
 
 import { dirname } from 'path';
-import { existsSync, mkdirSync, writeFileSync, readFileSync } from 'fs';
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs';
+
+import * as JSON5 from 'json5';
 
 import { getSessionStorageFilename } from './atlas_path_functions';
 
@@ -35,7 +37,7 @@ export function loadAtlasSession(returnInvalidSession: boolean = false): AtlasSe
   }
 
   try {
-    const rawSession = JSON.parse(contents);
+    const rawSession = JSON5.parse(contents);
 
     const session: AtlasSession = { ...rawSession, expiresIn: getExpiresIn(rawSession) };
     if (isValidSession(session) || returnInvalidSession) {
@@ -49,7 +51,7 @@ export function loadAtlasSession(returnInvalidSession: boolean = false): AtlasSe
 }
 
 export function saveAtlasSession(session: AtlasSession): void {
-  const dump = JSON.parse(JSON.stringify(session));
+  const dump = JSON5.parse(JSON.stringify(session));
   delete dump.expiresIn;
 
   const filename = getSessionStorageFilename();

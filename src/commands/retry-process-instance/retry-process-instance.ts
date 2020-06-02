@@ -1,12 +1,12 @@
-import { ApiClient } from '../../client/api_client';
+import { RetriedProcessInstanceInfo } from '../../contracts/api_client_types';
+
 import { addJsonPipingHintToResultJson, createResultJson } from '../../cli/result_json';
 import { loadAtlasSession } from '../../session/atlas_session';
-import { logError, logJsonResult } from '../../cli/logging';
-
 import { OUTPUT_FORMAT_JSON, OUTPUT_FORMAT_TEXT } from '../../atlas';
-import { StoppedProcessInstanceInfo } from '../../contracts/api_client_types';
+import { logError, logJsonResult } from '../../cli/logging';
+import { ApiClient } from '../../client/api_client';
 
-export async function stopProcessInstance(processInstanceIds: string[], outputFormat: string): Promise<void> {
+export async function retryProcessInstance(processInstanceIds: string[], outputFormat: string): Promise<void> {
   const session = loadAtlasSession();
   if (session == null) {
     logError('No session found. Aborting.');
@@ -15,9 +15,9 @@ export async function stopProcessInstance(processInstanceIds: string[], outputFo
 
   const apiClient = new ApiClient(session);
 
-  const results: StoppedProcessInstanceInfo[] = [];
+  const results: RetriedProcessInstanceInfo[] = [];
   for (const processInstanceId of processInstanceIds) {
-    const result = await apiClient.stopProcessInstance(processInstanceId);
+    const result = await apiClient.retryProcessInstance(processInstanceId);
     results.push(result);
   }
 
@@ -29,7 +29,7 @@ export async function stopProcessInstance(processInstanceIds: string[], outputFo
       logJsonResult(resultJson);
       break;
     case OUTPUT_FORMAT_TEXT:
-      console.table(results, ['success', 'processInstanceId', 'correlationId', 'error']);
+      console.table(results, ['success', 'processInstanceId', 'error']);
       break;
   }
 }

@@ -1,7 +1,7 @@
 import { ApiClient } from '../../client/api_client';
-import { createResultJson } from '../../cli/result_json';
+import { addJsonPipingHintToResultJson, createResultJson } from '../../cli/result_json';
 import { loadAtlasSession } from '../../session/atlas_session';
-import { logError } from '../../cli/logging';
+import { logError, logJsonResult } from '../../cli/logging';
 import { toFilterRegexes } from '../../cli/filter_regexes';
 
 import { OUTPUT_FORMAT_JSON, OUTPUT_FORMAT_TEXT } from '../../atlas';
@@ -10,6 +10,7 @@ export async function listProcessModels(
   pipedProcessModelIds: string[] | null,
   filterById: string[],
   rejectById: string[],
+  showAllFields: boolean,
   outputFormat: string
 ) {
   const session = loadAtlasSession();
@@ -31,11 +32,19 @@ export async function listProcessModels(
 
   const processModels = rejectProcessModelsById(filteredProcessModels, rejectById);
 
-  const resultJson = createResultJson('process-models', mapToShort(processModels));
+  let resultProcessModels;
+  if (showAllFields) {
+    resultProcessModels = mapToLong(processModels);
+  } else {
+    resultProcessModels = mapToShort(processModels);
+  }
+
+  let resultJson = createResultJson('process-models', resultProcessModels);
+  resultJson = addJsonPipingHintToResultJson(resultJson);
 
   switch (outputFormat) {
     case OUTPUT_FORMAT_JSON:
-      console.log(JSON.stringify(resultJson, null, 2));
+      logJsonResult(resultJson);
       break;
     case OUTPUT_FORMAT_TEXT:
       console.table(resultJson.result, ['id', 'startEventIds']);
@@ -69,8 +78,18 @@ export function rejectProcessModelsById(processModels: any[], rejectById: string
   });
 }
 
-function mapToShort(list: any): string[] {
+function mapToShort(list: any): any[] {
+  return addStartEventIds(list).map((model: any) => {
+    return { ...model, xml: '...' };
+  });
+}
+
+function mapToLong(list: any): any[] {
+  return addStartEventIds(list);
+}
+
+function addStartEventIds(list: any): any[] {
   return list.map((model: any) => {
-    return { ...model, xml: '...', startEventIds: model.startEvents.map((event: any) => event.id) };
+    return { ...model, startEventIds: model.startEvents.map((event: any) => event.id) };
   });
 }
