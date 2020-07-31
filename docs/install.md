@@ -12,7 +12,7 @@ Nachdem die Vorrausetzungen für die Installation erfüllt sind, kann die Atlas.
 ```shell
 npm install -global @atlas-engine/cli
 ```
-Für eine spezifische Version muss diese nach der Paketbezeichnung mit “@dist-tags heruntergeladen werden. Dist-Tags kennzeichnen die verschiedenen eindeutigen Versionen eines Pakets. Einen Überblick über die verschiedenen Versionen können Sie sich mit dem folgenden Befehl verschaffen:
+Für eine spezifische Version muss diese nach der Paketbezeichnung mit "@dist-tags" angegeben werden. Dist-Tags kennzeichnen die verschiedenen eindeutigen Versionen eines Pakets. Einen Überblick über die verschiedenen Versionen können Sie sich mit dem folgenden Befehl verschaffen:
 ```shell
 npm show @atlas-engine/cli
 ```
