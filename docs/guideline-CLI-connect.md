@@ -1,4 +1,4 @@
-# Guideline
+# Guideline CLI: Verbindung aufbauen
 
 ## Voraussetzungen
 * Die AtlasEngine muss auf dem lokalen oder auf einem entfernten System installiert sein. Siehe [Installationsanleitung AtlasEngine](./install.md) //ToDo: Link anpassen. Alternativ können Sie sich auch das BPMN-Studios / AtlasStudio mit einer integrierten AtlasEngine installieren. Siehe [Installationsanleitung BPMN-Studio / AtlasStudio](./install.md)
@@ -40,7 +40,7 @@ Geben Sie Ihre Anmeldeinformationen und bestätigen Sie mit "Login" oder wählen
 ### Entwicklungssystem
 Wenn Sie sich auf einem Entwicklungssystem befinden empfiehlt sich die Option für "Anonymen Root Zugriff" in der AtlasEngine freizuschalten. Bei der im BPMN-Studio / AtlasStudio integrierten AtlasEngine können Sie dies durch die [Einstellungen](./install.md) realisieren. Bei einer "standalone" eingerichteten AtlasEngine können Sie die Einstellung ebenfalls [konfigurieren](.install.md).
 
-Mit einer im BPMN-Studio / AtlasStudio integrierten AtlasEngine aus der 'stable' Freigabeversion, die lokal installiert wurde und dessen anaoymer root Zugriff erlaubt ist können Sie sich wie folgt einloggen:
+Mit einer im BPMN-Studio / AtlasStudio integrierten AtlasEngine aus der 'stable' Freigabeversion, die lokal installiert wurde und dessen anonymer root Zugriff erlaubt ist können Sie sich wie folgt einloggen:
 
 ```shell
 atlas login http://localhost:56000 --root

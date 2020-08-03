@@ -1,0 +1,282 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="Definition_001fc2b1-00ed-45e0-a9ec-6f46e335816d" targetNamespace="http://bpmn.io/schema/bpmn" exporter="BPMN Studio" exporterVersion="1">
+  <bpmn:collaboration id="BuchausleiheMitAusleihkarteDigital" name="BuchausleiheMitAusleihkarteDigital">
+    <bpmn:participant id="BuchAusleihenMitAusleihkarteDigital" name="Buch mit Ausleihkarte ausleihen" processRef="BuchAusleihenMitAusleihkarte" />
+  </bpmn:collaboration>
+  <bpmn:process id="BuchAusleihenMitAusleihkarte" name="BuchAusleihenMitAusleihkarte" isExecutable="true" camunda:versionTag="0.1">
+    <bpmn:laneSet id="LaneSet_1p3p2au">
+      <bpmn:lane id="Bibliothekar" name="Bibliothekar">
+        <bpmn:flowNodeRef>AusleiheBestaetigen</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>BuchAushaendigen</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>FristblattEintragErzeugen</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>BuchkarteAusfuellen</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>BuchIdentifizieren</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Event_1aqqwkx</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>AuseleiheAblehnen</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>KundenIdentifizieren</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>HatKundeOffeneGebuehren</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>BibliotheksausweisAnfordern</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>KundenAuthorisieren</bpmn:flowNodeRef>
+        <bpmn:childLaneSet id="LaneSet_0rmlamy" />
+      </bpmn:lane>
+      <bpmn:lane id="Kunde" name="Kunde">
+        <bpmn:flowNodeRef>BuchAusleihen</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>BuchAussuchen</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>BuchAusgeliehen</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>BibliotheksausweisVorlegen</bpmn:flowNodeRef>
+      </bpmn:lane>
+    </bpmn:laneSet>
+    <bpmn:startEvent id="BuchAusleihen" name="Buch ausleihen">
+      <bpmn:outgoing>BuchAusleihenStartResult</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:manualTask id="BuchAussuchen" name="Buch aussuchen">
+      <bpmn:incoming>BuchAusleihenStartResult</bpmn:incoming>
+      <bpmn:outgoing>BuchAussuchenResult</bpmn:outgoing>
+    </bpmn:manualTask>
+    <bpmn:sequenceFlow id="Flow_1nwr1v0" sourceRef="AuseleiheAblehnen" targetRef="Event_1aqqwkx" />
+    <bpmn:sequenceFlow id="KundeHatOffeneGebuehren" name="ja" sourceRef="HatKundeOffeneGebuehren" targetRef="AuseleiheAblehnen" />
+    <bpmn:sequenceFlow id="KundeHatKeineOffeneGebuehren" name="nein" sourceRef="HatKundeOffeneGebuehren" targetRef="BuchIdentifizieren" />
+    <bpmn:sequenceFlow id="KundenAuthorisierungsResult" sourceRef="KundenAuthorisieren" targetRef="HatKundeOffeneGebuehren" />
+    <bpmn:sequenceFlow id="BuchAussuchenResult" name="" sourceRef="BuchAussuchen" targetRef="BibliotheksausweisAnfordern" />
+    <bpmn:sequenceFlow id="KundenIdentifizierenResult" sourceRef="KundenIdentifizieren" targetRef="KundenAuthorisieren">
+      <bpmn:extensionElements>
+        <camunda:properties>
+          <camunda:property name="Kunde" value="Kunde" />
+        </camunda:properties>
+      </bpmn:extensionElements>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="FristblattEintragErzeugenResult" name="" sourceRef="FristblattEintragErzeugen" targetRef="AusleiheBestaetigen" />
+    <bpmn:sequenceFlow id="BuchAushaendigenResult" name="" sourceRef="BuchAushaendigen" targetRef="BuchAusgeliehen" />
+    <bpmn:sequenceFlow id="BuchkarteAusfuellenResult" name="" sourceRef="BuchkarteAusfuellen" targetRef="FristblattEintragErzeugen" />
+    <bpmn:sequenceFlow id="BuchIdentifizierenResult" name="" sourceRef="BuchIdentifizieren" targetRef="BuchkarteAusfuellen" />
+    <bpmn:sequenceFlow id="BibliotheksausweisVorlegenResult" name="" sourceRef="BibliotheksausweisVorlegen" targetRef="KundenIdentifizieren" />
+    <bpmn:sequenceFlow id="BibliotheksausweisAnfordernResult" name="" sourceRef="BibliotheksausweisAnfordern" targetRef="BibliotheksausweisVorlegen" />
+    <bpmn:sequenceFlow id="BuchAusleihenStartResult" sourceRef="BuchAusleihen" targetRef="BuchAussuchen" />
+    <bpmn:sequenceFlow id="AusleiheBestaetigenResult" sourceRef="AusleiheBestaetigen" targetRef="BuchAushaendigen" />
+    <bpmn:endEvent id="BuchAusgeliehen" name="Buch ausgeliehen">
+      <bpmn:incoming>BuchAushaendigenResult</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:userTask id="AusleiheBestaetigen" name="Ausleihe bestätigen" camunda:formKey="AusleiheBestaetigenForm">
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="ausleiheBestaetigt" label="Ausleihe bestätigen:" type="boolean" defaultValue="true" />
+        </camunda:formData>
+      </bpmn:extensionElements>
+      <bpmn:incoming>FristblattEintragErzeugenResult</bpmn:incoming>
+      <bpmn:outgoing>AusleiheBestaetigenResult</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:manualTask id="BuchAushaendigen" name="Buch an Kunden aushändigen">
+      <bpmn:incoming>AusleiheBestaetigenResult</bpmn:incoming>
+      <bpmn:outgoing>BuchAushaendigenResult</bpmn:outgoing>
+    </bpmn:manualTask>
+    <bpmn:serviceTask id="FristblattEintragErzeugen" name="Rückgabedatum ins Fristblatt eintragen" camunda:type="external" camunda:topic="Buecher.FristblattEintragErzeugen">
+      <bpmn:extensionElements>
+        <camunda:formData />
+      </bpmn:extensionElements>
+      <bpmn:incoming>BuchkarteAusfuellenResult</bpmn:incoming>
+      <bpmn:outgoing>FristblattEintragErzeugenResult</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="BuchkarteAusfuellen" name="Buchkarte ausfüllen und in Register einsortieren" camunda:type="external" camunda:topic="Buecher.BuchkarteAusfuellen">
+      <bpmn:extensionElements>
+        <camunda:properties>
+          <camunda:property name="payload" value="{&#10;KundenId:token.history.KundenIdentifizieren.kundenId&#10;}" />
+        </camunda:properties>
+      </bpmn:extensionElements>
+      <bpmn:incoming>BuchIdentifizierenResult</bpmn:incoming>
+      <bpmn:outgoing>BuchkarteAusfuellenResult</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:userTask id="BuchIdentifizieren" name="Buchkarte  aus Buch entnehmen" camunda:formKey="BuchIdentifizierenForm">
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="buchId" label="BuchId" type="string" defaultValue="Buch123" />
+        </camunda:formData>
+      </bpmn:extensionElements>
+      <bpmn:incoming>KundeHatKeineOffeneGebuehren</bpmn:incoming>
+      <bpmn:outgoing>BuchIdentifizierenResult</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:endEvent id="Event_1aqqwkx">
+      <bpmn:incoming>Flow_1nwr1v0</bpmn:incoming>
+      <bpmn:terminateEventDefinition id="TerminateEventDefinition_1g34fp1" />
+    </bpmn:endEvent>
+    <bpmn:userTask id="AuseleiheAblehnen" name="Ausleihe ablehnen" camunda:formKey="Form Key">
+      <bpmn:extensionElements>
+        <camunda:formData />
+      </bpmn:extensionElements>
+      <bpmn:incoming>KundeHatOffeneGebuehren</bpmn:incoming>
+      <bpmn:outgoing>Flow_1nwr1v0</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="KundenIdentifizieren" name="Kunde mit Bibliotheksausweis identifizieren" camunda:formKey="KundenIdentifikationsForm">
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="kundenId" label="KundenId" type="string" defaultValue="Kunde123" />
+          <camunda:formField id="offeneGebuehren" label="Offene Gebühren" type="number" defaultValue="0.00" />
+        </camunda:formData>
+      </bpmn:extensionElements>
+      <bpmn:incoming>BibliotheksausweisVorlegenResult</bpmn:incoming>
+      <bpmn:outgoing>KundenIdentifizierenResult</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:exclusiveGateway id="HatKundeOffeneGebuehren" name="Sind offene Forderungen/Auskeihen vorhanden?">
+      <bpmn:incoming>KundenAuthorisierungsResult</bpmn:incoming>
+      <bpmn:outgoing>KundeHatOffeneGebuehren</bpmn:outgoing>
+      <bpmn:outgoing>KundeHatKeineOffeneGebuehren</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:manualTask id="BibliotheksausweisAnfordern" name="Bibliotheks-ausweis anfordern">
+      <bpmn:incoming>BuchAussuchenResult</bpmn:incoming>
+      <bpmn:outgoing>BibliotheksausweisAnfordernResult</bpmn:outgoing>
+    </bpmn:manualTask>
+    <bpmn:manualTask id="BibliotheksausweisVorlegen" name="Bibliothekts-ausweis vorlegen">
+      <bpmn:extensionElements>
+        <camunda:formData />
+      </bpmn:extensionElements>
+      <bpmn:incoming>BibliotheksausweisAnfordernResult</bpmn:incoming>
+      <bpmn:outgoing>BibliotheksausweisVorlegenResult</bpmn:outgoing>
+    </bpmn:manualTask>
+    <bpmn:serviceTask id="KundenAuthorisieren" name="Forderungen/Ausleihen des Kunden prüfen" camunda:type="external" camunda:topic="Kunden.Authorisierung">
+      <bpmn:extensionElements>
+        <camunda:properties>
+          <camunda:property name="payload" value="{&#10;&#34;kunde&#34;: {&#10;&#34;kundenId&#34; : token.history.KundenIdentifizieren.kundenId,&#10;&#34;offeneGebuehren&#34; : token.history.KundenIdentifizieren.offeneGebuehren&#10;}&#10;}" />
+        </camunda:properties>
+      </bpmn:extensionElements>
+      <bpmn:incoming>KundenIdentifizierenResult</bpmn:incoming>
+      <bpmn:outgoing>KundenAuthorisierungsResult</bpmn:outgoing>
+    </bpmn:serviceTask>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="BuchausleiheMitAusleihkarteDigital">
+      <bpmndi:BPMNShape id="Participant_0i9qnyt_di" bpmnElement="BuchAusleihenMitAusleihkarteDigital" isHorizontal="true">
+        <dc:Bounds x="-560" y="-80" width="1888" height="510" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_1vnaozt_di" bpmnElement="Kunde" isHorizontal="true">
+        <dc:Bounds x="-530" y="-80" width="1858" height="185" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_1oxy4do_di" bpmnElement="Bibliothekar" isHorizontal="true">
+        <dc:Bounds x="-530" y="105" width="1858" height="325" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_1o5vvnh_di" bpmnElement="AusleiheBestaetigenResult">
+        <di:waypoint x="1070" y="209" />
+        <di:waypoint x="1103" y="209" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_06hh4m1_di" bpmnElement="BuchAusleihenStartResult">
+        <di:waypoint x="-449" y="25" />
+        <di:waypoint x="-403" y="25" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1gk9rt6_di" bpmnElement="BibliotheksausweisAnfordernResult">
+        <di:waypoint x="-150" y="209" />
+        <di:waypoint x="-130" y="209" />
+        <di:waypoint x="-130" y="25" />
+        <di:waypoint x="-90" y="25" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_025u0fh_di" bpmnElement="BibliotheksausweisVorlegenResult">
+        <di:waypoint x="10" y="25" />
+        <di:waypoint x="40" y="25" />
+        <di:waypoint x="40" y="209" />
+        <di:waypoint x="75" y="209" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_10gnkkv_di" bpmnElement="BuchIdentifizierenResult">
+        <di:waypoint x="663" y="209" />
+        <di:waypoint x="705" y="209" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0hxkaaw_di" bpmnElement="BuchkarteAusfuellenResult">
+        <di:waypoint x="805" y="209" />
+        <di:waypoint x="839" y="209" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_186lkw3_di" bpmnElement="BuchAushaendigenResult">
+        <di:waypoint x="1203" y="209" />
+        <di:waypoint x="1220" y="209" />
+        <di:waypoint x="1220" y="25" />
+        <di:waypoint x="1252" y="25" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_05xh853_di" bpmnElement="FristblattEintragErzeugenResult">
+        <di:waypoint x="939" y="209" />
+        <di:waypoint x="970" y="209" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0ob6m3d_di" bpmnElement="KundenIdentifizierenResult">
+        <di:waypoint x="175" y="209" />
+        <di:waypoint x="215" y="209" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0bs48k7_di" bpmnElement="BuchAussuchenResult">
+        <di:waypoint x="-303" y="25" />
+        <di:waypoint x="-280" y="25" />
+        <di:waypoint x="-280" y="209" />
+        <di:waypoint x="-250" y="209" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_19mo6vf_di" bpmnElement="KundenAuthorisierungsResult">
+        <di:waypoint x="315" y="209" />
+        <di:waypoint x="350" y="209" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0d0vd7w_di" bpmnElement="KundeHatKeineOffeneGebuehren">
+        <di:waypoint x="400" y="209" />
+        <di:waypoint x="563" y="209" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="425" y="191" width="21" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1jo33x1_di" bpmnElement="KundeHatOffeneGebuehren">
+        <di:waypoint x="375" y="234" />
+        <di:waypoint x="375" y="326" />
+        <di:waypoint x="435" y="326" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="386" y="277" width="9" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1nwr1v0_di" bpmnElement="Flow_1nwr1v0">
+        <di:waypoint x="535" y="326" />
+        <di:waypoint x="567" y="326" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Event_1xnr2w7_di" bpmnElement="BuchAusleihen">
+        <dc:Bounds x="-485" y="7" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="-505" y="47" width="76" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_122wj99_di" bpmnElement="BuchAussuchen">
+        <dc:Bounds x="-403" y="-15" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_16xuq8z_di" bpmnElement="BuchAusgeliehen">
+        <dc:Bounds x="1252" y="7" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1226" y="51" width="88" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0l9bs3i_di" bpmnElement="AusleiheBestaetigen">
+        <dc:Bounds x="970" y="169" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1pc38ge_di" bpmnElement="BuchAushaendigen">
+        <dc:Bounds x="1103" y="169" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0uqex6a_di" bpmnElement="FristblattEintragErzeugen">
+        <dc:Bounds x="839" y="169" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1tpjqa4_di" bpmnElement="BuchkarteAusfuellen">
+        <dc:Bounds x="705" y="169" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1ig768o_di" bpmnElement="BuchIdentifizieren">
+        <dc:Bounds x="563" y="169" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1b5w9vq_di" bpmnElement="Event_1aqqwkx">
+        <dc:Bounds x="567" y="308" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1eklsra_di" bpmnElement="AuseleiheAblehnen">
+        <dc:Bounds x="435" y="286" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0jlda97_di" bpmnElement="KundenIdentifizieren">
+        <dc:Bounds x="75" y="169" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0auht9x_di" bpmnElement="HatKundeOffeneGebuehren" isMarkerVisible="true">
+        <dc:Bounds x="350" y="184" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="333" y="133" width="85" height="53" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0yxdtz6_di" bpmnElement="BibliotheksausweisAnfordern">
+        <dc:Bounds x="-250" y="169" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_135zayi_di" bpmnElement="BibliotheksausweisVorlegen">
+        <dc:Bounds x="-90" y="-15" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1sfi63r_di" bpmnElement="KundenAuthorisieren">
+        <dc:Bounds x="215" y="169" width="100" height="80" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
