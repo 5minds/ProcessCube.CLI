@@ -39,7 +39,7 @@
     "os": "^0.1.1",
     "reflect-metadata": "^0.1.13",
     "shelljs": "^0.8.3",
-    "yargs": "^15.1.0",
+    "yargs": "^15.4.1",
     "yesno": "^0.3.1"
   },
   "devDependencies": {
