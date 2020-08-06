@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="Definition_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="BPMN Studio" exporterVersion="1">
   <bpmn:collaboration id="Collaboration_1cidyxu" name="">
-    <bpmn:participant id="Participant_0px403d" name="Buch ausleihen" processRef="BuchAusleihen_erfolgreich" />
+    <bpmn:participant id="Participant_0px403d" name="Buch ausleihen" processRef="BuchAusleihen_laufend" />
   </bpmn:collaboration>
-  <bpmn:process id="BuchAusleihen_erfolgreich" name="BuchAusleihen" isExecutable="true">
+  <bpmn:process id="BuchAusleihen_laufend" name="BuchAusleihen" isExecutable="true">
     <bpmn:laneSet>
       <bpmn:lane id="Lane_1xzf0d3" name="Bibliothekar">
         <bpmn:flowNodeRef>Task_0ac3rw6</bpmn:flowNodeRef>

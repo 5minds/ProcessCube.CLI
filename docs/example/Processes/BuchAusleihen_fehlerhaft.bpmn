@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="Definition_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="BPMN Studio" exporterVersion="1">
-  <bpmn:collaboration id="Collaboration_1cidyxu" name="">
-    <bpmn:participant id="Participant_0px403d" name="Buch ausleihen" processRef="BuchAusleihenMitAusleihkarte_erfolgreich__1_" />
+  <bpmn:collaboration id="fehlerhaft" name="">
+    <bpmn:participant id="Participant_0px403d" name="Buch ausleihen" processRef="BuchAusleihen_fehlerhaft" />
   </bpmn:collaboration>
-  <bpmn:process id="BuchAusleihenMitAusleihkarte_erfolgreich__1_" name="BuchAusleihen_fehlerhaft" isExecutable="true">
+  <bpmn:process id="BuchAusleihen_fehlerhaft" name="BuchAusleihen_fehlerhaft" isExecutable="true">
     <bpmn:laneSet>
       <bpmn:lane id="Lane_0sisqao" name="Kunde">
         <bpmn:flowNodeRef>KundeMoechteBuchAusleihen</bpmn:flowNodeRef>
@@ -146,7 +146,7 @@
     </bpmn:scriptTask>
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
-    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_1cidyxu">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="fehlerhaft">
       <bpmndi:BPMNShape id="Participant_0px403d_di" bpmnElement="Participant_0px403d" isHorizontal="true">
         <dc:Bounds x="5" y="-116" width="1761" height="470" />
       </bpmndi:BPMNShape>
