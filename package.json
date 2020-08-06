@@ -1,6 +1,6 @@
 {
   "name": "@atlas-engine/cli",
-  "version": "0.2.0",
+  "version": "1.0.0-beta.3",
   "description": "CLI for AtlasEngine and process-engine.io",
   "main": "dist/atlas.js",
   "scripts": {
@@ -22,7 +22,7 @@
   "author": "5Minds IT-Solutions GmbH & Co. KG",
   "license": "MIT",
   "dependencies": {
-    "@atlas-engine/atlas_engine_admin_client": "0.2.5-alpha.1",
+    "@atlas-engine/atlas_engine_client": "1.0.0",
     "@essential-projects/http": "^2.5.0",
     "@process-engine/management_api_client": "^6.2.0",
     "bpmn-moddle": "^6.0.2",
@@ -39,7 +39,7 @@
     "os": "^0.1.1",
     "reflect-metadata": "^0.1.13",
     "shelljs": "^0.8.3",
-    "yargs": "^15.1.0",
+    "yargs": "^15.4.1",
     "yesno": "^0.3.1"
   },
   "devDependencies": {

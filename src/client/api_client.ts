@@ -1,8 +1,7 @@
 import * as fs from 'fs';
 
-import chalk from 'chalk';
 import { DataModels } from '@process-engine/management_api_contracts';
-import { AdminDomainHttpClient } from '@atlas-engine/atlas_engine_admin_client';
+import { AtlasEngineClient } from '@atlas-engine/atlas_engine_client';
 
 import { getIdentityAndManagementApiClient } from './management_api_client';
 import { ManagementApiClient } from '@process-engine/management_api_client';
@@ -37,7 +36,7 @@ export class ApiClient {
   private engineUrl: string;
   private identity: Identity;
   private managementApiClient: ManagementApiClient;
-  private adminDomainHttpClient: AdminDomainHttpClient;
+  private atlasEngineClient: AtlasEngineClient;
 
   constructor(session: AtlasSession) {
     this.engineUrl = session.engineUrl;
@@ -45,7 +44,7 @@ export class ApiClient {
 
     this.identity = identity;
     this.managementApiClient = managementApiClient;
-    this.adminDomainHttpClient = new AdminDomainHttpClient(session.engineUrl, this.identity);
+    this.atlasEngineClient = new AtlasEngineClient(session.engineUrl, this.identity);
   }
 
   async deployFile(filename: string): Promise<DeployedProcessModelInfo> {
@@ -167,7 +166,7 @@ export class ApiClient {
 
   async retryProcessInstance(processInstanceId: string): Promise<StoppedProcessInstanceInfo> {
     try {
-      await this.adminDomainHttpClient.processInstances.retryProcessInstance(processInstanceId);
+      await this.atlasEngineClient.processInstances.retryProcessInstance(processInstanceId);
 
       return {
         success: true,
