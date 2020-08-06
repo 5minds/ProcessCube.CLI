@@ -1,6 +1,6 @@
 {
   "name": "@atlas-engine/cli",
-  "version": "1.0.0-beta.2",
+  "version": "1.0.0-beta.3",
   "description": "CLI for AtlasEngine and process-engine.io",
   "main": "dist/atlas.js",
   "scripts": {
