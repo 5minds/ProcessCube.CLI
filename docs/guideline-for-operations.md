@@ -4,7 +4,7 @@
 
 * Sie müssen die Atlas.CLI installiert haben. Siehe [Installationsanleitung Atlas.CLI](./install.md)
 * Sie müssen sich zuvor mithilfe der Atlas.CLI mit einer AtlasEngine verbunden haben. Siehe [Guideline CLI: Verbindung aufbauen](./guideline-CLI-connect.md)
-* Laden Sie sich das [Beispiel](./example) herunter. Darin sind mehrere Prozesse und Shell-Scripte enthalten.
+* Laden Sie sich das [Beispiel](./example) herunter. Darin sind mehrere Prozesse und Shell-Scripte enthalten. Sie können jederzeit das Script `cleanup-state-for-show-process-instance.sh` um ihre Umgebung in den Anfangszustand zurück zuversetzen.
   
 ## Deployment von Prozessmodellen
 Um BPMN-Prozesse mit der AtlasEngine ausführen zu können müssen diese zunächst an die AtlasEngine übertragen werden. Diese Schritt bezeichnet man als Deployment und kann mit dem folgenden Befehl ausgeführt werden: 
@@ -12,7 +12,7 @@ Um BPMN-Prozesse mit der AtlasEngine ausführen zu können müssen diese zunäch
 atlas deploy-files ./example/Processes/BuchAusleihen_erfolgreich.bpmn
 ```
 Als Ergebis des Befehls wird zu dem deployten BPMN die "process_model_id" angezeigt:
-![Ergebnis des deploy-files](./deploy-files_result.png "Ergebnis des deploy-files")
+![Ergebnis des deploy-files](./images/deploy-files_result.png "Ergebnis des deploy-files")
 
 Die "process_model_id" ist fest im BPMN hinterlegt und gleicht häufig dem Namen der *.bpmn Datei. Jedoch kann die "process_model_id" auch von Dateinamen des BPMNs abweichen. Sie können die "process_model_id" zusätzlich mithilfe des Ergebnisses des Befehls `list-process-models` aus dem Abschnitt [Anzeigen von Prozessmodellen](#Anzeigen-von-Prozessmodellen) in der Spalte "id" identifizieren.
 
@@ -42,7 +42,7 @@ Die angezeigte `processInstanceId` ist das Eindeutigkeitskriterium einer jeden P
 
 Im Abschnitt [Starten von Prozess-Instanzen](#Starten-von-Prozess-Instanzen) haben Sie eine Prozess-Instanz gestartet. In diesem Abschnitt soll die gestarte Prozess-Instanz angezeigt werden. Dies können Sie mit folgendem Kommando ausführen:
 ```shell
-atlas show-process-instance 'c29ebb9c-6561-4b0d-b1c5-aa7668bdd530'
+atlas show-process-instance '08a0845e-3537-4510-a568-58ee671a6a5d'
 ```
 **Info**
 
@@ -90,13 +90,20 @@ Als Ergebnis erhalten Sie eine tabellarische Auflistung aller Prozess-Instanzen 
 ![Ergebnis des list-process-instances](./images/list-process-instances_running_result.png "Ergebnis des list-process-instances")
 
 ## Fortsetzen fehlgeschlagener Prozess-Instanzen
+Wenn zum Beispiel ein Service der aus dem Prozess aufgerufen wird kurzzeitig nicht zur Verfügung steht, kann es vorkommen, dass Aktivitäten innerhalb des Prozesses fehlschlagen. Prozess-Instanzen werden dann in den Zustand "error" versetzt. Prozess-Instanzen in diesem Zustand können forgesetzt werden. Dabei wird die zufor fehlgeschlagene Operation erneut ausgeführt. In den folgenden Abschnitten wird beschrieben wie sie einzelne oder alle fehlgeschlagene Prozess-Instanzen fortsetzen können.
+
 ### Fortsetzen einzelner Prozess-Instanzen
+Um einzelne Prozess-Instanzen fortzusetzen müssen Sie zunächst die `processInstanceId` identifizieren, die sie fortsetzen möchten. Dazu können Sie wie im Abschnitt [Filtern nach fehlgeschlagener Prozess-Instanzen](#Filtern-nach-fehlgeschlagener-Prozess-Instanzen) beschrieben vorgehen. Die `processInstanceId` wird als Paramter für den Befehl `atlas retry-process-instance` benötigt. 
 ```shell
-atlas retry-process-instance 923b04b7-9c2b-4fd0-8b10-1d1041df54f6
+atlas retry-process-instance aa3db49e-c9ee-4c04-ac26-026ed31028db
 ```
 ### Fortsetzen aller Prozess-Instanzen
+Ergebisse von Befehlen können mithilfe der Atlas.CLI auch als Eingangsparameter in andere Befehle mithilfe der Pipe-Operators (`|`) umgeleitet werden. Erforderlich hierfür ist, dass die Eingabe an den Folgebefehl im JSON-Format übergeben wird. Dies können Sie realisieren, indem Sie am vorangegangen Befehl das Ausgabeformat mithilfe der `--output` Option festlegen.
+So ist es möglich zunächst alle fehlgeschlagenen Prozess-Instanzen zu ermitteln und diese im Anschluss fortzusetzen: 
 ```shell
 atlas list-process-instances --filter-by-state error --output json | atlas retry-process-instance
 ```
+Unanhängig, ob Sie eine einzelne oder alle fehlgeschlagenen Prozess-Instanzen fortgesetzt haben wird folgende Ausgabe angezeigt:
 
+![Ergebnis des retry-process-instance](./images/retry-process-instance_result.png "Ergebnis des retry-process-instance")
 
