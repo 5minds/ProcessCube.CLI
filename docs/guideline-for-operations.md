@@ -4,7 +4,7 @@
 
 * Sie müssen die Atlas.CLI installiert haben. Siehe [Installationsanleitung Atlas.CLI](./install.md)
 * Sie müssen sich zuvor mithilfe der Atlas.CLI mit einer AtlasEngine verbunden haben. Siehe [Guideline CLI: Verbindung aufbauen](./guideline-CLI-connect.md)
-* Laden Sie sich das [Beispiel](./example) herunter. Darin sind mehrere Prozesse und Scripte enthalten. Sie können jederzeit je nach Betriebssystem das Script `cleanup-state-for-show-process-instance.sh` (Linux oder MacOS) `cleanup-state-for-show-process-instance.bat` (Windows) um ihre Umgebung in den Anfangszustand zurück zuversetzen.
+* Laden Sie sich das [Beispiel](./example) herunter und extrahieren Sie das Zip-Archiv. Darin sind mehrere Prozesse und Scripte enthalten. Sie können jederzeit je nach Betriebssystem das Script `cleanup-state-for-show-process-instance.sh` (Linux oder MacOS) `cleanup-state-for-show-process-instance.bat` (Windows) um ihre Umgebung in den Anfangszustand zurück zuversetzen. Beachten Sie, dass Sie in der Konsole/Eingabeaufforderung in den Ordner navigieren in dem die Scripte enthalten sind.
   
 ## Deployment von Prozessmodellen
 
