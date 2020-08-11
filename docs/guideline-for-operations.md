@@ -81,7 +81,7 @@ call .\example\setup-state-for-show-process-instance.bat
 
 Mit diesem Befehl werden die Prozessmodelle "BuchAusleihen_erfolgreich", "BuchAusleihen_fehlerhaft" und "BuchAusleihen_laufend" die sich in dem "Processes"-Ordner befinden deployed und gestartet.
 
-Um sich die gestarteten Prozess-Instanzen anzeigen zu lassen können Sie folgenden Befehl ausführen:
+Um sich die gestarteten Prozess-Instanzen anzeigen zu lassen, können Sie den folgenden Befehl ausführen:
 
 ```shell
 atlas list-process-instances
@@ -130,7 +130,7 @@ Wenn zum Beispiel ein Service der aus dem Prozess aufgerufen wird kurzzeitig nic
 
 ### Fortsetzen einzelner Prozess-Instanzen
 
-Um einzelne Prozess-Instanzen fortzusetzen müssen Sie zunächst die `processInstanceId` identifizieren, die sie fortsetzen möchten. Dazu können Sie wie im Abschnitt [Filtern nach fehlgeschlagener Prozess-Instanzen](#Filtern-nach-fehlgeschlagener-Prozess-Instanzen) beschrieben vorgehen. Die `processInstanceId` wird als Parameter für den Befehl `atlas retry-process-instance` benötigt.
+Um einzelne Prozess-Instanzen fortzusetzen, müssen Sie zunächst die `processInstanceId` identifizieren, die Sie fortsetzen möchten. Dazu können Sie wie im Abschnitt [Filtern nach fehlgeschlagener Prozess-Instanzen](#Filtern-nach-fehlgeschlagener-Prozess-Instanzen) beschrieben vorgehen. Die `processInstanceId` wird als Parameter für den Befehl `atlas retry-process-instance` benötigt.
 
 ```shell
 atlas retry-process-instance aa3db49e-c9ee-4c04-ac26-026ed31028db
