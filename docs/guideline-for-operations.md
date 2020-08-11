@@ -76,7 +76,7 @@ sh ./example/setup-state-for-show-process-instance.sh
 * Windows
 
 ```shell
-call example\\setup-state-for-show-process-instance.bat
+call example\setup-state-for-show-process-instance.bat
 ```
 
 Mit diesem Befehl werden die Prozessmodelle "BuchAusleihen_erfolgreich", "BuchAusleihen_fehlerhaft" und "BuchAusleihen_laufend" die sich in dem "Processes"-Ordner befinden deployed und gestartet.
