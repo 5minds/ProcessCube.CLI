@@ -29,7 +29,7 @@ npm install -global @atlas-engine/cli@beta
 
 ## Aktualisieren auf eine andere Version
 
-Wenn Sie bereits die Atlas.CLI installiert haben und auf eine andere Version wechseln möchten können Sie die gleichen Befehle wie in dem Abschnitt [Erstinstallation](#Erstinstallation) beschrieben nutzen.
+Wenn Sie bereits die Atlas.CLI installiert haben und auf eine andere Version wechseln möchten, können Sie die gleichen Befehle wie in dem Abschnitt [Erstinstallation](#Erstinstallation) beschrieben nutzen.
 
 ---
 **Info:**
