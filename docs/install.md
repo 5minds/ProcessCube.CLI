@@ -9,7 +9,7 @@ Konsoleneaffine Entwickler lieben es eine Vielzahl ihrer anfallenden Tätigkeite
 
 ## Erstinstallation
 
-Nachdem die Vorrausetzungen für die Installation erfüllt sind, kann die Atlas.CLI installiert werden. Dies können Sie mit folgendem Befehl durchführen:
+Nachdem die Vorrausetzungen für die Installation erfüllt sind, kann die Atlas.CLI installiert werden. Dies können Sie mit dem folgenden Befehl durchführen:
 
 ```shell
 npm install -global @atlas-engine/cli
