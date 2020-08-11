@@ -27,6 +27,8 @@ Die Ports haben bei der Einrichtung Standardwerte für die verschiedenen Variant
 | standalone AtlasEngine                    | beta                         |     8000     |
 | standalone AtlasEngine                    | stable                       |     8000     |
 
+Die Ports der standalone AtlasEngine können im Rahmen der [Konfiguration](https://github.com/atlas-engine/AtlasEngine/master/docs/install.md) individuell angepasst werden. Sofern die Einstellung nicht den Standardwerten entsprechen müssen Sie die Verbindungsparmeter entsprechend anpassen.
+
 ---
 
 ### Produktions- oder Testsystem
