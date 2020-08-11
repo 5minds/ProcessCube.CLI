@@ -4,11 +4,11 @@
 
 * Sie müssen die Atlas.CLI installiert haben. Siehe [Installationsanleitung Atlas.CLI](./install.md)
 * Sie müssen sich zuvor mithilfe der Atlas.CLI mit einer AtlasEngine verbunden haben. Siehe [Guideline CLI: Verbindung aufbauen](./guideline-CLI-connect.md)
-* Laden Sie sich das [Beispiel](./example) herunter und extrahieren Sie das Zip-Archiv. Darin sind mehrere Prozesse und Scripte enthalten. Sie können jederzeit je nach Betriebssystem das Script `cleanup-state-for-show-process-instance.sh` (Linux oder MacOS) `cleanup-state-for-show-process-instance.bat` (Windows) um ihre Umgebung in den Anfangszustand zurück zu versetzen. Beachten Sie, dass Sie in der Konsole/Eingabeaufforderung in den  extrahierten Ordner navigieren.
+* Laden Sie sich das [Beispiel](./example) herunter und extrahieren Sie das Zip-Archiv. Darin sind mehrere Prozesse und Scripte enthalten. Sie können jederzeit je nach Betriebssystem das Script `cleanup-state-for-show-process-instance.sh` (Linux oder MacOS) `cleanup-state-for-show-process-instance.bat` (Windows) ausführen, um ihre Umgebung in den Anfangszustand zurück zu versetzen. Beachten Sie, dass Sie in der Konsole/Eingabeaufforderung in den extrahierten Ordner navigieren.
   
 ## Deployment von Prozessmodellen
 
-Um BPMN-Prozesse mit der AtlasEngine ausführen zu können müssen diese zunächst an die AtlasEngine übertragen werden. Diese Schritt bezeichnet man als Deployment und kann mit dem folgenden Befehl ausgeführt werden:
+Um BPMN-Prozesse mit der AtlasEngine ausführen zu können, müssen diese zunächst an die AtlasEngine übertragen werden. Diese Schritt bezeichnet man als Deployment und kann mit dem folgenden Befehl ausgeführt werden:
 
 ```shell
 atlas deploy-files ./example/Processes/BuchAusleihen_erfolgreich.bpmn
