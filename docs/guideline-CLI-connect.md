@@ -31,13 +31,13 @@ Die Ports haben bei der Einrichtung Standardwerte für die verschiedenen Variant
 
 ### Produktions- oder Testsystem
 
-Auf Produktions- oder Testsystem empfehlt sich die AtlasEngine nicht innerhalb eines BPMN-Studios / AtlasStudios zu betreiben. Mit einer im  AtlasEngine aus der 'stable' Freigabeversion die auf einem Server (mit der IP-Adresse 10.10.32.7) installiert wurde können Sie sich wie folgt einloggen:
+Auf Produktions- oder Testsystem empfiehlt sich die AtlasEngine nicht innerhalb eines BPMN-Studios / AtlasStudios zu betreiben. Mit einer im AtlasEngine aus der 'stable' Freigabeversion, die auf einem Server (mit der IP-Adresse 10.10.32.7) installiert wurde, können Sie sich wie folgt einloggen:
 
 ```shell
 atlas login http://10.10.32.7:8000
 ```
 
-Es öffnet sich nun ein Webbrowser mit der von Ihnen konfigurieren Authority.
+Es öffnet sich nun ein Webbrowser mit der von Ihnen konfigurierten Authority.
 
 ![alt text](./images/LoginWithAtlasAuthoriy.png "Einloggen mit der AtlasAuthoriy")
 
