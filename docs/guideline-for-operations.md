@@ -4,7 +4,7 @@
 
 * Sie müssen die Atlas.CLI installiert haben. Siehe [Installationsanleitung Atlas.CLI](./install.md)
 * Sie müssen sich zuvor mithilfe der Atlas.CLI mit einer AtlasEngine verbunden haben. Siehe [Guideline CLI: Verbindung aufbauen](./guideline-CLI-connect.md)
-* Laden Sie sich das [Beispiel](./example) herunter. Darin sind mehrere Prozesse und Shell-Scripte enthalten. Sie können jederzeit das Script `cleanup-state-for-show-process-instance.sh` um ihre Umgebung in den Anfangszustand zurück zuversetzen.
+* Laden Sie sich das [Beispiel](./example) herunter. Darin sind mehrere Prozesse und Scripte enthalten. Sie können jederzeit je nach Betriebssystem das Script `cleanup-state-for-show-process-instance.sh` (Linux oder MacOS) `cleanup-state-for-show-process-instance.bat` (Windows) um ihre Umgebung in den Anfangszustand zurück zuversetzen.
   
 ## Deployment von Prozessmodellen
 
@@ -65,10 +65,18 @@ Als Parameter wird die `processInstanceId` von der gestarteten Prozess-Instanz �
 Es folgt die Ausgabe der Eigenschaften der Prozess-Instanz innerhalb der Konsole:
 ![Ergebnis des show-process-instance](./images/show-process-instance_result.png "Ergebnis des show-process-instance")
 
-Für die folgenden Abschnitte benötigen Sie einen definierten Status um bei jedem Abschnitt das beschriebene Ergebnis zu erhalten. Um den definierten Status zu erreichen führen Sie einfach folgenden Befehl aus:
+Für die folgenden Abschnitte benötigen Sie einen definierten Status um bei jedem Abschnitt das beschriebene Ergebnis zu erhalten. Um den definierten Status zu erreichen führen Sie je nach Betriebssystem einer der folgenden Befehle aus:
+
+* Linux / MacOS
 
 ```shell
 sh ./example/setup-state-for-show-process-instance.sh
+```
+
+* Windows
+
+```shell
+call example\\setup-state-for-show-process-instance.bat
 ```
 
 Mit diesem Befehl werden die Prozessmodelle "BuchAusleihen_erfolgreich", "BuchAusleihen_fehlerhaft" und "BuchAusleihen_laufend" die sich in dem "Processes"-Ordner befinden deployed und gestartet.
