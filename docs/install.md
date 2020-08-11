@@ -6,7 +6,6 @@ Konsoleneaffine Entwickler lieben es eine Vielzahl ihrer anfallenden Tätigkeite
 ## Installationsvoraussetzungen
 
 * Node.js 10.0.0 oder höher auf einem Betriebssystem welches von 'Node.js' unterstützt wird. (Wenn Sie Node noch nicht installiert haben können Sie sich auf folgender Webseite informieren: [https://nodejs.org/](https://nodejs.org/))
-* npm 6.0.0 oder höher auf einem Betriebssystem welches von 'npm' unterstützt wird. (Wenn Sie Node noch nicht installiert haben können Sie sich auf folgender Webseite informieren: [https://docs.npmjs.com/about-npm/](https://docs.npmjs.com/about-npm/))
 
 ## Erstinstallation
 
