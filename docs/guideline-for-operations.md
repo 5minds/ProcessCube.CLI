@@ -4,11 +4,11 @@
 
 * Sie müssen die Atlas.CLI installiert haben. Siehe [Installationsanleitung Atlas.CLI](./install.md)
 * Sie müssen sich zuvor mithilfe der Atlas.CLI mit einer AtlasEngine verbunden haben. Siehe [Guideline CLI: Verbindung aufbauen](./guideline-CLI-connect.md)
-* Laden Sie sich das [Beispiel](./example) herunter und extrahieren Sie das Zip-Archiv. Darin sind mehrere Prozesse und Scripte enthalten. Sie können jederzeit je nach Betriebssystem das Script `cleanup-state-for-show-process-instance.sh` (Linux oder MacOS) `cleanup-state-for-show-process-instance.bat` (Windows) um ihre Umgebung in den Anfangszustand zurück zu versetzen. Beachten Sie, dass Sie in der Konsole/Eingabeaufforderung in den  extrahierten Ordner navigieren.
+* Laden Sie sich das [Beispiel](./example) herunter und extrahieren Sie das Zip-Archiv. Darin sind mehrere Prozesse und Scripte enthalten. Sie können jederzeit je nach Betriebssystem das Script `cleanup-state-for-show-process-instance.sh` (Linux oder MacOS) `cleanup-state-for-show-process-instance.bat` (Windows) ausführen, um ihre Umgebung in den Anfangszustand zurück zu versetzen. Beachten Sie, dass Sie in der Konsole/Eingabeaufforderung in den extrahierten Ordner navigieren.
   
 ## Deployment von Prozessmodellen
 
-Um BPMN-Prozesse mit der AtlasEngine ausführen zu können müssen diese zunächst an die AtlasEngine übertragen werden. Diese Schritt bezeichnet man als Deployment und kann mit dem folgenden Befehl ausgeführt werden:
+Um BPMN-Prozesse mit der AtlasEngine ausführen zu können, müssen diese zunächst an die AtlasEngine übertragen werden. Diese Schritt bezeichnet man als Deployment und kann mit dem folgenden Befehl ausgeführt werden:
 
 ```shell
 atlas deploy-files ./example/Processes/BuchAusleihen_erfolgreich.bpmn
@@ -81,7 +81,7 @@ call .\example\setup-state-for-show-process-instance.bat
 
 Mit diesem Befehl werden die Prozessmodelle "BuchAusleihen_erfolgreich", "BuchAusleihen_fehlerhaft" und "BuchAusleihen_laufend" die sich in dem "Processes"-Ordner befinden deployed und gestartet.
 
-Um sich die gestarteten Prozess-Instanzen anzeigen zu lassen können Sie folgenden Befehl ausführen:
+Um sich die gestarteten Prozess-Instanzen anzeigen zu lassen, können Sie den folgenden Befehl ausführen:
 
 ```shell
 atlas list-process-instances
@@ -130,7 +130,7 @@ Wenn zum Beispiel ein Service der aus dem Prozess aufgerufen wird kurzzeitig nic
 
 ### Fortsetzen einzelner Prozess-Instanzen
 
-Um einzelne Prozess-Instanzen fortzusetzen müssen Sie zunächst die `processInstanceId` identifizieren, die sie fortsetzen möchten. Dazu können Sie wie im Abschnitt [Filtern nach fehlgeschlagener Prozess-Instanzen](#Filtern-nach-fehlgeschlagener-Prozess-Instanzen) beschrieben vorgehen. Die `processInstanceId` wird als Parameter für den Befehl `atlas retry-process-instance` benötigt.
+Um einzelne Prozess-Instanzen fortzusetzen, müssen Sie zunächst die `processInstanceId` identifizieren, die Sie fortsetzen möchten. Dazu können Sie wie im Abschnitt [Filtern nach fehlgeschlagener Prozess-Instanzen](#Filtern-nach-fehlgeschlagener-Prozess-Instanzen) beschrieben vorgehen. Die `processInstanceId` wird als Parameter für den Befehl `atlas retry-process-instance` benötigt.
 
 ```shell
 atlas retry-process-instance aa3db49e-c9ee-4c04-ac26-026ed31028db
