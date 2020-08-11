@@ -33,7 +33,7 @@ Als Ergebnis werden alle deployten Prozessmodelle angezeigt:
 
 ## Starten von Prozess-Instanzen
 
-Nachdem das Prozessmodel deployed ist können Sie eine Prozess-Instanz starten. Dies können Sie mit dem Befehl `start-process-model` realisieren, indem Sie die "process_model_id" als Parameter übergeben:
+Nachdem das Prozessmodel deployt ist können Sie eine Prozess-Instanz starten. Dies können Sie mit dem Befehl `start-process-model` realisieren, indem Sie die "process_model_id" als Parameter übergeben:
 
 ```shell
 atlas start-process-model BuchAusleihen_erfolgreich
