@@ -1,3 +1,0 @@
-#!/bin/bash
-
-atlas remove-process-models BuchAusleihen_erfolgreich BuchAusleihen_fehlerhaft BuchAusleihen_laufend --yes
