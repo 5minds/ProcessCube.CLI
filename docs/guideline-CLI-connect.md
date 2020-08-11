@@ -37,8 +37,10 @@ Auf Produktions- oder Testsystem empfehlt sich die AtlasEngine nicht innerhalb e
 atlas login http://10.10.32.7:8000
 ```
 
-Es öffnet sich nun ein Webbrowser mit der von Ihnen konfigurieren Authority. 
+Es öffnet sich nun ein Webbrowser mit der von Ihnen konfigurieren Authority.
+
 ![alt text](./images/LoginWithAtlasAuthoriy.png "Einloggen mit der AtlasAuthoriy")
+
 Geben Sie Ihre Anmeldeinformationen und bestätigen Sie mit "Login" oder wählen Sie einen konfigurierten Provider wie Microsoft oder Google.
 
 ### Entwicklungssystem
