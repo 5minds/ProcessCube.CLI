@@ -95,6 +95,12 @@ Jede der aufgelisteten Prozess-Instanz befindet sich in einem anderen Status:
 * BuchAusleihen_fehlerhaft --> error
 * BuchAusleihen_erfolgreich --> finished
 
+---
+**Info:**
+Es existiert noch der Status "terminated" der jedoch für dieses Beispiel irrelevant ist.
+
+---
+
 Die AtlasCLI bietet die Möglichkeit nach spezifischen Merkmalen von Prozess-Instanzen zu filtern, die auch in der integrierten Hilfe `atlas list-process-instances --help` detailliert beschrieben werden. In den folgenden Abschnitten lernen Sie einige dieser Filtermöglichkeiten kennen.
 
 ### Filtern nach fehlgeschlagener Prozess-Instanzen
