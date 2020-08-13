@@ -7,7 +7,7 @@
 
 ## Einloggen in die Atlas.CLI
 
-Damit Sie mit der AtlasEngine über die Atlas.CLI interagieren können müssen Sie sich zunächst einloggen. Dies können Sie durch folgenden Befehl realisieren:
+Damit Sie mit der AtlasEngine über die Atlas.CLI interagieren können, müssen Sie sich zunächst einloggen. Dies können Sie durch den folgenden Befehl realisieren:
 
 ```shell
 atlas login <ENGINE_URI>
@@ -27,7 +27,7 @@ Die Ports haben bei der Einrichtung Standardwerte für die verschiedenen Variant
 | standalone AtlasEngine                    | beta                         |     8000     |
 | standalone AtlasEngine                    | stable                       |     8000     |
 
-Die Ports der standalone AtlasEngine können im Rahmen der [Konfiguration](https://github.com/atlas-engine/AtlasEngine/master/docs/install.md) individuell angepasst werden. Sofern die Einstellung nicht den Standardwerten entsprechen müssen Sie die Verbindungsparmeter entsprechend anpassen.
+Die Ports der standalone AtlasEngine können im Rahmen der [Konfiguration](https://github.com/atlas-engine/AtlasEngine/master/docs/install.md) individuell angepasst werden. Sofern die Einstellung nicht den Standardwerten entsprechen, müssen Sie die Verbindungsparameter entsprechend anpassen.
 
 ---
 
@@ -43,13 +43,13 @@ Es öffnet sich nun ein Webbrowser mit der von Ihnen konfigurierten Authority.
 
 ![alt text](./images/LoginWithAtlasAuthoriy.png "Einloggen mit der AtlasAuthoriy")
 
-Geben Sie Ihre Anmeldeinformationen und bestätigen Sie mit "Login" oder wählen Sie einen konfigurierten Provider wie Microsoft oder Google.
+Geben Sie Ihre Anmeldeinformationen ein und bestätigen Sie mit "Login" oder wählen Sie einen konfigurierten Provider wie Microsoft oder Google.
 
 ### Entwicklungssystem
 
 Wenn Sie sich auf einem Entwicklungssystem befinden empfiehlt sich die Option für "Anonymen Root Zugriff" in der AtlasEngine freizuschalten. Bei der im BPMN-Studio / AtlasStudio integrierten AtlasEngine können Sie dies durch die [Einstellungen](./install.md) realisieren. Bei einer "standalone" eingerichteten AtlasEngine können Sie die Einstellung ebenfalls [konfigurieren](.install.md).
 
-Mit einer im BPMN-Studio / AtlasStudio integrierten AtlasEngine aus der 'stable' Freigabeversion, die lokal installiert wurde und dessen anonymer root Zugriff erlaubt ist können Sie sich wie folgt einloggen:
+Mit einer im BPMN-Studio / AtlasStudio integrierten AtlasEngine aus der 'stable' Freigabeversion, die lokal installiert wurde und dessen anonymer root Zugriff erlaubt ist, können Sie sich wie folgt einloggen:
 
 ```shell
 atlas login http://localhost:56000 --root
