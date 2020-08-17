@@ -8,7 +8,7 @@
   
 ## Deployment von Prozessmodellen
 
-Um BPMN-Prozesse mit der AtlasEngine ausführen zu können, müssen diese zunächst an die AtlasEngine übertragen werden. Diesen Schritt bezeichnet man als Deployment und kann mit dem folgenden Befehl ausgeführt werden:
+Um BPMN-Prozesse mit der Atlas Engine ausführen zu können, müssen diese zunächst an die Atlas Engine übertragen werden. Diesen Schritt bezeichnet man als Deployment und kann mit dem folgenden Befehl ausgeführt werden:
 
 ```shell
 atlas deploy-files ./example/Processes/BuchAusleihen_erfolgreich.bpmn
