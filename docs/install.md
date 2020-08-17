@@ -1,7 +1,7 @@
 # Installation der Atlas.CLI
 
-Die Atlas.CLI ist eine Komandozeilenanwendung um mit der AtlasEngine unabhängig vom BPMN-Studio / AltasStudio zu interagieren. Mithilfe der CLI können Sie Prozesse in Ihrer CI-Pipeline automatisiert auf verschiedenen Systemen deployen. Des Weiteren ist es ein praktisches Werkzeug für den Softwarebetrieb. Denn Prozess-Instanzen können mithilfe der CLI beauskunftet und bei Bedarf auch gestartet, gestoppt oder fortgesetzt werden.
-Konsoleneaffine Entwickler bevorzugen es eine Vielzahl ihrer anfallenden Tätigkeiten mit der Konsole zu erledigen oder sogar zu automatisieren.  All das ist möglich mit der Atlas.CLI!
+Die Atlas CLI ist eine Komandozeilenanwendung, um mit der Atlas Engine unabhängig vom BPMN-Studio / Altas Studio zu interagieren. Mithilfe der CLI können Sie Prozesse in Ihrer CI-Pipeline automatisiert auf verschiedenen Systemen deployen. Des Weiteren ist es ein praktisches Werkzeug für den Softwarebetrieb. Denn Prozess-Instanzen können mithilfe der CLI inspiziert und bei Bedarf auch gestartet, gestoppt oder fortgesetzt werden.
+Viele Entwickler bevorzugen es, eine Vielzahl ihrer anfallenden Tätigkeiten mit der Konsole zu erledigen oder sogar zu automatisieren.  All das ist möglich mit der Atlas CLI!
 
 ## Installationsvoraussetzungen
 

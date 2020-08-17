@@ -1,11 +1,11 @@
-# Guideline CLI: Verbindung aufbauen
+# Atlas CLI: Verbindung zu einer Atlas Engine aufbauen
 
 ## Voraussetzungen
 
-* Die AtlasEngine muss auf dem lokalen oder auf einem entfernten System installiert sein. Siehe [Installationsanleitung AtlasEngine](./install.md) //ToDo: Link anpassen. Alternativ können Sie sich auch das BPMN-Studios / AtlasStudio mit einer integrierten AtlasEngine installieren. Siehe [Installationsanleitung BPMN-Studio / AtlasStudio](./install.md)
-* Die Atlas.CLI muss auf dem lokalen System installiert sein. Siehe [Installationsanleitung Atlas.CLI](./install.md)
+* Die Atlas Engine muss auf dem lokalen oder auf einem entfernten System installiert sein, siehe [Installationsanleitung Atlas Engine](./install.md) //ToDo: Link anpassen. Alternativ können Sie sich auch das BPMN Studio / Atlas Studio mit einer integrierten AtlasEngine installieren, siehe [Installationsanleitung BPMN Studio / Atlas Studio](./install.md).
+* Die Atlas CLI muss auf dem lokalen System installiert sein, siehe [Installationsanleitung Atlas CLI](./install.md).
 
-## Einloggen in die Atlas.CLI
+## Einloggen in die Atlas CLI
 
 Damit Sie mit der AtlasEngine über die Atlas.CLI interagieren können, müssen Sie sich zunächst einloggen. Dies können Sie durch den folgenden Befehl realisieren:
 
@@ -15,7 +15,7 @@ atlas login <ENGINE_URI>
 
 ---
 **Info:**
-Die "ENGINE_URI" variiert je nach Installation und Einrichtung ihrer AltasEngine. Auf einem Entwicklungssystem wird vorwiegend die AtlasEngine lokal auf dem selben System betrieben. Dazu verwenden Sie einfach "localhost" und den entsprechend konfigurierten Port.
+Die `ENGINE_URI` variiert je nach Installation und Einrichtung ihrer AltasEngine. Auf einem Entwicklungssystem wird vorwiegend die AtlasEngine lokal auf dem selben System betrieben. Dazu verwenden Sie einfach `localhost` und den entsprechend konfigurierten Port.
 Die Ports haben bei der Einrichtung Standardwerte für die verschiedenen Varianten der Freigabeversionen. Es folgt eine Auflistung der Standardwerte für jede Installationsart und Variante der Freigabeversion:
 
 | Installationsart                          | Variante der Freigabeversion | Standardport |
@@ -33,7 +33,7 @@ Die Ports der standalone AtlasEngine können im Rahmen der [Konfiguration](https
 
 ### Produktions- oder Testsystem
 
-Auf Produktions- oder Testsystem empfiehlt sich die AtlasEngine nicht innerhalb eines BPMN-Studios / AtlasStudios zu betreiben. Mit einer im AtlasEngine aus der 'stable' Freigabeversion, die auf einem Server (mit der IP-Adresse 10.10.32.7) installiert wurde, können Sie sich wie folgt einloggen:
+Auf Produktions- oder Testsystemen empfiehlt sich die Atlas Engine nicht innerhalb eines BPMN Studios / Atlas Studios zu betreiben. Mit einer AtlasEngine aus der 'stable' Freigabeversion, die auf einem Server (mit der IP-Adresse 10.10.32.7) installiert wurde, können Sie sich wie folgt einloggen:
 
 ```shell
 atlas login http://10.10.32.7:8000
