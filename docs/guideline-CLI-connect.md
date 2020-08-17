@@ -47,7 +47,7 @@ Geben Sie Ihre Anmeldeinformationen ein und bestätigen Sie mit "Login". Abhäng
 
 ### Entwicklungssystem
 
-Wenn Sie sich auf einem Entwicklungssystem befinden empfiehlt sich die Option für anonymen "Root-Zugriff" in der Atlas Engine freizuschalten. Bei der im BPMN Studio / Atlas Studio integrierten Atlas Engine können Sie dies durch die [Einstellungen](./install.md) realisieren. Bei einer Atlas Engine die nicht im BPMN Studio / Atlas Studio integriert ist können Sie die Einstellung ebenfalls [konfigurieren](.install.md).
+Wenn Sie sich auf einem Entwicklungssystem befinden empfiehlt sich die Option für anonymen "Root-Zugriff" in der Atlas Engine freizuschalten. Bei einer Atlas Engine können Sie diese Einstellung [konfigurieren](.install.md). Bei der im BPMN Studio / Atlas Studio integrierten Atlas Engine ist diese Option standardmäßig eingeschaltet.
 
 Mit einer im BPMN Studio / Atlas Studio integrierten Atlas Engine aus dem 'stable' Freigabekanal, die lokal installiert wurde und dessen anonymen "Root-Zugriff" erlaubt ist, können Sie sich wie folgt einloggen:
 
