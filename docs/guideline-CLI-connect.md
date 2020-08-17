@@ -27,7 +27,7 @@ Die Ports haben bei der Einrichtung Standardwerte für die verschiedenen Freigab
 | Atlas Engine via BPMN Studio / Atlas Studio | beta                         |     56100    |
 | Atlas Engine via BPMN Studio / Atlas Studio | stable                       |     56000    |
 
-Die Ports der standalone Atlas Engine können im Rahmen der [Konfiguration](https://github.com/atlas-engine/AtlasEngine/master/docs/install.md) individuell angepasst werden. Sofern die Einstellung nicht den Standardwerten entsprechen, müssen Sie die Verbindungsparameter entsprechend anpassen.
+Die Ports der Atlas Engine können im Rahmen der [Konfiguration](https://github.com/atlas-engine/AtlasEngine/master/docs/install.md) individuell angepasst werden. Sofern die Einstellung nicht den Standardwerten entsprechen, müssen Sie die Verbindungsparameter entsprechend anpassen.
 
 ---
 
@@ -43,13 +43,13 @@ Es öffnet sich nun ein Webbrowser mit der von Ihnen konfigurierten Authority.
 
 ![alt text](./images/LoginWithAtlasAuthoriy.png "Einloggen mit der AtlasAuthoriy")
 
-Geben Sie Ihre Anmeldeinformationen ein und bestätigen Sie mit "Login" oder wählen Sie einen konfigurierten Provider wie Microsoft oder Google.
+Geben Sie Ihre Anmeldeinformationen ein und bestätigen Sie mit "Login". Abhängig von Ihrer Konfiguration der Atlas Authority ist es auch möglich, dass sie sich mit einem Provider wie Microsoft oder Google einloggen können.
 
 ### Entwicklungssystem
 
-Wenn Sie sich auf einem Entwicklungssystem befinden empfiehlt sich die Option für "Anonymen Root Zugriff" in der Atlas Engine freizuschalten. Bei der im BPMN Studio / Atlas Studio integrierten Atlas Engine können Sie dies durch die [Einstellungen](./install.md) realisieren. Bei einer "standalone" eingerichteten Atlas Engine können Sie die Einstellung ebenfalls [konfigurieren](.install.md).
+Wenn Sie sich auf einem Entwicklungssystem befinden empfiehlt sich die Option für anonymen "Root-Zugriff" in der Atlas Engine freizuschalten. Bei der im BPMN Studio / Atlas Studio integrierten Atlas Engine können Sie dies durch die [Einstellungen](./install.md) realisieren. Bei einer Atlas Engine die nicht im BPMN Studio / Atlas Studio integriert ist können Sie die Einstellung ebenfalls [konfigurieren](.install.md).
 
-Mit einer im BPMN Studio / Atlas Studio integrierten Atlas Engine aus dem 'stable' Freigabekanal, die lokal installiert wurde und dessen anonymer root Zugriff erlaubt ist, können Sie sich wie folgt einloggen:
+Mit einer im BPMN Studio / Atlas Studio integrierten Atlas Engine aus dem 'stable' Freigabekanal, die lokal installiert wurde und dessen anonymen "Root-Zugriff" erlaubt ist, können Sie sich wie folgt einloggen:
 
 ```shell
 atlas login http://localhost:56000 --root
