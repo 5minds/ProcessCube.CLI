@@ -20,9 +20,9 @@ Die Ports haben bei der Einrichtung Standardwerte für die verschiedenen Variant
 
 | Installationsart                          | Variante der Freigabeversion | Standardport |
 |-------------------------------------------|------------------------------|:------------:|
-| Atlas Engine via BPMN-Studio / AtlasStudio | alpha                        |     56200    |
-| Atlas Engine via BPMN-Studio / AtlasStudio | beta                         |     56100    |
-| Atlas Engine via BPMN-Studio / AtlasStudio | stable                       |     56000    |
+| Atlas Engine via BPMN-Studio / Atlas Studio | alpha                        |     56200    |
+| Atlas Engine via BPMN-Studio / Atlas Studio | beta                         |     56100    |
+| Atlas Engine via BPMN-Studio / Atlas Studio | stable                       |     56000    |
 | standalone Atlas Engine                    | alpha                        |     8000     |
 | standalone Atlas Engine                    | beta                         |     8000     |
 | standalone Atlas Engine                    | stable                       |     8000     |
@@ -47,9 +47,9 @@ Geben Sie Ihre Anmeldeinformationen ein und bestätigen Sie mit "Login" oder wä
 
 ### Entwicklungssystem
 
-Wenn Sie sich auf einem Entwicklungssystem befinden empfiehlt sich die Option für "Anonymen Root Zugriff" in der Atlas Engine freizuschalten. Bei der im BPMN-Studio / AtlasStudio integrierten Atlas Engine können Sie dies durch die [Einstellungen](./install.md) realisieren. Bei einer "standalone" eingerichteten Atlas Engine können Sie die Einstellung ebenfalls [konfigurieren](.install.md).
+Wenn Sie sich auf einem Entwicklungssystem befinden empfiehlt sich die Option für "Anonymen Root Zugriff" in der Atlas Engine freizuschalten. Bei der im BPMN-Studio / Atlas Studio integrierten Atlas Engine können Sie dies durch die [Einstellungen](./install.md) realisieren. Bei einer "standalone" eingerichteten Atlas Engine können Sie die Einstellung ebenfalls [konfigurieren](.install.md).
 
-Mit einer im BPMN-Studio / AtlasStudio integrierten Atlas Engine aus der 'stable' Freigabeversion, die lokal installiert wurde und dessen anonymer root Zugriff erlaubt ist, können Sie sich wie folgt einloggen:
+Mit einer im BPMN-Studio / Atlas Studio integrierten Atlas Engine aus der 'stable' Freigabeversion, die lokal installiert wurde und dessen anonymer root Zugriff erlaubt ist, können Sie sich wie folgt einloggen:
 
 ```shell
 atlas login http://localhost:56000 --root
