@@ -54,3 +54,13 @@ Mit einer im BPMN-Studio / AtlasStudio integrierten AtlasEngine aus der 'stable'
 ```shell
 atlas login http://localhost:56000 --root
 ```
+
+---
+**Info:**
+Die Atlas CLI nimmt als Standardprotokoll `http` und als Standardhost `localhost`. Dadurch ist auf Entwicklungssystemen die verkürzte Schreibweise für das Anmelden möglich:
+
+```shell
+atlas login :56000 --root
+```
+
+---
