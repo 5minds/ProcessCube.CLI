@@ -4,11 +4,15 @@
 
 * Sie müssen die Atlas CLI installiert haben, siehe [Installationsanleitung Atlas CLI](./install.md).
 * Sie müssen sich zuvor mithilfe der Atlas CLI mit einer Atlas Engine verbunden haben, siehe [Atlas CLI: Verbindung aufbauen](./guideline-CLI-connect.md).
-* Laden Sie sich das [Beispiel](./example) herunter und extrahieren Sie das Zip-Archiv. Darin sind mehrere Prozesse und Scripte enthalten. Sie können jederzeit je nach Betriebssystem das Script `cleanup-state-for-show-process-instance.sh` (Linux oder MacOS) `cleanup-state-for-show-process-instance.bat` (Windows) ausführen, um ihre Umgebung in den Anfangszustand zurück zu versetzen.
+
+## Vorbereitung
+
+1. Laden Sie sich das [Beispiel](./example) herunter und extrahieren Sie das Zip-Archiv.
+2. Navigieren Sie in der Konsole/Eingabeaufforderung mithilfe des `cd`-Befehls in den extrahierten Ordner.
 
 ---
 **Info:**
-Beachten Sie, dass Sie in der Konsole/Eingabeaufforderung in den extrahierten Ordner navigieren.
+In dem extrahierten Ordner sind mehrere Prozesse und Scripte enthalten. Sie können jederzeit je nach Betriebssystem das Script `cleanup-state-for-show-process-instance.sh` (Linux oder macOS) `cleanup-state-for-show-process-instance.bat` (Windows) ausführen, um ihre Umgebung in den Anfangszustand zurück zu versetzen.
 
 ---
 
