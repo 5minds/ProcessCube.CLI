@@ -15,16 +15,12 @@ Nachdem die Vorrausetzungen für die Installation erfüllt sind, kann die Atlas.
 npm install -global @atlas-engine/cli
 ```
 
-Für eine spezifische Version muss diese nach der Paketbezeichnung mit "@dist-tags" angegeben werden. Dist-Tags kennzeichnen die verschiedenen eindeutigen Versionen eines Pakets. Einen Überblick über die verschiedenen Versionen können Sie sich mit dem folgenden Befehl verschaffen:
-
-```shell
-npm show @atlas-engine/cli
-```
+Für eine spezifische Version muss diese nach der Paketbezeichnung mit einem vorangestellten `@` angegeben werden. Einen Überblick über die verschiedenen Versionen können Sie sich auf der [npm-Webseite](https://preview.npmjs.com/package/@atlas-engine/cli?activeTab=versions) verschaffen.
 
 Der Befehl für die Installation einer spezifischen Version sieht dann wie folgend aus:
 
 ```shell
-npm install -global @atlas-engine/cli@beta
+npm install -global @atlas-engine/cli@1.0.0
 ```
 
 ## Aktualisieren auf eine andere Version
