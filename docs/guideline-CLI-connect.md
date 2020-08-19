@@ -39,11 +39,17 @@ Auf Produktions- oder Testsystemen empfiehlt sich die Atlas Engine nicht innerha
 atlas login http://10.10.32.7:8000
 ```
 
-Es öffnet sich nun ein Webbrowser mit der von Ihnen konfigurierten Authority.
+Es öffnet sich nun ein Webbrowser mit der von Ihnen konfigurierten Atlas Authority.
 
 ![alt text](./images/LoginWithAtlasAuthoriy.png "Einloggen mit der AtlasAuthoriy")
 
 Geben Sie Ihre Anmeldeinformationen ein und bestätigen Sie mit "Login". Abhängig von Ihrer Konfiguration der Atlas Authority ist es auch möglich, dass sie sich mit einem Provider wie Microsoft oder Google einloggen können.
+
+---
+**Info:**
+Die Atlas Authority ist für die Authentifizierung und Autorisierung in der Atlas Platform zuständig. Wenn Sie mehr dazu erfahren möchten, können Sie sich im Abschnitt [Atlas Authority](ToDo) detaillierter informieren.
+
+---
 
 ### Entwicklungssystem
 
