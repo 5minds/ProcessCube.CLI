@@ -20,7 +20,7 @@ Für eine spezifische Version muss diese nach der Paketbezeichnung mit einem vor
 Der Befehl für die Installation einer spezifischen Version sieht dann wie folgend aus:
 
 ```shell
-npm install -global @atlas-engine/cli@1.0.0
+npm install --global @atlas-engine/cli@1.0.0
 ```
 
 ## Aktualisieren auf eine andere Version
