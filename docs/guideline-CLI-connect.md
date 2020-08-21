@@ -7,7 +7,7 @@
 
 ## Einloggen in die Atlas CLI
 
-Damit Sie mit der Atlas Engine über die Atlas.CLI interagieren können, müssen Sie sich zunächst einloggen. Dies können Sie durch den folgenden Befehl realisieren:
+Damit Sie mit der Atlas Engine über die Atlas CLI interagieren können, müssen Sie sich zunächst einloggen. Dies können Sie durch den folgenden Befehl realisieren:
 
 ```shell
 atlas login <ENGINE_URI>

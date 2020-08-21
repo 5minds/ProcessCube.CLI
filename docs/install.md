@@ -1,4 +1,4 @@
-# Installation der Atlas.CLI
+# Installation der Atlas CLI
 
 Die Atlas CLI ist eine Komandozeilenanwendung, um mit der Atlas Engine unabhängig vom BPMN Studio / Atlas Studio zu interagieren. Mithilfe der CLI können Sie Prozesse in Ihrer CI-Pipeline automatisiert auf verschiedenen Systemen deployen. Des Weiteren ist es ein praktisches Werkzeug für den Softwarebetrieb. Denn Prozess-Instanzen können mithilfe der CLI inspiziert und bei Bedarf auch gestartet, gestoppt oder fortgesetzt werden.
 Viele Entwickler bevorzugen es, eine Vielzahl ihrer anfallenden Tätigkeiten mit der Konsole zu erledigen oder sogar zu automatisieren.  All das ist möglich mit der Atlas CLI!
@@ -9,7 +9,7 @@ Viele Entwickler bevorzugen es, eine Vielzahl ihrer anfallenden Tätigkeiten mit
 
 ## Erstinstallation
 
-Nachdem die Vorrausetzungen für die Installation erfüllt sind, kann die Atlas.CLI installiert werden. Dies können Sie mit dem folgenden Befehl durchführen:
+Nachdem die Vorrausetzungen für die Installation erfüllt sind, kann die Atlas CLI installiert werden. Dies können Sie mit dem folgenden Befehl durchführen:
 
 ```shell
 npm install -global @atlas-engine/cli
@@ -25,7 +25,7 @@ npm install -global @atlas-engine/cli@1.0.0
 
 ## Aktualisieren auf eine andere Version
 
-Wenn Sie bereits die Atlas.CLI installiert haben und auf eine andere Version wechseln möchten, können Sie die gleichen Befehle wie in dem Abschnitt [Erstinstallation](#Erstinstallation) beschrieben nutzen.
+Wenn Sie bereits die Atlas CLI installiert haben und auf eine andere Version wechseln möchten, können Sie die gleichen Befehle wie in dem Abschnitt [Erstinstallation](#Erstinstallation) beschrieben nutzen.
 
 ---
 **Info:**
