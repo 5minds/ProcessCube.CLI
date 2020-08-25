@@ -1,5 +1,7 @@
 # Guideline für den Betrieb
 
+In dieser Anleitung werden Ihnen anhand eines Beispiels, welches Sie selbst ausprobieren können, die grundlegenden Funktionen der Atlas CLI vorgestellt.
+
 ## Vorraussetzungen
 
 * Sie müssen die Atlas CLI installiert haben, siehe [Installationsanleitung Atlas CLI](./install.md).

@@ -1,5 +1,7 @@
 # Atlas CLI: Verbindung zu einer Atlas Engine aufbauen
 
+In dieser Anleitung wird Ihnen beschrieben, wie sie eine Verbindung zwischen der Atlas CLI und der Atlas Engine herstellen können.
+
 ## Voraussetzungen
 
 * Die Atlas Engine muss auf dem lokalen oder auf einem entfernten System installiert sein, siehe [Installationsanleitung Atlas Engine](./install.md) //ToDo: Link anpassen. Alternativ können Sie sich auch das BPMN Studio / Atlas Studio mit einer integrierten Atlas Engine installieren, siehe [Installationsanleitung BPMN Studio / Atlas Studio](./install.md).

@@ -1,9 +1,8 @@
 # Installation der Atlas CLI
 
-Die Atlas CLI ist eine Komandozeilenanwendung, um mit der Atlas Engine unabhängig vom BPMN Studio / Atlas Studio zu interagieren. Mithilfe der CLI können Sie Prozesse in Ihrer CI-Pipeline automatisiert auf verschiedenen Systemen deployen. Des Weiteren ist es ein praktisches Werkzeug für den Softwarebetrieb. Denn Prozess-Instanzen können mithilfe der CLI inspiziert und bei Bedarf auch gestartet, gestoppt oder fortgesetzt werden.
-Viele Entwickler bevorzugen es, eine Vielzahl ihrer anfallenden Tätigkeiten mit der Konsole zu erledigen oder sogar zu automatisieren.  All das ist möglich mit der Atlas CLI!
+In dieser Anleitung wird Ihnen beschrieben, wie Sie die Atlas CLI installieren und aktualisieren können.
 
-## Installationsvoraussetzungen
+## Voraussetzungen
 
 * Node.js 10.0.0 oder höher auf einem Betriebssystem welches von 'Node.js' unterstützt wird. (Wenn Sie Node noch nicht installiert haben können Sie sich auf folgender Webseite informieren: [https://nodejs.org/](https://nodejs.org/))
 
