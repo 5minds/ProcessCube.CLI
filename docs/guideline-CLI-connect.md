@@ -1,6 +1,6 @@
 # Atlas CLI: Verbindung zu einer Atlas Engine aufbauen
 
-In dieser Anleitung wird Ihnen beschrieben, wie sie eine Verbindung zwischen der Atlas CLI und der Atlas Engine herstellen können.
+In dieser Anleitung wird Ihnen beschrieben, wie Sie eine Verbindung zwischen der Atlas CLI und der Atlas Engine herstellen können.
 
 ## Voraussetzungen
 
