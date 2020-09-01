@@ -161,21 +161,21 @@ program
   )
 
   .command(
-    ['start-process-model [process_model_id] [start_event_id]', 'start [process_model_id] [start_event_id]'],
+    ['start-process-model [processModelId] [startEventId]', 'start [processModelId] [startEventId]'],
     'Start an instance of a deployed process model',
     (yargs) => {
       return yargs
         .usage(
           usageString(
-            'start-process-model [process_model_id] [start_event_id]',
+            'start-process-model [processModelId] [startEventId]',
             'Starts an instance of a deployed process model on the connected engine.'
           )
         )
-        .positional('process_model_id', {
+        .positional('processModelId', {
           description: 'ID of process model to start',
           type: 'string'
         })
-        .positional('start_event_id', {
+        .positional('startEventId', {
           description: 'ID of start event to trigger',
           type: 'string'
         })
@@ -223,8 +223,8 @@ program
 
       await startProcessInstance(
         pipedProcessModelIds,
-        argv.process_model_id,
-        argv.start_event_id,
+        argv.processModelId,
+        argv.startEventId,
         argv.correlationId,
         inputValues,
         argv.wait,
@@ -375,7 +375,7 @@ program
           type: 'string'
         })
         .option('filter-by-correlation-id', {
-          description: 'Filter process instances by <correlation_id>',
+          description: 'Filter process instances by <correlationId>',
           type: 'array',
           default: []
         })
@@ -474,7 +474,7 @@ program
     heading('USAGE') +
       '\n  $0 <command> [options]\n\n' +
       heading('SYNOPSIS') +
-      '\n  Atlas CLI provides a rich interface to deploy and start process models as well as manage and inspect process instances and correlations for both ProcesEngine and AtlasEngine.'
+      '\n  Atlas CLI provides a rich interface to deploy and start process models as well as manage and inspect process instances and correlations for both ProcessEngine and AtlasEngine.'
   )
   .epilog(formatHelpText(epilogSnippetAtlas))
   .locale('en')
