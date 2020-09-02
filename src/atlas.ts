@@ -307,7 +307,7 @@ program
         .positional('processInstanceIds', {
           description: 'IDs of process instances to restart'
         })
-        .epilog(formatHelpText(epilogSnippetRetryProcessInstance));_
+        .epilog(formatHelpText(epilogSnippetRetryProcessInstance));
     },
     async (argv: any) => {
       const stdinPipeReader = await StdinPipeReader.create();
