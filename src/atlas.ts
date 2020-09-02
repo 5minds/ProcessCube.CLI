@@ -130,17 +130,17 @@ program
   )
 
   .command(
-    ['remove-process-models [process_model_ids...]', 'remove [process_model_ids...]'],
+    ['remove-process-models [processModelIds...]', 'remove [processModelIds...]'],
     'Remove deployed process models from the engine',
     (yargs) => {
       return yargs
         .usage(
           usageString(
-            'remove-process-models [process_model_ids...]',
+            'remove-process-models [processModelIds...]',
             'Removes deployed process models from the connected engine.'
           )
         )
-        .positional('process_model_ids', {
+        .positional('processModelIds', {
           description: 'IDs of process models to remove'
         })
         .option('yes', {
@@ -234,17 +234,17 @@ program
   )
 
   .command(
-    ['stop-process-instance [process_instance_ids...]', 'stop [process_instance_ids...]'],
+    ['stop-process-instance [processInstanceIds...]', 'stop [processInstanceIds...]'],
     'Stop instances with the given process instance IDs',
     (yargs) => {
       return yargs
         .usage(
           usageString(
-            'stop-process-instance [process_instance_ids...]',
+            'stop-process-instance [processInstanceIds...]',
             'Stops instances with the given process instance IDs on the connected engine.'
           )
         )
-        .positional('process_instance_ids', {
+        .positional('processInstanceIds', {
           description: 'IDs of process instances to stop'
         })
         .epilog(formatHelpText(epilogSnippetStopProcessInstance));
@@ -258,17 +258,17 @@ program
   )
 
   .command(
-    ['show-process-instance [process_instance_ids...]', 'show'],
+    ['show-process-instance [processInstanceIds...]', 'show'],
     'Show detailed information about individual process instances or correlations',
     (yargs) => {
       return yargs
         .usage(
           usageString(
-            'show-process-instance [process_instance_ids...]',
+            'show-process-instance [processInstanceIds...]',
             'Shows detailed information about individual process instances or correlations from the connected engine.'
           )
         )
-        .positional('process_instance_ids', {
+        .positional('processInstanceIds', {
           description: 'IDs of process instances to show; if omitted, the latest process instance is shown'
         })
         .option('correlation', {
@@ -294,20 +294,20 @@ program
   )
 
   .command(
-    ['retry-process-instance [process_instance_ids...]', 'retry'],
+    ['retry-process-instance [processInstanceIds...]', 'retry'],
     'Restart failed process instances with the given process instance IDs',
     (yargs) => {
       return yargs
         .usage(
           usageString(
-            'retry [process_instance_ids...]',
+            'retry [processInstanceIds...]',
             'Restarts failed process instances with the given process instance IDs on the connected engine.'
           )
         )
-        .positional('process_instance_ids', {
+        .positional('processInstanceIds', {
           description: 'IDs of process instances to restart'
         })
-        .epilog(formatHelpText(epilogSnippetRetryProcessInstance));
+        .epilog(formatHelpText(epilogSnippetRetryProcessInstance));_
     },
     async (argv: any) => {
       const stdinPipeReader = await StdinPipeReader.create();
