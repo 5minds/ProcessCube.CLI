@@ -151,12 +151,12 @@ program
         .epilog(formatHelpText(epilogSnippetRemoveProcessModels));
     },
     (argv: any) => {
-      if (argv.process_model_ids?.length === 0) {
+      if (argv.processModelIds?.length === 0) {
         program.showHelp();
         return;
       }
 
-      removeProcessModels(argv.process_model_ids, argv.yes, argv.output);
+      removeProcessModels(argv.processModelIds, argv.yes, argv.output);
     }
   )
 
@@ -251,7 +251,7 @@ program
     },
     async (argv: any) => {
       const stdinPipeReader = await StdinPipeReader.create();
-      let processInstanceIds = stdinPipeReader.getPipedProcessInstanceIds() || argv.process_instance_ids;
+      let processInstanceIds = stdinPipeReader.getPipedProcessInstanceIds() || argv.processInstanceIds;
 
       await stopProcessInstance(processInstanceIds, argv.output);
     }
@@ -287,7 +287,7 @@ program
     },
     async (argv: any) => {
       const stdinPipeReader = await StdinPipeReader.create();
-      let processInstanceIds = stdinPipeReader.getPipedProcessInstanceIds() || argv.process_instance_ids;
+      let processInstanceIds = stdinPipeReader.getPipedProcessInstanceIds() || argv.processInstanceIds;
 
       await showProcessInstance(processInstanceIds, argv.correlation, argv.allFields, argv.output);
     }
@@ -311,7 +311,7 @@ program
     },
     async (argv: any) => {
       const stdinPipeReader = await StdinPipeReader.create();
-      let processInstanceIds = stdinPipeReader.getPipedProcessInstanceIds() || argv.process_instance_ids;
+      let processInstanceIds = stdinPipeReader.getPipedProcessInstanceIds() || argv.processInstanceIds;
 
       await retryProcessInstance(processInstanceIds, argv.output);
     }
