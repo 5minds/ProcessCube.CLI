@@ -60,6 +60,18 @@ program
     choices: [OUTPUT_FORMAT_TEXT, OUTPUT_FORMAT_JSON]
   })
 
+
+  .command(
+    ['atlas'],
+    'Show help',
+    (yargs) => {
+      return yargs
+        .showHelpOnFail(true)
+        .showHelp()
+      
+    }, 
+  )
+
   .command(
     ['session-status', 'st'],
     'Show status of the current session',
