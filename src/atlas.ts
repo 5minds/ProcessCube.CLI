@@ -42,6 +42,10 @@ const usageString = (commandName: string, synopsis: string): string => {
   return heading('USAGE') + `\n  $0 ${commandName} [options]\n\n` + heading('SYNOPSIS') + `\n  ${synopsis}`;
 };
 
+const argv = require('yargs')
+  .command('$0', 'the default command', (yargs) => {return yargs 
+  .showHelp()});
+  
 program
   .version(VERSION)
   .scriptName('atlas')
@@ -467,15 +471,6 @@ program
         argv.output
       );
     }
-  )
-
-  .command(
-    ['atlas'],
-    'Show help',
-    (yargs) => {
-      return yargs
-        .showHelp()
-    } 
   )
 
   .showHelpOnFail(false)
