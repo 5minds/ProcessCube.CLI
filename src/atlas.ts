@@ -61,14 +61,6 @@ program
   })
 
   .command(
-    '$0', 'the default command',
-    (yargs) => {
-      return yargs
-      .showHelp()
-    }
-  )
-
-  .command(
     ['session-status', 'st'],
     'Show status of the current session',
     (yargs) => {
@@ -477,7 +469,8 @@ program
     }
   )
 
-  .showHelpOnFail(false)
+  .showHelpOnFail(true)
+  .demandCommand(1, '')
   .usage(
     heading('USAGE') +
       '\n  $0 <command> [options]\n\n' +
