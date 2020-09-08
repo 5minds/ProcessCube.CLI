@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
 
     services:
-      process_engine:
+      atlas_engine:
         image: 5minds/atlas_engine_fullstack_server:10
         ports:
         - 8000:8000
