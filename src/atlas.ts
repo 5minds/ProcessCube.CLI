@@ -41,7 +41,7 @@ const VERSION = require('../package.json').version;
 const usageString = (commandName: string, synopsis: string): string => {
   return heading('USAGE') + `\n  $0 ${commandName} [options]\n\n` + heading('SYNOPSIS') + `\n  ${synopsis}`;
 };
-
+  
 program
   .version(VERSION)
   .scriptName('atlas')
@@ -469,7 +469,8 @@ program
     }
   )
 
-  .showHelpOnFail(false)
+  .showHelpOnFail(true)
+  .demandCommand(1, '')
   .usage(
     heading('USAGE') +
       '\n  $0 <command> [options]\n\n' +
