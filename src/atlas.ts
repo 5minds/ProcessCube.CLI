@@ -41,10 +41,6 @@ const VERSION = require('../package.json').version;
 const usageString = (commandName: string, synopsis: string): string => {
   return heading('USAGE') + `\n  $0 ${commandName} [options]\n\n` + heading('SYNOPSIS') + `\n  ${synopsis}`;
 };
-
-const argv = require('yargs')
-  .command('$0', 'the default command', (yargs) => {return yargs 
-  .showHelp()});
   
 program
   .version(VERSION)
@@ -63,6 +59,14 @@ program
     default: OUTPUT_FORMAT_TEXT,
     choices: [OUTPUT_FORMAT_TEXT, OUTPUT_FORMAT_JSON]
   })
+
+  .command(
+    '$0', 'the default command',
+    (yargs) => {
+      return yargs
+      .showHelp()
+    }
+  )
 
   .command(
     ['session-status', 'st'],
