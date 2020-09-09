@@ -74,12 +74,12 @@ program
   )
 
   .command(
-    'login [engine_url]',
+    'login [engineUrl]',
     'Log in to the given engine',
     (yargs) => {
       return yargs
-        .usage(usageString('login [engine_url]', 'Starts or renews a session with the given engine.'))
-        .positional('engine_url', {
+        .usage(usageString('login [engineUrl]', 'Starts or renews a session with the given engine.'))
+        .positional('engineUrl', {
           description: 'URL of engine to connect to',
           type: 'string'
         })
@@ -90,7 +90,7 @@ program
         .epilog(formatHelpText(epilogSnippetLogin));
     },
     async (argv: any) => {
-      await login(argv.engine_url, argv.root, argv.output);
+      await login(argv.engineUrl, argv.root, argv.output);
     }
   )
 
@@ -273,7 +273,7 @@ program
         })
         .option('correlation', {
           alias: 'c',
-          description: 'All given <process_instance_ids> are interpreted as correlation ids',
+          description: 'All given <processInstanceIds> are interpreted as correlation ids',
           type: 'boolean',
           default: false
         })
