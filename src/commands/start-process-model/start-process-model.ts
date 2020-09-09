@@ -70,6 +70,10 @@ export async function startProcessInstance(
 async function getSingleStartEventIdOrNull(apiClient: ApiClient, processModelId: string): Promise<string | null> {
   const processModels = await apiClient.getProcessModelsByIds([processModelId]);
   const processModel = processModels[0];
+  if (processModel == null) {
+    logError('No process model with the id "'+ processModelId + '" was found. Please check the spelling.');
+    process.exit(1);
+  }
   if (processModel.startEvents.length === 1) {
     return processModel.startEvents[0].id;
   }

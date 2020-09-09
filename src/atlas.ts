@@ -41,7 +41,7 @@ const VERSION = require('../package.json').version;
 const usageString = (commandName: string, synopsis: string): string => {
   return heading('USAGE') + `\n  $0 ${commandName} [options]\n\n` + heading('SYNOPSIS') + `\n  ${synopsis}`;
 };
-
+  
 program
   .version(VERSION)
   .scriptName('atlas')
@@ -74,12 +74,12 @@ program
   )
 
   .command(
-    'login [engine_url]',
+    'login [engineUrl]',
     'Log in to the given engine',
     (yargs) => {
       return yargs
-        .usage(usageString('login [engine_url]', 'Starts or renews a session with the given engine.'))
-        .positional('engine_url', {
+        .usage(usageString('login [engineUrl]', 'Starts or renews a session with the given engine.'))
+        .positional('engineUrl', {
           description: 'URL of engine to connect to',
           type: 'string'
         })
@@ -90,7 +90,7 @@ program
         .epilog(formatHelpText(epilogSnippetLogin));
     },
     async (argv: any) => {
-      await login(argv.engine_url, argv.root, argv.output);
+      await login(argv.engineUrl, argv.root, argv.output);
     }
   )
 
@@ -130,17 +130,17 @@ program
   )
 
   .command(
-    ['remove-process-models [process_model_ids...]', 'remove [process_model_ids...]'],
+    ['remove-process-models [processModelIds...]', 'remove [processModelIds...]'],
     'Remove deployed process models from the engine',
     (yargs) => {
       return yargs
         .usage(
           usageString(
-            'remove-process-models [process_model_ids...]',
+            'remove-process-models [processModelIds...]',
             'Removes deployed process models from the connected engine.'
           )
         )
-        .positional('process_model_ids', {
+        .positional('processModelIds', {
           description: 'IDs of process models to remove'
         })
         .option('yes', {
@@ -151,31 +151,31 @@ program
         .epilog(formatHelpText(epilogSnippetRemoveProcessModels));
     },
     (argv: any) => {
-      if (argv.process_model_ids?.length === 0) {
+      if (argv.processModelIds?.length === 0) {
         program.showHelp();
         return;
       }
 
-      removeProcessModels(argv.process_model_ids, argv.yes, argv.output);
+      removeProcessModels(argv.processModelIds, argv.yes, argv.output);
     }
   )
 
   .command(
-    ['start-process-model [process_model_id] [start_event_id]', 'start [process_model_id] [start_event_id]'],
+    ['start-process-model [processModelId] [startEventId]', 'start [processModelId] [startEventId]'],
     'Start an instance of a deployed process model',
     (yargs) => {
       return yargs
         .usage(
           usageString(
-            'start-process-model [process_model_id] [start_event_id]',
+            'start-process-model [processModelId] [startEventId]',
             'Starts an instance of a deployed process model on the connected engine.'
           )
         )
-        .positional('process_model_id', {
+        .positional('processModelId', {
           description: 'ID of process model to start',
           type: 'string'
         })
-        .positional('start_event_id', {
+        .positional('startEventId', {
           description: 'ID of start event to trigger',
           type: 'string'
         })
@@ -223,8 +223,8 @@ program
 
       await startProcessInstance(
         pipedProcessModelIds,
-        argv.process_model_id,
-        argv.start_event_id,
+        argv.processModelId,
+        argv.startEventId,
         argv.correlationId,
         inputValues,
         argv.wait,
@@ -234,46 +234,46 @@ program
   )
 
   .command(
-    ['stop-process-instance [process_instance_ids...]', 'stop [process_instance_ids...]'],
+    ['stop-process-instance [processInstanceIds...]', 'stop [processInstanceIds...]'],
     'Stop instances with the given process instance IDs',
     (yargs) => {
       return yargs
         .usage(
           usageString(
-            'stop-process-instance [process_instance_ids...]',
+            'stop-process-instance [processInstanceIds...]',
             'Stops instances with the given process instance IDs on the connected engine.'
           )
         )
-        .positional('process_instance_ids', {
+        .positional('processInstanceIds', {
           description: 'IDs of process instances to stop'
         })
         .epilog(formatHelpText(epilogSnippetStopProcessInstance));
     },
     async (argv: any) => {
       const stdinPipeReader = await StdinPipeReader.create();
-      let processInstanceIds = stdinPipeReader.getPipedProcessInstanceIds() || argv.process_instance_ids;
+      let processInstanceIds = stdinPipeReader.getPipedProcessInstanceIds() || argv.processInstanceIds;
 
       await stopProcessInstance(processInstanceIds, argv.output);
     }
   )
 
   .command(
-    ['show-process-instance [process_instance_ids...]', 'show'],
+    ['show-process-instance [processInstanceIds...]', 'show'],
     'Show detailed information about individual process instances or correlations',
     (yargs) => {
       return yargs
         .usage(
           usageString(
-            'show-process-instance [process_instance_ids...]',
+            'show-process-instance [processInstanceIds...]',
             'Shows detailed information about individual process instances or correlations from the connected engine.'
           )
         )
-        .positional('process_instance_ids', {
+        .positional('processInstanceIds', {
           description: 'IDs of process instances to show; if omitted, the latest process instance is shown'
         })
         .option('correlation', {
           alias: 'c',
-          description: 'All given <process_instance_ids> are interpreted as correlation ids',
+          description: 'All given <processInstanceIds> are interpreted as correlation ids',
           type: 'boolean',
           default: false
         })
@@ -287,31 +287,31 @@ program
     },
     async (argv: any) => {
       const stdinPipeReader = await StdinPipeReader.create();
-      let processInstanceIds = stdinPipeReader.getPipedProcessInstanceIds() || argv.process_instance_ids;
+      let processInstanceIds = stdinPipeReader.getPipedProcessInstanceIds() || argv.processInstanceIds;
 
       await showProcessInstance(processInstanceIds, argv.correlation, argv.allFields, argv.output);
     }
   )
 
   .command(
-    ['retry-process-instance [process_instance_ids...]', 'retry'],
+    ['retry-process-instance [processInstanceIds...]', 'retry'],
     'Restart failed process instances with the given process instance IDs',
     (yargs) => {
       return yargs
         .usage(
           usageString(
-            'retry [process_instance_ids...]',
+            'retry [processInstanceIds...]',
             'Restarts failed process instances with the given process instance IDs on the connected engine.'
           )
         )
-        .positional('process_instance_ids', {
+        .positional('processInstanceIds', {
           description: 'IDs of process instances to restart'
         })
         .epilog(formatHelpText(epilogSnippetRetryProcessInstance));
     },
     async (argv: any) => {
       const stdinPipeReader = await StdinPipeReader.create();
-      let processInstanceIds = stdinPipeReader.getPipedProcessInstanceIds() || argv.process_instance_ids;
+      let processInstanceIds = stdinPipeReader.getPipedProcessInstanceIds() || argv.processInstanceIds;
 
       await retryProcessInstance(processInstanceIds, argv.output);
     }
@@ -375,7 +375,7 @@ program
           type: 'string'
         })
         .option('filter-by-correlation-id', {
-          description: 'Filter process instances by <correlation_id>',
+          description: 'Filter process instances by <correlationId>',
           type: 'array',
           default: []
         })
@@ -469,12 +469,13 @@ program
     }
   )
 
-  .showHelpOnFail(false)
+  .showHelpOnFail(true)
+  .demandCommand(1, '')
   .usage(
     heading('USAGE') +
       '\n  $0 <command> [options]\n\n' +
       heading('SYNOPSIS') +
-      '\n  Atlas CLI provides a rich interface to deploy and start process models as well as manage and inspect process instances and correlations for both ProcesEngine and AtlasEngine.'
+      '\n  Atlas CLI provides a rich interface to deploy and start process models as well as manage and inspect process instances and correlations for both ProcessEngine and AtlasEngine.'
   )
   .epilog(formatHelpText(epilogSnippetAtlas))
   .locale('en')
