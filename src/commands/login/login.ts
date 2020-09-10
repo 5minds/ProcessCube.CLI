@@ -60,9 +60,9 @@ export async function login(
     }
   }
   
-  const engineIsAvailable = await isUrlAvailable(engineUrl)
+  const engineUrlIsAvailable = await isUrlAvailable(engineUrl)
   let newSession: AtlasSession;
-  if (tryAnonymousRootLogin && engineIsAvailable == true) {
+  if (tryAnonymousRootLogin && engineUrlIsAvailable == true) {
     newSession = await loginViaAnonymousRootAccess(engineUrl);
 
     console.log('');
