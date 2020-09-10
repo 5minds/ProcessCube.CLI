@@ -73,6 +73,7 @@ jobs:
 
   notify_about_build:
     name: "Notify About Build"
+    if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/beta'
     needs: [build_test_and_publish_linux]
     runs-on: ubuntu-18.04
 
@@ -97,7 +98,6 @@ jobs:
         key: npm-cache-fix-${{ hashFiles('package-lock.json') }}
 
     - name: Announce Release Notes
-      if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/beta'
       run: |
         ./node_modules/.bin/ci_tools publish-releasenotes-on-slack
       env:
