@@ -84,6 +84,14 @@ export async function login(
 }
 
 async function loginViaAnonymousRootAccess(engineUrl: string): Promise<AtlasSession> {
+
+  const engineIsAvailable = await isUrlAvailable(engineUrl)
+  if(engineIsAvailable === false){
+    logError('The Engine cannot be reached.')
+    console.warn('');
+    process.exit(1);
+  }
+
   const newSession: AtlasSession = {
     type: 'session',
     engineUrl: engineUrl,
