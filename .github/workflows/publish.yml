@@ -33,6 +33,18 @@ jobs:
       run: |
         ./node_modules/.bin/ci_tools prepare-version --allow-dirty-workdir
 
+    - name: Stash package.json
+      uses: actions/upload-artifact@master
+      with:
+        name: package_json
+        path: package.json
+
+    - name: Cache node modules
+      uses: actions/cache@v1
+      with:
+        path: node_modules
+        key: npm-cache-fix-${{ hashFiles('package-lock.json') }}
+
     - name: 'Build sources'
       run: npm run build
 
@@ -58,3 +70,37 @@ jobs:
         NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
       run: |
           ./node_modules/.bin/ci_tools publish-npm-package --create-tag-from-branch-name
+
+  notify_about_build:
+    name: "Notify About Build"
+    needs: [build_test_and_publish_linux]
+    runs-on: ubuntu-18.04
+
+    steps:
+    - uses: actions/checkout@v1
+
+    - name: Use Node.js 12.x
+      uses: actions/setup-node@v1
+      with:
+        node-version: 12.x
+
+    - name: Unstash package.json
+      uses: actions/download-artifact@master
+      with:
+        name: package_json
+        path: "."
+
+    - name: Get node_modules from Cache
+      uses: actions/cache@v1
+      with:
+        path: node_modules
+        key: npm-cache-fix-${{ hashFiles('package-lock.json') }}
+
+    - name: Announce Release Notes
+      # if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/beta'
+      run: |
+        ./node_modules/.bin/ci_tools publish-releasenotes-on-slack
+      env:
+        SLACK_WEBHOOK: ${{ secrets.SLACK_ANNOUNCER_WEBHOOK }}
+        GH_USER: ${{ secrets.GH_USER }}
+        GH_TOKEN: ${{ secrets.GH_TOKEN }}
