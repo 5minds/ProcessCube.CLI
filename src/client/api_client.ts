@@ -244,7 +244,6 @@ export class ApiClient {
     return allProcessInstances;
   }
 
-
   async getAllProcessInstancesViaIds(processInstanceIds: string[]): Promise<ProcessInstance[]> {
     let allProcessInstances = [];
     for (const processInstanceId of processInstanceIds) {
