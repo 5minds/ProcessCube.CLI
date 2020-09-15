@@ -235,21 +235,15 @@ export class ApiClient {
   }
 
   async getAllProcessInstancesViaCorrelations(correlationIds: string[]): Promise<ProcessInstance[]> {
-    
     let allProcessInstances = [];
     for (const correlationId of correlationIds) {
-      try {
-        const result = await this.managementApiClient.getProcessInstancesForCorrelation(this.identity, correlationId);
-        allProcessInstances = allProcessInstances.concat(result.processInstances);
-
-      } catch (error) {
-        this.warnAndExitIfEnginerUrlNotAvailable();
-        throw error;
-      }
+      const result = await this.managementApiClient.getProcessInstancesForCorrelation(this.identity, correlationId);
+      allProcessInstances = allProcessInstances.concat(result.processInstances);
     }
 
     return allProcessInstances;
   }
+
 
   async getAllProcessInstancesViaIds(processInstanceIds: string[]): Promise<ProcessInstance[]> {
     let allProcessInstances = [];
