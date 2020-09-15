@@ -65,7 +65,7 @@ export class ApiClient {
     try {
       await this.managementApiClient.updateProcessDefinitionsByName(this.identity, processModelId, payload);
     } catch (error) {
-      this.warnAndExitIfEnginerUrlNotAvailable();
+      await this.warnAndExitIfEnginerUrlNotAvailable();
 
       return { success: false, filename, processModelId, error };
     }
@@ -79,7 +79,7 @@ export class ApiClient {
 
       return { success: true, processModelId };
     } catch (error) {
-      this.warnAndExitIfEnginerUrlNotAvailable();
+      await this.warnAndExitIfEnginerUrlNotAvailable();
 
       return { success: false, processModelId, error };
     }
@@ -126,7 +126,7 @@ export class ApiClient {
 
       return result;
     } catch (error) {
-      this.warnAndExitIfEnginerUrlNotAvailable();
+      await this.warnAndExitIfEnginerUrlNotAvailable();
 
       return { success: false, processModelId, startEventId, error };
     }
@@ -158,7 +158,7 @@ export class ApiClient {
         processInstanceId
       };
     } catch (error) {
-      this.warnAndExitIfEnginerUrlNotAvailable();
+      await this.warnAndExitIfEnginerUrlNotAvailable();
 
       return { success: false, processInstanceId, error };
     }
@@ -173,22 +173,35 @@ export class ApiClient {
         processInstanceId
       };
     } catch (error) {
-      this.warnAndExitIfEnginerUrlNotAvailable();
+      await this.warnAndExitIfEnginerUrlNotAvailable();
 
       return { success: false, processInstanceId, error };
     }
   }
 
   async getProcessModels(offset?: number, limit?: number): Promise<any[]> {
-    const result = await this.managementApiClient.getProcessModels(this.identity, offset, limit);
+    try {
+      const result = await this.managementApiClient.getProcessModels(this.identity, offset, limit);
 
-    return result.processModels;
+      return result.processModels;
+
+    } catch (error) {
+      await this.warnAndExitIfEnginerUrlNotAvailable();
+      throw error;
+    }
   }
 
   async getProcessModelsByIds(processModelIds: string[] | null = null): Promise<any[]> {
-    const processModels = await this.getProcessModels();
+    try {
+      const processModels = await this.getProcessModels();
 
-    return processModels.filter((processModel: any) => processModelIds.includes(processModel.id));
+      return processModels.filter((processModel: any) => processModelIds.includes(processModel.id));
+
+    } catch (error) {
+      await this.warnAndExitIfEnginerUrlNotAvailable();
+      throw error;
+      
+    }
   }
 
   async getAllProcessInstances(
@@ -209,7 +222,7 @@ export class ApiClient {
         allProcessInstances = await this.getAllProcessInstancesViaAllProcessModels(filterByProcessModelId);
       }
     } catch (error) {
-      this.warnAndExitIfEnginerUrlNotAvailable();
+      await this.warnAndExitIfEnginerUrlNotAvailable();
       throw error;
     }
 
@@ -224,8 +237,14 @@ export class ApiClient {
   async getAllProcessInstancesViaCorrelations(correlationIds: string[]): Promise<ProcessInstance[]> {
     let allProcessInstances = [];
     for (const correlationId of correlationIds) {
-      const result = await this.managementApiClient.getProcessInstancesForCorrelation(this.identity, correlationId);
-      allProcessInstances = allProcessInstances.concat(result.processInstances);
+      try {
+        const result = await this.managementApiClient.getProcessInstancesForCorrelation(this.identity, correlationId);
+        allProcessInstances = allProcessInstances.concat(result.processInstances);
+      } catch (error) {
+        await this.warnAndExitIfEnginerUrlNotAvailable();
+        throw error;
+      }
+      
     }
 
     return allProcessInstances;
@@ -234,32 +253,46 @@ export class ApiClient {
   async getAllProcessInstancesViaIds(processInstanceIds: string[]): Promise<ProcessInstance[]> {
     let allProcessInstances = [];
     for (const processInstanceId of processInstanceIds) {
-      const rawProcessInstance = await this.managementApiClient.getProcessInstanceById(
-        this.identity,
-        processInstanceId
-      );
-      allProcessInstances.push(rawProcessInstance);
+      try {
+        const rawProcessInstance = await this.managementApiClient.getProcessInstanceById(
+          this.identity,
+          processInstanceId
+        );
+        allProcessInstances.push(rawProcessInstance);
+
+      } catch (error) {
+        await this.warnAndExitIfEnginerUrlNotAvailable();
+        throw error;
+      }
     }
 
     return allProcessInstances;
   }
 
   async getLatestProcessInstance(): Promise<ProcessInstance> {
-    const sortByCreatedAtDescFn = (a: any, b: any) => {
-      if (a.createdAt > b.createdAt) {
-        return -1;
-      }
-      if (a.createdAt < b.createdAt) {
-        return 1;
-      }
-      return 0;
-    };
+    try {
 
-    const correlationResult = await this.managementApiClient.getAllCorrelations(this.identity);
-    const latestCorrelation = correlationResult.correlations.sort(sortByCreatedAtDescFn)[0];
-    const processInstances = latestCorrelation.processInstances;
+      const sortByCreatedAtDescFn = (a: any, b: any) => {
+        if (a.createdAt > b.createdAt) {
+          return -1;
+        }
+        if (a.createdAt < b.createdAt) {
+          return 1;
+        }
+        return 0;
+      };
+  
+      const correlationResult = await this.managementApiClient.getAllCorrelations(this.identity);
+      const latestCorrelation = correlationResult.correlations.sort(sortByCreatedAtDescFn)[0];
+      const processInstances = latestCorrelation.processInstances;
+  
+      return processInstances.sort(sortByCreatedAtDescFn)[0];
 
-    return processInstances.sort(sortByCreatedAtDescFn)[0];
+    } catch (error) {
+      await this.warnAndExitIfEnginerUrlNotAvailable();
+      throw error;
+    }
+    
   }
 
   async addTokensToProcessInstances(rawProcessInstances: ProcessInstance[]): Promise<ProcessInstanceWithTokens[]> {
@@ -312,19 +345,26 @@ export class ApiClient {
   private async getAllProcessInstancesViaState(filterByState: string[]): Promise<ProcessInstance[]> {
     let allProcessInstances: ProcessInstance[] = [];
     for (const state of filterByState) {
-      const result = await this.managementApiClient.getProcessInstancesByState(
-        this.identity,
-        state as DataModels.Correlations.CorrelationState
-      );
+      try {
+        const result = await this.managementApiClient.getProcessInstancesByState(
+          this.identity,
+          state as DataModels.Correlations.CorrelationState
+        );
+  
+        allProcessInstances = allProcessInstances.concat(result.processInstances);
 
-      allProcessInstances = allProcessInstances.concat(result.processInstances);
+      } catch (error) {
+        await this.warnAndExitIfEnginerUrlNotAvailable();
+        throw error;
+      }
+      
     }
 
     return allProcessInstances;
   }
 
-  private warnAndExitIfEnginerUrlNotAvailable(): void {
-    if (!isUrlAvailable(this.engineUrl)) {
+  private async warnAndExitIfEnginerUrlNotAvailable(): Promise<void> {
+    if (! await isUrlAvailable(this.engineUrl)) {
       logError(`Could not connect to engine: Please make sure it is running.`);
       process.exit(1);
     }
