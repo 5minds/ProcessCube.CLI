@@ -65,7 +65,7 @@ export class ApiClient {
     try {
       await this.managementApiClient.updateProcessDefinitionsByName(this.identity, processModelId, payload);
     } catch (error) {
-      this.warnAndExitIfEnginerUrlNotAvailable();
+      await this.warnAndExitIfEnginerUrlNotAvailable();
 
       return { success: false, filename, processModelId, error };
     }
@@ -79,7 +79,7 @@ export class ApiClient {
 
       return { success: true, processModelId };
     } catch (error) {
-      this.warnAndExitIfEnginerUrlNotAvailable();
+      await this.warnAndExitIfEnginerUrlNotAvailable();
 
       return { success: false, processModelId, error };
     }
@@ -126,7 +126,7 @@ export class ApiClient {
 
       return result;
     } catch (error) {
-      this.warnAndExitIfEnginerUrlNotAvailable();
+      await this.warnAndExitIfEnginerUrlNotAvailable();
 
       return { success: false, processModelId, startEventId, error };
     }
@@ -158,7 +158,7 @@ export class ApiClient {
         processInstanceId
       };
     } catch (error) {
-      this.warnAndExitIfEnginerUrlNotAvailable();
+      await this.warnAndExitIfEnginerUrlNotAvailable();
 
       return { success: false, processInstanceId, error };
     }
@@ -173,7 +173,7 @@ export class ApiClient {
         processInstanceId
       };
     } catch (error) {
-      this.warnAndExitIfEnginerUrlNotAvailable();
+      await this.warnAndExitIfEnginerUrlNotAvailable();
 
       return { success: false, processInstanceId, error };
     }
@@ -186,7 +186,7 @@ export class ApiClient {
       return result.processModels;
 
     } catch (error) {
-      this.warnAndExitIfEnginerUrlNotAvailable();
+      await this.warnAndExitIfEnginerUrlNotAvailable();
       throw error;
     }
   }
@@ -198,7 +198,7 @@ export class ApiClient {
       return processModels.filter((processModel: any) => processModelIds.includes(processModel.id));
 
     } catch (error) {
-      this.warnAndExitIfEnginerUrlNotAvailable();
+      await this.warnAndExitIfEnginerUrlNotAvailable();
       throw error;
       
     }
@@ -222,7 +222,7 @@ export class ApiClient {
         allProcessInstances = await this.getAllProcessInstancesViaAllProcessModels(filterByProcessModelId);
       }
     } catch (error) {
-      this.warnAndExitIfEnginerUrlNotAvailable();
+      await this.warnAndExitIfEnginerUrlNotAvailable();
       throw error;
     }
 
@@ -241,7 +241,7 @@ export class ApiClient {
         const result = await this.managementApiClient.getProcessInstancesForCorrelation(this.identity, correlationId);
         allProcessInstances = allProcessInstances.concat(result.processInstances);
       } catch (error) {
-        this.warnAndExitIfEnginerUrlNotAvailable();
+        await this.warnAndExitIfEnginerUrlNotAvailable();
         throw error;
       }
       
@@ -261,7 +261,7 @@ export class ApiClient {
         allProcessInstances.push(rawProcessInstance);
 
       } catch (error) {
-        this.warnAndExitIfEnginerUrlNotAvailable();
+        await this.warnAndExitIfEnginerUrlNotAvailable();
         throw error;
       }
     }
@@ -289,7 +289,7 @@ export class ApiClient {
       return processInstances.sort(sortByCreatedAtDescFn)[0];
 
     } catch (error) {
-      this.warnAndExitIfEnginerUrlNotAvailable();
+      await this.warnAndExitIfEnginerUrlNotAvailable();
       throw error;
     }
     
@@ -354,7 +354,7 @@ export class ApiClient {
         allProcessInstances = allProcessInstances.concat(result.processInstances);
 
       } catch (error) {
-        this.warnAndExitIfEnginerUrlNotAvailable();
+        await this.warnAndExitIfEnginerUrlNotAvailable();
         throw error;
       }
       
@@ -363,8 +363,8 @@ export class ApiClient {
     return allProcessInstances;
   }
 
-  private warnAndExitIfEnginerUrlNotAvailable(): void {
-    if (!isUrlAvailable(this.engineUrl)) {
+  private async warnAndExitIfEnginerUrlNotAvailable(): Promise<void> {
+    if (! await isUrlAvailable(this.engineUrl)) {
       logError(`Could not connect to engine: Please make sure it is running.`);
       process.exit(1);
     }
