@@ -114,3 +114,37 @@ export function filterProcessModelsById(processModels: any[], filterById: string
     return anyFilterMatched;
   });
 }
+
+export function filterProcessInstancesEndTimeAfter(
+  processInstances: FilterableProcessInstance[],
+  fieldName: string,
+  completedAfter: string
+): any[] {
+  if (completedAfter == null) {
+    return processInstances;
+  }
+
+  // TODO: validation of input
+  const afterDate = moment(completedAfter);
+
+  return processInstances.filter((processInstance: FilterableProcessInstance) =>
+    moment(processInstance[fieldName]).isAfter(afterDate)
+  );
+}
+
+export function filterProcessInstancesEndTimeBefore(
+  processInstances: FilterableProcessInstance[],
+  fieldName: string,
+  completedBefore: string
+): any[] {
+  if (completedBefore == null) {
+    return processInstances;
+  }
+
+  // TODO: validation of input
+  const beforeDate = moment(completedBefore);
+
+  return processInstances.filter((processInstance: FilterableProcessInstance) =>
+    moment(processInstance[fieldName]).isBefore(beforeDate)
+  );
+}
