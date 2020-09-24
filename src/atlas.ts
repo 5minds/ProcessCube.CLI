@@ -382,6 +382,10 @@ program
           description: 'Only include process instances created after <datetime>',
           type: 'string'
         })
+        .option('completed-in', {
+          description: 'Only include process instances created after <datetime>',
+          type: 'string'
+        })
         .option('filter-by-correlation-id', {
           description: 'Filter process instances by <correlation_id>',
           type: 'array',
@@ -438,6 +442,7 @@ program
             'created-before',
             'completed-after',
             'completed-before',
+            'completed-in',
             'filter-by-correlation-id',
             'filter-by-process-model-id',
             'filter-by-state',
@@ -466,6 +471,7 @@ program
         argv.createdBefore,
         argv.completedAfter,
         argv.completedBefore,
+        argv.filterByExecutionTime,
         argv.filterByCorrelationId,
         argv.filterByProcessModelId,
         argv.rejectByProcessModelId,

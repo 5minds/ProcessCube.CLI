@@ -4,6 +4,7 @@ import { toFilterRegexes } from '../cli/filter_regexes';
 
 type FilterableProcessInstance = {
   createdAt?: any; // is given as string, but should be a Date according to the management_api_contracts
+  finishedAt?: any;
   processModelId: string;
   state: string;
 };
@@ -146,5 +147,21 @@ export function filterProcessInstancesEndTimeBefore(
 
   return processInstances.filter((processInstance: FilterableProcessInstance) =>
     moment(processInstance[fieldName]).isBefore(beforeDate)
+  );
+}
+
+export function filterProcessInstanceExecutionTime(
+  processInstances: FilterableProcessInstance[],
+  filterByExecutionTime: string,
+): any[] {
+ 
+  const timeExecution = moment(filterByExecutionTime);
+
+  return processInstances.filter((processInstance: FilterableProcessInstance) => {
+    const delta = moment(processInstance.finishedAt).diff(processInstance.createdAt, 'hour');
+
+    console.log(`Filter: ${timeExecution}, delta: ${delta}`);
+    return true;
+  }
   );
 }
