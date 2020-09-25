@@ -58,7 +58,7 @@ export function filterProcessInstancesByState(
 }
 
 export function rejectProcessInstancesByState(
-  processInstances: FilterableProcessInstance[],
+  processInstances: FilterableProcessInstance[], 
   rejectByState: string[]
 ): any[] {
   if (rejectByState.length === 0) {
@@ -152,16 +152,20 @@ export function filterProcessInstancesEndTimeBefore(
 
 export function filterProcessInstanceExecutionTime(
   processInstances: FilterableProcessInstance[],
-  filterByExecutionTime: string,
-): any[] {
- 
-  const timeExecution = moment(filterByExecutionTime);
+  filterByExecutionTime: string
+  ): any[] {
 
-  return processInstances.filter((processInstance: FilterableProcessInstance) => {
-    const delta = moment(processInstance.finishedAt).diff(processInstance.createdAt, 'hour');
+    if (filterByExecutionTime == null) {
+      return processInstances;
+    }
+    const numberFilter = parseInt(filterByExecutionTime.replace("<", "").replace(">", "").replace("h", ""));
 
-    console.log(`Filter: ${timeExecution}, delta: ${delta}`);
-    return true;
-  }
-  );
-}
+    return processInstances.filter((processInstance: FilterableProcessInstance) => {
+      const executionTime = moment(processInstance.finishedAt).diff(processInstance.createdAt, 'hour');
+
+        console.log(`Filter: ${numberFilter}, executionTime: ${executionTime}`);
+     
+          return executionTime > numberFilter;
+    }
+    );
+}  

@@ -84,4 +84,37 @@ describe('filtering', () => {
       assert.deepStrictEqual(result.length, expected.length);
     });
   });
+
+  describe('filterProcessInstancesEndTimeBefore()', () => {
+    it('should filter by createdAt before', () => {
+      const processInstances = getMockedProcessInstances();
+      const result = filterProcessInstancesByState(processInstances, ['error', 'running', 'finished']);
+
+      const expected = processInstances;
+
+      assert.deepStrictEqual(mapIds(result), mapIds(expected));
+    });
+  });
+
+  describe('filterProcessInstancesEndTimeAfter()', () => {
+    it('should filter by finishedAt after', () => {
+      const processInstances = getMockedProcessInstances();
+      const result = filterProcessInstancesByState(processInstances, ['error', 'running', 'finished']);
+
+      const expected = processInstances;
+
+      assert.deepStrictEqual(mapIds(result), mapIds(expected));
+    });
+  });
+
+  describe('filterProcessInstanceExecutionTime()', () => {
+    it('should filter by execution time', () => {
+      const processInstances = getMockedProcessInstances();
+      const result = filterProcessInstancesByState(processInstances, ['error', 'running', 'finished']);
+
+      const expected = processInstances;
+
+      assert.deepStrictEqual(mapIds(result), mapIds(expected));
+    });
+  });
 });

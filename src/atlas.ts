@@ -463,7 +463,6 @@ program
       const sortByCreatedAt = argv.sortByCreatedAt === '' ? 'asc' : argv.sortByCreatedAt;
       const sortByProcessModelId = argv.sortByProcessModelId === '' ? 'asc' : argv.sortByProcessModelId;
       const sortByState = argv.sortByState === '' ? 'asc' : argv.sortByState;
-
       listProcessInstances(
         pipedProcessInstanceIds,
         pipedProcessModelIds,
@@ -471,7 +470,7 @@ program
         argv.createdBefore,
         argv.completedAfter,
         argv.completedBefore,
-        argv.filterByExecutionTime,
+        argv.completedIn,
         argv.filterByCorrelationId,
         argv.filterByProcessModelId,
         argv.rejectByProcessModelId,

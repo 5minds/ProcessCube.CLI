@@ -76,8 +76,7 @@ export async function listProcessInstances(
       'processModelId',
       'processInstanceId',
       'state',
-      'correlationId',
-      'executionTime'
+      'correlationId'
     ]);
   }
 }
@@ -129,7 +128,7 @@ async function getProcessInstances(
   allProcessInstances = filterProcessInstancesEndTimeAfter(allProcessInstances, 'finishedAt', completedAfter);
   allProcessInstances = filterProcessInstancesEndTimeBefore(allProcessInstances, 'finishedAt', completedBefore);
 
-  allProcessInstances = filterProcessInstanceExecutionTime(allProcessInstances,  filterByExecutionTime);
+  allProcessInstances = filterProcessInstanceExecutionTime(allProcessInstances, filterByExecutionTime);
 
   allProcessInstances = sortProcessInstances(allProcessInstances, sortByProcessModelId, sortByState, sortByCreatedAt);
 
