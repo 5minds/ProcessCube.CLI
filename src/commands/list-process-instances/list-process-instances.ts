@@ -18,7 +18,7 @@ export async function listProcessInstances(
   createdBefore: string,
   completedAfter: string,
   completedBefore: string,
-  filterByExecutionTime : string,
+  filterByExecutionTime: string,
   filterByCorrelationId: string[],
   filterByProcessModelId: string[],
   rejectByProcessModelId: string[],
