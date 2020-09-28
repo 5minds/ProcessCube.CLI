@@ -18,7 +18,7 @@ export async function listProcessInstances(
   createdBefore: string,
   completedAfter: string,
   completedBefore: string,
-  filterByExecutionTime: string,
+  completedIn: string,
   filterByCorrelationId: string[],
   filterByProcessModelId: string[],
   rejectByProcessModelId: string[],
@@ -45,7 +45,7 @@ export async function listProcessInstances(
     createdBefore,
     completedAfter,
     completedBefore,
-    filterByExecutionTime,
+    completedIn,
     filterByCorrelationId,
     filterByProcessModelId,
     rejectByProcessModelId,
@@ -89,7 +89,7 @@ async function getProcessInstances(
   createdBefore: string,
   completedAfter: string,
   completedBefore: string,
-  filterByExecutionTime: string,
+  completedIn: string,
   filterByCorrelationId: string[],
   filterByProcessModelId: string[],
   rejectByProcessModelId: string[],
@@ -125,10 +125,10 @@ async function getProcessInstances(
   allProcessInstances = filterProcessInstancesDateAfter(allProcessInstances, 'createdAt', createdAfter);
   allProcessInstances = filterProcessInstancesDateBefore(allProcessInstances, 'createdAt', createdBefore);
 
-  allProcessInstances = filterProcessInstancesEndTimeAfter(allProcessInstances, 'finishedAt', completedAfter);
+  allProcessInstances = filterProcessInstancesByEndTimeAfter(allProcessInstances, 'finishedAt', completedAfter);
   allProcessInstances = filterProcessInstancesEndTimeBefore(allProcessInstances, 'finishedAt', completedBefore);
 
-  allProcessInstances = filterProcessInstanceExecutionTime(allProcessInstances, filterByExecutionTime);
+  allProcessInstances = filterProcessInstancesByExecutionTime(allProcessInstances, completedIn);
 
   allProcessInstances = sortProcessInstances(allProcessInstances, sortByProcessModelId, sortByState, sortByCreatedAt);
 

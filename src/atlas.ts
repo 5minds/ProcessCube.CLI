@@ -379,11 +379,11 @@ program
           type: 'string'
         })
         .option('completed-before', {
-          description: 'Only include process instances created after <datetime>',
+          description: 'Only include process instances completed before <datetime>',
           type: 'string'
         })
         .option('completed-in', {
-          description: 'Only include process instances created after <datetime>',
+          description: 'Only include process instances completed in <datetime>',
           type: 'string'
         })
         .option('filter-by-correlation-id', {

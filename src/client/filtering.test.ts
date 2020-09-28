@@ -85,7 +85,7 @@ describe('filtering', () => {
     });
   });
 
-  describe('filterProcessInstancesEndTimeBefore()', () => {
+  describe('filterProcessInstancesByEndTimeBefore()', () => {
     it('should filter by createdAt before', () => {
       const processInstances = getMockedProcessInstances();
       const result = filterProcessInstancesByState(processInstances, ['error', 'running', 'finished']);

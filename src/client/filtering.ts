@@ -58,7 +58,7 @@ export function filterProcessInstancesByState(
 }
 
 export function rejectProcessInstancesByState(
-  processInstances: FilterableProcessInstance[], 
+  processInstances: FilterableProcessInstance[],
   rejectByState: string[]
 ): any[] {
   if (rejectByState.length === 0) {
@@ -116,7 +116,7 @@ export function filterProcessModelsById(processModels: any[], filterById: string
   });
 }
 
-export function filterProcessInstancesEndTimeAfter(
+export function filterProcessInstancesByEndTimeAfter(
   processInstances: FilterableProcessInstance[],
   fieldName: string,
   completedAfter: string
@@ -133,7 +133,7 @@ export function filterProcessInstancesEndTimeAfter(
   );
 }
 
-export function filterProcessInstancesEndTimeBefore(
+export function filterProcessInstancesByEndTimeBefore(
   processInstances: FilterableProcessInstance[],
   fieldName: string,
   completedBefore: string
@@ -150,7 +150,7 @@ export function filterProcessInstancesEndTimeBefore(
   );
 }
 
-export function filterProcessInstanceExecutionTime(
+export function filterProcessInstanceByExecutionTime(
   processInstances: FilterableProcessInstance[],
   filterByExecutionTime: string
   ): any[] {
