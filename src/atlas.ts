@@ -375,7 +375,7 @@ program
           type: 'string'
         })
         .option('completed-after', {
-          description: 'Only include process instances created after <datetime>',
+          description: 'Only include process instances completed after <datetime>',
           type: 'string'
         })
         .option('completed-before', {
