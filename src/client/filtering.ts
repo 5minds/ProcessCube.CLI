@@ -118,7 +118,6 @@ export function filterProcessModelsById(processModels: any[], filterById: string
 
 export function filterProcessInstancesByEndTimeAfter(
   processInstances: FilterableProcessInstance[],
-  fieldName: string,
   completedAfter: string
 ): any[] {
   if (completedAfter == null) {
@@ -129,13 +128,12 @@ export function filterProcessInstancesByEndTimeAfter(
   const afterDate = moment(completedAfter);
 
   return processInstances.filter((processInstance: FilterableProcessInstance) =>
-    moment(processInstance[fieldName]).isAfter(afterDate)
+    moment(processInstance['finishedAt']).isAfter(afterDate)
   );
 }
 
 export function filterProcessInstancesByEndTimeBefore(
   processInstances: FilterableProcessInstance[],
-  fieldName: string,
   completedBefore: string
 ): any[] {
   if (completedBefore == null) {
@@ -146,7 +144,7 @@ export function filterProcessInstancesByEndTimeBefore(
   const beforeDate = moment(completedBefore);
 
   return processInstances.filter((processInstance: FilterableProcessInstance) =>
-    moment(processInstance[fieldName]).isBefore(beforeDate)
+    moment(processInstance['finishedAt']).isBefore(beforeDate)
   );
 }
 

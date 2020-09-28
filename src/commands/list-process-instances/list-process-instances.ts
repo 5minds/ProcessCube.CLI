@@ -126,7 +126,7 @@ async function getProcessInstances(
   allProcessInstances = filterProcessInstancesDateBefore(allProcessInstances, 'createdAt', createdBefore);
 
   allProcessInstances = filterProcessInstancesByEndTimeAfter(allProcessInstances, 'finishedAt', completedAfter);
-  allProcessInstances = filterProcessInstancesEndTimeBefore(allProcessInstances, 'finishedAt', completedBefore);
+  allProcessInstances = filterProcessInstancesByEndTimeBefore(allProcessInstances, 'finishedAt', completedBefore);
 
   allProcessInstances = filterProcessInstancesByExecutionTime(allProcessInstances, completedIn);
 
