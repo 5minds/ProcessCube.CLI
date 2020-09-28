@@ -158,6 +158,7 @@ export function filterProcessInstanceExecutionTime(
     if (filterByExecutionTime == null) {
       return processInstances;
     }
+    
     const numberFilter = parseInt(filterByExecutionTime.replace("<", "").replace(">", "").replace("h", ""));
 
     return processInstances.filter((processInstance: FilterableProcessInstance) => {
@@ -168,4 +169,4 @@ export function filterProcessInstanceExecutionTime(
           return executionTime > numberFilter;
     }
     );
-}  
+}

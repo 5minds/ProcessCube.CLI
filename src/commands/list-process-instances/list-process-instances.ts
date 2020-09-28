@@ -4,7 +4,7 @@ import { ApiClient } from '../../client/api_client';
 import { AtlasSession, loadAtlasSession } from '../../session/atlas_session';
 import { addJsonPipingHintToResultJson, createResultJson } from '../../cli/result_json';
 import { filterProcessInstancesDateAfter, filterProcessInstancesDateBefore, 
-         filterProcessInstancesEndTimeAfter, filterProcessInstancesEndTimeBefore, filterProcessInstanceExecutionTime} from '../../client/filtering';
+         filterProcessInstancesEndTimeAfter, filterProcessInstancesEndTimeBefore, filterProcessInstanceExecutionTime,} from '../../client/filtering';
 import { logJsonResult, logNoValidSessionError } from '../../cli/logging';
 import { OUTPUT_FORMAT_JSON, OUTPUT_FORMAT_TEXT } from '../../atlas';
 import { sortProcessInstances } from './sorting';
