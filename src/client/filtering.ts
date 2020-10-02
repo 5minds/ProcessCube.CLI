@@ -160,7 +160,7 @@ export function filterProcessInstancesByEndTimeBefore(
 export function filterProcessInstanceByExecutionTime(
   processInstances: FilterableProcessInstance[],
   filterByExecutionTime: string
-  ): any[] {
+): FilterableProcessInstance[] {
 
     if (filterByExecutionTime == null) {
       return processInstances;
