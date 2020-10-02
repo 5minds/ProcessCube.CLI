@@ -1,6 +1,7 @@
 import * as assert from 'assert';
 
-import { filterProcessInstancesByProcessModelId, filterProcessInstancesByState } from './filtering';
+import { filterProcessInstancesByProcessModelId, filterProcessInstancesByState, filterProcessInstancesByEndTimeAfter,
+         filterProcessInstancesByEndTimeBefore, filterProcessInstanceByExecutionTime} from './filtering';
 
 import {
   PROCESS_A_createdAt_01_error,
@@ -10,6 +11,9 @@ import {
   PROCESS_B_createdAt_07_finished,
   PROCESS_C_createdAt_05_finished,
   PROCESS_C_createdAt_06_error,
+  ProcessInstanceA,
+  ProcessInstanceB,
+  ProcessInstanceC,
   getMockedProcessInstances,
   mapIds
 } from '../commands/list-process-instances/test-mocks.test';
@@ -85,23 +89,23 @@ describe('filtering', () => {
     });
   });
 
-  describe('filterProcessInstancesByEndTimeBefore()', () => {
-    it('should filter by createdAt before', () => {
+  describe('filterProcessInstancesByEndTimeAfter()', () => {
+    it('should filter by finishedAt after', () => {
       const processInstances = getMockedProcessInstances();
-      const result = filterProcessInstancesByState(processInstances, ['error', 'running', 'finished']);
+      const result = filterProcessInstancesByEndTimeAfter(processInstances, '2020-01-01T08:56:22.060Z');
 
-      const expected = processInstances;
+      const expected = [ProcessInstanceA, ProcessInstanceB];
 
       assert.deepStrictEqual(mapIds(result), mapIds(expected));
     });
   });
 
-  describe('filterProcessInstancesEndTimeAfter()', () => {
-    it('should filter by finishedAt after', () => {
+  describe('filterProcessInstancesByEndTimeBefore()', () => {
+    it('should filter by createdAt before', () => {
       const processInstances = getMockedProcessInstances();
-      const result = filterProcessInstancesByState(processInstances, ['error', 'running', 'finished']);
+      const result = filterProcessInstancesByEndTimeBefore(processInstances, '2020-10-30T08:56:22.060Z');
 
-      const expected = processInstances;
+      const expected = [ProcessInstanceA, ProcessInstanceB];
 
       assert.deepStrictEqual(mapIds(result), mapIds(expected));
     });
@@ -110,9 +114,9 @@ describe('filtering', () => {
   describe('filterProcessInstanceExecutionTime()', () => {
     it('should filter by execution time', () => {
       const processInstances = getMockedProcessInstances();
-      const result = filterProcessInstancesByState(processInstances, ['error', 'running', 'finished']);
+      const result = filterProcessInstanceByExecutionTime(processInstances, '> 5h');
 
-      const expected = processInstances;
+      const expected = [ProcessInstanceC];
 
       assert.deepStrictEqual(mapIds(result), mapIds(expected));
     });

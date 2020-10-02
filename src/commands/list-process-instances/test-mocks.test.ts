@@ -47,6 +47,24 @@ export const PROCESS_C_createdAt_06_error = {
   state: 'error'
 };
 
+export const ProcessInstanceA = {
+  id: 'ProcessInstanceA_finishedAt',
+  createdAt: '2020-01-01T08:56:22.060Z',
+  processModelId: 'Process_A',
+};
+
+export const ProcessInstanceB = {
+  id: 'ProcessInstanceB_finishedAt',
+  finishedAt: '2020-10-30T08:56:22.060Z',
+  processModelId: 'Process_B',
+};
+
+export const ProcessInstanceC = {
+  id: 'ProcessInstanceC_executionTime',
+  executionTime: '> 5h',
+  processModelId: 'Process_C',
+};
+
 export const PROCESS_INSTANCES = [
   PROCESS_A_createdAt_01_error,
   PROCESS_A_createdAt_03_finished,
@@ -54,7 +72,10 @@ export const PROCESS_INSTANCES = [
   PROCESS_C_createdAt_06_error,
   PROCESS_B_createdAt_07_finished,
   PROCESS_A_createdAt_02_error,
-  PROCESS_C_createdAt_05_finished
+  PROCESS_C_createdAt_05_finished,
+  ProcessInstanceA,
+  ProcessInstanceB,
+  ProcessInstanceC
 ];
 
 export function getMockedProcessInstances() {

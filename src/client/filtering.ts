@@ -1,6 +1,8 @@
 import * as moment from 'moment';
+import chalk from 'chalk';
 
 import { toFilterRegexes } from '../cli/filter_regexes';
+import { logError } from '../cli/logging';
 
 type FilterableProcessInstance = {
   createdAt?: any; // is given as string, but should be a Date according to the management_api_contracts
@@ -123,13 +125,18 @@ export function filterProcessInstancesByEndTimeAfter(
   if (completedAfter == null) {
     return processInstances;
   }
+  try {
+    // TODO: validation of input
+    const afterDate = moment(completedAfter).format('YYYY-MM-DD');
+    console.log(afterDate);
 
-  // TODO: validation of input
-  const afterDate = moment(completedAfter);
+    return processInstances.filter((processInstance: FilterableProcessInstance) =>
+      moment(processInstance['finishedAt']).isAfter(afterDate)
+    );
 
-  return processInstances.filter((processInstance: FilterableProcessInstance) =>
-    moment(processInstance['finishedAt']).isAfter(afterDate)
-  );
+  } catch (error) {
+    console.error(`Invalid date format! Please enter a valid date format.`, error);
+  }
 }
 
 export function filterProcessInstancesByEndTimeBefore(
@@ -139,13 +146,18 @@ export function filterProcessInstancesByEndTimeBefore(
   if (completedBefore == null) {
     return processInstances;
   }
+  try {
+     // TODO: validation of input
+    const beforeDate = moment(completedBefore).format('YYYY-MM-DD');
+    console.log(beforeDate);
 
-  // TODO: validation of input
-  const beforeDate = moment(completedBefore);
+    return processInstances.filter((processInstance: FilterableProcessInstance) =>
+      moment(processInstance['finishedAt']).isBefore(beforeDate)
+    );
 
-  return processInstances.filter((processInstance: FilterableProcessInstance) =>
-    moment(processInstance['finishedAt']).isBefore(beforeDate)
-  );
+  } catch (error){
+    console.error(`Invalid date format! Please enter a valid date format.`, error);
+  }
 }
 
 export function filterProcessInstanceByExecutionTime(
@@ -156,15 +168,47 @@ export function filterProcessInstanceByExecutionTime(
     if (filterByExecutionTime == null) {
       return processInstances;
     }
+      //const regexp = new RegExp("([<]|[>]) +[ 0-9]{1,}");
     
-    const numberFilter = parseInt(filterByExecutionTime.replace("<", "").replace(">", "").replace("h", ""));
+      const regex = /([<]|[>]) +[ 0-9]{1,}[smhd.]/g;
+      const isExisting = regex.test(filterByExecutionTime);
+      if (!isExisting){
+        throw console.error('Invalid execution time format.');
+      }
+      const lastIndexOfExecutionTime = filterByExecutionTime.substr(filterByExecutionTime.length - 1);
+      
+      const numberFilter = parseInt(filterByExecutionTime.replace("<", "").replace(">", "").replace("h", ""));
 
-    return processInstances.filter((processInstance: FilterableProcessInstance) => {
-      const executionTime = moment(processInstance.finishedAt).diff(processInstance.createdAt, 'hour');
-
-        console.log(`Filter: ${numberFilter}, executionTime: ${executionTime}`);
-     
+      if (lastIndexOfExecutionTime == 's'){
+        console.log('Calculation of the execution time in seconds.')
+        return processInstances.filter((processInstance: FilterableProcessInstance) => {
+          const executionTime = moment(processInstance.finishedAt).diff(processInstance.createdAt, 'seconds');
           return executionTime > numberFilter;
-    }
-    );
+        }
+        );
+      }
+      if (lastIndexOfExecutionTime == 'm'){
+        console.log('Calculation of the execution time in minutes.')
+        return processInstances.filter((processInstance: FilterableProcessInstance) => {
+          const executionTime = moment(processInstance.finishedAt).diff(processInstance.createdAt, 'minute');
+          return executionTime > numberFilter;
+        }
+        );
+      }
+      if (lastIndexOfExecutionTime == 'h'){
+        console.log('Calculation of the execution time in hours.')
+        return processInstances.filter((processInstance: FilterableProcessInstance) => {
+          const executionTime = moment(processInstance.finishedAt).diff(processInstance.createdAt, 'hours');
+          return executionTime > numberFilter;
+        }
+        );
+      }
+      if (lastIndexOfExecutionTime == 'd'){
+        console.log('Calculation of the execution time in days.')
+        return processInstances.filter((processInstance: FilterableProcessInstance) => {
+          const executionTime = moment(processInstance.finishedAt).diff(processInstance.createdAt, 'days');
+          return executionTime > numberFilter;
+        }
+        );
+      }
 }

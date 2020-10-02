@@ -4,7 +4,7 @@ import { ApiClient } from '../../client/api_client';
 import { AtlasSession, loadAtlasSession } from '../../session/atlas_session';
 import { addJsonPipingHintToResultJson, createResultJson } from '../../cli/result_json';
 import { filterProcessInstancesDateAfter, filterProcessInstancesDateBefore, 
-         filterProcessInstancesEndTimeAfter, filterProcessInstancesEndTimeBefore, filterProcessInstancesExecutionTime,} from '../../client/filtering';
+  filterProcessInstancesByEndTimeAfter, filterProcessInstancesByEndTimeBefore, filterProcessInstanceByExecutionTime,} from '../../client/filtering';
 import { logJsonResult, logNoValidSessionError } from '../../cli/logging';
 import { OUTPUT_FORMAT_JSON, OUTPUT_FORMAT_TEXT } from '../../atlas';
 import { sortProcessInstances } from './sorting';
@@ -18,7 +18,7 @@ export async function listProcessInstances(
   createdBefore: string,
   completedAfter: string,
   completedBefore: string,
-  filterByExecutionTime: string,
+  completedIn: string,
   filterByCorrelationId: string[],
   filterByProcessModelId: string[],
   rejectByProcessModelId: string[],
@@ -45,7 +45,7 @@ export async function listProcessInstances(
     createdBefore,
     completedAfter,
     completedBefore,
-    filterByExecutionTime,
+    completedIn,
     filterByCorrelationId,
     filterByProcessModelId,
     rejectByProcessModelId,
@@ -89,7 +89,7 @@ async function getProcessInstances(
   createdBefore: string,
   completedAfter: string,
   completedBefore: string,
-  filterByExecutionTime: string,
+  completedIn: string,
   filterByCorrelationId: string[],
   filterByProcessModelId: string[],
   rejectByProcessModelId: string[],
@@ -125,10 +125,10 @@ async function getProcessInstances(
   allProcessInstances = filterProcessInstancesDateAfter(allProcessInstances, 'createdAt', createdAfter);
   allProcessInstances = filterProcessInstancesDateBefore(allProcessInstances, 'createdAt', createdBefore);
 
-  allProcessInstances = filterProcessInstancesEndTimeAfter(allProcessInstances, 'finishedAt', completedAfter);
-  allProcessInstances = filterProcessInstancesEndTimeBefore(allProcessInstances, 'finishedAt', completedBefore);
+  allProcessInstances = filterProcessInstancesByEndTimeAfter(allProcessInstances, completedAfter);
+  allProcessInstances = filterProcessInstancesByEndTimeBefore(allProcessInstances, completedBefore);
 
-  allProcessInstances = filterProcessInstancesExecutionTime(allProcessInstances, filterByExecutionTime);
+  allProcessInstances = filterProcessInstanceByExecutionTime(allProcessInstances, completedIn);
 
   allProcessInstances = sortProcessInstances(allProcessInstances, sortByProcessModelId, sortByState, sortByCreatedAt);
 
