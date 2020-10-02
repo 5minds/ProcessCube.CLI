@@ -1,8 +1,6 @@
 import * as moment from 'moment';
-import chalk from 'chalk';
 
 import { toFilterRegexes } from '../cli/filter_regexes';
-import { logError } from '../cli/logging';
 
 type FilterableProcessInstance = {
   createdAt?: any; // is given as string, but should be a Date according to the management_api_contracts
@@ -177,7 +175,10 @@ export function filterProcessInstanceByExecutionTime(
       }
       const lastIndexOfExecutionTime = filterByExecutionTime.substr(filterByExecutionTime.length - 1);
       
-      const numberFilter = parseInt(filterByExecutionTime.replace("<", "").replace(">", "").replace("h", ""));
+      const numberFilter = parseInt(filterByExecutionTime
+        .replace("<", "")
+        .replace(">", "")
+        .replace("h", ""));
 
       if (lastIndexOfExecutionTime == 's'){
         console.log('Calculation of the execution time in seconds.')

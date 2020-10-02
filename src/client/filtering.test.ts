@@ -1,7 +1,7 @@
 import * as assert from 'assert';
 
-import { filterProcessInstancesByProcessModelId, filterProcessInstancesByState, filterProcessInstancesByEndTimeAfter,
-         filterProcessInstancesByEndTimeBefore, filterProcessInstanceByExecutionTime} from './filtering';
+import { filterProcessInstancesByEndTimeAfter, filterProcessInstancesByEndTimeBefore, filterProcessInstanceByExecutionTime, 
+         filterProcessInstancesByProcessModelId, filterProcessInstancesByState} from './filtering';
 
 import {
   PROCESS_A_createdAt_01_error,
