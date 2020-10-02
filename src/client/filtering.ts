@@ -169,8 +169,8 @@ export function filterProcessInstanceByExecutionTime(
       //const regexp = new RegExp("([<]|[>]) +[ 0-9]{1,}");
     
       const regex = /([<]|[>]) +[ 0-9]{1,}[smhd.]/g;
-      const isExisting = regex.test(filterByExecutionTime);
-      if (!isExisting){
+      const isCorrectExecutionTime = regex.test(filterByExecutionTime);
+      if (!isCorrectExecutionTime){
         throw console.error('Invalid execution time format.');
       }
       const lastIndexOfExecutionTime = filterByExecutionTime.substr(filterByExecutionTime.length - 1);
