@@ -126,7 +126,6 @@ export function filterProcessInstancesByEndTimeAfter(
   try {
     // TODO: validation of input
     const afterDate = moment(completedAfter).format('YYYY-MM-DD');
-    console.log(afterDate);
 
     return processInstances.filter((processInstance: FilterableProcessInstance) =>
       moment(processInstance['finishedAt']).isAfter(afterDate)
