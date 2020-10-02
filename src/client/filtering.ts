@@ -119,59 +119,55 @@ export function filterProcessModelsById(processModels: any[], filterById: string
 export function filterProcessInstancesByEndTimeAfter(
   processInstances: FilterableProcessInstance[],
   completedAfter: string
-): FilterableProcessInstance[] {
+): any[] {
   if (completedAfter == null) {
     return processInstances;
   }
-  try {
-    // TODO: validation of input
-    const afterDate = moment(completedAfter).format('YYYY-MM-DD');
+  if (!moment(completedAfter).isValid()) {
 
-    return processInstances.filter((processInstance: FilterableProcessInstance) =>
-      moment(processInstance['finishedAt']).isAfter(afterDate)
-    );
-
-  } catch (error) {
-    console.error(`Invalid date format! Please enter a valid date format.`, error);
+    console.error(`Invalid date format! Please enter a valid date format.`);
+    return undefined; 
   }
+  const afterDate = moment(completedAfter).format('YYYY-MM-DD');
+
+  return processInstances.filter((processInstance: FilterableProcessInstance) =>
+    moment(processInstance['finishedAt']).isAfter(afterDate)
+  );
 }
 
 export function filterProcessInstancesByEndTimeBefore(
   processInstances: FilterableProcessInstance[],
   completedBefore: string
-): FilterableProcessInstance[] {
+): any[] {
   if (completedBefore == null) {
     return processInstances;
   }
-  try {
-     // TODO: validation of input
-    const beforeDate = moment(completedBefore).format('YYYY-MM-DD');
-    console.log(beforeDate);
+  if (!moment(completedBefore).isValid()){
 
-    return processInstances.filter((processInstance: FilterableProcessInstance) =>
-      moment(processInstance['finishedAt']).isBefore(beforeDate)
-    );
-
-  } catch (error){
-    console.error(`Invalid date format! Please enter a valid date format.`, error);
+    console.error(`Invalid date format! Please enter a valid date format.`);
+    return undefined;
   }
+
+  const beforeDate = moment(completedBefore).format('YYYY-MM-DD');
+
+  return processInstances.filter((processInstance: FilterableProcessInstance) =>
+    moment(processInstance['finishedAt']).isBefore(beforeDate)
+  );
 }
 
 export function filterProcessInstanceByExecutionTime(
   processInstances: FilterableProcessInstance[],
   filterByExecutionTime: string
-): FilterableProcessInstance[] {
+): any[] {
 
     if (filterByExecutionTime == null) {
       return processInstances;
     }
-      //const regexp = new RegExp("([<]|[>]) +[ 0-9]{1,}");
     
-      const regex = /([<]|[>]) +[ 0-9]{1,}[smhd.]/g;
-      const isCorrectExecutionTime = regex.test(filterByExecutionTime);
+      const regexExecutionTime = /([<]|[>]) +[ 0-9]{1,}[smhd.]/g;
+      const isCorrectExecutionTime = regexExecutionTime.test(filterByExecutionTime);
       if (!isCorrectExecutionTime){
         const errorMessage = 'Invalid execution time format.';
-        console.error(errorMessage);
         throw console.error(errorMessage);
       }
       const lastIndexOfExecutionTime = filterByExecutionTime.substr(filterByExecutionTime.length - 1);
