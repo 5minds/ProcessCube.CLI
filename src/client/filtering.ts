@@ -119,7 +119,7 @@ export function filterProcessModelsById(processModels: any[], filterById: string
 export function filterProcessInstancesByEndTimeAfter(
   processInstances: FilterableProcessInstance[],
   completedAfter: string
-): any[] {
+): FilterableProcessInstance[] {
   if (completedAfter == null) {
     return processInstances;
   }
