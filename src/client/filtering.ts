@@ -139,7 +139,7 @@ export function filterProcessInstancesByEndTimeAfter(
 export function filterProcessInstancesByEndTimeBefore(
   processInstances: FilterableProcessInstance[],
   completedBefore: string
-): any[] {
+): FilterableProcessInstance[] {
   if (completedBefore == null) {
     return processInstances;
   }
