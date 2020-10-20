@@ -125,8 +125,7 @@ export function filterProcessInstancesByEndTimeAfter(
   }
   if (!moment(completedAfter).isValid()) {
 
-    console.error(`Invalid date format! Please enter a valid date format.`);
-    return undefined; 
+    throw new Error(`Invalid date format '${completedAfter}'! Please enter a valid date format.`);
   }
   const afterDate = moment(completedAfter).format('YYYY-MM-DD');
 
