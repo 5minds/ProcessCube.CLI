@@ -162,7 +162,7 @@ export function filterProcessInstanceByExecutionTime(
       return processInstances;
     }
     
-      const regexExecutionTime = /([<]|[>]) +[ 0-9]{1,}[smhd.]/g;
+      const regexExecutionTime = /([<]|[>]) *([ 0-9]{1,}) *([smhd])/g;
       const isCorrectExecutionTime = regexExecutionTime.test(filterByExecutionTime);
       if (!isCorrectExecutionTime){
         throw new Error(`Invalid execution time format '${filterByExecutionTime}'.`);
