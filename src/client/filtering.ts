@@ -143,8 +143,7 @@ export function filterProcessInstancesByEndTimeBefore(
   }
   if (!moment(completedBefore).isValid()){
 
-    console.error(`Invalid date format! Please enter a valid date format.`);
-    return undefined;
+    throw new Error(`Invalid date format '${completedBefore}'! Please enter a valid date format.`);
   }
 
   const beforeDate = moment(completedBefore).format('YYYY-MM-DD');
