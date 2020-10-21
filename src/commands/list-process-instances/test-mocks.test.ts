@@ -61,7 +61,8 @@ export const ProcessInstanceB = {
 
 export const ProcessInstanceC = {
   id: 'ProcessInstanceC_executionTime',
-  executionTime: '> 5h',
+  createdAt: '2020-01-01T08:56:22.060Z',
+  finishedAt: '2020-01-01T13:57:22.060Z',
   processModelId: 'Process_C',
 };
 

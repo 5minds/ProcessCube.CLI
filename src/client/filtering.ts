@@ -161,49 +161,44 @@ export function filterProcessInstanceByExecutionTime(
     if (filterByExecutionTime == null) {
       return processInstances;
     }
-    
       const regexExecutionTime = /([<]|[>]) *([ 0-9]{1,}) *([smhd])/g;
-      const isCorrectExecutionTime = regexExecutionTime.test(filterByExecutionTime);
-      if (!isCorrectExecutionTime){
-        throw new Error(`Invalid execution time format '${filterByExecutionTime}'.`);
-      }
-      const lastIndexOfExecutionTime = filterByExecutionTime.substr(filterByExecutionTime.length - 1);
-      
-      const numberFilter = parseInt(filterByExecutionTime
-        .replace("<", "")
-        .replace(">", "")
-        .replace("h", ""));
 
-      if (lastIndexOfExecutionTime == 's'){
-        console.log('Calculation of the execution time in seconds.')
-        return processInstances.filter((processInstance: FilterableProcessInstance) => {
-          const executionTime = moment(processInstance.finishedAt).diff(processInstance.createdAt, 'seconds');
-          return executionTime > numberFilter;
-        }
-        );
-      }
-      if (lastIndexOfExecutionTime == 'm'){
-        console.log('Calculation of the execution time in minutes.')
-        return processInstances.filter((processInstance: FilterableProcessInstance) => {
-          const executionTime = moment(processInstance.finishedAt).diff(processInstance.createdAt, 'minute');
-          return executionTime > numberFilter;
-        }
-        );
-      }
-      if (lastIndexOfExecutionTime == 'h'){
-        console.log('Calculation of the execution time in hours.')
-        return processInstances.filter((processInstance: FilterableProcessInstance) => {
-          const executionTime = moment(processInstance.finishedAt).diff(processInstance.createdAt, 'hours');
-          return executionTime > numberFilter;
-        }
-        );
-      }
-      if (lastIndexOfExecutionTime == 'd'){
-        console.log('Calculation of the execution time in days.')
-        return processInstances.filter((processInstance: FilterableProcessInstance) => {
-          const executionTime = moment(processInstance.finishedAt).diff(processInstance.createdAt, 'days');
-          return executionTime > numberFilter;
-        }
-        );
-      }
+      const executionTimeMatches = regexExecutionTime.exec(filterByExecutionTime);
+
+      const parsedComparisonType = executionTimeMatches[1];
+
+      const parsedTime = executionTimeMatches[2];
+      const time = parseInt(parsedTime);
+
+      const parsedUnitOfTime = executionTimeMatches[3];
+      const unitOfTime = getUnitOfTimeForAbbreviation(parsedUnitOfTime);
+ 
+      return processInstances.filter(processInstance => isCompletedIn(processInstance, parsedComparisonType, time, unitOfTime));  
+}
+
+function getUnitOfTimeForAbbreviation(abbreviation: string): moment.unitOfTime.Diff {
+  switch(abbreviation) {
+    case 'd':
+      return 'days';
+    case 'h':
+      return 'hours';
+    case 'm':
+      return 'minutes';
+    case 's':
+      return 'seconds';
+    default:
+      throw new Error(`Unknown unit of time abbreviation: '${abbreviation}. It should be d, h, m or s.'`);
+  }
+}
+
+function isCompletedIn(processInstance: FilterableProcessInstance, comparisonType: string, time: number, unitOfTime: moment.unitOfTime.Diff): boolean {
+  const executionTime = moment(processInstance.finishedAt).diff(processInstance.createdAt, unitOfTime);
+  
+  if (comparisonType === '>') {
+    return executionTime > time;
+  } else if (comparisonType === '<') {
+    return executionTime < time;
+  } 
+
+  throw new Error(`Unknown comparison type: '${comparisonType}'. It should be > or <.`);
 }

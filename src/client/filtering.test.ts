@@ -114,11 +114,29 @@ describe('filtering', () => {
   describe('filterProcessInstanceExecutionTime()', () => {
     it('should filter by execution time', () => {
       const processInstances = getMockedProcessInstances();
-      const result = filterProcessInstanceByExecutionTime(processInstances, '> 5h');
+
+      const resultForGreaterThanSeconds = filterProcessInstanceByExecutionTime(processInstances, '> 60s');
+      const resultForGreaterThanMinutes = filterProcessInstanceByExecutionTime(processInstances, '> 60m');
+      const resultForGreaterThanHours = filterProcessInstanceByExecutionTime(processInstances, '> 5h');
+      const resultForGreaterThanDays = filterProcessInstanceByExecutionTime(processInstances, '> 1d');
+
+      const resultForLessThanSeconds = filterProcessInstanceByExecutionTime(processInstances, '< 60s');
+      const resultForLessThanMinutes = filterProcessInstanceByExecutionTime(processInstances, '< 60m');
+      const resultForLessThanHours = filterProcessInstanceByExecutionTime(processInstances, '< 5h');
+      const resultForLessThanDays = filterProcessInstanceByExecutionTime(processInstances, '< 1d');
 
       const expected = [ProcessInstanceC];
 
-      assert.deepStrictEqual(mapIds(result), mapIds(expected));
+      assert.deepStrictEqual(mapIds(resultForGreaterThanSeconds), mapIds(expected));
+      assert.deepStrictEqual(mapIds(resultForGreaterThanMinutes), mapIds(expected));
+      assert.deepStrictEqual(mapIds(resultForGreaterThanHours), mapIds(expected));
+      assert.deepStrictEqual(mapIds(resultForGreaterThanDays), mapIds(expected));
+
+      assert.deepStrictEqual(mapIds(resultForLessThanSeconds), mapIds(expected));
+      assert.deepStrictEqual(mapIds(resultForLessThanMinutes), mapIds(expected));
+      assert.deepStrictEqual(mapIds(resultForLessThanHours), mapIds(expected));
+      assert.deepStrictEqual(mapIds(resultForLessThanDays), mapIds(expected));
+
     });
   });
 });
