@@ -127,11 +127,17 @@ export function filterProcessInstancesByEndTimeAfter(
 
     throw new Error(`Invalid date format '${completedAfter}'! Please enter a valid date format.`);
   }
-  const afterDate = moment(completedAfter).format('YYYY-MM-DD');
+  const afterDate = moment(completedAfter);
 
-  return processInstances.filter((processInstance: FilterableProcessInstance) =>
-    moment(processInstance['finishedAt']).isAfter(afterDate)
-  );
+  return processInstances.filter((processInstance: FilterableProcessInstance) => {
+
+    if (!processInstance['finishedAt']) {
+      return false;
+    }
+    
+    return moment(processInstance['finishedAt']).isAfter(afterDate);
+  
+  });
 }
 
 export function filterProcessInstancesByEndTimeBefore(
@@ -146,11 +152,18 @@ export function filterProcessInstancesByEndTimeBefore(
     throw new Error(`Invalid date format '${completedBefore}'! Please enter a valid date format.`);
   }
 
-  const beforeDate = moment(completedBefore).format('YYYY-MM-DD');
+  const beforeDate = moment(completedBefore);
 
-  return processInstances.filter((processInstance: FilterableProcessInstance) =>
-    moment(processInstance['finishedAt']).isBefore(beforeDate)
-  );
+  return processInstances.filter((processInstance: FilterableProcessInstance) => {
+
+    if (!processInstance['finishedAt']) {
+      return false;
+    }
+    
+    return moment(processInstance['finishedAt']).isBefore(beforeDate);
+  
+  });
+  
 }
 
 export function filterProcessInstanceByExecutionTime(
