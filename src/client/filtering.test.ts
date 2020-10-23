@@ -1,6 +1,6 @@
 import * as assert from 'assert';
 
-import { filterProcessInstancesByEndTimeAfter, filterProcessInstancesByEndTimeBefore, filterProcessInstanceByExecutionTime, 
+import { filterProcessInstancesByEndTimeAfter, filterProcessInstancesByEndTimeBefore, filterProcessInstancesByExecutionTime, 
          filterProcessInstancesByProcessModelId, filterProcessInstancesByState} from './filtering';
 
 import {
@@ -112,15 +112,15 @@ describe('filtering', () => {
     it('should filter by execution time', () => {
       const processInstances = getMockedProcessInstances();
 
-      const resultForGreaterThanSeconds = filterProcessInstanceByExecutionTime(processInstances, '> 3s');
-      const resultForGreaterThanMinutes = filterProcessInstanceByExecutionTime(processInstances, '> 10m');
-      const resultForGreaterThanHours = filterProcessInstanceByExecutionTime(processInstances, '> 2h');
-      const resultForGreaterThanDays = filterProcessInstanceByExecutionTime(processInstances, '> 24d');
+      const resultForGreaterThanSeconds = filterProcessInstancesByExecutionTime(processInstances, '> 3s');
+      const resultForGreaterThanMinutes = filterProcessInstancesByExecutionTime(processInstances, '> 10m');
+      const resultForGreaterThanHours = filterProcessInstancesByExecutionTime(processInstances, '> 2h');
+      const resultForGreaterThanDays = filterProcessInstancesByExecutionTime(processInstances, '> 24d');
 
-      const resultForLessThanSeconds = filterProcessInstanceByExecutionTime(processInstances, '< 3s');
-      const resultForLessThanMinutes = filterProcessInstanceByExecutionTime(processInstances, '< 10m');
-      const resultForLessThanHours = filterProcessInstanceByExecutionTime(processInstances, '< 2h');
-      const resultForLessThanDays = filterProcessInstanceByExecutionTime(processInstances, '< 24d');
+      const resultForLessThanSeconds = filterProcessInstancesByExecutionTime(processInstances, '< 3s');
+      const resultForLessThanMinutes = filterProcessInstancesByExecutionTime(processInstances, '< 10m');
+      const resultForLessThanHours = filterProcessInstancesByExecutionTime(processInstances, '< 2h');
+      const resultForLessThanDays = filterProcessInstancesByExecutionTime(processInstances, '< 24d');
 
       const expectedForGreaterThanSeconds = [PROCESS_A_completedIn_24_days_01_error,
         PROCESS_A_completedIn_2_hours_02_error,

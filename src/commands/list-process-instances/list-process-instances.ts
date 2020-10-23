@@ -3,8 +3,8 @@ import { DataModels } from '@process-engine/management_api_contracts';
 import { ApiClient } from '../../client/api_client';
 import { AtlasSession, loadAtlasSession } from '../../session/atlas_session';
 import { addJsonPipingHintToResultJson, createResultJson } from '../../cli/result_json';
-import { filterProcessInstancesDateAfter, filterProcessInstancesDateBefore, 
-  filterProcessInstancesByEndTimeAfter, filterProcessInstancesByEndTimeBefore, filterProcessInstanceByExecutionTime,} from '../../client/filtering';
+import { filterProcessInstancesByEndTimeAfter, filterProcessInstancesByEndTimeBefore, filterProcessInstancesByExecutionTime, 
+  filterProcessInstancesDateAfter, filterProcessInstancesDateBefore} from '../../client/filtering';
 import { logJsonResult, logNoValidSessionError } from '../../cli/logging';
 import { OUTPUT_FORMAT_JSON, OUTPUT_FORMAT_TEXT } from '../../atlas';
 import { sortProcessInstances } from './sorting';
@@ -128,7 +128,7 @@ async function getProcessInstances(
   allProcessInstances = filterProcessInstancesByEndTimeAfter(allProcessInstances, completedAfter);
   allProcessInstances = filterProcessInstancesByEndTimeBefore(allProcessInstances, completedBefore);
 
-  allProcessInstances = filterProcessInstanceByExecutionTime(allProcessInstances, completedIn);
+  allProcessInstances = filterProcessInstancesByExecutionTime(allProcessInstances, completedIn);
 
   allProcessInstances = sortProcessInstances(allProcessInstances, sortByProcessModelId, sortByState, sortByCreatedAt);
 

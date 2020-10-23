@@ -166,7 +166,7 @@ export function filterProcessInstancesByEndTimeBefore(
   
 }
 
-export function filterProcessInstanceByExecutionTime(
+export function filterProcessInstancesByExecutionTime(
   processInstances: FilterableProcessInstance[],
   filterByExecutionTime: string
 ): any[] {
@@ -186,7 +186,7 @@ export function filterProcessInstanceByExecutionTime(
       const parsedUnitOfTime = executionTimeMatches[3];
       const unitOfTime = getUnitOfTimeForAbbreviation(parsedUnitOfTime);
  
-      return processInstances.filter(processInstance => isCompletedIn(processInstance, parsedComparisonType, time, unitOfTime));  
+      return processInstances.filter((processInstance: FilterableProcessInstance) => isCompletedIn(processInstance, parsedComparisonType, time, unitOfTime));  
 }
 
 function getUnitOfTimeForAbbreviation(abbreviation: string): moment.unitOfTime.Diff {
