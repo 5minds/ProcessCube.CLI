@@ -109,18 +109,10 @@ describe('filtering', () => {
   });
 
   describe('filterProcessInstanceExecutionTime()', () => {
-    it('should filter by execution time', () => {
+    it('should filter by execution time > 3s', () => {
       const processInstances = getMockedProcessInstances();
 
       const resultForGreaterThanSeconds = filterProcessInstancesByExecutionTime(processInstances, '> 3s');
-      const resultForGreaterThanMinutes = filterProcessInstancesByExecutionTime(processInstances, '> 10m');
-      const resultForGreaterThanHours = filterProcessInstancesByExecutionTime(processInstances, '> 2h');
-      const resultForGreaterThanDays = filterProcessInstancesByExecutionTime(processInstances, '> 24d');
-
-      const resultForLessThanSeconds = filterProcessInstancesByExecutionTime(processInstances, '< 3s');
-      const resultForLessThanMinutes = filterProcessInstancesByExecutionTime(processInstances, '< 10m');
-      const resultForLessThanHours = filterProcessInstancesByExecutionTime(processInstances, '< 2h');
-      const resultForLessThanDays = filterProcessInstancesByExecutionTime(processInstances, '< 24d');
 
       const expectedForGreaterThanSeconds = [PROCESS_A_completedIn_24_days_01_error,
         PROCESS_A_completedIn_2_hours_02_error,
@@ -128,42 +120,88 @@ describe('filtering', () => {
         PROCESS_B_completedIn_04_running,
         PROCESS_C_completedIn_1_years_06_error
       ];
+      assert.deepStrictEqual(mapIds(resultForGreaterThanSeconds), mapIds(expectedForGreaterThanSeconds));
+    });
+
+    it('should filter by execution time > 10m', () => {
+      const processInstances = getMockedProcessInstances();
+
+      const resultForGreaterThanMinutes = filterProcessInstancesByExecutionTime(processInstances, '> 10m');
 
       const expectedForGreaterThanMinutes = [PROCESS_A_completedIn_24_days_01_error, 
         PROCESS_A_completedIn_2_hours_02_error,
         PROCESS_B_completedIn_04_running,
         PROCESS_C_completedIn_1_years_06_error
       ];
+      assert.deepStrictEqual(mapIds(resultForGreaterThanMinutes), mapIds(expectedForGreaterThanMinutes));
+    });
+
+    it('should filter by execution time > 2h', () => {
+      const processInstances = getMockedProcessInstances();
+
+      const resultForGreaterThanHours = filterProcessInstancesByExecutionTime(processInstances, '> 2h');
 
       const expectedForGreaterThanHours = [PROCESS_A_completedIn_24_days_01_error, PROCESS_B_completedIn_04_running, PROCESS_C_completedIn_1_years_06_error];
 
+      assert.deepStrictEqual(mapIds(resultForGreaterThanHours), mapIds(expectedForGreaterThanHours));
+    });
+
+    it('should filter by execution time > 24d', () => {
+      const processInstances = getMockedProcessInstances();
+
+      const resultForGreaterThanDays = filterProcessInstancesByExecutionTime(processInstances, '> 24d');
+
       const expectedForGreaterThanDays = [PROCESS_B_completedIn_04_running,PROCESS_C_completedIn_1_years_06_error];
+
+      assert.deepStrictEqual(mapIds(resultForGreaterThanDays), mapIds(expectedForGreaterThanDays));
+    });
+
+    it('should filter by execution time < 3s', () => {
+      const processInstances = getMockedProcessInstances();
+
+      const resultForLessThanSeconds = filterProcessInstancesByExecutionTime(processInstances, '< 3s');
 
       const expectedForLessThanSeconds = [PROCESS_C_completedIn_50_milliseconds_05_finished];
 
+      assert.deepStrictEqual(mapIds(resultForLessThanSeconds), mapIds(expectedForLessThanSeconds));
+    });
+
+    it('should filter by execution time < 10m', () => {
+      const processInstances = getMockedProcessInstances();
+
+      const resultForLessThanMinutes = filterProcessInstancesByExecutionTime(processInstances, '< 10m');
+
       const expectedForLessThanMinutes = [PROCESS_B_completedIn_3_seconds_07_finished, PROCESS_C_completedIn_50_milliseconds_05_finished];
+
+      assert.deepStrictEqual(mapIds(resultForLessThanMinutes), mapIds(expectedForLessThanMinutes));
+    });
+
+    it('should filter by execution time < 2h', () => {
+      const processInstances = getMockedProcessInstances();
+
+      const resultForLessThanHours = filterProcessInstancesByExecutionTime(processInstances, '< 2h');
 
       const expectedForLessThanHours = [PROCESS_A_completedIn_10_minutes_03_finished, 
         PROCESS_B_completedIn_3_seconds_07_finished, 
         PROCESS_C_completedIn_50_milliseconds_05_finished
       ];
 
+      assert.deepStrictEqual(mapIds(resultForLessThanHours), mapIds(expectedForLessThanHours));
+    });
+
+    it('should filter by execution time < 24d', () => {
+      const processInstances = getMockedProcessInstances();
+
+      const resultForLessThanDays = filterProcessInstancesByExecutionTime(processInstances, '< 24d');
+
       const expectedForLessThanDays = [PROCESS_A_completedIn_2_hours_02_error,
         PROCESS_A_completedIn_10_minutes_03_finished, 
         PROCESS_B_completedIn_3_seconds_07_finished, 
         PROCESS_C_completedIn_50_milliseconds_05_finished
       ];
-
-      assert.deepStrictEqual(mapIds(resultForGreaterThanSeconds), mapIds(expectedForGreaterThanSeconds));
-      assert.deepStrictEqual(mapIds(resultForGreaterThanMinutes), mapIds(expectedForGreaterThanMinutes));
-      assert.deepStrictEqual(mapIds(resultForGreaterThanHours), mapIds(expectedForGreaterThanHours));
-      assert.deepStrictEqual(mapIds(resultForGreaterThanDays), mapIds(expectedForGreaterThanDays));
-
-      assert.deepStrictEqual(mapIds(resultForLessThanSeconds), mapIds(expectedForLessThanSeconds));
-      assert.deepStrictEqual(mapIds(resultForLessThanMinutes), mapIds(expectedForLessThanMinutes));
-      assert.deepStrictEqual(mapIds(resultForLessThanHours), mapIds(expectedForLessThanHours));
+      
       assert.deepStrictEqual(mapIds(resultForLessThanDays), mapIds(expectedForLessThanDays));
-
     });
+
   });
 });
