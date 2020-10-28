@@ -208,12 +208,14 @@ function getUnitOfTimeForAbbreviation(abbreviation: string): moment.unitOfTime.D
 }
 
 function isCompletedIn(processInstance: FilterableProcessInstance, comparisonType: string, time: number, unitOfTime: moment.unitOfTime.Diff): boolean {
-  const executionTime = moment(processInstance.finishedAt).diff(processInstance.createdAt, unitOfTime);
-  
   if (comparisonType === '>') {
-    return executionTime > time;
+    return moment(processInstance.createdAt)
+      .add(time, unitOfTime)
+      .isBefore(processInstance.finishedAt);
   } else if (comparisonType === '<') {
-    return executionTime < time;
+    return moment(processInstance.createdAt)
+      .add(time, unitOfTime)
+      .isAfter(processInstance.finishedAt);
   } 
 
   throw new Error(`Unknown comparison type: '${comparisonType}'. It should be > or <.`);
