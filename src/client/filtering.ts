@@ -180,7 +180,7 @@ export function filterProcessInstancesByExecutionTime(
       const lastIndexOfExecutionTime = filterByExecutionTime.substr(filterByExecutionTime.length - 1);
 
       if (executionTimeMatches == null){
-        throw new Error(`Unable to parse completed-in parameter '${filterByExecutionTime}'. '${lastIndexOfExecutionTime}' is not known unit of time. Please use either d, h, m or s.`);
+        throw new Error(`Unable to parse completed-in parameter '${filterByExecutionTime}'. Format has to be "[<|>] [TIME] [d|h|m|s]". Please refer to 'lsi --help' for more detailed information.`);
       }
       
       const parsedComparisonType = executionTimeMatches[1];
