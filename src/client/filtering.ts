@@ -175,9 +175,14 @@ export function filterProcessInstancesByExecutionTime(
       return processInstances;
     }
       const regexExecutionTime = /([<]|[>]) *([ 0-9]{1,}) *([smhd])/g;
-
       const executionTimeMatches = regexExecutionTime.exec(filterByExecutionTime);
+    
+      const lastIndexOfExecutionTime = filterByExecutionTime.substr(filterByExecutionTime.length - 1);
 
+      if (executionTimeMatches == null){
+        throw new Error(`Unable to parse completed-in parameter '${filterByExecutionTime}'. '${lastIndexOfExecutionTime}' is not known unit of time. Please use either d, h, m or s.`);
+      }
+      
       const parsedComparisonType = executionTimeMatches[1];
 
       const parsedTime = executionTimeMatches[2];
@@ -199,8 +204,6 @@ function getUnitOfTimeForAbbreviation(abbreviation: string): moment.unitOfTime.D
       return 'minutes';
     case 's':
       return 'seconds';
-    default:
-      throw new Error(`Unknown unit of time abbreviation: '${abbreviation}. It should be d, h, m or s.'`);
   }
 }
 
