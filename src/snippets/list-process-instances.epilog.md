@@ -17,7 +17,7 @@ For example, process-instances whose execution time is longer than 1 hour:
 
     $ atlas list-process-instances --completed-in "> 1h"
 
-For example, a process-instances whose execution time is less than 45 minutes:
+For example, process-instances whose execution time is less than 45 minutes:
 
     $ atlas list-process-instances --completed-in "< 45m"
 
