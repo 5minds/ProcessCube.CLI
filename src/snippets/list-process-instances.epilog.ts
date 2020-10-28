@@ -22,11 +22,11 @@ Filtering by completed date:
     $ atlas list-process-instances --completed-after "2020-01-01" --completed-before "2020-10-31"    
 
 Filtering by execution time in units of time 'days, hours, minutes or seconds' with the abbreviation 'd, h, m or s'.
-For example, a process-instances whose execution time is longer than 1 hour:
+For example, process-instances whose execution time is longer than 1 hour:
 
     $ atlas list-process-instances --completed-in "> 1h"
 
-For example, a process-instances whose execution time is less than 45 minutes:
+For example, process-instances whose execution time is less than 45 minutes:
 
     $ atlas list-process-instances --completed-in "< 45m"
 
@@ -67,7 +67,7 @@ Combinations of all switches are possible:
                                     --sort-by-state desc \\
                                     --sort-by-created-at asc
 
-The above lists all process instances from January 2020, which were started from a process model whose name contains the prefix "Registration.", but does not contain the word "Internal", and which are either still running or resulted in an error.
+The above lists all process instances from January 2020, which were started from a process model and were completed at the end of October. The completed process instances can be filtered according to the execution time. The name of the started process model contains the prefix "Registration.", but does not contain the word "Internal", and which are either still running or resulted in an error.
 The results are sorted by process model in ascending alphabetical order, within each model section, the process instances are grouped by state in the order "running, error" and for each state, process instances are listed oldest to newest.
 `;
 //
