@@ -4,6 +4,7 @@ import { toFilterRegexes } from '../cli/filter_regexes';
 
 type FilterableProcessInstance = {
   createdAt?: any; // is given as string, but should be a Date according to the management_api_contracts
+  finishedAt?: any;
   processModelId: string;
   state: string;
 };
@@ -113,4 +114,109 @@ export function filterProcessModelsById(processModels: any[], filterById: string
     const anyFilterMatched = filterRegexes.some((regex: RegExp) => regex.exec(processModel.id) != null);
     return anyFilterMatched;
   });
+}
+
+export function filterProcessInstancesByEndTimeAfter(
+  processInstances: FilterableProcessInstance[],
+  completedAfter: string
+): any[] {
+  if (completedAfter == null) {
+    return processInstances;
+  }
+  if (!moment(completedAfter).isValid()) {
+
+    throw new Error(`Invalid date format '${completedAfter}'! Please enter a valid date format.`);
+  }
+  const afterDate = moment(completedAfter);
+
+  return processInstances.filter((processInstance: FilterableProcessInstance) => {
+
+    if (!processInstance['finishedAt']) {
+      return false;
+    }
+    
+    return moment(processInstance['finishedAt']).isAfter(afterDate);
+  
+  });
+}
+
+export function filterProcessInstancesByEndTimeBefore(
+  processInstances: FilterableProcessInstance[],
+  completedBefore: string
+): any[] {
+  if (completedBefore == null) {
+    return processInstances;
+  }
+  if (!moment(completedBefore).isValid()){
+
+    throw new Error(`Invalid date format '${completedBefore}'! Please enter a valid date format.`);
+  }
+
+  const beforeDate = moment(completedBefore);
+
+  return processInstances.filter((processInstance: FilterableProcessInstance) => {
+
+    if (!processInstance['finishedAt']) {
+      return false;
+    }
+    
+    return moment(processInstance['finishedAt']).isBefore(beforeDate);
+  
+  });
+  
+}
+
+export function filterProcessInstancesByExecutionTime(
+  processInstances: FilterableProcessInstance[],
+  filterByExecutionTime: string
+): any[] {
+
+    if (filterByExecutionTime == null) {
+      return processInstances;
+    }
+      const regexExecutionTime = /([<]|[>]) *([ 0-9]{1,}) *([smhd])/g;
+      const executionTimeMatches = regexExecutionTime.exec(filterByExecutionTime);
+    
+      const lastIndexOfExecutionTime = filterByExecutionTime.substr(filterByExecutionTime.length - 1);
+
+      if (executionTimeMatches == null){
+        throw new Error(`Unable to parse completed-in parameter '${filterByExecutionTime}'. Format has to be "[<|>] [TIME] [d|h|m|s]". Please refer to 'lsi --help' for more detailed information.`);
+      }
+      
+      const parsedComparisonType = executionTimeMatches[1];
+
+      const parsedTime = executionTimeMatches[2];
+      const time = parseInt(parsedTime);
+
+      const parsedUnitOfTime = executionTimeMatches[3];
+      const unitOfTime = getUnitOfTimeForAbbreviation(parsedUnitOfTime);
+ 
+      return processInstances.filter((processInstance: FilterableProcessInstance) => isCompletedIn(processInstance, parsedComparisonType, time, unitOfTime));  
+}
+
+function getUnitOfTimeForAbbreviation(abbreviation: string): moment.unitOfTime.Diff {
+  switch(abbreviation) {
+    case 'd':
+      return 'days';
+    case 'h':
+      return 'hours';
+    case 'm':
+      return 'minutes';
+    case 's':
+      return 'seconds';
+  }
+}
+
+function isCompletedIn(processInstance: FilterableProcessInstance, comparisonType: string, time: number, unitOfTime: moment.unitOfTime.Diff): boolean {
+  if (comparisonType === '>') {
+    return moment(processInstance.createdAt)
+      .add(time, unitOfTime)
+      .isBefore(processInstance.finishedAt);
+  } else if (comparisonType === '<') {
+    return moment(processInstance.createdAt)
+      .add(time, unitOfTime)
+      .isAfter(processInstance.finishedAt);
+  } 
+
+  throw new Error(`Unknown comparison type: '${comparisonType}'. It should be > or <.`);
 }
