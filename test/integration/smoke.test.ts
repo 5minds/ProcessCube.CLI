@@ -1,5 +1,5 @@
 import * as assert from 'assert';
-import { execAsJson, execAsText } from './exec_as';
+import { execAsDefault, execAsJson, execAsText } from './exec_as';
 
 describe('atlas', () => {
   it('should work with JSON output', async () => {
@@ -74,6 +74,8 @@ describe('atlas', () => {
   });
 
   it('should work with help output', async () => {
+    execAsText('--help');
+
     execAsText('login http://localhost:8000 --root --help');
 
     execAsText('session-status --help');
@@ -99,5 +101,19 @@ describe('atlas', () => {
     execAsText('session-status --help');
 
     assert.ok(true);
+  });
+
+  it('should fail and show help output if no or invalid command was given', async () => {
+    try {
+      execAsDefault('');
+    } catch(error) {
+      assert.ok(error.message.includes(execAsDefault('--help')));
+    }
+
+    try {
+      execAsDefault('nonexistingcommand');
+    } catch(error) {
+      assert.ok(error.message.includes(execAsDefault('--help')));
+    }
   });
 });
