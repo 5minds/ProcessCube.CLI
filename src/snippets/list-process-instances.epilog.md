@@ -35,7 +35,7 @@ Filtering by process model ID also supports regular expressions:
 
 Filter options compound, meaning that they allow to look for more than one pattern:
 
-    $ atlas list-process-instances --filter-by-state error --filter-by-state running
+    $ atlas list-process-instances --filter-by-state error --filter-by-state finished
 
 ... i.e. using the same filter multiple times results in an OR query:
 
@@ -53,7 +53,7 @@ Combinations of all switches are possible:
                                     --filter-by-process-model-id "^Registration.+$" \
                                     --reject-by-process-model-id "Internal" \
                                     --filter-by-state error \
-                                    --filter-by-state running \
+                                    --filter-by-state finished \
                                     --sort-by-process-model-id asc \
                                     --sort-by-state desc \
                                     --sort-by-created-at asc
