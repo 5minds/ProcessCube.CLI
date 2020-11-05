@@ -23,6 +23,7 @@ import {
 } from './filtering';
 import { logError } from '../cli/logging';
 import { isUrlAvailable } from './is_url_available';
+import { Console } from 'console';
 
 // TODO: missing IIdentity here
 type Identity = any;
@@ -50,8 +51,13 @@ export class ApiClient {
   async deployFile(filename: string): Promise<DeployedProcessModelInfo> {
     const xml = fs.readFileSync(filename).toString();
     const bpmnDocument = new BpmnDocument();
-    await bpmnDocument.loadXml(xml);
 
+    try {
+      await bpmnDocument.loadXml(xml);
+    } catch (error) {
+      console.error('Fehler invalid!', error);
+    }
+  
     const processModelId: string = bpmnDocument.getProcessModelId();
     if (processModelId == null) {
       throw new Error('Unexpected value: `processModelId` should not be null here');
