@@ -23,7 +23,6 @@ import {
 } from './filtering';
 import { logError } from '../cli/logging';
 import { isUrlAvailable } from './is_url_available';
-import { Console } from 'console';
 
 // TODO: missing IIdentity here
 type Identity = any;
@@ -55,7 +54,7 @@ export class ApiClient {
     try {
       await bpmnDocument.loadXml(xml);
     } catch (error) {
-      throw new Error('The specified file is invalid! Please enter a valid bpmn file.');
+      throw new Error('The specified file is invalid! Please enter a valid BPMN file.');
     }
   
     const processModelId: string = bpmnDocument.getProcessModelId();
