@@ -1,6 +1,6 @@
 {
   "name": "@atlas-engine/cli",
-  "version": "1.1.0-beta.3",
+  "version": "1.2.0-alpha.4",
   "description": "CLI for AtlasEngine and process-engine.io",
   "main": "dist/atlas.js",
   "scripts": {
@@ -45,7 +45,7 @@
   },
   "devDependencies": {
     "@essential-projects/eslint-config": "^1.0.6",
-    "@process-engine/ci_tools": "3.0.0",
+    "@process-engine/ci_tools": "^3.1.0",
     "@types/mocha": "^5.2.7",
     "@types/node": "^12.12.28",
     "@types/yargs": "^15.0.4",

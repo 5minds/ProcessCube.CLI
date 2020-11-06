@@ -10,6 +10,7 @@ jobs:
 
   build_test_and_publish_linux:
     runs-on: ubuntu-latest
+    if: "!(contains(github.actor, 'process-engine-ci') || contains(github.actor, 'admin'))"
 
     services:
       atlas_engine:
