@@ -54,7 +54,7 @@ export class ApiClient {
     try {
       await bpmnDocument.loadXml(xml);
     } catch (error) {
-      throw new Error('The specified file is invalid! Please enter a valid BPMN file.');
+      throw new Error(`The specified file is invalid! Please enter a valid BPMN file. ${error}`);
     }
   
     const processModelId: string = bpmnDocument.getProcessModelId();
