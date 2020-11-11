@@ -54,7 +54,8 @@ export const PROCESS_INSTANCES = [
   PROCESS_C_createdAt_06_error,
   PROCESS_B_createdAt_07_finished,
   PROCESS_A_createdAt_02_error,
-  PROCESS_C_createdAt_05_finished
+  PROCESS_C_createdAt_05_finished,
+
 ];
 
 export function getMockedProcessInstances() {

@@ -374,6 +374,18 @@ program
           description: 'Only include process instances created before <datetime>',
           type: 'string'
         })
+        .option('completed-after', {
+          description: 'Only include process instances completed after <datetime>',
+          type: 'string'
+        })
+        .option('completed-before', {
+          description: 'Only include process instances completed before <datetime>',
+          type: 'string'
+        })
+        .option('completed-in', {
+          description: 'Only include process instances completed in <datetime>',
+          type: 'string'
+        })
         .option('filter-by-correlation-id', {
           description: 'Filter process instances by <correlationId>',
           type: 'array',
@@ -428,6 +440,9 @@ program
           [
             'created-after',
             'created-before',
+            'completed-after',
+            'completed-before',
+            'completed-in',
             'filter-by-correlation-id',
             'filter-by-process-model-id',
             'filter-by-state',
@@ -448,12 +463,14 @@ program
       const sortByCreatedAt = argv.sortByCreatedAt === '' ? 'asc' : argv.sortByCreatedAt;
       const sortByProcessModelId = argv.sortByProcessModelId === '' ? 'asc' : argv.sortByProcessModelId;
       const sortByState = argv.sortByState === '' ? 'asc' : argv.sortByState;
-
       listProcessInstances(
         pipedProcessInstanceIds,
         pipedProcessModelIds,
         argv.createdAfter,
         argv.createdBefore,
+        argv.completedAfter,
+        argv.completedBefore,
+        argv.completedIn,
         argv.filterByCorrelationId,
         argv.filterByProcessModelId,
         argv.rejectByProcessModelId,
