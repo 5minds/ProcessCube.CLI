@@ -14,7 +14,7 @@ jobs:
 
     services:
       atlas_engine:
-        image: 5minds/atlas_engine_fullstack_server:10
+        image: 5minds/atlas_engine_fullstack_server:11
         ports:
         - 8000:8000
         options: --health-cmd true --health-interval 10s --health-timeout 5s --health-retries 5
