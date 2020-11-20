@@ -23,10 +23,6 @@ import {
 } from './filtering';
 import { logError } from '../cli/logging';
 import { isUrlAvailable } from './is_url_available';
-import {ClientFactory} from '@atlas-engine/atlas_engine_client';
-
-
-const atlasEngineUri = 'http://localhost:8000';
 
 // TODO: missing IIdentity here
 type Identity = any;
