@@ -8,6 +8,7 @@ import program = require('yargs');
 import { login } from './commands/login/login';
 import { logout } from './commands/logout/logout';
 import { printSessionStatus } from './commands/session-status/session-status';
+import { listUserTasks } from './commands/list-user-tasks/list-user-tasks';
 import { listProcessModels } from './commands/list-process-models/list-process-models';
 import { startProcessInstance } from './commands/start-process-model/start-process-model';
 import { listProcessInstances } from './commands/list-process-instances/list-process-instances';
@@ -472,6 +473,83 @@ program
         argv.completedBefore,
         argv.completedIn,
         argv.filterByCorrelationId,
+        argv.filterByProcessModelId,
+        argv.rejectByProcessModelId,
+        argv.filterByState,
+        argv.rejectByState,
+        sortByProcessModelId,
+        sortByState,
+        sortByCreatedAt,
+        argv.limit,
+        argv.allFields,
+        argv.output
+      );
+    }
+  )
+
+  .command(
+    ['list-user-tasks', 'lut'],
+    'Lists, sorts and filters user tasks by state and/or process model from the connected engine.',
+    (yargs) => {
+      return yargs
+          .usage(
+            usageString(
+              'list-user-tasks',
+              'Lists, sorts and filters user tasks by state and/or process model from the connected engine.'
+            )
+          )
+          .option('created-after', {
+          description: 'Only include process instances created after <datetime>',
+          type: 'string'
+          })
+          .option('created-before', {
+          description: 'Only include process instances created before <datetime>',
+          type: 'string'
+          })
+          .option('filter-by-process-model-id', {
+            description: 'Filter process instances by <pattern> (supports regular expressions)',
+            type: 'array',
+            default: []
+          })
+          .option('filter-by-state', {
+            description: 'Filter process instances by <state> (running, finished, error)',
+            type: 'array',
+            default: []
+          })
+          .option('limit', {
+            description: 'List a maximum of <limit> process instances',
+            type: 'number'
+          })
+          .option('all-fields', {
+            alias: 'F',
+            description: 'Show all fields',
+            type: 'boolean',
+            default: false
+          })
+          .group(
+            [
+              'filter-by-process-model-id',
+              'filter-by-state',
+              'reject-by-process-model-id',
+              'reject-by-state'
+            ],
+            heading('FILTERING OPTIONS')
+          )
+          .group(['sort-by-created-at', 'sort-by-process-model-id', 'sort-by-state', 'limit'], heading('SORTING OPTIONS'))
+          .group(['all-fields', 'output'], heading('OUTPUT OPTIONS'))
+          //.epilog(formatHelpText(epilogSnippetListUserTasks));
+    },
+    async (argv: any) => {
+      const stdinPipeReader = await StdinPipeReader.create();
+      const pipedProcessInstanceIds = stdinPipeReader.getPipedProcessInstanceIds();
+      const pipedProcessModelIds = stdinPipeReader.getPipedProcessModelIds();
+
+      const sortByCreatedAt = argv.sortByCreatedAt === '' ? 'asc' : argv.sortByCreatedAt;
+      const sortByProcessModelId = argv.sortByProcessModelId === '' ? 'asc' : argv.sortByProcessModelId;
+      const sortByState = argv.sortByState === '' ? 'asc' : argv.sortByState;
+      listUserTasks(
+        pipedProcessInstanceIds,
+        pipedProcessModelIds,
         argv.filterByProcessModelId,
         argv.rejectByProcessModelId,
         argv.filterByState,

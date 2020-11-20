@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 
 import { DataModels } from '@process-engine/management_api_contracts';
-import { AtlasEngineClient } from '@atlas-engine/atlas_engine_client';
+import { AtlasEngineClient} from '@atlas-engine/atlas_engine_client';
 
 import { getIdentityAndManagementApiClient } from './management_api_client';
 import { ManagementApiClient } from '@process-engine/management_api_client';
@@ -23,11 +23,16 @@ import {
 } from './filtering';
 import { logError } from '../cli/logging';
 import { isUrlAvailable } from './is_url_available';
+import {ClientFactory} from '@atlas-engine/atlas_engine_client';
+
+
+const atlasEngineUri = 'http://localhost:8000';
 
 // TODO: missing IIdentity here
 type Identity = any;
 
 type ProcessInstance = DataModels.Correlations.ProcessInstance;
+type FlowNodeInstances = DataModels.FlowNodeInstances.FlowNodeInstanceList;
 type ProcessInstanceWithTokens = ProcessInstance & {
   tokens: DataModels.TokenHistory.TokenHistoryGroup;
 };
@@ -238,6 +243,34 @@ export class ApiClient {
 
     return allProcessInstances;
   }
+
+  async getAllUserTasks(
+    filterByProcessModelId: string[],
+    rejectByProcessModelId: string[],
+    filterByState: string[],
+    rejectByState: string[]
+  ): Promise<ProcessInstance[]> {
+    let allProcessInstances: ProcessInstance[];
+
+    try {
+      if (filterByState.length > 0) {
+        allProcessInstances = await this.getAllProcessInstancesViaState(filterByState);
+      } else {
+        allProcessInstances = await this.getAllProcessInstancesViaAllProcessModels(filterByProcessModelId);
+      }
+    } catch (error) {
+      await this.warnAndExitIfEnginerUrlNotAvailable();
+      throw error;
+    }
+
+    allProcessInstances = filterProcessInstancesByProcessModelId(allProcessInstances, filterByProcessModelId);
+    allProcessInstances = filterProcessInstancesByState(allProcessInstances, filterByState);
+    allProcessInstances = rejectProcessInstancesByProcessModelId(allProcessInstances, rejectByProcessModelId);
+    allProcessInstances = rejectProcessInstancesByState(allProcessInstances, rejectByState);
+
+    return allProcessInstances;
+  }
+
 
   async getAllProcessInstancesViaCorrelations(correlationIds: string[]): Promise<ProcessInstance[]> {
     let allProcessInstances = [];
