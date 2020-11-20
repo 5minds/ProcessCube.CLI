@@ -57,46 +57,46 @@ export async function listUserTasks(
     logJsonResult(resultJson);
   } else if (outputFormat === OUTPUT_FORMAT_TEXT) {
     console.table(processInstances, [
-      'createdAt',
-      'finishedAt',
-      'processModelId',
-      'processInstanceId',
-      'state',
-      'correlationId'
-    ]);
-  }
+        'createdAt',
+        'finishedAt',
+        'processModelId',
+        'processInstanceId',
+        'state',
+        'correlationId'
+      ]);
+    }
 }
 
 async function getProcessInstances(
-  session: AtlasSession,
-  pipedProcessInstanceIds: string[] | null,
-  pipedProcessModelIds: string[] | null,
-  filterByProcessModelId: string[],
-  rejectByProcessModelId: string[],
-  filterByState: string[],
-  rejectByState: string[],
-  sortByProcessModelId: string,
-  sortByState: string,
-  sortByCreatedAt: string,
-  limit: number
+    session: AtlasSession,
+    pipedProcessInstanceIds: string[] | null,
+    pipedProcessModelIds: string[] | null,
+    filterByProcessModelId: string[],
+    rejectByProcessModelId: string[],
+    filterByState: string[],
+    rejectByState: string[],
+    sortByProcessModelId: string,
+    sortByState: string,
+    sortByCreatedAt: string,
+    limit: number
 ): Promise<ProcessInstance[]> {
-  const apiClient = new ApiClient(session);
+    const apiClient = new ApiClient(session);
 
-  let allProcessInstances = await apiClient.getAllUserTasks(
-    filterByProcessModelId,
-    rejectByProcessModelId,
-    filterByState,
-    rejectByState
-  );
+    let allProcessInstances = await apiClient.getAllUserTasks(
+        filterByProcessModelId,
+        rejectByProcessModelId,
+        filterByState,
+        rejectByState
+    );
 
   if (pipedProcessInstanceIds != null) {
-    allProcessInstances = allProcessInstances.filter((processInstance: any) =>
+      allProcessInstances = allProcessInstances.filter((processInstance: any) =>
       pipedProcessInstanceIds.includes(processInstance.processInstanceId)
     );
   }
 
   if (pipedProcessModelIds != null) {
-    allProcessInstances = allProcessInstances.filter((processInstance: any) =>
+      allProcessInstances = allProcessInstances.filter((processInstance: any) =>
       pipedProcessModelIds.includes(processInstance.processModelId)
     );
   }
