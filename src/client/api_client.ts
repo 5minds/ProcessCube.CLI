@@ -50,8 +50,13 @@ export class ApiClient {
   async deployFile(filename: string): Promise<DeployedProcessModelInfo> {
     const xml = fs.readFileSync(filename).toString();
     const bpmnDocument = new BpmnDocument();
-    await bpmnDocument.loadXml(xml);
 
+    try {
+      await bpmnDocument.loadXml(xml);
+    } catch (error) {
+      throw new Error(`The specified file is invalid! Please enter a valid BPMN file. ${error}`);
+    }
+  
     const processModelId: string = bpmnDocument.getProcessModelId();
     if (processModelId == null) {
       throw new Error('Unexpected value: `processModelId` should not be null here');
