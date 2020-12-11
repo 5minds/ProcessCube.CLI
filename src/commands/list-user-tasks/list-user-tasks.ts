@@ -1,4 +1,4 @@
-import { DataModels } from '@process-engine/management_api_contracts';    
+import { DataModels} from '@process-engine/management_api_contracts';    
 
 import { ApiClient } from '../../client/api_client';
 import { AtlasSession, loadAtlasSession } from '../../session/atlas_session';
@@ -8,10 +8,13 @@ import { OUTPUT_FORMAT_JSON, OUTPUT_FORMAT_TEXT } from '../../atlas';
 import { sortProcessInstances } from '../list-process-instances/sorting';
 
 export type ProcessInstance = DataModels.Correlations.ProcessInstance;
+//export type UserTask = DataModels.UserTasks.UserTask;
 
 export async function listUserTasks(
   pipedProcessInstanceIds: string[] | null,
   pipedProcessModelIds: string[] | null,
+  processModelId: string[],
+  filterByCorrelationId: string[],
   filterByProcessModelId: string[],
   rejectByProcessModelId: string[],
   filterByState: string[],
@@ -29,10 +32,12 @@ export async function listUserTasks(
     return;
   }
 
-  const processInstances = await getProcessInstances(
+  const processInstances = await getUserTasks(
     session,
     pipedProcessInstanceIds,
     pipedProcessModelIds,
+    processModelId,
+    filterByCorrelationId,
     filterByProcessModelId,
     rejectByProcessModelId,
     filterByState,
@@ -50,7 +55,7 @@ export async function listUserTasks(
     resultProcessInstances = mapToShort(processInstances);
   }
 
-  let resultJson = createResultJson('process-instances', resultProcessInstances);
+  let resultJson = createResultJson('user-tasks', resultProcessInstances);
   resultJson = addJsonPipingHintToResultJson(resultJson);
 
   if (outputFormat === OUTPUT_FORMAT_JSON) {
@@ -67,10 +72,12 @@ export async function listUserTasks(
     }
 }
 
-async function getProcessInstances(
+async function getUserTasks(
     session: AtlasSession,
     pipedProcessInstanceIds: string[] | null,
     pipedProcessModelIds: string[] | null,
+    processModelId: string[],
+    filterByCorrelationId: string[],
     filterByProcessModelId: string[],
     rejectByProcessModelId: string[],
     filterByState: string[],
@@ -82,7 +89,9 @@ async function getProcessInstances(
 ): Promise<ProcessInstance[]> {
     const apiClient = new ApiClient(session);
 
-    let allProcessInstances = await apiClient.getAllUserTasks(
+    let allUserTasks = await apiClient.getAllUserTasks(
+        processModelId,
+        filterByCorrelationId,
         filterByProcessModelId,
         rejectByProcessModelId,
         filterByState,
@@ -90,20 +99,20 @@ async function getProcessInstances(
     );
 
   if (pipedProcessInstanceIds != null) {
-      allProcessInstances = allProcessInstances.filter((processInstance: any) =>
+      allUserTasks = allUserTasks.filter((processInstance: any) =>
       pipedProcessInstanceIds.includes(processInstance.processInstanceId)
     );
   }
 
   if (pipedProcessModelIds != null) {
-      allProcessInstances = allProcessInstances.filter((processInstance: any) =>
+      allUserTasks = allUserTasks.filter((processInstance: any) =>
       pipedProcessModelIds.includes(processInstance.processModelId)
     );
   }
 
-  allProcessInstances = sortProcessInstances(allProcessInstances, sortByProcessModelId, sortByState, sortByCreatedAt);
+  allUserTasks = sortProcessInstances(allUserTasks, sortByProcessModelId, sortByState, sortByCreatedAt);
 
-  const processInstances = allProcessInstances;
+  const processInstances = allUserTasks;
 
   if (limit != null && limit > 0) {
     return processInstances.slice(0, limit);

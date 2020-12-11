@@ -550,6 +550,8 @@ program
       listUserTasks(
         pipedProcessInstanceIds,
         pipedProcessModelIds,
+        argv.processModelId,
+        argv.filterByCorrelationId,
         argv.filterByProcessModelId,
         argv.rejectByProcessModelId,
         argv.filterByState,

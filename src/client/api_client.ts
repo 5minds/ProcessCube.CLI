@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 
-import { DataModels } from '@process-engine/management_api_contracts';
-import { AtlasEngineClient} from '@atlas-engine/atlas_engine_client';
+import { DataModels} from '@process-engine/management_api_contracts';
+import { AtlasEngineClient, ClientFactory, DataModels as AtlasEngineDataModels} from '@atlas-engine/atlas_engine_client';
 
 import { getIdentityAndManagementApiClient } from './management_api_client';
 import { ManagementApiClient } from '@process-engine/management_api_client';
@@ -24,11 +24,13 @@ import {
 import { logError } from '../cli/logging';
 import { isUrlAvailable } from './is_url_available';
 
+const atlasEngineUri = 'http://localhost:8000';
+
 // TODO: missing IIdentity here
 type Identity = any;
 
 type ProcessInstance = DataModels.Correlations.ProcessInstance;
-type FlowNodeInstances = DataModels.FlowNodeInstances.FlowNodeInstanceList;
+//type UserTask = DataModels.UserTasks.UserTask;
 type ProcessInstanceWithTokens = ProcessInstance & {
   tokens: DataModels.TokenHistory.TokenHistoryGroup;
 };
@@ -241,15 +243,29 @@ export class ApiClient {
   }
 
   async getAllUserTasks(
+    processModelId: string[],
+    filterByCorrelationId: string[],
     filterByProcessModelId: string[],
     rejectByProcessModelId: string[],
     filterByState: string[],
     rejectByState: string[]
   ): Promise<ProcessInstance[]> {
     let allProcessInstances: ProcessInstance[];
-
+  
     try {
-      if (filterByState.length > 0) {
+      const client = ClientFactory.createUserTaskClient(atlasEngineUri);
+      const userTask = await client.query({
+        processModelId: processModelId,
+        state: AtlasEngineDataModels.FlowNodeInstances.FlowNodeInstanceState.suspended,
+      });
+      
+      if (userTask.userTasks.length == 0) {
+        throw new Error(`Cannot find a UserTask with FlowNodeInstance ID ${processModelId}.`);
+      }
+
+      if (filterByCorrelationId.length > 0) {
+        allProcessInstances = await this.getAllProcessInstancesViaCorrelations(filterByCorrelationId);
+      } else if (filterByState.length > 0) {
         allProcessInstances = await this.getAllProcessInstancesViaState(filterByState);
       } else {
         allProcessInstances = await this.getAllProcessInstancesViaAllProcessModels(filterByProcessModelId);
@@ -258,15 +274,14 @@ export class ApiClient {
       await this.warnAndExitIfEnginerUrlNotAvailable();
       throw error;
     }
-
+  
     allProcessInstances = filterProcessInstancesByProcessModelId(allProcessInstances, filterByProcessModelId);
     allProcessInstances = filterProcessInstancesByState(allProcessInstances, filterByState);
     allProcessInstances = rejectProcessInstancesByProcessModelId(allProcessInstances, rejectByProcessModelId);
     allProcessInstances = rejectProcessInstancesByState(allProcessInstances, rejectByState);
-
+  
     return allProcessInstances;
-  }
-
+  } 
 
   async getAllProcessInstancesViaCorrelations(correlationIds: string[]): Promise<ProcessInstance[]> {
     let allProcessInstances = [];
