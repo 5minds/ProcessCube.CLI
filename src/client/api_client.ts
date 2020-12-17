@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 
 import { DataModels} from '@process-engine/management_api_contracts';
-import { AtlasEngineClient, ClientFactory, DataModels as AtlasEngineDataModels} from '@atlas-engine/atlas_engine_client';
+import { AtlasEngineClient, ClientFactory, DataModels as AtlasEngineDataModels, } from '@atlas-engine/atlas_engine_client';
 
 import { getIdentityAndManagementApiClient } from './management_api_client';
 import { ManagementApiClient } from '@process-engine/management_api_client';
@@ -29,8 +29,10 @@ const atlasEngineUri = 'http://localhost:8000';
 // TODO: missing IIdentity here
 type Identity = any;
 
+type FlowNodeInstance = AtlasEngineDataModels.FlowNodeInstances.FlowNodeInstance;
+type UserTask = AtlasEngineDataModels.FlowNodeInstances.UserTask;
+
 type ProcessInstance = DataModels.Correlations.ProcessInstance;
-//type UserTask = DataModels.UserTasks.UserTask;
 type ProcessInstanceWithTokens = ProcessInstance & {
   tokens: DataModels.TokenHistory.TokenHistoryGroup;
 };
@@ -233,7 +235,7 @@ export class ApiClient {
       await this.warnAndExitIfEnginerUrlNotAvailable();
       throw error;
     }
-
+                           
     allProcessInstances = filterProcessInstancesByProcessModelId(allProcessInstances, filterByProcessModelId);
     allProcessInstances = filterProcessInstancesByState(allProcessInstances, filterByState);
     allProcessInstances = rejectProcessInstancesByProcessModelId(allProcessInstances, rejectByProcessModelId);
@@ -244,44 +246,92 @@ export class ApiClient {
 
   async getAllUserTasks(
     processModelId: string[],
-    filterByCorrelationId: string[],
     filterByProcessModelId: string[],
     rejectByProcessModelId: string[],
     filterByState: string[],
     rejectByState: string[]
-  ): Promise<ProcessInstance[]> {
-    let allProcessInstances: ProcessInstance[];
-  
-    try {
-      const client = ClientFactory.createUserTaskClient(atlasEngineUri);
-      const userTask = await client.query({
+  ): Promise<UserTask[]> {
+    let allUserTasks: UserTask[];
+     try {
+      const client = this.atlasEngineClient;
+      const userTaskList = await client.userTasks.query({
         processModelId: processModelId,
         state: AtlasEngineDataModels.FlowNodeInstances.FlowNodeInstanceState.suspended,
       });
-      
-      if (userTask.userTasks.length == 0) {
-        throw new Error(`Cannot find a UserTask with FlowNodeInstance ID ${processModelId}.`);
+      console.log(JSON.stringify(userTaskList));
+     
+      allUserTasks = userTaskList.userTasks;
+      if (userTaskList.userTasks.length == 0) {
+        throw new Error(`Cannot find a UserTask with ProcessModel ID ${processModelId}.`);
       }
-
-      if (filterByCorrelationId.length > 0) {
-        allProcessInstances = await this.getAllProcessInstancesViaCorrelations(filterByCorrelationId);
-      } else if (filterByState.length > 0) {
-        allProcessInstances = await this.getAllProcessInstancesViaState(filterByState);
+  
+      if (filterByState.length > 0) {
+        allUserTasks = await this.getAllUserTasksViaState(filterByState);
       } else {
-        allProcessInstances = await this.getAllProcessInstancesViaAllProcessModels(filterByProcessModelId);
+        allUserTasks = await this.getAllUserTasksViaAllProcessModels(filterByProcessModelId);
       }
     } catch (error) {
       await this.warnAndExitIfEnginerUrlNotAvailable();
       throw error;
     }
+    allUserTasks = filterProcessInstancesByProcessModelId(allUserTasks, filterByProcessModelId);
+    allUserTasks = filterProcessInstancesByState(allUserTasks, filterByState);
+    allUserTasks = rejectProcessInstancesByProcessModelId(allUserTasks, rejectByProcessModelId);
+    allUserTasks = rejectProcessInstancesByState(allUserTasks, rejectByState);
   
-    allProcessInstances = filterProcessInstancesByProcessModelId(allProcessInstances, filterByProcessModelId);
-    allProcessInstances = filterProcessInstancesByState(allProcessInstances, filterByState);
-    allProcessInstances = rejectProcessInstancesByProcessModelId(allProcessInstances, rejectByProcessModelId);
-    allProcessInstances = rejectProcessInstancesByState(allProcessInstances, rejectByState);
+    return allUserTasks;
+  }
+
+  private async getAllUserTasksViaAllProcessModels(
+    filterByProcessModelId: string[]
+  ): Promise<UserTask[]> {
+    const allProcessModels = await this.getProcessModels();
+
+    const processModels = filterProcessModelsById(allProcessModels, filterByProcessModelId);
+
+    let allUserTasks = [];
+    for (const processModel of processModels) {
+      try {
+
+        const result = await this.atlasEngineClient.userTasks.query(
+          this.identity,
+          processModel.id
+        );
+
+        allUserTasks = allUserTasks.concat(result.userTasks);
+      } catch (e) {
+        if (
+          e.message.includes('No ProcessInstances for ProcessModel') ||
+          e.message.includes('No ProcessInstances for ProcessModel') ||
+          e.message.includes('not found')
+        ) {
+          // OMG, why are we using errors for normal control-flow?
+        } else {
+          throw e;
+        }
+      }
+    }
+    return allUserTasks;
+  }
+
+  private async getAllUserTasksViaState(filterByState: string[]): Promise<UserTask[]> {
+    let allProcessInstances: UserTask[] = [];
+    for (const state of filterByState) {
+      try {
+
+        const result = await this.atlasEngineClient.userTasks.query({
+            state: AtlasEngineDataModels.FlowNodeInstances.FlowNodeInstanceState.suspended,
+        });
   
+        allProcessInstances = allProcessInstances.concat(result.userTasks);
+
+      } catch (error) {
+        await this.warnAndExitIfEnginerUrlNotAvailable();
+        throw error;
+      }
+    }
     return allProcessInstances;
-  } 
+  }
 
   async getAllProcessInstancesViaCorrelations(correlationIds: string[]): Promise<ProcessInstance[]> {
     let allProcessInstances = [];

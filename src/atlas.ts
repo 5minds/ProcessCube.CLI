@@ -543,7 +543,7 @@ program
       const stdinPipeReader = await StdinPipeReader.create();
       const pipedProcessInstanceIds = stdinPipeReader.getPipedProcessInstanceIds();
       const pipedProcessModelIds = stdinPipeReader.getPipedProcessModelIds();
-
+  
       const sortByCreatedAt = argv.sortByCreatedAt === '' ? 'asc' : argv.sortByCreatedAt;
       const sortByProcessModelId = argv.sortByProcessModelId === '' ? 'asc' : argv.sortByProcessModelId;
       const sortByState = argv.sortByState === '' ? 'asc' : argv.sortByState;
@@ -551,7 +551,6 @@ program
         pipedProcessInstanceIds,
         pipedProcessModelIds,
         argv.processModelId,
-        argv.filterByCorrelationId,
         argv.filterByProcessModelId,
         argv.rejectByProcessModelId,
         argv.filterByState,
