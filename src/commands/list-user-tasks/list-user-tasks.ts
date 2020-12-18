@@ -31,7 +31,7 @@ export async function listUserTasks(
    return;
  }
  
- const flowNodeInstances = await getUserTasks(
+ const userTasks = await getUserTasks(
    session,
    pipedProcessInstanceIds,
    pipedProcessModelIds,
@@ -48,9 +48,9 @@ export async function listUserTasks(
  
  let resultProcessInstances: any[];
  if (showAllFields) {
-   resultProcessInstances = mapToLong(flowNodeInstances);
+   resultProcessInstances = mapToLong(userTasks);
  } else {
-   resultProcessInstances = mapToShort(flowNodeInstances);
+   resultProcessInstances = mapToShort(userTasks);
  }
  
  let resultJson = createResultJson('user-tasks', resultProcessInstances);
@@ -59,7 +59,7 @@ export async function listUserTasks(
  if (outputFormat === OUTPUT_FORMAT_JSON) {
    logJsonResult(resultJson);
  } else if (outputFormat === OUTPUT_FORMAT_TEXT) {
-   console.table(flowNodeInstances, [
+   console.table(userTasks, [
        'createdAt',
        'finishedAt',
        'processModelId',
@@ -83,7 +83,7 @@ async function getUserTasks(
    sortByState: string,
    sortByCreatedAt: string,
    limit: number
-): Promise<FlowNodeInstance[]> {
+): Promise<UserTask[]> {
    const apiClient = new ApiClient(session);
  
    let allUserTasks = await apiClient.getAllUserTasks(
@@ -108,13 +108,13 @@ async function getUserTasks(
  
  allUserTasks = sortProcessInstances(allUserTasks, sortByProcessModelId, sortByState, sortByCreatedAt);
  
- const flowNodeInstances = allUserTasks;
+ const userTasks = allUserTasks;
  
  if (limit != null && limit > 0) {
-   return flowNodeInstances.slice(0, limit);
+   return userTasks.slice(0, limit);
  }
  
- return flowNodeInstances;
+ return userTasks;
 }
  
 function mapToLong(list: any): any[] {

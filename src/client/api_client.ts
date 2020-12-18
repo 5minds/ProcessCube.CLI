@@ -253,12 +253,11 @@ export class ApiClient {
   ): Promise<UserTask[]> {
     let allUserTasks: UserTask[];
      try {
-      const client = this.atlasEngineClient;
-      const userTaskList = await client.userTasks.query({
+      const userTaskList = await this.atlasEngineClient.userTasks.query({
         processModelId: processModelId,
         state: AtlasEngineDataModels.FlowNodeInstances.FlowNodeInstanceState.suspended,
       });
-      console.log(JSON.stringify(userTaskList));
+      //console.log(JSON.stringify(userTaskList));
      
       allUserTasks = userTaskList.userTasks;
       if (userTaskList.userTasks.length == 0) {
