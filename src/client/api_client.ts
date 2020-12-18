@@ -253,31 +253,38 @@ export class ApiClient {
   ): Promise<UserTask[]> {
     let allUserTasks: UserTask[];
      try {
-      const userTaskList = await this.atlasEngineClient.userTasks.query({
-        processModelId: processModelId,
-        state: AtlasEngineDataModels.FlowNodeInstances.FlowNodeInstanceState.suspended,
-      });
-      //console.log(JSON.stringify(userTaskList));
-     
+
+      const userTaskList = await this.atlasEngineClient.userTasks.query(
+       this.identity,
+      );
+
+      // const userTaskList = await this.atlasEngineClient.userTasks.query({
+      //    processModelId: processModelId,
+      //    state: AtlasEngineDataModels.FlowNodeInstances.FlowNodeInstanceState.suspended,
+         
+      // });
+
+      // console.log(JSON.stringify(userTaskList));
       allUserTasks = userTaskList.userTasks;
       if (userTaskList.userTasks.length == 0) {
         throw new Error(`Cannot find a UserTask with ProcessModel ID ${processModelId}.`);
       }
-  
+
       if (filterByState.length > 0) {
         allUserTasks = await this.getAllUserTasksViaState(filterByState);
-      } else {
-        allUserTasks = await this.getAllUserTasksViaAllProcessModels(filterByProcessModelId);
-      }
+      } 
+      //  else {
+      //   allUserTasks = await this.getAllUserTasksViaAllProcessModels(filterByProcessModelId);
+      // }
     } catch (error) {
       await this.warnAndExitIfEnginerUrlNotAvailable();
       throw error;
     }
-    allUserTasks = filterProcessInstancesByProcessModelId(allUserTasks, filterByProcessModelId);
-    allUserTasks = filterProcessInstancesByState(allUserTasks, filterByState);
-    allUserTasks = rejectProcessInstancesByProcessModelId(allUserTasks, rejectByProcessModelId);
-    allUserTasks = rejectProcessInstancesByState(allUserTasks, rejectByState);
-  
+     // allUserTasks = filterProcessInstancesByProcessModelId(allUserTasks, filterByProcessModelId);
+     allUserTasks = filterProcessInstancesByState(allUserTasks, filterByState);
+    // allUserTasks = rejectProcessInstancesByProcessModelId(allUserTasks, rejectByProcessModelId);
+    // allUserTasks = rejectProcessInstancesByState(allUserTasks, rejectByState);
+
     return allUserTasks;
   }
 
@@ -319,7 +326,7 @@ export class ApiClient {
       try {
 
         const result = await this.atlasEngineClient.userTasks.query({
-            state: AtlasEngineDataModels.FlowNodeInstances.FlowNodeInstanceState.suspended,
+          state: AtlasEngineDataModels.FlowNodeInstances.FlowNodeInstanceState.suspended,
         });
   
         allProcessInstances = allProcessInstances.concat(result.userTasks);

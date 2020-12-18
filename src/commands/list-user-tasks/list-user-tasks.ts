@@ -87,11 +87,11 @@ async function getUserTasks(
    const apiClient = new ApiClient(session);
  
    let allUserTasks = await apiClient.getAllUserTasks(
-       processModelId,
-       filterByProcessModelId,
-       rejectByProcessModelId,
-       filterByState,
-       rejectByState
+    processModelId,
+    filterByProcessModelId,
+    rejectByProcessModelId,
+    filterByState,
+    rejectByState
    );
  
  if (pipedProcessInstanceIds != null) {
@@ -122,9 +122,9 @@ function mapToLong(list: any): any[] {
 }
  
 function mapToShort(list: any): any[] {
- return list.map((processInstance: any) => {
-   const identity = { ...processInstance.identity, token: '...' };
+ return list.map((userTask: any) => {
+   const identity = { ...userTask.identity, token: '...' };
  
-   return { ...processInstance, xml: '...', identity: identity };
+   return { ...userTask, xml: '...', identity: identity };
  });
 }
