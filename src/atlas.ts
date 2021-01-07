@@ -506,8 +506,30 @@ program
           description: 'Only include process instances created before <datetime>',
           type: 'string'
           })
+          .option('completed-after', {
+            description: 'Only include process instances completed after <datetime>',
+            type: 'string'
+          })
+          .option('completed-before', {
+            description: 'Only include process instances completed before <datetime>',
+            type: 'string'
+          })
+          .option('completed-in', {
+            description: 'Only include process instances completed in <datetime>',
+            type: 'string'
+          })
+          .option('filter-by-correlation-id', {
+            description: 'Filter process instances by <correlationId>',
+            type: 'array',
+            default: []
+          })
           .option('filter-by-process-model-id', {
             description: 'Filter process instances by <pattern> (supports regular expressions)',
+            type: 'array',
+            default: []
+          })
+          .option('reject-by-process-model-id', {
+            description: 'Reject process instances by <pattern> (supports regular expressions)',
             type: 'array',
             default: []
           })
@@ -515,6 +537,26 @@ program
             description: 'Filter process instances by <state> (running, finished, error)',
             type: 'array',
             default: []
+          })
+          .option('reject-by-state', {
+            description: 'Reject process instances by <state> (running, finished, error)',
+            type: 'array',
+            default: []
+          })
+          .option('sort-by-created-at', {
+            description: 'Sort process instances by their created at timestamp in <direction> (asc, desc)',
+            type: 'string',
+            choices: ['', 'asc', 'desc']
+          })
+          .option('sort-by-process-model-id', {
+            description: 'Sort process instances by their process model id in <direction> (asc, desc)',
+            type: 'string',
+            choices: ['', 'asc', 'desc']
+          })
+          .option('sort-by-state', {
+            description: 'Sort process instances by their state in <direction> (asc, desc)',
+            type: 'string',
+            choices: ['', 'asc', 'desc']
           })
           .option('limit', {
             description: 'List a maximum of <limit> process instances',
@@ -528,6 +570,12 @@ program
           })
           .group(
             [
+              'created-after',
+              'created-before',
+              'completed-after',
+              'completed-before',
+              'completed-in',
+              'filter-by-correlation-id',
               'filter-by-process-model-id',
               'filter-by-state',
               'reject-by-process-model-id',
@@ -550,7 +598,12 @@ program
       listUserTasks(
         pipedProcessInstanceIds,
         pipedProcessModelIds,
-        argv.processModelId,
+        argv.createdAfter,
+        argv.createdBefore,
+        argv.completedAfter,
+        argv.completedBefore,
+        argv.completedIn,
+        argv.filterByCorrelationId,
         argv.filterByProcessModelId,
         argv.rejectByProcessModelId,
         argv.filterByState,

@@ -24,12 +24,9 @@ import {
 import { logError } from '../cli/logging';
 import { isUrlAvailable } from './is_url_available';
 
-const atlasEngineUri = 'http://localhost:8000';
-
 // TODO: missing IIdentity here
 type Identity = any;
 
-type FlowNodeInstance = AtlasEngineDataModels.FlowNodeInstances.FlowNodeInstance;
 type UserTask = AtlasEngineDataModels.FlowNodeInstances.UserTask;
 
 type ProcessInstance = DataModels.Correlations.ProcessInstance;
@@ -245,7 +242,7 @@ export class ApiClient {
   }
 
   async getAllUserTasks(
-    processModelId: string[],
+    filterByCorrelationId: string[],
     filterByProcessModelId: string[],
     rejectByProcessModelId: string[],
     filterByState: string[],
@@ -253,37 +250,42 @@ export class ApiClient {
   ): Promise<UserTask[]> {
     let allUserTasks: UserTask[];
      try {
-
-      const userTaskList = await this.atlasEngineClient.userTasks.query(
-       this.identity,
-      );
-
-      // const userTaskList = await this.atlasEngineClient.userTasks.query({
-      //    processModelId: processModelId,
-      //    state: AtlasEngineDataModels.FlowNodeInstances.FlowNodeInstanceState.suspended,
-         
-      // });
-
-      // console.log(JSON.stringify(userTaskList));
+      const userTaskList = await this.atlasEngineClient.userTasks.query(this.identity);
       allUserTasks = userTaskList.userTasks;
-      if (userTaskList.userTasks.length == 0) {
-        throw new Error(`Cannot find a UserTask with ProcessModel ID ${processModelId}.`);
-      }
-
-      if (filterByState.length > 0) {
+      
+      if (filterByCorrelationId.length > 0) {
+        allUserTasks = await this.getAllUserTasksViaCorrelations(filterByCorrelationId);
+      } else if (filterByState.length > 0) {
         allUserTasks = await this.getAllUserTasksViaState(filterByState);
-      } 
-      //  else {
-      //   allUserTasks = await this.getAllUserTasksViaAllProcessModels(filterByProcessModelId);
-      // }
+      } else if (filterByProcessModelId.length > 0) {
+        allUserTasks = await this.getAllUserTasksViaAllProcessModels(filterByProcessModelId);
+      }
     } catch (error) {
       await this.warnAndExitIfEnginerUrlNotAvailable();
       throw error;
     }
-     // allUserTasks = filterProcessInstancesByProcessModelId(allUserTasks, filterByProcessModelId);
      allUserTasks = filterProcessInstancesByState(allUserTasks, filterByState);
-    // allUserTasks = rejectProcessInstancesByProcessModelId(allUserTasks, rejectByProcessModelId);
-    // allUserTasks = rejectProcessInstancesByState(allUserTasks, rejectByState);
+     allUserTasks = filterProcessInstancesByProcessModelId(allUserTasks, filterByProcessModelId);
+     allUserTasks = rejectProcessInstancesByProcessModelId(allUserTasks, rejectByProcessModelId);
+     allUserTasks = rejectProcessInstancesByState(allUserTasks, rejectByState);
+
+    return allUserTasks;
+  }
+
+  async getAllUserTasksViaCorrelations(correlationIds: string[]): Promise<UserTask[]> {
+    let allUserTasks = [];
+    for (const correlationId of correlationIds) {
+      try{
+        const result = await this.atlasEngineClient.userTasks.query({
+          correlationId: correlationIds,
+        });
+        allUserTasks = allUserTasks.concat(result.userTasks);
+      } catch (error) {
+        await this.warnAndExitIfEnginerUrlNotAvailable();
+        throw error;
+      }
+
+    } 
 
     return allUserTasks;
   }
@@ -299,10 +301,9 @@ export class ApiClient {
     for (const processModel of processModels) {
       try {
 
-        const result = await this.atlasEngineClient.userTasks.query(
-          this.identity,
-          processModel.id
-        );
+        const result = await this.atlasEngineClient.userTasks.query({
+          processModelId: processModel.id,
+        });
 
         allUserTasks = allUserTasks.concat(result.userTasks);
       } catch (e) {
@@ -311,7 +312,7 @@ export class ApiClient {
           e.message.includes('No ProcessInstances for ProcessModel') ||
           e.message.includes('not found')
         ) {
-          // OMG, why are we using errors for normal control-flow?
+          
         } else {
           throw e;
         }
