@@ -319,16 +319,13 @@ export class ApiClient {
   }
 
   private async getAllUserTasksViaState(filterByState: string[]): Promise<UserTask[]> {
-    let allProcessInstances: UserTask[] = [];
-    for (const state of filterByState) {
       try {
 
         const result = await this.atlasEngineClient.userTasks.query({
-          state: AtlasEngineDataModels.FlowNodeInstances.FlowNodeInstanceState.suspended,
+          state: filterByState,
         });
   
-        allProcessInstances = allProcessInstances.concat(result.userTasks);
-
+       return result.userTasks;
       } catch (error) {
         await this.warnAndExitIfEnginerUrlNotAvailable();
         throw error;
