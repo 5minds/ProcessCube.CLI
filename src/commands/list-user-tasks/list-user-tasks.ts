@@ -3,11 +3,9 @@ import { DataModels as AtlasEngineDataModels, } from '@atlas-engine/atlas_engine
 import { ApiClient } from '../../client/api_client';
 import { AtlasSession, loadAtlasSession } from '../../session/atlas_session';
 import { addJsonPipingHintToResultJson, createResultJson } from '../../cli/result_json';
-import { filterProcessInstancesByEndTimeAfter, filterProcessInstancesByEndTimeBefore, filterProcessInstancesByExecutionTime, 
-  filterProcessInstancesDateAfter, filterProcessInstancesDateBefore} from '../../client/filtering';
 import { logJsonResult, logNoValidSessionError } from '../../cli/logging';
 import { OUTPUT_FORMAT_JSON, OUTPUT_FORMAT_TEXT } from '../../atlas';
-import { sortProcessInstances } from '../list-process-instances/sorting';
+import { sortUserTasks } from '../list-process-instances/sorting';
  
 export type FlowNodeInstance = AtlasEngineDataModels.FlowNodeInstances.FlowNodeInstance;
 export type UserTask = AtlasEngineDataModels.FlowNodeInstances.UserTask;
@@ -15,11 +13,6 @@ export type UserTask = AtlasEngineDataModels.FlowNodeInstances.UserTask;
 export async function listUserTasks(
  pipedProcessInstanceIds: string[] | null,
  pipedProcessModelIds: string[] | null,
- createdAfter: string,
- createdBefore: string,
- completedAfter: string,
- completedBefore: string,
- completedIn: string,
  filterByCorrelationId: string[],
  filterByProcessModelId: string[],
  rejectByProcessModelId: string[],
@@ -27,7 +20,6 @@ export async function listUserTasks(
  rejectByState: string[],
  sortByProcessModelId: string,
  sortByState: string,
- sortByCreatedAt: string,
  limit: number,
  showAllFields: boolean,
  outputFormat: string
@@ -42,11 +34,6 @@ export async function listUserTasks(
    session,
    pipedProcessInstanceIds,
    pipedProcessModelIds,
-   createdAfter,
-   createdBefore,
-   completedAfter,
-   completedBefore,
-   completedIn,
    filterByCorrelationId,
    filterByProcessModelId,
    rejectByProcessModelId,
@@ -54,7 +41,6 @@ export async function listUserTasks(
    rejectByState,
    sortByProcessModelId,
    sortByState,
-   sortByCreatedAt,
    limit
  );
  
@@ -72,8 +58,6 @@ export async function listUserTasks(
    logJsonResult(resultJson);
  } else if (outputFormat === OUTPUT_FORMAT_TEXT) {
    console.table(userTasks, [
-       'createdAt',
-       'finishedAt',
        'processModelId',
        'processInstanceId',
        'state',
@@ -86,11 +70,6 @@ async function getUserTasks(
    session: AtlasSession,
    pipedProcessInstanceIds: string[] | null,
    pipedProcessModelIds: string[] | null,
-   createdAfter: string,
-   createdBefore: string,
-   completedAfter: string,
-   completedBefore: string,
-   completedIn: string,
    filterByCorrelationId: string[],
    filterByProcessModelId: string[],
    rejectByProcessModelId: string[],
@@ -98,7 +77,6 @@ async function getUserTasks(
    rejectByState: string[],
    sortByProcessModelId: string,
    sortByState: string,
-   sortByCreatedAt: string,
    limit: number
 ): Promise<UserTask[]> {
    const apiClient = new ApiClient(session);
@@ -122,16 +100,7 @@ async function getUserTasks(
      pipedProcessModelIds.includes(processInstance.processModelId)
    );
  }
-
- allUserTasks = filterProcessInstancesDateAfter(allUserTasks, 'createdAt', createdAfter);
- allUserTasks = filterProcessInstancesDateBefore(allUserTasks, 'createdAt', createdBefore);
-
- allUserTasks = filterProcessInstancesByEndTimeAfter(allUserTasks, completedAfter);
- allUserTasks = filterProcessInstancesByEndTimeBefore(allUserTasks, completedBefore);
-
- allUserTasks = filterProcessInstancesByExecutionTime(allUserTasks, completedIn);
- 
- allUserTasks = sortProcessInstances(allUserTasks, sortByProcessModelId, sortByState, sortByCreatedAt);
+ allUserTasks = sortUserTasks(allUserTasks, sortByProcessModelId, sortByState);
  
  const userTasks = allUserTasks;
  

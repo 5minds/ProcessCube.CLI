@@ -498,26 +498,6 @@ program
               'Lists, sorts and filters user tasks by state and/or process model from the connected engine.'
             )
           )
-          .option('created-after', {
-          description: 'Only include process instances created after <datetime>',
-          type: 'string'
-          })
-          .option('created-before', {
-          description: 'Only include process instances created before <datetime>',
-          type: 'string'
-          })
-          .option('completed-after', {
-            description: 'Only include process instances completed after <datetime>',
-            type: 'string'
-          })
-          .option('completed-before', {
-            description: 'Only include process instances completed before <datetime>',
-            type: 'string'
-          })
-          .option('completed-in', {
-            description: 'Only include process instances completed in <datetime>',
-            type: 'string'
-          })
           .option('filter-by-correlation-id', {
             description: 'Filter process instances by <correlationId>',
             type: 'array',
@@ -570,11 +550,6 @@ program
           })
           .group(
             [
-              'created-after',
-              'created-before',
-              'completed-after',
-              'completed-before',
-              'completed-in',
               'filter-by-correlation-id',
               'filter-by-process-model-id',
               'filter-by-state',
@@ -583,7 +558,7 @@ program
             ],
             heading('FILTERING OPTIONS')
           )
-          .group(['sort-by-created-at', 'sort-by-process-model-id', 'sort-by-state', 'limit'], heading('SORTING OPTIONS'))
+          .group(['sort-by-process-model-id', 'sort-by-state', 'limit'], heading('SORTING OPTIONS'))
           .group(['all-fields', 'output'], heading('OUTPUT OPTIONS'))
           //.epilog(formatHelpText(epilogSnippetListUserTasks));
     },
@@ -592,17 +567,11 @@ program
       const pipedProcessInstanceIds = stdinPipeReader.getPipedProcessInstanceIds();
       const pipedProcessModelIds = stdinPipeReader.getPipedProcessModelIds();
   
-      const sortByCreatedAt = argv.sortByCreatedAt === '' ? 'asc' : argv.sortByCreatedAt;
       const sortByProcessModelId = argv.sortByProcessModelId === '' ? 'asc' : argv.sortByProcessModelId;
       const sortByState = argv.sortByState === '' ? 'asc' : argv.sortByState;
       listUserTasks(
         pipedProcessInstanceIds,
         pipedProcessModelIds,
-        argv.createdAfter,
-        argv.createdBefore,
-        argv.completedAfter,
-        argv.completedBefore,
-        argv.completedIn,
         argv.filterByCorrelationId,
         argv.filterByProcessModelId,
         argv.rejectByProcessModelId,
@@ -610,7 +579,6 @@ program
         argv.rejectByState,
         sortByProcessModelId,
         sortByState,
-        sortByCreatedAt,
         argv.limit,
         argv.allFields,
         argv.output

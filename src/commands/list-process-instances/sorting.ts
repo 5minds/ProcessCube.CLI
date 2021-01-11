@@ -35,6 +35,32 @@ export function sortProcessInstances(
   return processInstances.sort(metaCompareFn);
 }
 
+export function sortUserTasks(
+  processInstances: SortableProcessInstance[],
+  sortByProcessModelId: SortingDirection | null,
+  sortByState: SortingDirection | null
+): any[] {
+  const compareFns = [];
+  if (sortByProcessModelId != null) {
+    compareFns.push(sortByProcessModelId === 'asc' ? sortByProcessModelIdAscFn : sortByProcessModelIdDescFn);
+  }
+  if (sortByState != null) {
+    compareFns.push(sortByState === 'asc' ? sortByStateAscFn : sortByStateDescFn);
+  }
+
+  const metaCompareFn = (a: SortableProcessInstance, b: SortableProcessInstance) => {
+    for (const compareFn of compareFns) {
+      const result = compareFn(a, b);
+      if (result != 0) {
+        return result;
+      }
+    }
+    return 0;
+  };
+
+  return processInstances.sort(metaCompareFn);
+}
+
 const sortByProcessModelIdAscFn = (a: SortableProcessInstance, b: SortableProcessInstance) => {
   if (a.processModelId < b.processModelId) {
     return -1;

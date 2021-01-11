@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 
-import { DataModels} from '@process-engine/management_api_contracts';
-import { AtlasEngineClient, ClientFactory, DataModels as AtlasEngineDataModels, } from '@atlas-engine/atlas_engine_client';
+import { DataModels } from '@process-engine/management_api_contracts';
+import { AtlasEngineClient, DataModels as AtlasEngineDataModels, } from '@atlas-engine/atlas_engine_client';
 
 import { getIdentityAndManagementApiClient } from './management_api_client';
 import { ManagementApiClient } from '@process-engine/management_api_client';
@@ -231,8 +231,7 @@ export class ApiClient {
     } catch (error) {
       await this.warnAndExitIfEnginerUrlNotAvailable();
       throw error;
-    }
-                           
+    }                      
     allProcessInstances = filterProcessInstancesByProcessModelId(allProcessInstances, filterByProcessModelId);
     allProcessInstances = filterProcessInstancesByState(allProcessInstances, filterByState);
     allProcessInstances = rejectProcessInstancesByProcessModelId(allProcessInstances, rejectByProcessModelId);
@@ -308,7 +307,6 @@ export class ApiClient {
         allUserTasks = allUserTasks.concat(result.userTasks);
       } catch (e) {
         if (
-          e.message.includes('No ProcessInstances for ProcessModel') ||
           e.message.includes('No ProcessInstances for ProcessModel') ||
           e.message.includes('not found')
         ) {
