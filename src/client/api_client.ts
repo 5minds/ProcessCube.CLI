@@ -272,13 +272,12 @@ export class ApiClient {
   }
 
   async getAllUserTasksViaCorrelations(correlationIds: string[]): Promise<UserTask[]> {
-    let allUserTasks = [];
-    for (const correlationId of correlationIds) {
-      try{
+      try {
         const result = await this.atlasEngineClient.userTasks.query({
           correlationId: correlationIds,
         });
-        allUserTasks = allUserTasks.concat(result.userTasks);
+        
+        return result.userTasks;
       } catch (error) {
         await this.warnAndExitIfEnginerUrlNotAvailable();
         throw error;

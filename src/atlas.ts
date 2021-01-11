@@ -504,22 +504,22 @@ program
             default: []
           })
           .option('filter-by-process-model-id', {
-            description: 'Filter process instances by <pattern> (supports regular expressions)',
+            description: 'Filter user tasks by <pattern> (supports regular expressions)',
             type: 'array',
             default: []
           })
           .option('reject-by-process-model-id', {
-            description: 'Reject process instances by <pattern> (supports regular expressions)',
+            description: 'Reject user tasks by <pattern> (supports regular expressions)',
             type: 'array',
             default: []
           })
           .option('filter-by-state', {
-            description: 'Filter process instances by <state> (running, finished, error)',
+            description: 'Filter user tasks by <state> (running, finished, error)',
             type: 'array',
             default: []
           })
           .option('reject-by-state', {
-            description: 'Reject process instances by <state> (running, finished, error)',
+            description: 'Reject user tasks by <state> (running, finished, error)',
             type: 'array',
             default: []
           })
