@@ -499,7 +499,7 @@ program
             )
           )
           .option('filter-by-correlation-id', {
-            description: 'Filter process instances by <correlationId>',
+            description: 'Filter user tasks by <correlationId>',
             type: 'array',
             default: []
           })
