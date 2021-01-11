@@ -282,10 +282,6 @@ export class ApiClient {
         await this.warnAndExitIfEnginerUrlNotAvailable();
         throw error;
       }
-
-    } 
-
-    return allUserTasks;
   }
 
   private async getAllUserTasksViaAllProcessModels(
