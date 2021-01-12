@@ -24,6 +24,7 @@ import { retryProcessInstance } from './commands/retry-process-instance/retry-pr
 import epilogSnippetAtlas from './snippets/atlas.epilog';
 import epilogSnippetDeployFiles from './snippets/deploy-files.epilog';
 import epilogSnippetListProcessInstances from './snippets/list-process-instances.epilog';
+import epilogSnippetListUserTasks from './snippets/list-user-tasks.epilog';
 import epilogSnippetListProcessModels from './snippets/list-process-models.epilog';
 import epilogSnippetLogin from './snippets/login.epilog';
 import epilogSnippetLogout from './snippets/logout.epilog';
@@ -523,18 +524,13 @@ program
             type: 'array',
             default: []
           })
-          .option('sort-by-created-at', {
-            description: 'Sort process instances by their created at timestamp in <direction> (asc, desc)',
-            type: 'string',
-            choices: ['', 'asc', 'desc']
-          })
           .option('sort-by-process-model-id', {
-            description: 'Sort process instances by their process model id in <direction> (asc, desc)',
+            description: 'Sort user tasks by their process model id in <direction> (asc, desc)',
             type: 'string',
             choices: ['', 'asc', 'desc']
           })
           .option('sort-by-state', {
-            description: 'Sort process instances by their state in <direction> (asc, desc)',
+            description: 'Sort user tasks by their state in <direction> (asc, desc)',
             type: 'string',
             choices: ['', 'asc', 'desc']
           })
@@ -560,7 +556,7 @@ program
           )
           .group(['sort-by-process-model-id', 'sort-by-state', 'limit'], heading('SORTING OPTIONS'))
           .group(['all-fields', 'output'], heading('OUTPUT OPTIONS'))
-          //.epilog(formatHelpText(epilogSnippetListUserTasks));
+          .epilog(formatHelpText(epilogSnippetListUserTasks));
     },
     async (argv: any) => {
       const stdinPipeReader = await StdinPipeReader.create();

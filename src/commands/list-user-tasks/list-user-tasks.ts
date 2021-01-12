@@ -5,7 +5,7 @@ import { AtlasSession, loadAtlasSession } from '../../session/atlas_session';
 import { addJsonPipingHintToResultJson, createResultJson } from '../../cli/result_json';
 import { logJsonResult, logNoValidSessionError } from '../../cli/logging';
 import { OUTPUT_FORMAT_JSON, OUTPUT_FORMAT_TEXT } from '../../atlas';
-import { sortUserTasks } from '../list-process-instances/sorting';
+import { sortUserTasks } from '../list-user-tasks/sorting';
  
 export type FlowNodeInstance = AtlasEngineDataModels.FlowNodeInstances.FlowNodeInstance;
 export type UserTask = AtlasEngineDataModels.FlowNodeInstances.UserTask;
@@ -45,11 +45,6 @@ export async function listUserTasks(
  );
  
  let resultUserTasks: any[];
- if (showAllFields) {
-   resultUserTasks = mapToLong(userTasks);
- } else {
-   resultUserTasks = mapToShort(userTasks);
- }
  
  let resultJson = createResultJson('user-tasks', resultUserTasks);
  resultJson = addJsonPipingHintToResultJson(resultJson);
@@ -109,16 +104,4 @@ async function getUserTasks(
  }
  
  return userTasks;
-}
- 
-function mapToLong(list: any): any[] {
- return list;
-}
- 
-function mapToShort(list: any): any[] {
- return list.map((userTask: any) => {
-   const identity = { ...userTask.identity, token: '...' };
- 
-   return { ...userTask, xml: '...', identity: identity };
- });
 }
