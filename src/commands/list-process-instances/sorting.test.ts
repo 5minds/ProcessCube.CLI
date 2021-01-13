@@ -14,7 +14,7 @@ import {
   mapIds
 } from './test-mocks.test';
 
-describe('sorting', () => {
+describe('sorting process instances', () => {
   describe('sortProcessInstances()', () => {
     it('should sort by createdAt DESC', () => {
       const result = sortProcessInstances(getMockedProcessInstances(), null, null, null);

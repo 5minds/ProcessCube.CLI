@@ -14,10 +14,10 @@ import {
   mapIds
 } from './test-mocks.test';
 
-describe('sorting', () => {
+describe('sorting user tasks', () => {
   describe('sortUserTasks()', () => {
 
-    it('should sort by ,processModelId DESC, state ASC', () => {
+    it('should sort by processModelId DESC, state ASC', () => {
       const result = sortUserTasks(getMockedUserTasks(), 'desc', 'asc');
 
       const expected = [
@@ -28,6 +28,22 @@ describe('sorting', () => {
         PROCESS_A_userTask_01_error,
         PROCESS_A_userTask_02_error,
         PROCESS_A_userTask_03_finished
+      ];
+
+      assert.deepStrictEqual(mapIds(result), mapIds(expected));
+    });
+
+    it('should sort by processModelId DESC, state DESC', () => {
+      const result = sortUserTasks(getMockedUserTasks(), 'desc', 'desc');
+
+      const expected = [
+        PROCESS_C_userTask_05_finished,
+        PROCESS_C_userTask_06_error,
+        PROCESS_B_userTask_04_running,
+        PROCESS_B_userTask_07_finished,
+        PROCESS_A_userTask_03_finished,
+        PROCESS_A_userTask_01_error,
+        PROCESS_A_userTask_02_error
       ];
 
       assert.deepStrictEqual(mapIds(result), mapIds(expected));
