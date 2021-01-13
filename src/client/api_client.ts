@@ -23,6 +23,7 @@ import {
 } from './filtering';
 import { logError } from '../cli/logging';
 import { isUrlAvailable } from './is_url_available';
+import { FlowNodeInstanceState } from '@atlas-engine/atlas_engine_client/dist/types/data_models/flow_node_instance';
 
 // TODO: missing IIdentity here
 type Identity = any;
@@ -318,7 +319,7 @@ export class ApiClient {
       try {
 
         const result = await this.atlasEngineClient.userTasks.query({
-          state: AtlasEngineDataModels.FlowNodeInstances.FlowNodeInstanceState.suspended,
+          state: filterByState as unknown as Array<FlowNodeInstanceState>,
         });
   
        return result.userTasks;
