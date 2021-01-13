@@ -317,9 +317,8 @@ export class ApiClient {
 
   private async getAllUserTasksViaState(filterByState: string[]): Promise<UserTask[]> {
       try {
-
         const result = await this.atlasEngineClient.userTasks.query({
-          state: filterByState as unknown as Array<FlowNodeInstanceState>,
+          state: filterByState as unknown as FlowNodeInstanceState[],
         });
   
        return result.userTasks;
