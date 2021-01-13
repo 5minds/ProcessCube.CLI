@@ -64,7 +64,7 @@ describe('sorting process instances', () => {
       assert.deepStrictEqual(mapIds(result), mapIds(expected));
     });
 
-    it('should sort by ,rocessModelId DESC, state ASC, createdAt ASC', () => {
+    it('should sort by processModelId DESC, state ASC, createdAt ASC', () => {
       const result = sortProcessInstances(getMockedProcessInstances(), 'desc', 'asc', 'asc');
 
       const expected = [
