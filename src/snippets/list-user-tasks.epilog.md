@@ -36,6 +36,7 @@ Combinations of all switches are possible:
 
     $ atlas list-user-tasks --filter-by-process-model-id "^Registration.+$" \\
                             --reject-by-process-model-id "Internal" \\
+                            --filter-by-correlation-id \\
                             --filter-by-state error \\
                             --filter-by-state finished \\
                             --sort-by-process-model-id asc \\
