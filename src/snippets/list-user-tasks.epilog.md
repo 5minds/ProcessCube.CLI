@@ -36,11 +36,11 @@ Combinations of all switches are possible:
 
     $ atlas list-user-tasks --filter-by-process-model-id "^Registration.+$" \\
                             --reject-by-process-model-id "Internal" \\
-                            --filter-by-correlation-id \\
+                            --filter-by-correlation-id "00b4a5cf-5e95-49c5-bf01-11a157a4f4e2" \\
                             --filter-by-state error \\
                             --filter-by-state finished \\
                             --sort-by-process-model-id asc \\
                             --sort-by-state desc 
 
-The above lists all user tasks, which were started from a process model with a unique correlation value whose name contains the prefix "Registration.", but does not contain the word "Internal", which are finished or resulted in an error.
-The results are sorted by process model in ascending alphabetical order, within each model section, the user tasks are grouped by state in the order "running, error" and for each state.
+The above lists all user tasks, which were started from a process model whose name contains the prefix "Registration.", but does not contain the word "Internal", which are finished or resulted in an error.
+The results are sorted by process model in ascending alphabetical order, within each model section, the user tasks are grouped by state in the order "running, error" and for each state. The correlation ID display all user tasks for a given correlation ID in chronological order.

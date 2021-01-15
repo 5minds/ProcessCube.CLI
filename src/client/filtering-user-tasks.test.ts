@@ -6,10 +6,7 @@ import {
   PROCESS_A_userTask_01_error,
   PROCESS_A_userTask_02_error,
   PROCESS_A_userTask_03_finished,
-  PROCESS_B_userTask_04_running,
-  PROCESS_C_userTask_05_finished,
   PROCESS_C_userTask_06_error,
-  PROCESS_B_userTask_07_finished,
   getMockedUserTasks,
   mapIds
 } from '../commands/list-user-tasks/test-mocks.test';
