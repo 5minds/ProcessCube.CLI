@@ -246,7 +246,7 @@ export class ApiClient {
     filterByProcessModelId: string[],
     rejectByProcessModelId: string[],
     filterByState: string[],
-    filterByFlowNodeInstanceId:string[],
+    filterByFlowNodeInstanceId: string[],
     rejectByState: string[]
   ): Promise<UserTask[]> {
     let allUserTasks: UserTask[];
