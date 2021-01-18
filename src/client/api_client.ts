@@ -246,6 +246,7 @@ export class ApiClient {
     filterByProcessModelId: string[],
     rejectByProcessModelId: string[],
     filterByState: string[],
+    filterByFlowNodeInstanceId:string[],
     rejectByState: string[]
   ): Promise<UserTask[]> {
     let allUserTasks: UserTask[];
@@ -259,6 +260,8 @@ export class ApiClient {
         allUserTasks = await this.getAllUserTasksViaState(filterByState);
       } else if (filterByProcessModelId.length > 0) {
         allUserTasks = await this.getAllUserTasksViaAllProcessModels(filterByProcessModelId);
+      } else if (filterByFlowNodeInstanceId.length > 0) {
+        allUserTasks = await this.getAllUserTasksViaFlowNodeInstances(filterByFlowNodeInstanceId)
       }
     } catch (error) {
       await this.warnAndExitIfEnginerUrlNotAvailable();
@@ -326,6 +329,19 @@ export class ApiClient {
         await this.warnAndExitIfEnginerUrlNotAvailable();
         throw error;
       }
+  }
+
+  async getAllUserTasksViaFlowNodeInstances(flowNodeInstanceId: string[]): Promise<UserTask[]> {
+    try {
+      const result = await this.atlasEngineClient.userTasks.query({
+        flowNodeInstanceId: flowNodeInstanceId,
+      });
+
+      return result.userTasks;
+    } catch (error) {
+      await this.warnAndExitIfEnginerUrlNotAvailable();
+    }
+
   }
 
   async getAllProcessInstancesViaCorrelations(correlationIds: string[]): Promise<ProcessInstance[]> {
