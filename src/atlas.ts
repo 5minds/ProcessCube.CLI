@@ -520,7 +520,7 @@ program
             default: []
           })
           .option('filter-by-flow-node-instance-id', {
-            description: 'Filter user tasks by (flowNodeInstanceId)',
+            description: 'Filter user tasks by <flowNodeInstanceId>',
             type: 'array',
             default: []
           })
