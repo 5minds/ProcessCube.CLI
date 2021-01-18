@@ -15,7 +15,7 @@ import {
   mapIds
 } from './completedIn-test-mocks.test';
 
-describe('filtering', () => {
+describe('filtering process instances', () => {
   describe('filterProcessInstancesDateBefore()', () => {
     it('should filter by createdAt before', () => {
       const processInstances = getMockedProcessInstances();

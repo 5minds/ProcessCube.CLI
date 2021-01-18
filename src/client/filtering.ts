@@ -176,8 +176,6 @@ export function filterProcessInstancesByExecutionTime(
     }
       const regexExecutionTime = /([<]|[>]) *([ 0-9]{1,}) *([smhd])/g;
       const executionTimeMatches = regexExecutionTime.exec(filterByExecutionTime);
-    
-      const lastIndexOfExecutionTime = filterByExecutionTime.substr(filterByExecutionTime.length - 1);
 
       if (executionTimeMatches == null){
         throw new Error(`Unable to parse completed-in parameter '${filterByExecutionTime}'. Format has to be "[<|>] [TIME] [d|h|m|s]". Please refer to 'lsi --help' for more detailed information.`);
