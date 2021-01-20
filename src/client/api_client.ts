@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 
 import { DataModels } from '@process-engine/management_api_contracts';
-import { AtlasEngineClient } from '@atlas-engine/atlas_engine_client';
+import { AtlasEngineClient, DataModels as AtlasEngineDataModels, } from '@atlas-engine/atlas_engine_client';
 
 import { getIdentityAndManagementApiClient } from './management_api_client';
 import { ManagementApiClient } from '@process-engine/management_api_client';
@@ -23,9 +23,12 @@ import {
 } from './filtering';
 import { logError } from '../cli/logging';
 import { isUrlAvailable } from './is_url_available';
+import { FlowNodeInstanceState } from '@atlas-engine/atlas_engine_client/dist/types/data_models/flow_node_instance';
 
 // TODO: missing IIdentity here
 type Identity = any;
+
+type UserTask = AtlasEngineDataModels.FlowNodeInstances.UserTask;
 
 type ProcessInstance = DataModels.Correlations.ProcessInstance;
 type ProcessInstanceWithTokens = ProcessInstance & {
@@ -229,14 +232,116 @@ export class ApiClient {
     } catch (error) {
       await this.warnAndExitIfEnginerUrlNotAvailable();
       throw error;
-    }
-
+    }                      
     allProcessInstances = filterProcessInstancesByProcessModelId(allProcessInstances, filterByProcessModelId);
     allProcessInstances = filterProcessInstancesByState(allProcessInstances, filterByState);
     allProcessInstances = rejectProcessInstancesByProcessModelId(allProcessInstances, rejectByProcessModelId);
     allProcessInstances = rejectProcessInstancesByState(allProcessInstances, rejectByState);
 
     return allProcessInstances;
+  }
+
+  async getAllUserTasks(
+    filterByCorrelationId: string[],
+    filterByProcessModelId: string[],
+    rejectByProcessModelId: string[],
+    filterByState: string[],
+    filterByFlowNodeInstanceId: string[],
+    rejectByState: string[]
+  ): Promise<UserTask[]> {
+    let allUserTasks: UserTask[];
+     try {
+      const userTaskList = await this.atlasEngineClient.userTasks.query(this.identity);
+      allUserTasks = userTaskList.userTasks;
+      
+      if (filterByCorrelationId.length > 0) {
+        allUserTasks = await this.getAllUserTasksViaCorrelations(filterByCorrelationId);
+      } else if (filterByState.length > 0) {
+        allUserTasks = await this.getAllUserTasksViaState(filterByState);
+      } else if (filterByProcessModelId.length > 0) {
+        allUserTasks = await this.getAllUserTasksViaAllProcessModels(filterByProcessModelId);
+      } else if (filterByFlowNodeInstanceId.length > 0) {
+        allUserTasks = await this.getAllUserTasksViaFlowNodeInstances(filterByFlowNodeInstanceId)
+      }
+    } catch (error) {
+      await this.warnAndExitIfEnginerUrlNotAvailable();
+      throw error;
+    }
+     allUserTasks = filterProcessInstancesByState(allUserTasks, filterByState);
+     allUserTasks = filterProcessInstancesByProcessModelId(allUserTasks, filterByProcessModelId);
+     allUserTasks = rejectProcessInstancesByProcessModelId(allUserTasks, rejectByProcessModelId);
+     allUserTasks = rejectProcessInstancesByState(allUserTasks, rejectByState);
+
+    return allUserTasks;
+  }
+
+  async getAllUserTasksViaCorrelations(correlationIds: string[]): Promise<UserTask[]> {
+      try {
+        const result = await this.atlasEngineClient.userTasks.query({
+          correlationId: correlationIds,
+        });
+        
+        return result.userTasks;
+      } catch (error) {
+        await this.warnAndExitIfEnginerUrlNotAvailable();
+        throw error;
+      }
+  }
+
+  private async getAllUserTasksViaAllProcessModels(
+    filterByProcessModelId: string[]
+  ): Promise<UserTask[]> {
+    const allProcessModels = await this.getProcessModels();
+
+    const processModels = filterProcessModelsById(allProcessModels, filterByProcessModelId);
+
+    let allUserTasks = [];
+    for (const processModel of processModels) {
+      try {
+
+        const result = await this.atlasEngineClient.userTasks.query({
+          processModelId: processModel.id,
+        });
+
+        allUserTasks = allUserTasks.concat(result.userTasks);
+      } catch (e) {
+        if (
+          e.message.includes('No ProcessInstances for ProcessModel') ||
+          e.message.includes('not found')
+        ) {
+          
+        } else {
+          throw e;
+        }
+      }
+    }
+    return allUserTasks;
+  }
+
+  private async getAllUserTasksViaState(filterByState: string[]): Promise<UserTask[]> {
+      try {
+        const result = await this.atlasEngineClient.userTasks.query({
+          state: filterByState as unknown as FlowNodeInstanceState[],
+        });
+  
+       return result.userTasks;
+      } catch (error) {
+        await this.warnAndExitIfEnginerUrlNotAvailable();
+        throw error;
+      }
+  }
+
+  async getAllUserTasksViaFlowNodeInstances(flowNodeInstanceId: string[]): Promise<UserTask[]> {
+    try {
+      const result = await this.atlasEngineClient.userTasks.query({
+        flowNodeInstanceId: flowNodeInstanceId,
+      });
+
+      return result.userTasks;
+    } catch (error) {
+      await this.warnAndExitIfEnginerUrlNotAvailable();
+    }
+
   }
 
   async getAllProcessInstancesViaCorrelations(correlationIds: string[]): Promise<ProcessInstance[]> {

@@ -14,7 +14,7 @@ import {
   mapIds
 } from './test-mocks.test';
 
-describe('sorting', () => {
+describe('sorting process instances', () => {
   describe('sortProcessInstances()', () => {
     it('should sort by createdAt DESC', () => {
       const result = sortProcessInstances(getMockedProcessInstances(), null, null, null);
@@ -64,7 +64,7 @@ describe('sorting', () => {
       assert.deepStrictEqual(mapIds(result), mapIds(expected));
     });
 
-    it('should sort by ,rocessModelId DESC, state ASC, createdAt ASC', () => {
+    it('should sort by processModelId DESC, state ASC, createdAt ASC', () => {
       const result = sortProcessInstances(getMockedProcessInstances(), 'desc', 'asc', 'asc');
 
       const expected = [

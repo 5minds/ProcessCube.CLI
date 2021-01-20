@@ -8,6 +8,7 @@ import program = require('yargs');
 import { login } from './commands/login/login';
 import { logout } from './commands/logout/logout';
 import { printSessionStatus } from './commands/session-status/session-status';
+import { listUserTasks } from './commands/list-user-tasks/list-user-tasks';
 import { listProcessModels } from './commands/list-process-models/list-process-models';
 import { startProcessInstance } from './commands/start-process-model/start-process-model';
 import { listProcessInstances } from './commands/list-process-instances/list-process-instances';
@@ -23,6 +24,7 @@ import { retryProcessInstance } from './commands/retry-process-instance/retry-pr
 import epilogSnippetAtlas from './snippets/atlas.epilog';
 import epilogSnippetDeployFiles from './snippets/deploy-files.epilog';
 import epilogSnippetListProcessInstances from './snippets/list-process-instances.epilog';
+import epilogSnippetListUserTasks from './snippets/list-user-tasks.epilog';
 import epilogSnippetListProcessModels from './snippets/list-process-models.epilog';
 import epilogSnippetLogin from './snippets/login.epilog';
 import epilogSnippetLogout from './snippets/logout.epilog';
@@ -479,6 +481,106 @@ program
         sortByProcessModelId,
         sortByState,
         sortByCreatedAt,
+        argv.limit,
+        argv.allFields,
+        argv.output
+      );
+    }
+  )
+
+  .command(
+    ['list-user-tasks', 'lut'],
+    'Lists, sorts and filters user tasks by state and/or process model from the connected engine.',
+    (yargs) => {
+      return yargs
+          .usage(
+            usageString(
+              'list-user-tasks',
+              'Lists, sorts and filters user tasks by state and/or process model from the connected engine.'
+            )
+          )
+          .option('filter-by-correlation-id', {
+            description: 'Filter user tasks by <correlationId>',
+            type: 'array',
+            default: []
+          })
+          .option('filter-by-process-model-id', {
+            description: 'Filter user tasks by <pattern> (supports regular expressions)',
+            type: 'array',
+            default: []
+          })
+          .option('reject-by-process-model-id', {
+            description: 'Reject user tasks by <pattern> (supports regular expressions)',
+            type: 'array',
+            default: []
+          })
+          .option('filter-by-state', {
+            description: 'Filter user tasks by <state> (running, finished, error)',
+            type: 'array',
+            default: []
+          })
+          .option('filter-by-flow-node-instance-id', {
+            description: 'Filter user tasks by <flowNodeInstanceId>',
+            type: 'array',
+            default: []
+          })
+          .option('reject-by-state', {
+            description: 'Reject user tasks by <state> (running, finished, error)',
+            type: 'array',
+            default: []
+          })
+          .option('sort-by-process-model-id', {
+            description: 'Sort user tasks by their process model id in <direction> (asc, desc)',
+            type: 'string',
+            choices: ['', 'asc', 'desc']
+          })
+          .option('sort-by-state', {
+            description: 'Sort user tasks by their state in <direction> (asc, desc)',
+            type: 'string',
+            choices: ['', 'asc', 'desc']
+          })
+          .option('limit', {
+            description: 'List a maximum of <limit> process instances',
+            type: 'number'
+          })
+          .option('all-fields', {
+            alias: 'F',
+            description: 'Show all fields',
+            type: 'boolean',
+            default: false
+          })
+          .group(
+            [
+              'filter-by-correlation-id',
+              'filter-by-process-model-id',
+              'filter-by-state',
+              'reject-by-process-model-id',
+              'reject-by-state'
+            ],
+            heading('FILTERING OPTIONS')
+          )
+          .group(['sort-by-process-model-id', 'sort-by-state', 'limit'], heading('SORTING OPTIONS'))
+          .group(['all-fields', 'output'], heading('OUTPUT OPTIONS'))
+          .epilog(formatHelpText(epilogSnippetListUserTasks));
+    },
+    async (argv: any) => {
+      const stdinPipeReader = await StdinPipeReader.create();
+      const pipedProcessInstanceIds = stdinPipeReader.getPipedProcessInstanceIds();
+      const pipedProcessModelIds = stdinPipeReader.getPipedProcessModelIds();
+  
+      const sortByProcessModelId = argv.sortByProcessModelId === '' ? 'asc' : argv.sortByProcessModelId;
+      const sortByState = argv.sortByState === '' ? 'asc' : argv.sortByState;
+      listUserTasks(
+        pipedProcessInstanceIds,
+        pipedProcessModelIds,
+        argv.filterByFlowNodeInstanceId,
+        argv.filterByCorrelationId,
+        argv.filterByProcessModelId,
+        argv.rejectByProcessModelId,
+        argv.filterByState,
+        argv.rejectByState,
+        sortByProcessModelId,
+        sortByState,
         argv.limit,
         argv.allFields,
         argv.output
