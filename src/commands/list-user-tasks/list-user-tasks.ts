@@ -13,6 +13,7 @@ export type UserTask = AtlasEngineDataModels.FlowNodeInstances.UserTask;
 export async function listUserTasks(
  pipedProcessInstanceIds: string[] | null,
  pipedProcessModelIds: string[] | null,
+ filterByFlowNodeInstanceId: string[],
  filterByCorrelationId: string[],
  filterByProcessModelId: string[],
  rejectByProcessModelId: string[],
@@ -34,6 +35,7 @@ export async function listUserTasks(
    session,
    pipedProcessInstanceIds,
    pipedProcessModelIds,
+   filterByFlowNodeInstanceId,
    filterByCorrelationId,
    filterByProcessModelId,
    rejectByProcessModelId,
@@ -56,7 +58,8 @@ export async function listUserTasks(
        'processModelId',
        'processInstanceId',
        'state',
-       'correlationId'
+       'correlationId',
+       'flowNodeInstanceId'
      ]);
    }
 }
@@ -65,6 +68,7 @@ async function getUserTasks(
    session: AtlasSession,
    pipedProcessInstanceIds: string[] | null,
    pipedProcessModelIds: string[] | null,
+   flowNodeInstanceId: string[],
    filterByCorrelationId: string[],
    filterByProcessModelId: string[],
    rejectByProcessModelId: string[],
@@ -81,6 +85,7 @@ async function getUserTasks(
     filterByProcessModelId,
     rejectByProcessModelId,
     filterByState,
+    flowNodeInstanceId,
     rejectByState
    );
  

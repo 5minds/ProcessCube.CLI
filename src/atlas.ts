@@ -519,6 +519,11 @@ program
             type: 'array',
             default: []
           })
+          .option('filter-by-flow-node-instance-id', {
+            description: 'Filter user tasks by <flowNodeInstanceId>',
+            type: 'array',
+            default: []
+          })
           .option('reject-by-state', {
             description: 'Reject user tasks by <state> (running, finished, error)',
             type: 'array',
@@ -568,6 +573,7 @@ program
       listUserTasks(
         pipedProcessInstanceIds,
         pipedProcessModelIds,
+        argv.filterByFlowNodeInstanceId,
         argv.filterByCorrelationId,
         argv.filterByProcessModelId,
         argv.rejectByProcessModelId,

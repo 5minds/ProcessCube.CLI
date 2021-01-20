@@ -7,6 +7,7 @@ type FilterableProcessInstance = {
   finishedAt?: any;
   processModelId: string;
   state: string;
+  flowNodeInstanceId?: any;
 };
 
 export function filterProcessInstancesDateAfter(
@@ -85,6 +86,22 @@ export function filterProcessInstancesByProcessModelId(
     const anyFilterMatched = filterRegexes.some((regex: RegExp) => processInstance.processModelId.match(regex) != null);
     return anyFilterMatched;
   });
+}
+
+export function filterUserTasksByFlowNodeInstanceId(
+  processInstances: FilterableProcessInstance[],
+  filterByFlowNodeInstanceId: string[]
+  ): any[] {
+    if (filterByFlowNodeInstanceId.length === 0) {
+      return processInstances;
+    }
+
+    const filterRegexes = toFilterRegexes(filterByFlowNodeInstanceId);
+
+    return processInstances.filter((processInstance: FilterableProcessInstance) => {
+      const anyFilterMatched = filterRegexes.some((regex: RegExp) => processInstance.flowNodeInstanceId.match(regex) != null);
+      return anyFilterMatched;
+    })
 }
 
 export function rejectProcessInstancesByProcessModelId(
