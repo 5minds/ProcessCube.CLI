@@ -20,6 +20,7 @@ import { removeProcessModels } from './commands/remove-process-models/remove-pro
 import { formatHelpText, heading } from './cli/logging';
 import { readFileSync } from 'fs';
 import { retryProcessInstance } from './commands/retry-process-instance/retry-process-instance';
+import { finishUserTask } from './commands/finish-user-task/finish-user-task';
 
 import epilogSnippetAtlas from './snippets/atlas.epilog';
 import epilogSnippetDeployFiles from './snippets/deploy-files.epilog';
@@ -34,6 +35,7 @@ import epilogSnippetShowProcessInstance from './snippets/show-process-instance.e
 import epilogSnippetStartProcessModel from './snippets/start-process-model.epilog';
 import epilogSnippetStopProcessInstance from './snippets/stop-process-instance.epilog';
 import epilogSnippetSessionStatus from './snippets/session-status.epilog';
+import epilogSnippetFinishUserTask from './snippets/finish-user-task.epilog';
 
 export const OUTPUT_FORMAT_JSON = 'json';
 export const OUTPUT_FORMAT_TEXT = 'text';
@@ -585,6 +587,30 @@ program
         argv.allFields,
         argv.output
       );
+    }
+  )
+
+  .command(
+    ['finish-user-task [flowNodeInstanceId...]', 'finish'],
+    'Finish a suspended instance of an user task',
+    (yargs) => {
+      return yargs
+        .usage(
+          usageString(
+            'finish-user-task [flowNodeInstanceId...]',
+            'Finish a suspended instance of an user task.'
+          )
+        )
+        .positional('flowNodeInstanceId', {
+          description: 'IDs of user task to finish '
+        })
+        .epilog(formatHelpText(epilogSnippetFinishUserTask));
+    },
+    async (argv: any) => {
+      const stdinPipeReader = await StdinPipeReader.create();
+      let flowNodeInstanceIds = stdinPipeReader.getPipedProcessInstanceIds() || argv.processInstanceIds;
+
+      await finishUserTask(flowNodeInstanceIds, argv.output);
     }
   )
 

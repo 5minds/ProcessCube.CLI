@@ -95,3 +95,21 @@ type RetriedProcessInstanceInfo_Failure = {
 
   error: Error;
 };
+
+//
+
+export type FinishedUserTaskInfo = FinishedUserTaskInfo_Success | FinishedUserTaskInfo_Failure;
+
+type FinishedUserTaskInfo_Success = {
+  success: true;
+  
+  flowNodeInstanceId: string;
+};
+
+type FinishedUserTaskInfo_Failure = {
+  success: false;
+
+  flowNodeInstanceId: string;
+
+  error: Error;
+};
