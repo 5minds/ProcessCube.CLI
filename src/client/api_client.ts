@@ -9,8 +9,8 @@ import { ManagementApiClient } from '@process-engine/management_api_client';
 import { AtlasSession } from '../session/atlas_session';
 import { BpmnDocument } from '../cli/bpmn_document';
 import {
-  FinishedUserTaskInfo,
   DeployedProcessModelInfo,
+  FinishedUserTaskInfo,
   RemovedProcessModelInfo,
   StartedProcessModelInfo,
   StoppedProcessInstanceInfo
@@ -278,7 +278,7 @@ export class ApiClient {
 
   async finishSuspendedUserTask(flowNodeInstanceId: string, userTaskResult: string[]): Promise<FinishedUserTaskInfo> {
     try {
-      const result = await this.atlasEngineClient.userTasks.finishUserTask(flowNodeInstanceId, userTaskResult, this.identity);
+      await this.atlasEngineClient.userTasks.finishUserTask(flowNodeInstanceId, userTaskResult, this.identity);
 
       return { success: true, flowNodeInstanceId };
     } catch (error) {

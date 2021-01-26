@@ -607,8 +607,6 @@ program
         .epilog(formatHelpText(epilogSnippetFinishUserTask));
     },
     async (argv: any) => {
-      const stdinPipeReader = await StdinPipeReader.create();
-
       await finishUserTask(argv.flowNodeInstanceId, argv.userTaskResult, argv.output);
     }
   )

@@ -19,7 +19,6 @@ export async function finishUserTask(flowNodeInstanceId: string, userTaskResult:
   const result = await apiClient.finishSuspendedUserTask(flowNodeInstanceId, userTaskResult);
 
   results.push(result);
-  
 
   let resultJson = createResultJson('finished-user-task', results);
   resultJson = addJsonPipingHintToResultJson(resultJson);
