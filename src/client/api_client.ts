@@ -276,9 +276,10 @@ export class ApiClient {
     return allUserTasks;
   }
 
-  async finishSuspendedUserTask(flowNodeInstanceId: string): Promise<FinishedUserTaskInfo> {
+  async finishSuspendedUserTask(flowNodeInstanceId: string, userTaskResult: string[]): Promise<FinishedUserTaskInfo> {
     try {
-      await this.atlasEngineClient.userTasks.finishUserTask(flowNodeInstanceId, this.identity);
+      const result = await this.atlasEngineClient.userTasks.finishUserTask(flowNodeInstanceId, userTaskResult, this.identity);
+
       return { success: true, flowNodeInstanceId };
     } catch (error) {
       await this.warnAndExitIfEnginerUrlNotAvailable();

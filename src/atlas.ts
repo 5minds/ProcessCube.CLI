@@ -608,9 +608,8 @@ program
     },
     async (argv: any) => {
       const stdinPipeReader = await StdinPipeReader.create();
-      let flowNodeInstanceIds = stdinPipeReader.getPipedProcessInstanceIds() || argv.processInstanceIds;
 
-      await finishUserTask(flowNodeInstanceIds, argv.output);
+      await finishUserTask(argv.flowNodeInstanceId, argv.userTaskResult, argv.output);
     }
   )
 
