@@ -46,9 +46,7 @@ export async function listUserTasks(
    limit
  );
  
- let resultUserTasks: any[];
- 
- let resultJson = createResultJson('user-tasks', resultUserTasks);
+ let resultJson = createResultJson('user-tasks', userTasks);
  resultJson = addJsonPipingHintToResultJson(resultJson);
  
  if (outputFormat === OUTPUT_FORMAT_JSON) {

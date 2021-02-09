@@ -1,25 +1,26 @@
 import * as assert from 'assert';
-import { threadId } from 'worker_threads';
+import { resolve } from 'dns';
 import { execAsDefault, execAsJson, execAsText } from './exec_as';
 
 describe('atlas', () => {
   it('should work with JSON output', async () => {
-    execAsText('login http://localhost:56000 --root');
+    execAsText('login http://localhost:8000 --root');
 
     execAsJson('session-status');
 
     execAsJson('deploy-files fixtures/Generate_Email_Adress.bpmn');
 
-    const result = execAsJson('start-process-model Generate_Email_Adress StartEvent_1mox3jl --input-values \'{"seconds": 1}\'');
-    const processInstanceId = result?.result[0]?.processInstanceId;
-    assert.notEqual(processInstanceId, null);
+    execAsJson('start-process-model Generate_Email_Adress StartEvent_1mox3jl --input-values \'{"seconds": 1}\'');
 
-    execAsJson('list-user-tasks');
+    await new Promise(resolve => setTimeout(resolve, 1000));
 
-    const flowNodeInstanceId = result?.result[0].flowNodeInstanceId;
-    assert.notEqual(flowNodeInstanceId, null);
+    const listUserTasksResult = execAsJson('list-user-tasks');
+    const state = listUserTasksResult?.result[0]?.state;
 
-    execAsJson(`finish-user-task ${flowNodeInstanceId}`);
+    if (state == 'suspended'){
+      const flowNodeInstanceId = listUserTasksResult?.result[0]?.flowNodeInstanceId;
+      execAsJson(`finish-user-task ${flowNodeInstanceId}`);
+    };
 
     execAsJson('list-user-tasks');
   
@@ -32,22 +33,23 @@ describe('atlas', () => {
   });
 
   it('should work with text output', async () => {
-    execAsText('login http://localhost:56000 --root');
+    execAsText('login http://localhost:8000 --root');
 
     execAsText('session-status');
 
     execAsText('deploy-files fixtures/Generate_Email_Adress.bpmn');
 
-    const result = execAsJson('start-process-model Generate_Email_Adress StartEvent_1mox3jl --input-values \'{"seconds": 1}\'');
-    const processInstanceId = result?.result[0]?.processInstanceId;
-    assert.notEqual(processInstanceId, null);
+    execAsText('start-process-model Generate_Email_Adress StartEvent_1mox3jl --input-values \'{"seconds": 1}\'');
+    
+    await new Promise(resolve => setTimeout(resolve, 1000));
 
-    execAsText('list-user-tasks');
+    const listUserTasksResult = execAsText('list-user-tasks');
+    const state = listUserTasksResult?.result?.state;
 
-    const flowNodeInstanceId = result?.result[0].flowNodeInstanceId;
-    assert.notEqual(flowNodeInstanceId, null);
-
-    execAsText(`finish-user-task ${flowNodeInstanceId}`);
+    if (state == 'suspended'){
+      const flowNodeInstanceId = listUserTasksResult?.result[0]?.flowNodeInstanceId;
+      execAsText(`finish-user-task ${flowNodeInstanceId}`);
+    };
 
     execAsText('list-user-tasks');
 
@@ -61,7 +63,7 @@ describe('atlas', () => {
   it('should work with help output', async () => {
     execAsText('--help');
 
-    execAsText('login http://localhost:56000 --root --help');
+    execAsText('login http://localhost:8000 --root --help');
 
     execAsText('session-status --help');
 
