@@ -1,5 +1,4 @@
 import * as assert from 'assert';
-import { resolve } from 'dns';
 import { execAsDefault, execAsJson, execAsText } from './exec_as';
 
 describe('atlas', () => {
@@ -8,13 +7,15 @@ describe('atlas', () => {
 
     execAsJson('session-status');
 
-    execAsJson('deploy-files fixtures/Generate_Email_Adress.bpmn');
+    execAsJson('deploy-files fixtures/E-Mail-Adresse-Generieren.bpmn');
 
-    execAsJson('start-process-model Generate_Email_Adress StartEvent_1mox3jl --input-values \'{"seconds": 1}\'');
+    const result = execAsJson('start-process-model E-Mail-Adresse-Generieren StartEvent_1mox3jl --input-values \'{"seconds": 1}\'');
 
     await new Promise(resolve => setTimeout(resolve, 1000));
 
     const listUserTasksResult = execAsJson('list-user-tasks');
+    assert.ok(listUserTasksResult.result.length > 0, 'There should be user tasks.');
+
     const state = listUserTasksResult?.result[0]?.state;
 
     if (state == 'suspended'){
@@ -22,7 +23,10 @@ describe('atlas', () => {
       execAsJson(`finish-user-task ${flowNodeInstanceId}`);
     };
 
-    execAsJson('list-user-tasks');
+    const resultState = listUserTasksResult?.[0]?.state;
+
+    const listUserTasksAfterFinished = execAsJson('list-user-tasks');
+    assert.strictEqual(listUserTasksAfterFinished.result.length, listUserTasksResult.result.length);
   
     execAsText('logout');
 
@@ -37,9 +41,9 @@ describe('atlas', () => {
 
     execAsText('session-status');
 
-    execAsText('deploy-files fixtures/Generate_Email_Adress.bpmn');
+    execAsText('deploy-files fixtures/E-Mail-Adresse-Generieren.bpmn');
 
-    execAsText('start-process-model Generate_Email_Adress StartEvent_1mox3jl --input-values \'{"seconds": 1}\'');
+    execAsText('start-process-model E-Mail-Adresse-Generieren StartEvent_1mox3jl --input-values \'{"seconds": 1}\'');
     
     await new Promise(resolve => setTimeout(resolve, 1000));
 
@@ -67,7 +71,7 @@ describe('atlas', () => {
 
     execAsText('session-status --help');
 
-    execAsText('deploy-files fixtures/Generate_Email_Adress.bpmn --help');
+    execAsText('deploy-files fixtures/E-Mail-Adresse-Generieren.bpmn --help');
 
     execAsText('start-process-model --help');
 
