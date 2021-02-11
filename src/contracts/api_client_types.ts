@@ -98,7 +98,7 @@ type RetriedProcessInstanceInfo_Failure = {
 
 //
 
-export type FinishedUserTaskInfo = FinishedUserTaskInfo_Success | FinishedUserTaskInfo_Failure;
+export type FinishedUserTaskInfo = FinishedUserTaskInfoSuccess | FinishedUserTaskInfoFailure;
 
 type FinishedUserTaskInfoSuccess = {
   success: true;

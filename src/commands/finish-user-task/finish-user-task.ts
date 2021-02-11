@@ -15,6 +15,8 @@ export async function finishUserTask(flowNodeInstanceId: string, userTaskResult:
 
   const apiClient = new ApiClient(session);
 
+  const results: FinishedUserTaskInfo[] = [];
+
   const result = await apiClient.finishSuspendedUserTask(flowNodeInstanceId, userTaskResult);
 
   results.push(result);
