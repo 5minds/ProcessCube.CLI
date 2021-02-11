@@ -14,7 +14,7 @@ describe('atlas', () => {
     await new Promise(resolve => setTimeout(resolve, 1000));
 
     const listUserTasksResult = execAsJson('list-user-tasks');
-    assert.ok(listUserTasksResult.result.length > 0, 'There should be user tasks.');
+    assert.ok(listUserTasksResult.result.length > 0, 'Expected to get user tasks.');
 
     const state = listUserTasksResult?.result[0]?.state;
 
@@ -27,7 +27,7 @@ describe('atlas', () => {
 
     const stateAfterFinishedUserTask = listUserTasksAfterFinished?.result[0]?.state;
 
-    assert.notEqual(stateAfterFinishedUserTask, state);
+    assert.notStrictEqual(stateAfterFinishedUserTask, state);
   
     execAsText('logout');
 

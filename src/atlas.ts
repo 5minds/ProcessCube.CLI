@@ -591,18 +591,18 @@ program
   )
 
   .command(
-    ['finish-user-task [flowNodeInstanceId...]', 'finish'],
+    ['finish-user-task [flowNodeInstanceId]', 'finish'],
     'Finish a suspended instance of an user task',
     (yargs) => {
       return yargs
         .usage(
           usageString(
-            'finish-user-task [flowNodeInstanceId...]',
+            'finish-user-task [flowNodeInstanceId]',
             'Finish a suspended instance of an user task.'
           )
         )
         .positional('flowNodeInstanceId', {
-          description: 'IDs of user task to finish '
+          description: 'ID of user task to finish '
         })
         .epilog(formatHelpText(epilogSnippetFinishUserTask));
     },

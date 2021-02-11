@@ -284,7 +284,7 @@ export class ApiClient {
     } catch (error) {
       await this.warnAndExitIfEnginerUrlNotAvailable();
 
-      return { success: false, flowNodeInstanceId, error};
+      return { success: false, flowNodeInstanceId, error };
     }
   }
 

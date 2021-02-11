@@ -100,13 +100,13 @@ type RetriedProcessInstanceInfo_Failure = {
 
 export type FinishedUserTaskInfo = FinishedUserTaskInfo_Success | FinishedUserTaskInfo_Failure;
 
-type FinishedUserTaskInfo_Success = {
+type FinishedUserTaskInfoSuccess = {
   success: true;
   
   flowNodeInstanceId: string;
 };
 
-type FinishedUserTaskInfo_Failure = {
+type FinishedUserTaskInfoFailure = {
   success: false;
 
   flowNodeInstanceId: string;
