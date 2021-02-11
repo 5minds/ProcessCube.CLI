@@ -9,7 +9,7 @@ describe('atlas', () => {
 
     execAsJson('deploy-files fixtures/E-Mail-Adresse-Generieren.bpmn');
 
-    const result = execAsJson('start-process-model E-Mail-Adresse-Generieren StartEvent_1mox3jl --input-values \'{"seconds": 1}\'');
+    execAsJson('start-process-model E-Mail-Adresse-Generieren StartEvent_1mox3jl --input-values \'{"seconds": 1}\'');
 
     await new Promise(resolve => setTimeout(resolve, 1000));
 
@@ -21,12 +21,13 @@ describe('atlas', () => {
     if (state == 'suspended'){
       const flowNodeInstanceId = listUserTasksResult?.result[0]?.flowNodeInstanceId;
       execAsJson(`finish-user-task ${flowNodeInstanceId}`);
-    };
-
-    const resultState = listUserTasksResult?.[0]?.state;
+    };    
 
     const listUserTasksAfterFinished = execAsJson('list-user-tasks');
-    assert.strictEqual(listUserTasksAfterFinished.result.length, listUserTasksResult.result.length);
+
+    const stateAfterFinishedUserTask = listUserTasksAfterFinished?.result[0]?.state;
+
+    assert.notEqual(stateAfterFinishedUserTask, state);
   
     execAsText('logout');
 
