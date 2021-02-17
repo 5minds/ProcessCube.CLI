@@ -8,7 +8,7 @@ export type IdTokenAccessTokenAndExpiresAt = {
   expiresAt: number;
 };
 
-const DEFAULT_PORT = 9000; // 56073;
+const DEFAULT_PORT = 12560;
 const DEFAULT_CLIENT_ID = 'bpmn_studio';
 
 export function startServerToLoginAndWaitForAccessTokenFromIdentityServer(
