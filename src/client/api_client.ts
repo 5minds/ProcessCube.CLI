@@ -24,7 +24,7 @@ import {
 } from './filtering';
 import { logError } from '../cli/logging';
 import { isUrlAvailable } from './is_url_available';
-import { FlowNodeInstanceState } from '@atlas-engine/atlas_engine_client/dist/types/data_models/flow_node_instance';
+import { FlowNodeInstance, FlowNodeInstanceState } from '@atlas-engine/atlas_engine_client/dist/types/data_models/flow_node_instance';
 
 // TODO: missing IIdentity here
 type Identity = any;
@@ -276,11 +276,12 @@ export class ApiClient {
     return allUserTasks;
   }
 
-  async finishSuspendedUserTask(flowNodeInstanceId: string, userTaskResult: string[]): Promise<FinishedUserTaskInfo> {
+  async finishSuspendedUserTask(flowNodeInstanceId: string, userTaskResult: string[], payload: any = {}): Promise<FinishedUserTaskInfo> {
     try {
-      await this.atlasEngineClient.userTasks.finishUserTask(flowNodeInstanceId, userTaskResult, this.identity);
+      const userTask = await this.atlasEngineClient.userTasks.finishUserTask(flowNodeInstanceId, userTaskResult, this.identity);
 
-      return { success: true, flowNodeInstanceId };
+      return { success: true, flowNodeInstanceId, resultValues: payload.resultValues };
+      
     } catch (error) {
       await this.warnAndExitIfEnginerUrlNotAvailable();
 

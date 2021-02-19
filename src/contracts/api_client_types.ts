@@ -104,6 +104,8 @@ type FinishedUserTaskInfoSuccess = {
   success: true;
   
   flowNodeInstanceId: string;
+  resultValues: any;
+  payload?: any;
 };
 
 type FinishedUserTaskInfoFailure = {

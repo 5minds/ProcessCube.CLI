@@ -5,7 +5,13 @@ import { OUTPUT_FORMAT_JSON, OUTPUT_FORMAT_TEXT } from '../../atlas';
 import { logJsonResult, logNoValidSessionError } from '../../cli/logging';
 import { ApiClient } from '../../client/api_client';
 
-export async function finishUserTask(flowNodeInstanceId: string, userTaskResult: string[], outputFormat: string): Promise<void> {
+export async function finishUserTask(
+  flowNodeInstanceId: string, 
+  userTaskResult: string[],
+  correlationId: string,
+  resultValues: any, 
+  outputFormat: string
+  ): Promise<void> {
 
   const session = loadAtlasSession();
   if (session == null) {
@@ -17,9 +23,10 @@ export async function finishUserTask(flowNodeInstanceId: string, userTaskResult:
 
   const results: FinishedUserTaskInfo[] = [];
 
-  const result = await apiClient.finishSuspendedUserTask(flowNodeInstanceId, userTaskResult);
+  const startRequestPayload = {correlationId, resultValues};
 
-  results.push(result);
+  const result = await apiClient.finishSuspendedUserTask(flowNodeInstanceId, userTaskResult, startRequestPayload);
+  results.push(result)
 
   let resultJson = createResultJson('finished-user-task', results);
   resultJson = addJsonPipingHintToResultJson(resultJson);

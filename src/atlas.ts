@@ -569,7 +569,6 @@ program
       const stdinPipeReader = await StdinPipeReader.create();
       const pipedProcessInstanceIds = stdinPipeReader.getPipedProcessInstanceIds();
       const pipedProcessModelIds = stdinPipeReader.getPipedProcessModelIds();
-  
       const sortByProcessModelId = argv.sortByProcessModelId === '' ? 'asc' : argv.sortByProcessModelId;
       const sortByState = argv.sortByState === '' ? 'asc' : argv.sortByState;
       listUserTasks(
@@ -602,12 +601,33 @@ program
           )
         )
         .positional('flowNodeInstanceId', {
-          description: 'ID of user task to finish '
+          description: 'ID of user task to finish'
+        })
+        .option('result', {
+          description: 'Set result values for the finished user task from <json> string',
+          type: 'string'
+        })
+        .option('result-from-file', {
+          description: 'Read result values as JSON from <file>',
+          type: 'string'
         })
         .epilog(formatHelpText(epilogSnippetFinishUserTask));
     },
     async (argv: any) => {
-      await finishUserTask(argv.flowNodeInstanceId, argv.userTaskResult, argv.output);
+      const stdinPipeReader = await StdinPipeReader.create();
+      const flowNodeInstanceId = stdinPipeReader.getPipedFlowNodeInstanceIds()|| argv.flowNodeInstanceId;
+
+      let resultValues: any;
+
+      if (argv.resultValuesFromFile != null) {
+        const contents = readFileSync(argv.resultValuesFromFile);
+        resultValues = JSON5.parse(contents.toString());
+      }
+      if (argv.inputValues != null) {
+        resultValues = JSON5.parse(argv.resultValues);
+      }
+
+      await finishUserTask(flowNodeInstanceId, argv.userTaskResult, argv.correlationId, resultValues, argv.output);
     }
   )
 
