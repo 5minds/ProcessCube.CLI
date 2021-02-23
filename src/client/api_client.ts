@@ -24,7 +24,7 @@ import {
 } from './filtering';
 import { logError } from '../cli/logging';
 import { isUrlAvailable } from './is_url_available';
-import { FlowNodeInstance, FlowNodeInstanceState } from '@atlas-engine/atlas_engine_client/dist/types/data_models/flow_node_instance';
+import { FlowNodeInstanceState } from '@atlas-engine/atlas_engine_client/dist/types/data_models/flow_node_instance';
 
 // TODO: missing IIdentity here
 type Identity = any;
@@ -278,7 +278,7 @@ export class ApiClient {
 
   async finishSuspendedUserTask(flowNodeInstanceId: string, userTaskResult: string[], payload: any = {}): Promise<FinishedUserTaskInfo> {
     try {
-      const userTask = await this.atlasEngineClient.userTasks.finishUserTask(flowNodeInstanceId, userTaskResult, this.identity);
+      await this.atlasEngineClient.userTasks.finishUserTask(flowNodeInstanceId, userTaskResult, this.identity);
 
       return { success: true, flowNodeInstanceId, resultValues: payload.resultValues };
       

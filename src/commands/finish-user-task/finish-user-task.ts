@@ -23,9 +23,14 @@ export async function finishUserTask(
 
   const results: FinishedUserTaskInfo[] = [];
 
-  const startRequestPayload = {correlationId, resultValues};
+  const startRequestPayload = { correlationId, resultValues} ;
 
-  const result = await apiClient.finishSuspendedUserTask(flowNodeInstanceId, userTaskResult, startRequestPayload);
+  const result = await apiClient.finishSuspendedUserTask(
+    flowNodeInstanceId, 
+    userTaskResult,
+    startRequestPayload
+    );
+
   results.push(result)
 
   let resultJson = createResultJson('finished-user-task', results);

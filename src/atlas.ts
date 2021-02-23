@@ -615,15 +615,15 @@ program
     },
     async (argv: any) => {
       const stdinPipeReader = await StdinPipeReader.create();
-      const flowNodeInstanceId = stdinPipeReader.getPipedFlowNodeInstanceIds()|| argv.flowNodeInstanceId;
-
+      const flowNodeInstanceId = stdinPipeReader.getPipedFlowNodeInstanceIds() || argv.flowNodeInstanceId;
+      
       let resultValues: any;
 
       if (argv.resultValuesFromFile != null) {
         const contents = readFileSync(argv.resultValuesFromFile);
         resultValues = JSON5.parse(contents.toString());
       }
-      if (argv.inputValues != null) {
+      if (argv.resultValues != null) {
         resultValues = JSON5.parse(argv.resultValues);
       }
 
