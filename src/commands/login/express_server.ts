@@ -9,7 +9,7 @@ export type IdTokenAccessTokenAndExpiresAt = {
 };
 
 const DEFAULT_PORT = 12560;
-const DEFAULT_CLIENT_ID = 'bpmn_studio';
+const DEFAULT_CLIENT_ID = 'atlas_cli';
 
 export function startServerToLoginAndWaitForAccessTokenFromIdentityServer(
   identityServerUrl: string,
