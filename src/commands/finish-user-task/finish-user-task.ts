@@ -6,9 +6,7 @@ import { logJsonResult, logNoValidSessionError } from '../../cli/logging';
 import { ApiClient } from '../../client/api_client';
 
 export async function finishUserTask(
-  flowNodeInstanceId: string, 
-  userTaskResult: string[],
-  correlationId: string,
+  flowNodeInstanceId: string,
   resultValues: any, 
   outputFormat: string
   ): Promise<void> {
@@ -23,17 +21,16 @@ export async function finishUserTask(
 
   const results: FinishedUserTaskInfo[] = [];
 
-  const startRequestPayload = { correlationId, resultValues} ;
-
+  //const startRequestPayload = { flowNodeInstanceId, resultValues } ;
   const result = await apiClient.finishSuspendedUserTask(
-    flowNodeInstanceId, 
-    userTaskResult,
-    startRequestPayload
+    flowNodeInstanceId,
+    resultValues
+    //startRequestPayload
     );
 
   results.push(result)
 
-  let resultJson = createResultJson('finished-user-task', results);
+  let resultJson = createResultJson('user-tasks', results);
   resultJson = addJsonPipingHintToResultJson(resultJson);
 
   switch (outputFormat) {

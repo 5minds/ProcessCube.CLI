@@ -39,7 +39,7 @@ export class StdinPipeReader {
   }
 
   getPipedFlowNodeInstanceIds(): string[] | null {
-    if (this.pipedData?.result_type === 'finished-user-task') {
+    if (this.pipedData?.result_type === 'user-tasks') {
       const pipedFlowNodeInstanceIds = this.pipedData.result.map((item: any) => item.flowNodeInstanceId);
 
       return pipedFlowNodeInstanceIds;

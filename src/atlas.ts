@@ -619,15 +619,15 @@ program
       
       let resultValues: any;
 
-      if (argv.resultValuesFromFile != null) {
-        const contents = readFileSync(argv.resultValuesFromFile);
+      if (argv.resultFromFile != null) {
+        const contents = readFileSync(argv.resultFromFile);
         resultValues = JSON5.parse(contents.toString());
       }
-      if (argv.resultValues != null) {
-        resultValues = JSON5.parse(argv.resultValues);
+      if (argv.result != null) {
+        resultValues = JSON5.parse(argv.result);
       }
 
-      await finishUserTask(flowNodeInstanceId, argv.userTaskResult, argv.correlationId, resultValues, argv.output);
+      await finishUserTask(flowNodeInstanceId, resultValues, argv.output);
     }
   )
 
