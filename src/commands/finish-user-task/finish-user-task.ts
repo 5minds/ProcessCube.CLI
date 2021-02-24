@@ -19,13 +19,10 @@ export async function finishUserTask(
 
   const apiClient = new ApiClient(session);
 
-  const results: FinishedUserTaskInfo[] = [];
-
   const result = await apiClient.finishSuspendedUserTask(
     flowNodeInstanceId,
     resultValues,
     );
-
 
   let resultJson = createResultJson('user-tasks', result);
   resultJson = addJsonPipingHintToResultJson(resultJson);
