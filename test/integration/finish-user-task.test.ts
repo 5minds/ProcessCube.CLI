@@ -26,13 +26,12 @@ describe('atlas', () => {
 
     const stateAfterFinishedUserTask = listUserTasksAfterFinished?.result[0]?.state;
 
-    assert.notStrictEqual(stateAfterFinishedUserTask, state);
+    assert.ok(stateAfterFinishedUserTask == 'finished', 'Expected to be finished');
   
     execAsText('logout');
 
     const session = execAsJson('session-status');
     assert.equal(session.accessToken, null);
 
-    assert.ok(true);
   });
 });

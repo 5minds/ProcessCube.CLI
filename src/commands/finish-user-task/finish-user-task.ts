@@ -8,7 +8,7 @@ import { ApiClient } from '../../client/api_client';
 export async function finishUserTask(
   flowNodeInstanceId: string,
   resultValues: any, 
-  outputFormat: string
+  outputFormat: string,
   ): Promise<void> {
 
   const session = loadAtlasSession();
@@ -21,16 +21,13 @@ export async function finishUserTask(
 
   const results: FinishedUserTaskInfo[] = [];
 
-  //const startRequestPayload = { flowNodeInstanceId, resultValues } ;
   const result = await apiClient.finishSuspendedUserTask(
     flowNodeInstanceId,
-    resultValues
-    //startRequestPayload
+    resultValues,
     );
 
-  results.push(result)
 
-  let resultJson = createResultJson('user-tasks', results);
+  let resultJson = createResultJson('user-tasks', result);
   resultJson = addJsonPipingHintToResultJson(resultJson);
 
   switch (outputFormat) {
@@ -38,7 +35,7 @@ export async function finishUserTask(
           logJsonResult(resultJson);
           break;
       case OUTPUT_FORMAT_TEXT:
-          console.table(results, ['success', 'flowNodeInstanceId', 'error']);
+          console.table([result], ['success', 'flowNodeInstanceId', 'error']);
           break;
    }
 }

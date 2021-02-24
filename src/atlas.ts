@@ -615,8 +615,11 @@ program
     },
     async (argv: any) => {
       const stdinPipeReader = await StdinPipeReader.create();
-      const flowNodeInstanceId = stdinPipeReader.getPipedFlowNodeInstanceIds() || argv.flowNodeInstanceId;
+      const flowNodeInstanceId = stdinPipeReader.getPipedFlowNodeInstanceIds()?.[0] || argv.flowNodeInstanceId;
       
+      if (stdinPipeReader.getPipedFlowNodeInstanceIds()?.length > 1) {
+        console.log('Warning: Only using first piped flowNodeInstanceId from stdin to finish user task.');
+      }
       let resultValues: any;
 
       if (argv.resultFromFile != null) {
