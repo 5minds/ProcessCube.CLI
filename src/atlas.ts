@@ -20,6 +20,7 @@ import { removeProcessModels } from './commands/remove-process-models/remove-pro
 import { formatHelpText, heading } from './cli/logging';
 import { readFileSync } from 'fs';
 import { retryProcessInstance } from './commands/retry-process-instance/retry-process-instance';
+import { finishUserTask } from './commands/finish-user-task/finish-user-task';
 
 import epilogSnippetAtlas from './snippets/atlas.epilog';
 import epilogSnippetDeployFiles from './snippets/deploy-files.epilog';
@@ -34,6 +35,7 @@ import epilogSnippetShowProcessInstance from './snippets/show-process-instance.e
 import epilogSnippetStartProcessModel from './snippets/start-process-model.epilog';
 import epilogSnippetStopProcessInstance from './snippets/stop-process-instance.epilog';
 import epilogSnippetSessionStatus from './snippets/session-status.epilog';
+import epilogSnippetFinishUserTask from './snippets/finish-user-task.epilog';
 
 export const OUTPUT_FORMAT_JSON = 'json';
 export const OUTPUT_FORMAT_TEXT = 'text';
@@ -567,7 +569,6 @@ program
       const stdinPipeReader = await StdinPipeReader.create();
       const pipedProcessInstanceIds = stdinPipeReader.getPipedProcessInstanceIds();
       const pipedProcessModelIds = stdinPipeReader.getPipedProcessModelIds();
-  
       const sortByProcessModelId = argv.sortByProcessModelId === '' ? 'asc' : argv.sortByProcessModelId;
       const sortByState = argv.sortByState === '' ? 'asc' : argv.sortByState;
       listUserTasks(
@@ -585,6 +586,51 @@ program
         argv.allFields,
         argv.output
       );
+    }
+  )
+
+  .command(
+    ['finish-user-task [flowNodeInstanceId]', 'finish'],
+    'Finish a suspended instance of an user task',
+    (yargs) => {
+      return yargs
+        .usage(
+          usageString(
+            'finish-user-task [flowNodeInstanceId]',
+            'Finish a suspended instance of an user task.'
+          )
+        )
+        .positional('flowNodeInstanceId', {
+          description: 'ID of user task to finish'
+        })
+        .option('result', {
+          description: 'Set result values for the finished user task from <json> string',
+          type: 'string'
+        })
+        .option('result-from-file', {
+          description: 'Read result values as JSON from <file>',
+          type: 'string'
+        })
+        .epilog(formatHelpText(epilogSnippetFinishUserTask));
+    },
+    async (argv: any) => {
+      const stdinPipeReader = await StdinPipeReader.create();
+      const flowNodeInstanceId = stdinPipeReader.getPipedFlowNodeInstanceIds()?.[0] || argv.flowNodeInstanceId;
+      
+      if (stdinPipeReader.getPipedFlowNodeInstanceIds()?.length > 1) {
+        console.log('Warning: Only using first piped flowNodeInstanceId from stdin to finish user task.');
+      }
+      let resultValues: any;
+
+      if (argv.resultFromFile != null) {
+        const contents = readFileSync(argv.resultFromFile);
+        resultValues = JSON5.parse(contents.toString());
+      }
+      if (argv.result != null) {
+        resultValues = JSON5.parse(argv.result);
+      }
+
+      await finishUserTask(flowNodeInstanceId, resultValues, argv.output);
     }
   )
 
