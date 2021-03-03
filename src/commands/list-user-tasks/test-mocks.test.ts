@@ -10,7 +10,7 @@ export const PROCESS_A_userTask_02_error = {
   id: 'PROCESS_A_userTask_02_error',
   processModelId: 'Process_A',
   flowNodeInstanceId: 'Process_A',
-  state: 'error',
+  state: 'error'
 };
 export const PROCESS_A_userTask_03_finished = {
   id: 'PROCESS_A_userTask_03_finished',

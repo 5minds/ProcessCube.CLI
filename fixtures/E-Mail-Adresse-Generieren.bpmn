@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="Definition_413a144c-9da1-482e-8ada-f2a0e6886c58" targetNamespace="http://bpmn.io/schema/bpmn" exporter="BPMN Studio" exporterVersion="1">
+  <bpmn:collaboration id="Collaboration_1cidyxu" name="">
+    <bpmn:participant id="Participant_0px403d" name="E-Mail-Adresse-Generieren" processRef="E-Mail-Adresse-Generieren" />
+  </bpmn:collaboration>
+  <bpmn:process id="E-Mail-Adresse-Generieren" name="E-Mail-Adresse-Generieren" isExecutable="true">
+    <bpmn:laneSet>
+      <bpmn:lane id="Lane_1xzf0d3" name="Lane">
+        <bpmn:flowNodeRef>StartEvent_1mox3jl</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>EndEvent_0eie6q6</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Activity_1j8fdsk</bpmn:flowNodeRef>
+      </bpmn:lane>
+    </bpmn:laneSet>
+    <bpmn:startEvent id="StartEvent_1mox3jl" name="Start Event">
+      <bpmn:outgoing>Flow_014i91o</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="Flow_06g1n78" name="" sourceRef="Activity_1j8fdsk" targetRef="EndEvent_0eie6q6" />
+    <bpmn:sequenceFlow id="Flow_014i91o" name="" sourceRef="StartEvent_1mox3jl" targetRef="Activity_1j8fdsk" />
+    <bpmn:endEvent id="EndEvent_0eie6q6" name="End Event">
+      <bpmn:incoming>Flow_06g1n78</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:userTask id="Activity_1j8fdsk" name="E-Mail-Adresse generieren" camunda:formKey="Form Key">
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="vorname" label="Bitte geben Sie Ihren Vornamen ein!" type="string" defaultValue="" />
+          <camunda:formField id="nachname" label="Bitte geben Sie Ihren Nachnamen ein!" type="string" defaultValue="" />
+        </camunda:formData>
+        <camunda:properties>
+          <camunda:property name="preferredControl" value="enter-name-custom" />
+        </camunda:properties>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_014i91o</bpmn:incoming>
+      <bpmn:outgoing>Flow_06g1n78</bpmn:outgoing>
+    </bpmn:userTask>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_1cidyxu">
+      <bpmndi:BPMNShape id="Participant_0px403d_di" bpmnElement="Participant_0px403d" isHorizontal="true">
+        <dc:Bounds x="-276" y="-110" width="696" height="210" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_1xzf0d3_di" bpmnElement="Lane_1xzf0d3" isHorizontal="true">
+        <dc:Bounds x="-246" y="-110" width="666" height="210" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_014i91o_di" bpmnElement="Flow_014i91o">
+        <di:waypoint x="-162" y="-15" />
+        <di:waypoint x="0" y="-15" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_06g1n78_di" bpmnElement="Flow_06g1n78">
+        <di:waypoint x="100" y="-15" />
+        <di:waypoint x="322" y="-15" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="StartEvent_1mox3jl_di" bpmnElement="StartEvent_1mox3jl">
+        <dc:Bounds x="-198" y="-33" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="-207" y="3" width="55" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_0eie6q6_di" bpmnElement="EndEvent_0eie6q6">
+        <dc:Bounds x="322" y="-33" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="315" y="3" width="51" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1j8fdsk_di" bpmnElement="Activity_1j8fdsk">
+        <dc:Bounds x="0" y="-55" width="100" height="80" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
