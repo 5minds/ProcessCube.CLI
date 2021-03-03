@@ -1,7 +1,7 @@
 {
   "name": "@atlas-engine/cli",
-  "version": "1.4.0-alpha.4",
-  "description": "CLI for AtlasEngine and process-engine.io",
+  "version": "2.0.0",
+  "description": "Command Line Utilities for 5Minds ProcessCube",
   "main": "dist/atlas.js",
   "scripts": {
     "clean": "rm -rf dist",
