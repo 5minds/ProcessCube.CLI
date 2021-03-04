@@ -1,0 +1,39 @@
+on:
+  release:
+    types: [published, unpublished]
+
+jobs:
+  upload_atlas_download_sites_to_azure:
+
+    name: Generate Download Site with Atlas Products and upload them to Azure
+    runs-on: ubuntu-20.04
+
+    steps:
+      - name: "Use node"
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+
+      - name: "Install Atlas Download Site plugin"
+        run: npm i -g @atlas-engine/atlasdownloadsite
+
+      - name: "Create static html files in outputfolder"
+        run: atlasdownloadsite
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_CI_USER_TOKEN }}
+
+      - name: Log into Azure
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_ATLAS_PLATFORM_CI_CREDENTIALS }}
+
+      - name: Upload build artifacts
+        uses: azure/cli@v1
+        with:
+          azcliversion: 2.14.1
+          inlineScript: |
+            az storage blob upload-batch \
+              --account-name 5mindsproducts \
+              --auth-mode login \
+              --destination '$web' \
+              --source output

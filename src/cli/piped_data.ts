@@ -38,6 +38,16 @@ export class StdinPipeReader {
     return null;
   }
 
+  getPipedFlowNodeInstanceIds(): string[] | null {
+    if (this.pipedData?.result_type === 'user-tasks') {
+      const pipedFlowNodeInstanceIds = this.pipedData.result.map((item: any) => item.flowNodeInstanceId);
+
+      return pipedFlowNodeInstanceIds;
+    }
+
+    return null;
+  }
+
   getPipedProcessModelIdsInDeployedFiles(): string[] | null {
     if (this.pipedData?.result_type === 'deployed-files') {
       const pipedProcessModelIds = this.pipedData.result.map((item: any) => item.processModelId);

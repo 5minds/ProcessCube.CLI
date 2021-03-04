@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 
 import { DataModels } from '@process-engine/management_api_contracts';
-import { AtlasEngineClient, DataModels as AtlasEngineDataModels, } from '@atlas-engine/atlas_engine_client';
+import { AtlasEngineClient, DataModels as AtlasEngineDataModels } from '@atlas-engine/atlas_engine_client';
 
 import { getIdentityAndManagementApiClient } from './management_api_client';
 import { ManagementApiClient } from '@process-engine/management_api_client';
@@ -10,6 +10,7 @@ import { AtlasSession } from '../session/atlas_session';
 import { BpmnDocument } from '../cli/bpmn_document';
 import {
   DeployedProcessModelInfo,
+  FinishedUserTaskInfo,
   RemovedProcessModelInfo,
   StartedProcessModelInfo,
   StoppedProcessInstanceInfo
@@ -273,6 +274,27 @@ export class ApiClient {
      allUserTasks = rejectProcessInstancesByState(allUserTasks, rejectByState);
 
     return allUserTasks;
+  }
+
+  async finishSuspendedUserTask(flowNodeInstanceId: string, payload: any = {}): Promise<FinishedUserTaskInfo> {
+    try {
+      await this.atlasEngineClient.userTasks.finishUserTask(
+        flowNodeInstanceId,
+        payload,
+        this.identity
+        );
+
+      const result: FinishedUserTaskInfo = {
+        success: true,
+        flowNodeInstanceId: flowNodeInstanceId,
+        resultValues: payload.resultValues
+      };
+      return result;
+    } catch (error) {
+      await this.warnAndExitIfEnginerUrlNotAvailable();
+
+      return { success: false, flowNodeInstanceId, error };
+    }
   }
 
   async getAllUserTasksViaCorrelations(correlationIds: string[]): Promise<UserTask[]> {

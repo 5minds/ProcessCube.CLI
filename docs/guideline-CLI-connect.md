@@ -20,9 +20,9 @@ Die Ports haben bei der Einrichtung Standardwerte für die verschiedenen Freigab
 
 | Installationsart                          | Freigabekanal | Standardport |
 |-------------------------------------------|------------------------------|:------------:|
-| Atlas Engine                    | alpha                        |     8000     |
-| Atlas Engine                    | beta                         |     8000     |
-| Atlas Engine                    | stable                       |     8000     |
+| Atlas Engine                    | alpha                        |     10580     |
+| Atlas Engine                    | beta                         |     10570     |
+| Atlas Engine                    | stable                       |     10560     |
 | Atlas Engine via BPMN Studio / Atlas Studio | alpha                        |     56200    |
 | Atlas Engine via BPMN Studio / Atlas Studio | beta                         |     56100    |
 | Atlas Engine via BPMN Studio / Atlas Studio | stable                       |     56000    |
@@ -36,7 +36,7 @@ Die Ports der Atlas Engine können im Rahmen der [Konfiguration](https://github.
 Auf Produktions- oder Testsystemen empfiehlt sich die Atlas Engine nicht innerhalb eines BPMN Studios / Atlas Studios zu betreiben. Mit einer Atlas Engine aus dem 'stable' Freigabekanal, die auf einem Server (mit der IP-Adresse 10.10.32.7) installiert wurde, können Sie sich wie folgt einloggen:
 
 ```shell
-atlas login http://10.10.32.7:8000
+atlas login http://10.10.32.7:10560
 ```
 
 Es öffnet sich nun ein Webbrowser mit der von Ihnen konfigurierten Atlas Authority.
