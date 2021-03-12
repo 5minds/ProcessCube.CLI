@@ -30,6 +30,7 @@ import { FlowNodeInstanceState } from '@atlas-engine/atlas_engine_client/dist/ty
 type Identity = any;
 
 type UserTask = AtlasEngineDataModels.FlowNodeInstances.UserTask;
+type FlowNodeInstance = AtlasEngineDataModels.FlowNodeInstances.FlowNodeInstance;
 
 type ProcessInstance = DataModels.Correlations.ProcessInstance;
 type ProcessInstanceWithTokens = ProcessInstance & {
@@ -294,6 +295,18 @@ export class ApiClient {
       await this.warnAndExitIfEnginerUrlNotAvailable();
 
       return { success: false, flowNodeInstanceId, error };
+    }
+  }
+
+  async getFlowNodeInstancesForProcessInstance(processInstanceId: string[]):Promise<FlowNodeInstance[]>{
+    try {
+      const result = await this.atlasEngineClient.flowNodeInstances.queryFlowNodeInstances({
+        processInstanceId: processInstanceId,
+      });
+      return result.flowNodeInstances;
+    } catch (error) {
+      await this.warnAndExitIfEnginerUrlNotAvailable();
+      throw error;
     }
   }
 

@@ -1,5 +1,5 @@
 import { DataModels } from '@process-engine/management_api_contracts';
-import { DataModels as AtlasEngineDataModels } from '@atlas-engine/atlas_engine_client'; 
+import { DataModels as AtlasEngineDataModels } from '@atlas-engine/atlas_engine_client';
 
 import { ApiClient } from '../../client/api_client';
 import { AtlasSession, loadAtlasSession } from '../../session/atlas_session';
@@ -12,7 +12,6 @@ import { sortProcessInstances } from './sorting';
 
 export type ProcessInstance = DataModels.Correlations.ProcessInstance;
 export type FlowNodeInstance = AtlasEngineDataModels.FlowNodeInstances.FlowNodeInstance;
-export type ProcessInstanceWithTokens = AtlasEngineDataModels.FlowNodeInstances.ProcessToken;
 
 export async function listProcessInstances(
   pipedProcessInstanceIds: string[] | null,
@@ -152,19 +151,26 @@ function mapToShort(list: any): any[] {
   return list.map((processInstance: any) => {
     const identity = { ...processInstance.identity, token: '...' };
   
-    const token = findToken(processInstance);
+    const token = getToken(processInstance.processInstanceId, 'onExit');
+    console.log(JSON.stringify(token));
 
     return { ...processInstance, xml: '...', finalToken: token, identity: identity };
   });
 }
 
-async function findToken(processInstance: FlowNodeInstance): Promise <any[]>{
-  const state = processInstance.state;
-  
-  if (state != 'finished') {
-    return null;
-  } 
-  const tokens = processInstance.tokens;  
+async function getToken(processInstanceId: string[], tokenType: string){
+ 
+  const session = loadAtlasSession();
+  const apiClient = new ApiClient(session);
+  const flowNodeInstances = await apiClient.getFlowNodeInstancesForProcessInstance(
+    processInstanceId
+  );
+  const processToken = flowNodeInstances.find((entry) => entry.flowNodeInstanceId);
+  const tokens = processToken.tokens;
+  const token = tokens.find((entry) => entry.type === tokenType);
 
-  return tokens;
-}
+  console.log(JSON.stringify(token.payload));
+
+  return token.payload;
+ }
+ 
