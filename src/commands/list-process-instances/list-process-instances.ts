@@ -158,7 +158,7 @@ function mapToShort(list: any): any[] {
   });
 }
 
-async function getToken(processInstanceId: string[], tokenType: string){
+async function getToken(processInstanceId: string[], tokenType: string): Promise <any| null>{
  
   const session = loadAtlasSession();
   const apiClient = new ApiClient(session);
@@ -167,8 +167,12 @@ async function getToken(processInstanceId: string[], tokenType: string){
   );
   const processToken = flowNodeInstances.find((entry) => entry.flowNodeInstanceId);
   const tokens = processToken.tokens;
-  const token = tokens.find((entry) => entry.type === tokenType);
 
+  if (tokens == null){
+    return null;
+  }
+  
+  const token = tokens.find((entry) => entry.type === tokenType);
   console.log(JSON.stringify(token.payload));
 
   return token.payload;
