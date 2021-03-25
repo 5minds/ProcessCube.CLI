@@ -59,13 +59,14 @@ export async function listProcessInstances(
     limit
   );
 
+  const processInstanceWithToken = await decorateProcessInstancesWithExitToken(processInstances);
+
   let resultProcessInstances: any[];
   if (showAllFields) {
-    resultProcessInstances = mapToLong(processInstances);
+    resultProcessInstances = mapToLong(processInstanceWithToken);
   } else {
-    resultProcessInstances = mapToShort(processInstances);
+    resultProcessInstances = mapToShort(processInstanceWithToken);
   }
-
   let resultJson = createResultJson('process-instances', resultProcessInstances);
   resultJson = addJsonPipingHintToResultJson(resultJson);
 
@@ -150,16 +151,20 @@ function mapToLong(list: any): any[] {
 function mapToShort(list: any): any[] {
   return list.map((processInstance: any) => {
     const identity = { ...processInstance.identity, token: '...' };
-  
-    const token = getToken(processInstance.processInstanceId, 'onExit');
-    console.log(JSON.stringify(token));
 
-    return { ...processInstance, xml: '...', finalToken: token, identity: identity };
+    return { ...processInstance, xml: '...', identity: identity};
   });
 }
 
-async function getToken(processInstanceId: string[], tokenType: string): Promise <any| null>{
- 
+async function decorateProcessInstancesWithExitToken(processInstance: any): Promise <any[]>{
+  const token = await getToken(processInstance.processInstanceId, 'onExit');
+  const processInstanceWithToken = {finalToken: token};
+  processInstance.push(processInstanceWithToken);
+
+  return processInstance;
+}  
+
+async function getToken(processInstanceId: string[], tokenType: string): Promise <any|null>{
   const session = loadAtlasSession();
   const apiClient = new ApiClient(session);
   const flowNodeInstances = await apiClient.getFlowNodeInstancesForProcessInstance(
@@ -171,10 +176,7 @@ async function getToken(processInstanceId: string[], tokenType: string): Promise
   if (tokens == null){
     return null;
   }
-  
   const token = tokens.find((entry) => entry.type === tokenType);
-  console.log(JSON.stringify(token.payload));
-
   return token.payload;
  }
  
