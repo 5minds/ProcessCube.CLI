@@ -39,7 +39,7 @@ export async function listProcessInstances(
     return;
   }
 
-  const processInstances = await getProcessInstances(
+  let processInstances = await getProcessInstances(
     session,
     pipedProcessInstanceIds,
     pipedProcessModelIds,
@@ -59,13 +59,13 @@ export async function listProcessInstances(
     limit
   );
 
-  const processInstanceWithToken = await decorateProcessInstancesWithExitToken(processInstances);
-
+  processInstances = await decorateProcessInstancesWithExitToken(processInstances);
+  
   let resultProcessInstances: any[];
   if (showAllFields) {
-    resultProcessInstances = mapToLong(processInstanceWithToken);
+    resultProcessInstances = mapToLong(processInstances);
   } else {
-    resultProcessInstances = mapToShort(processInstanceWithToken);
+    resultProcessInstances = mapToShort(processInstances);
   }
   let resultJson = createResultJson('process-instances', resultProcessInstances);
   resultJson = addJsonPipingHintToResultJson(resultJson);
@@ -151,20 +151,23 @@ function mapToLong(list: any): any[] {
 function mapToShort(list: any): any[] {
   return list.map((processInstance: any) => {
     const identity = { ...processInstance.identity, token: '...' };
+    const token = {...processInstance.finalToken};
 
-    return { ...processInstance, xml: '...', identity: identity};
+    return { ...processInstance, xml: '...', finalToken: token, identity: identity};
   });
 }
 
-async function decorateProcessInstancesWithExitToken(processInstance: any): Promise <any[]>{
-  const token = await getToken(processInstance.processInstanceId, 'onExit');
-  const processInstanceWithToken = {finalToken: token};
-  processInstance.push(processInstanceWithToken);
+async function decorateProcessInstancesWithExitToken(list: any): Promise <any[]>{
+  return Promise.all(list.map(async(processInstance: any) => {
+    const token = await getToken(processInstance.processInstanceId, 'onExit');
+    //console.log(JSON.stringify(token));
+    const processInstanceWithToken = {...processInstance, finalToken: token};
 
-  return processInstance;
+    return processInstanceWithToken;
+  }));
 }  
 
-async function getToken(processInstanceId: string[], tokenType: string): Promise <any|null>{
+export async function getToken(processInstanceId: string[], tokenType: string): Promise <any|null>{
   const session = loadAtlasSession();
   const apiClient = new ApiClient(session);
   const flowNodeInstances = await apiClient.getFlowNodeInstancesForProcessInstance(
@@ -172,11 +175,10 @@ async function getToken(processInstanceId: string[], tokenType: string): Promise
   );
   const processToken = flowNodeInstances.find((entry) => entry.flowNodeInstanceId);
   const tokens = processToken.tokens;
-
-  if (tokens == null){
+  const token = tokens.find((entry) => entry.type === tokenType);
+  if (token == null){
     return null;
   }
-  const token = tokens.find((entry) => entry.type === tokenType);
   return token.payload;
  }
  
