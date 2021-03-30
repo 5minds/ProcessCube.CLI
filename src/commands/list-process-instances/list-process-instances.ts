@@ -160,7 +160,6 @@ function mapToShort(list: any): any[] {
 async function decorateProcessInstancesWithExitToken(list: any): Promise <any[]>{
   return Promise.all(list.map(async(processInstance: any) => {
     const token = await getToken(processInstance.processInstanceId, 'onExit');
-    //console.log(JSON.stringify(token));
     const processInstanceWithToken = {...processInstance, finalToken: token};
 
     return processInstanceWithToken;
