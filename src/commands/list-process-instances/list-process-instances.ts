@@ -169,7 +169,7 @@ async function decorateProcessInstancesWithExitToken(list: any): Promise <any[]>
 export async function getToken(processInstanceId: string[], tokenType: string): Promise <any|null>{
   const session = loadAtlasSession();
   const apiClient = new ApiClient(session);
-  const flowNodeInstances = await apiClient.getFlowNodeInstancesForProcessInstance(
+  const flowNodeInstances = await apiClient.getFlowNodeInstancesForProcessInstanceIds(
     processInstanceId
   );
   const processToken = flowNodeInstances.find((entry) => entry.flowNodeInstanceId);

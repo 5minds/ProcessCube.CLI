@@ -3,7 +3,7 @@ import { execAsDefault, execAsJson, execAsText } from './exec_as';
 
 describe('atlas', () => {
   it('should work with JSON output', async () => {
-    execAsText('login http://localhost:8000 --root');
+    execAsText('login http://localhost:56000 --root');
 
     execAsJson('session-status');
 
