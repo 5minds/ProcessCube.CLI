@@ -301,7 +301,7 @@ export class ApiClient {
   async getFlowNodeInstancesForProcessInstanceIds(processInstanceIds: string[]): Promise<FlowNodeInstance[]>{
     try {
       const result = await this.atlasEngineClient.flowNodeInstances.queryFlowNodeInstances({
-        processInstanceId: processInstanceId,
+        processInstanceId: processInstanceIds,
       });
       return result.flowNodeInstances;
     } catch (error) {
