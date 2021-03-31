@@ -6,28 +6,23 @@ describe('atlas', () => {
    execAsText('login http://localhost:8000 --root');
  
    execAsJson('session-status');
- 
-   execAsJson('deploy-files fixtures/E-Mail-Adresse-Generieren.bpmn');
 
-   execAsJson('deploy-files fixtures/FinalTokenTest.bpmn');
+   execAsJson('deploy-files fixtures/finalTokenTest.bpmn');
 
-   const result1 = execAsJson('start-process-model E-Mail-Adresse-Generieren StartEvent_1mox3jl --input-values \'{"seconds": 1}\'');
+   const result = execAsJson('start-process-model finalTokenTest StartEvent_1mox3jl --input-values \'{"seconds": 1}\' --wait');
 
-   const result2 = execAsJson('start-process-model FinalTokenTest StartEvent_1mox3jl --input-values \'{"seconds": 1}\' --wait');
+   //const processInstanceId = result?.result[0]?.processInstanceId;
 
-   const processInstanceIdFromResult1 = result1?.result[0]?.processInstanceId;
-   console.log(JSON.stringify(processInstanceIdFromResult1));
+   const correlationId = result?.result[0]?.correlationId;
+   const filterByCorrelationId = execAsJson(`list-process-instances --filter-by-correlation-id ${correlationId}`);
 
-   const token1 = processInstanceIdFromResult1?.result[0]?.token;
-   console.log(JSON.stringify(token1));
+   const currentToken = filterByCorrelationId?.result[0]?.finalToken;
 
-   const processInstanceIdFromResult2 = result2?.result[0]?.processInstanceId;
-
-   const token2 = processInstanceIdFromResult2?.result[0]?.myTestValue;
-
-   assert.ok(token1 == token2, 'Expected');
+   const expectedToken = '{"myTestValue":"test"}';
+   assert.ok(currentToken, expectedToken,);
 
    execAsText('logout');
+
    const session = execAsJson('session-status');
    assert.equal(session.accessToken, null);
 
