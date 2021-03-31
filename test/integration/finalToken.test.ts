@@ -11,17 +11,17 @@ describe('atlas', () => {
 
    const result = execAsJson('start-process-model finalTokenTest StartEvent_1mox3jl --wait');
 
-
    const correlationId = result?.result[0]?.correlationId;
    const processInstances = execAsJson(`list-process-instances --filter-by-correlation-id ${correlationId}`);
 
-   const currentToken = filterByCorrelationId?.result[0]?.finalToken;
+   const currentToken = processInstances?.result[0]?.finalToken;
+   console.log(JSON.stringify(currentToken));
 
-   const expectedToken = '{"myTestValue":"test"}';
+   const expectedToken = {"myTestValue":"test"};
+   console.log(JSON.stringify(expectedToken));
    assert.deepEqual(currentToken, expectedToken);
 
    execAsText('logout');
-
 
  });
 });
