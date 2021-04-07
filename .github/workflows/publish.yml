@@ -3,14 +3,8 @@ name: All CI Tests
 on:
   push:
     branches:
-      - develop
-      - beta
-      - master
-  pull_request:
-    branches:
-      - develop
-      - beta
-      - master
+      - "*"
+      - "*/*"
 
 jobs:
 
