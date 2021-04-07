@@ -5,7 +5,7 @@ on:
 jobs:
   upload_atlas_download_sites_to_azure:
 
-    name: Generate Download Site with Atlas Products and upload them to Azure
+    name: Generate Download Site with Products and upload them to Azure
     runs-on: ubuntu-20.04
 
     steps:
@@ -14,7 +14,7 @@ jobs:
         with:
           node-version: '14'
 
-      - name: "Install Atlas Download Site plugin"
+      - name: "Install Download Site plugin"
         run: npm i -g @atlas-engine/atlasdownloadsite
 
       - name: "Create static html files in outputfolder"

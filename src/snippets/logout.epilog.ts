@@ -11,7 +11,7 @@ const AUTO_GENERATED_FROM_A_MARKDOWN_FILE =
 
 Logging out is simple:
 
-    $ atlas logout
+    $ pc logout
 `;
 //
 // AUTO-GENERATED - READ THIS - AUTO-GENERATED - READ THIS - AUTO-GENERATED

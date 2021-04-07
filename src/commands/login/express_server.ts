@@ -83,11 +83,11 @@ export function startServerToLoginAndWaitForAccessTokenFromIdentityServer(
           `
           # You are now logged in!
 
-          $ atlas list-process-models
+          $ pc list-process-models
 
-          $ atlas list-process-instances
+          $ pc list-process-instances
 
-          $ atlas --help
+          $ pc --help
           `
         )
       );

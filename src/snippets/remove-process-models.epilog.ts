@@ -11,15 +11,15 @@ const AUTO_GENERATED_FROM_A_MARKDOWN_FILE =
 
 To remove a specific process model, provide its process model ID:
 
-    $ atlas remove-process-models Registration.EmailCoupons
+    $ pc remove-process-models Registration.EmailCoupons
 
 Alternatively, use the convenience alias \`remove\`:
 
-    $ atlas remove Registration.EmailCoupons
+    $ pc remove Registration.EmailCoupons
 
 If you don't want to be prompted for confirmation, use \`--yes\`:
 
-    $ atlas remove Registration.EmailCoupons --yes
+    $ pc remove Registration.EmailCoupons --yes
 `;
 //
 // AUTO-GENERATED - READ THIS - AUTO-GENERATED - READ THIS - AUTO-GENERATED

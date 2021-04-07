@@ -2,4 +2,4 @@
 
 Logging out is simple:
 
-    $ atlas logout
+    $ pc logout

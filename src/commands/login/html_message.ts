@@ -15,11 +15,11 @@ ${terminalCode
     if (line.startsWith('#')) {
       return `<span class="comment">${line}</span>`;
     }
-    if (line.startsWith('$ atlas --')) {
-      return `<span class="shell-prompt">$ atlas</span> <span class="shell-option">--${line.substr(10)}</span>`;
+    if (line.startsWith('$ pc --')) {
+      return `<span class="shell-prompt">$ pc</span> <span class="shell-option">--${line.substr(10)}</span>`;
     }
-    if (line.startsWith('$ atlas')) {
-      return `<span class="shell-prompt">$ atlas</span>${line.substr(7)}`;
+    if (line.startsWith('$ pc')) {
+      return `<span class="shell-prompt">$ pc</span>${line.substr(7)}`;
     }
     return line;
   })

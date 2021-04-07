@@ -11,7 +11,7 @@ const AUTO_GENERATED_FROM_A_MARKDOWN_FILE =
 
 To display the current session status:
 
-    $ atlas session-status
+    $ pc session-status
 `;
 //
 // AUTO-GENERATED - READ THIS - AUTO-GENERATED - READ THIS - AUTO-GENERATED

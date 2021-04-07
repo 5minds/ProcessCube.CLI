@@ -2,8 +2,8 @@
 
 ## Vorraussetzungen
 
-* Sie müssen die Atlas CLI installiert haben, siehe [Installationsanleitung Atlas CLI](./install.md).
-* Sie müssen sich zuvor mithilfe der Atlas CLI mit einer Atlas Engine verbunden haben, siehe [Atlas CLI: Verbindung aufbauen](./guideline-CLI-connect.md).
+* Sie müssen die ProcessCube CLI installiert haben, siehe [Installationsanleitung ProcessCube CLI](./install.md).
+* Sie müssen sich zuvor mithilfe der ProcessCube CLI mit einer 5Minds Engine verbunden haben, siehe [ProcessCube CLI: Verbindung aufbauen](./guideline-CLI-connect.md).
 
 ## Vorbereitung
 
@@ -18,10 +18,10 @@ In dem extrahierten Ordner sind mehrere Prozesse und Scripte enthalten. Sie kön
 
 ## Deployment von Prozessmodellen
 
-Um BPMN-Prozesse mit der Atlas Engine ausführen zu können, müssen diese zunächst an die Atlas Engine übertragen werden. Diesen Schritt bezeichnet man als Deployment und er kann mit dem folgenden Befehl ausgeführt werden:
+Um BPMN-Prozesse mit der 5Minds Engine ausführen zu können, müssen diese zunächst an die 5Minds Engine übertragen werden. Diesen Schritt bezeichnet man als Deployment und er kann mit dem folgenden Befehl ausgeführt werden:
 
 ```shell
-atlas deploy-files ./example/Processes/BuchAusleihen_erfolgreich.bpmn
+pc deploy-files ./example/Processes/BuchAusleihen_erfolgreich.bpmn
 ```
 
 Als Ergebnis des Befehls wird zu dem deployten BPMN die `process_model_id` angezeigt:
@@ -35,7 +35,7 @@ Die `process_model_id` ist fest im BPMN hinterlegt und gleicht häufig dem Namen
 Sie können sich vergewissern, welche Prozessmodelle deployed wurden, indem Sie sich alle deployten Prozessmodelle auflisten lassen. Dies können Sie mit dem folgenden Befehl realisieren:
 
 ```shell
-atlas list-process-models
+pc list-process-models
 ```
 
 Als Ergebnis werden alle deployten Prozessmodelle angezeigt:
@@ -47,7 +47,7 @@ Als Ergebnis werden alle deployten Prozessmodelle angezeigt:
 Nachdem das Prozessmodel deployt ist, können Sie eine Prozess-Instanz starten. Dies können Sie mit dem Befehl `start-process-model` realisieren, indem Sie die `process_model_id` als Parameter übergeben:
 
 ```shell
-atlas start-process-model BuchAusleihen_erfolgreich
+pc start-process-model BuchAusleihen_erfolgreich
 ```
 
 Es folgt eine tabellarische Ausgabe der Eigenschaften der gestarteten Prozess-Instanz innerhalb der Konsole:
@@ -65,7 +65,7 @@ Die angezeigte `processInstanceId` ist für jede Prozess-Instanz eindeutig.
 Im Abschnitt [Starten von Prozess-Instanzen](#Starten-von-Prozess-Instanzen) haben Sie eine Prozess-Instanz gestartet. In diesem Abschnitt soll die gestartete Prozess-Instanz angezeigt werden. Dies können Sie mit folgendem Kommando ausführen:
 
 ```shell
-atlas show-process-instance 08a0845e-3537-4510-a568-58ee671a6a5d
+pc show-process-instance 08a0845e-3537-4510-a568-58ee671a6a5d
 ```
 
 ---
@@ -97,7 +97,7 @@ Mit diesem Befehl werden die Prozessmodelle "BuchAusleihen_erfolgreich", "BuchAu
 Um sich die gestarteten Prozess-Instanzen anzeigen zu lassen, können Sie den folgenden Befehl ausführen:
 
 ```shell
-atlas list-process-instances
+pc list-process-instances
 ```
 
 Als Ergebnis erhalten Sie eine tabellarische Auflistung aller Prozess-Instanzen:
@@ -116,12 +116,12 @@ Es existiert noch der Status "terminated", der jedoch für dieses Beispiel irrel
 
 ---
 
-Die Atlas CLI bietet die Möglichkeit nach spezifischen Merkmalen von Prozess-Instanzen zu filtern, die auch in der integrierten Hilfe `atlas list-process-instances --help` detailliert beschrieben werden. In den folgenden Abschnitten lernen Sie einige dieser Filtermöglichkeiten kennen.
+Die ProcessCube CLI bietet die Möglichkeit nach spezifischen Merkmalen von Prozess-Instanzen zu filtern, die auch in der integrierten Hilfe `pc list-process-instances --help` detailliert beschrieben werden. In den folgenden Abschnitten lernen Sie einige dieser Filtermöglichkeiten kennen.
 
 ### Filtern nach fehlgeschlagenen Prozess-Instanzen
 
 ```shell
-atlas list-process-instances --filter-by-state error
+pc list-process-instances --filter-by-state error
 ```
 
 Als Ergebnis erhalten Sie eine tabellarische Auflistung aller Prozess-Instanzen im Status `error`:
@@ -131,7 +131,7 @@ Als Ergebnis erhalten Sie eine tabellarische Auflistung aller Prozess-Instanzen 
 ### Filtern nach erfolgreicher Prozess-Instanzen
 
 ```shell
-atlas list-process-instances --filter-by-state finished
+pc list-process-instances --filter-by-state finished
 ```
 
 Als Ergebnis erhalten Sie eine tabellarische Auflistung aller Prozess-Instanzen im Status `finished`:
@@ -141,7 +141,7 @@ Als Ergebnis erhalten Sie eine tabellarische Auflistung aller Prozess-Instanzen 
 ### Filtern nach laufenden Prozess-Instanzen
 
 ```shell
-atlas list-process-instances --filter-by-state running
+pc list-process-instances --filter-by-state running
 ```
 
 Als Ergebnis erhalten Sie eine tabellarische Auflistung aller Prozess-Instanzen im Status `running`:
@@ -154,19 +154,19 @@ Wenn zum Beispiel ein Service der aus dem Prozess aufgerufen wird kurzzeitig nic
 
 ### Wiederholen einzelner Prozess-Instanzen
 
-Um einzelne Prozess-Instanzen zu wiederholen, müssen Sie zunächst die `processInstanceId` identifizieren, die Sie fortsetzen möchten. Dazu können Sie wie im Abschnitt [Filtern nach fehlgeschlagenen Prozess-Instanzen](#Filtern-nach-fehlgeschlagenen-Prozess-Instanzen) beschrieben vorgehen. Die `processInstanceId` wird als Parameter für den Befehl `atlas retry-process-instance` benötigt.
+Um einzelne Prozess-Instanzen zu wiederholen, müssen Sie zunächst die `processInstanceId` identifizieren, die Sie fortsetzen möchten. Dazu können Sie wie im Abschnitt [Filtern nach fehlgeschlagenen Prozess-Instanzen](#Filtern-nach-fehlgeschlagenen-Prozess-Instanzen) beschrieben vorgehen. Die `processInstanceId` wird als Parameter für den Befehl `pc retry-process-instance` benötigt.
 
 ```shell
-atlas retry-process-instance aa3db49e-c9ee-4c04-ac26-026ed31028db
+pc retry-process-instance aa3db49e-c9ee-4c04-ac26-026ed31028db
 ```
 
 ### Wiederholen aller Prozess-Instanzen
 
-Ergebnisse von Befehlen können mithilfe der Atlas CLI auch als Eingangsparameter in andere Befehle mithilfe des Pipe-Operators (`|`) umgeleitet werden. Erforderlich hierfür ist, dass die Eingabe an den Folgebefehl im JSON-Format übergeben wird. Dies können Sie realisieren, indem Sie am vorangegangen Befehl das Ausgabeformat mithilfe der `--output`-Option festlegen.
+Ergebnisse von Befehlen können mithilfe der ProcessCube CLI auch als Eingangsparameter in andere Befehle mithilfe des Pipe-Operators (`|`) umgeleitet werden. Erforderlich hierfür ist, dass die Eingabe an den Folgebefehl im JSON-Format übergeben wird. Dies können Sie realisieren, indem Sie am vorangegangen Befehl das Ausgabeformat mithilfe der `--output`-Option festlegen.
 So ist es möglich zunächst alle fehlgeschlagenen Prozess-Instanzen zu ermitteln und diese im Anschluss zu wiederholen:
 
 ```shell
-atlas list-process-instances --filter-by-state error --output json | atlas retry-process-instance
+pc list-process-instances --filter-by-state error --output json | pc retry-process-instance
 ```
 
 Unabhängig davon, ob Sie eine einzelne oder alle fehlgeschlagenen Prozess-Instanzen wiederholt haben, wird folgende Ausgabe angezeigt:

@@ -3,7 +3,7 @@ import { execAsDefault, execAsJson, execAsText } from './exec_as';
 
 describe('atlas', () => {
   it('should work with JSON output', async () => {
-    execAsText('login http://localhost:8000 --root');
+    execAsText('login http://localhost:10560 --root');
 
     execAsJson('session-status');
 
@@ -40,7 +40,7 @@ describe('atlas', () => {
   });
 
   it('should work with text output', async () => {
-    execAsText('login http://localhost:8000 --root');
+    execAsText('login http://localhost:10560 --root');
 
     execAsText('session-status');
 
@@ -76,7 +76,7 @@ describe('atlas', () => {
   it('should work with help output', async () => {
     execAsText('--help');
 
-    execAsText('login http://localhost:8000 --root --help');
+    execAsText('login http://localhost:10560 --root --help');
 
     execAsText('session-status --help');
 
@@ -106,13 +106,13 @@ describe('atlas', () => {
   it('should fail and show help output if no or invalid command was given', async () => {
     try {
       execAsDefault('');
-    } catch(error) {
+    } catch (error) {
       assert.ok(error.message.includes(execAsDefault('--help')));
     }
 
     try {
       execAsDefault('nonexistingcommand');
-    } catch(error) {
+    } catch (error) {
       assert.ok(error.message.includes(execAsDefault('--help')));
     }
   });
