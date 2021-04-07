@@ -2,7 +2,8 @@ import chalk from 'chalk';
 import * as moment from 'moment';
 
 import { AtlasSession, loadAtlasSession } from '../../session/atlas_session';
-import { logWarning } from '../../cli/logging';
+import { logJsonResult, logWarning } from '../../cli/logging';
+import { addJsonPipingHintToResultJson } from '../../cli/result_json';
 
 import { OUTPUT_FORMAT_JSON, OUTPUT_FORMAT_TEXT } from '../../pc';
 
@@ -22,7 +23,7 @@ export async function printSessionStatus(outputFormat: string): Promise<void> {
 
   switch (outputFormat) {
     case OUTPUT_FORMAT_JSON:
-      console.log(JSON.stringify(sanitizeSensibleInformation(session), null, 2));
+      logJsonResult(addJsonPipingHintToResultJson(sanitizeSensibleInformation(session)));
       break;
     case OUTPUT_FORMAT_TEXT:
       log(session);
