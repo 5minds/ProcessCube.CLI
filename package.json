@@ -6,7 +6,7 @@
   "scripts": {
     "clean": "rm -rf dist",
     "reinstall": "./reinstall.sh",
-    "build": "npm run clean && npm run build:md-snippets && tsc",
+    "build": "esbuild src/pc.ts --bundle --outfile=dist/pc.js --platform=node --loader:.md=text",
     "build:md-snippets": "ts-node convert-md-files-to-typescript.ts \"src/**/snippets/*.md\"",
     "lint": "eslint \"src/**/*.ts\"",
     "test": "npm run test:unit",
@@ -32,6 +32,7 @@
     "chalk": "^2.4.2",
     "commander": "^4.1.1",
     "compare-versions": "^3.4.0",
+    "esbuild": "^0.11.5",
     "express": "^4.17.1",
     "glob": "^7.1.6",
     "json5": "^2.1.1",

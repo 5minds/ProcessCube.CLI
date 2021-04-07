@@ -1,4 +1,4 @@
-import * as yesno from 'yesno';
+import yesno from 'yesno';
 
 import { loadAtlasSession } from '../../session/atlas_session';
 import { createResultJson } from '../../cli/result_json';

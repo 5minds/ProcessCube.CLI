@@ -1,4 +1,4 @@
-import * as moment from 'moment';
+import moment from 'moment';
 
 import { toFilterRegexes } from '../cli/filter_regexes';
 
@@ -91,17 +91,19 @@ export function filterProcessInstancesByProcessModelId(
 export function filterUserTasksByFlowNodeInstanceId(
   processInstances: FilterableProcessInstance[],
   filterByFlowNodeInstanceId: string[]
-  ): any[] {
-    if (filterByFlowNodeInstanceId.length === 0) {
-      return processInstances;
-    }
+): any[] {
+  if (filterByFlowNodeInstanceId.length === 0) {
+    return processInstances;
+  }
 
-    const filterRegexes = toFilterRegexes(filterByFlowNodeInstanceId);
+  const filterRegexes = toFilterRegexes(filterByFlowNodeInstanceId);
 
-    return processInstances.filter((processInstance: FilterableProcessInstance) => {
-      const anyFilterMatched = filterRegexes.some((regex: RegExp) => processInstance.flowNodeInstanceId.match(regex) != null);
-      return anyFilterMatched;
-    })
+  return processInstances.filter((processInstance: FilterableProcessInstance) => {
+    const anyFilterMatched = filterRegexes.some(
+      (regex: RegExp) => processInstance.flowNodeInstanceId.match(regex) != null
+    );
+    return anyFilterMatched;
+  });
 }
 
 export function rejectProcessInstancesByProcessModelId(
@@ -141,19 +143,16 @@ export function filterProcessInstancesByEndTimeAfter(
     return processInstances;
   }
   if (!moment(completedAfter).isValid()) {
-
     throw new Error(`Invalid date format '${completedAfter}'! Please enter a valid date format.`);
   }
   const afterDate = moment(completedAfter);
 
   return processInstances.filter((processInstance: FilterableProcessInstance) => {
-
     if (!processInstance['finishedAt']) {
       return false;
     }
-    
+
     return moment(processInstance['finishedAt']).isAfter(afterDate);
-  
   });
 }
 
@@ -164,53 +163,52 @@ export function filterProcessInstancesByEndTimeBefore(
   if (completedBefore == null) {
     return processInstances;
   }
-  if (!moment(completedBefore).isValid()){
-
+  if (!moment(completedBefore).isValid()) {
     throw new Error(`Invalid date format '${completedBefore}'! Please enter a valid date format.`);
   }
 
   const beforeDate = moment(completedBefore);
 
   return processInstances.filter((processInstance: FilterableProcessInstance) => {
-
     if (!processInstance['finishedAt']) {
       return false;
     }
-    
+
     return moment(processInstance['finishedAt']).isBefore(beforeDate);
-  
   });
-  
 }
 
 export function filterProcessInstancesByExecutionTime(
   processInstances: FilterableProcessInstance[],
   filterByExecutionTime: string
 ): any[] {
+  if (filterByExecutionTime == null) {
+    return processInstances;
+  }
+  const regexExecutionTime = /([<]|[>]) *([ 0-9]{1,}) *([smhd])/g;
+  const executionTimeMatches = regexExecutionTime.exec(filterByExecutionTime);
 
-    if (filterByExecutionTime == null) {
-      return processInstances;
-    }
-      const regexExecutionTime = /([<]|[>]) *([ 0-9]{1,}) *([smhd])/g;
-      const executionTimeMatches = regexExecutionTime.exec(filterByExecutionTime);
+  if (executionTimeMatches == null) {
+    throw new Error(
+      `Unable to parse completed-in parameter '${filterByExecutionTime}'. Format has to be "[<|>] [TIME] [d|h|m|s]". Please refer to 'lsi --help' for more detailed information.`
+    );
+  }
 
-      if (executionTimeMatches == null){
-        throw new Error(`Unable to parse completed-in parameter '${filterByExecutionTime}'. Format has to be "[<|>] [TIME] [d|h|m|s]". Please refer to 'lsi --help' for more detailed information.`);
-      }
-      
-      const parsedComparisonType = executionTimeMatches[1];
+  const parsedComparisonType = executionTimeMatches[1];
 
-      const parsedTime = executionTimeMatches[2];
-      const time = parseInt(parsedTime);
+  const parsedTime = executionTimeMatches[2];
+  const time = parseInt(parsedTime);
 
-      const parsedUnitOfTime = executionTimeMatches[3];
-      const unitOfTime = getUnitOfTimeForAbbreviation(parsedUnitOfTime);
- 
-      return processInstances.filter((processInstance: FilterableProcessInstance) => isCompletedIn(processInstance, parsedComparisonType, time, unitOfTime));  
+  const parsedUnitOfTime = executionTimeMatches[3];
+  const unitOfTime = getUnitOfTimeForAbbreviation(parsedUnitOfTime);
+
+  return processInstances.filter((processInstance: FilterableProcessInstance) =>
+    isCompletedIn(processInstance, parsedComparisonType, time, unitOfTime)
+  );
 }
 
 function getUnitOfTimeForAbbreviation(abbreviation: string): moment.unitOfTime.Diff {
-  switch(abbreviation) {
+  switch (abbreviation) {
     case 'd':
       return 'days';
     case 'h':
@@ -222,7 +220,12 @@ function getUnitOfTimeForAbbreviation(abbreviation: string): moment.unitOfTime.D
   }
 }
 
-function isCompletedIn(processInstance: FilterableProcessInstance, comparisonType: string, time: number, unitOfTime: moment.unitOfTime.Diff): boolean {
+function isCompletedIn(
+  processInstance: FilterableProcessInstance,
+  comparisonType: string,
+  time: number,
+  unitOfTime: moment.unitOfTime.Diff
+): boolean {
   if (comparisonType === '>') {
     return moment(processInstance.createdAt)
       .add(time, unitOfTime)
@@ -231,7 +234,7 @@ function isCompletedIn(processInstance: FilterableProcessInstance, comparisonTyp
     return moment(processInstance.createdAt)
       .add(time, unitOfTime)
       .isAfter(processInstance.finishedAt);
-  } 
+  }
 
   throw new Error(`Unknown comparison type: '${comparisonType}'. It should be > or <.`);
 }

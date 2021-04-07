@@ -1,5 +1,5 @@
 import chalk from 'chalk';
-import * as marked from 'marked';
+import marked from 'marked';
 import { MarkdownRenderer } from './MarkdownRenderer';
 
 const HTML_ENTITY_REGEX = /&(#(?:\d+)|(?:#x[0-9A-Fa-f]+)|(?:\w+));?/gi;
