@@ -1,10 +1,14 @@
-name: Node CI
+name: All CI Tests
 
 on:
   push:
     branches:
-      - "*"
-      - "*/*"
+      - develop
+      - beta
+      - master
+  pull_request:
+    branches:
+      - develop
 
 jobs:
 
@@ -14,9 +18,9 @@ jobs:
 
     services:
       atlas_engine:
-        image: 5minds/atlas_engine_fullstack_server:11
+        image: 5minds/atlas_engine_fullstack_server:12
         ports:
-        - 8000:8000
+        - 10560:10560
         options: --health-cmd true --health-interval 10s --health-timeout 5s --health-retries 5
 
     steps:
