@@ -16,10 +16,10 @@ ${terminalCode
       return `<span class="comment">${line}</span>`;
     }
     if (line.startsWith('$ pc --')) {
-      return `<span class="shell-prompt">$ pc</span> <span class="shell-option">--${line.substr(10)}</span>`;
+      return `<span class="shell-prompt">$ pc</span> <span class="shell-option">--${line.substr(7)}</span>`;
     }
     if (line.startsWith('$ pc')) {
-      return `<span class="shell-prompt">$ pc</span>${line.substr(7)}`;
+      return `<span class="shell-prompt">$ pc</span>${line.substr(4)}`;
     }
     return line;
   })
