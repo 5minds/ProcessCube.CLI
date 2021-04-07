@@ -9,15 +9,15 @@ export function logJsonResult(result: any): void {
 }
 
 export function logError(error: string): void {
-  console.warn(chalk.redBright.bold(`** (Atlas) ${error}`));
+  console.warn(chalk.redBright.bold(`** (pc) ${error}`));
 }
 
 export function logNoValidSessionError(): void {
-  logError('No session found. Please use `atlas login <engine_url>` to log in.');
+  logError('No session found. Please use `pc login <engine_url>` to log in.');
 }
 
 export function logWarning(warning: string): void {
-  console.warn(chalk.yellowBright(`** (Atlas) ${warning}`));
+  console.warn(chalk.yellowBright(`** (pc) ${warning}`));
 }
 
 export function logMultiline(text: string): void {

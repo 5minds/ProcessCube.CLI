@@ -2,7 +2,7 @@ import * as yesno from 'yesno';
 
 import { loadAtlasSession } from '../../session/atlas_session';
 import { createResultJson } from '../../cli/result_json';
-import { OUTPUT_FORMAT_JSON, OUTPUT_FORMAT_TEXT } from '../../atlas';
+import { OUTPUT_FORMAT_JSON, OUTPUT_FORMAT_TEXT } from '../../pc';
 import { logError, logJsonResult } from '../../cli/logging';
 import { ApiClient } from '../../client/api_client';
 

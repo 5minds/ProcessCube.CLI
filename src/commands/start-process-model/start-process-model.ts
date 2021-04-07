@@ -3,7 +3,7 @@ import { addJsonPipingHintToResultJson, createResultJson } from '../../cli/resul
 import { loadAtlasSession } from '../../session/atlas_session';
 import { logError, logJsonResult } from '../../cli/logging';
 
-import { OUTPUT_FORMAT_JSON, OUTPUT_FORMAT_TEXT } from '../../atlas';
+import { OUTPUT_FORMAT_JSON, OUTPUT_FORMAT_TEXT } from '../../pc';
 
 export async function startProcessInstance(
   pipedProcessModelIds: string[] | null,
@@ -71,7 +71,7 @@ async function getSingleStartEventIdOrNull(apiClient: ApiClient, processModelId:
   const processModels = await apiClient.getProcessModelsByIds([processModelId]);
   const processModel = processModels[0];
   if (processModel == null) {
-    logError('No process model with the id "'+ processModelId + '" was found. Please check the spelling.');
+    logError('No process model with the id "' + processModelId + '" was found. Please check the spelling.');
     process.exit(1);
   }
   if (processModel.startEvents.length === 1) {

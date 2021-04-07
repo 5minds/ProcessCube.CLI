@@ -3,7 +3,7 @@ import { execSync } from 'child_process';
 
 import * as JSON5 from 'json5';
 
-const ATLAS_EXECUTABLE = 'node ./dist/atlas.js';
+const ATLAS_EXECUTABLE = 'node ./dist/pc.js';
 
 export function execAsJson(cmd: string): any {
   console.log(cmd);

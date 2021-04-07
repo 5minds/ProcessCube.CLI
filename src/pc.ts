@@ -45,10 +45,10 @@ const VERSION = require('../package.json').version;
 const usageString = (commandName: string, synopsis: string): string => {
   return heading('USAGE') + `\n  $0 ${commandName} [options]\n\n` + heading('SYNOPSIS') + `\n  ${synopsis}`;
 };
-  
+
 program
   .version(VERSION)
-  .scriptName('atlas')
+  .scriptName('pc')
 
   .option('help', {
     alias: 'h',
@@ -495,75 +495,75 @@ program
     'Lists, sorts and filters user tasks by state and/or process model from the connected engine.',
     (yargs) => {
       return yargs
-          .usage(
-            usageString(
-              'list-user-tasks',
-              'Lists, sorts and filters user tasks by state and/or process model from the connected engine.'
-            )
+        .usage(
+          usageString(
+            'list-user-tasks',
+            'Lists, sorts and filters user tasks by state and/or process model from the connected engine.'
           )
-          .option('filter-by-correlation-id', {
-            description: 'Filter user tasks by <correlationId>',
-            type: 'array',
-            default: []
-          })
-          .option('filter-by-process-model-id', {
-            description: 'Filter user tasks by <pattern> (supports regular expressions)',
-            type: 'array',
-            default: []
-          })
-          .option('reject-by-process-model-id', {
-            description: 'Reject user tasks by <pattern> (supports regular expressions)',
-            type: 'array',
-            default: []
-          })
-          .option('filter-by-state', {
-            description: 'Filter user tasks by <state> (running, finished, error)',
-            type: 'array',
-            default: []
-          })
-          .option('filter-by-flow-node-instance-id', {
-            description: 'Filter user tasks by <flowNodeInstanceId>',
-            type: 'array',
-            default: []
-          })
-          .option('reject-by-state', {
-            description: 'Reject user tasks by <state> (running, finished, error)',
-            type: 'array',
-            default: []
-          })
-          .option('sort-by-process-model-id', {
-            description: 'Sort user tasks by their process model id in <direction> (asc, desc)',
-            type: 'string',
-            choices: ['', 'asc', 'desc']
-          })
-          .option('sort-by-state', {
-            description: 'Sort user tasks by their state in <direction> (asc, desc)',
-            type: 'string',
-            choices: ['', 'asc', 'desc']
-          })
-          .option('limit', {
-            description: 'List a maximum of <limit> process instances',
-            type: 'number'
-          })
-          .option('all-fields', {
-            alias: 'F',
-            description: 'Show all fields',
-            type: 'boolean',
-            default: false
-          })
-          .group(
-            [
-              'filter-by-correlation-id',
-              'filter-by-process-model-id',
-              'filter-by-state',
-              'reject-by-process-model-id',
-              'reject-by-state'
-            ],
-            heading('FILTERING OPTIONS')
-          )
-          .group(['sort-by-process-model-id', 'sort-by-state', 'limit'], heading('SORTING OPTIONS'))
-          .group(['all-fields', 'output'], heading('OUTPUT OPTIONS'))
-          .epilog(formatHelpText(epilogSnippetListUserTasks));
+        )
+        .option('filter-by-correlation-id', {
+          description: 'Filter user tasks by <correlationId>',
+          type: 'array',
+          default: []
+        })
+        .option('filter-by-process-model-id', {
+          description: 'Filter user tasks by <pattern> (supports regular expressions)',
+          type: 'array',
+          default: []
+        })
+        .option('reject-by-process-model-id', {
+          description: 'Reject user tasks by <pattern> (supports regular expressions)',
+          type: 'array',
+          default: []
+        })
+        .option('filter-by-state', {
+          description: 'Filter user tasks by <state> (running, finished, error)',
+          type: 'array',
+          default: []
+        })
+        .option('filter-by-flow-node-instance-id', {
+          description: 'Filter user tasks by <flowNodeInstanceId>',
+          type: 'array',
+          default: []
+        })
+        .option('reject-by-state', {
+          description: 'Reject user tasks by <state> (running, finished, error)',
+          type: 'array',
+          default: []
+        })
+        .option('sort-by-process-model-id', {
+          description: 'Sort user tasks by their process model id in <direction> (asc, desc)',
+          type: 'string',
+          choices: ['', 'asc', 'desc']
+        })
+        .option('sort-by-state', {
+          description: 'Sort user tasks by their state in <direction> (asc, desc)',
+          type: 'string',
+          choices: ['', 'asc', 'desc']
+        })
+        .option('limit', {
+          description: 'List a maximum of <limit> process instances',
+          type: 'number'
+        })
+        .option('all-fields', {
+          alias: 'F',
+          description: 'Show all fields',
+          type: 'boolean',
+          default: false
+        })
+        .group(
+          [
+            'filter-by-correlation-id',
+            'filter-by-process-model-id',
+            'filter-by-state',
+            'reject-by-process-model-id',
+            'reject-by-state'
+          ],
+          heading('FILTERING OPTIONS')
+        )
+        .group(['sort-by-process-model-id', 'sort-by-state', 'limit'], heading('SORTING OPTIONS'))
+        .group(['all-fields', 'output'], heading('OUTPUT OPTIONS'))
+        .epilog(formatHelpText(epilogSnippetListUserTasks));
     },
     async (argv: any) => {
       const stdinPipeReader = await StdinPipeReader.create();
@@ -594,12 +594,7 @@ program
     'Finish a suspended instance of an user task',
     (yargs) => {
       return yargs
-        .usage(
-          usageString(
-            'finish-user-task [flowNodeInstanceId]',
-            'Finish a suspended instance of an user task.'
-          )
-        )
+        .usage(usageString('finish-user-task [flowNodeInstanceId]', 'Finish a suspended instance of an user task.'))
         .positional('flowNodeInstanceId', {
           description: 'ID of user task to finish'
         })
@@ -616,7 +611,7 @@ program
     async (argv: any) => {
       const stdinPipeReader = await StdinPipeReader.create();
       const flowNodeInstanceId = stdinPipeReader.getPipedFlowNodeInstanceIds()?.[0] || argv.flowNodeInstanceId;
-      
+
       if (stdinPipeReader.getPipedFlowNodeInstanceIds()?.length > 1) {
         console.log('Warning: Only using first piped flowNodeInstanceId from stdin to finish user task.');
       }
@@ -640,7 +635,7 @@ program
     heading('USAGE') +
       '\n  $0 <command> [options]\n\n' +
       heading('SYNOPSIS') +
-      '\n  Atlas CLI provides a rich interface to deploy and start process models as well as manage and inspect process instances and correlations for both ProcessEngine and AtlasEngine.'
+      '\n  ProcessCube CLI provides a rich interface to deploy and start process models as well as manage and inspect process instances and correlations for 5Minds Engine.'
   )
   .epilog(formatHelpText(epilogSnippetAtlas))
   .locale('en')

@@ -1,6 +1,6 @@
 import * as assert from 'assert';
 
-describe('atlas', () => {
+describe('pc', () => {
   it('should be equal', () => {
     assert.ok(true);
   });

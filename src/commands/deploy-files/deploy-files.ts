@@ -7,7 +7,7 @@ import { ApiClient } from '../../client/api_client';
 import { addJsonPipingHintToResultJson, createResultJson } from '../../cli/result_json';
 import { loadAtlasSession } from '../../session/atlas_session';
 import { logError, logJsonResult } from '../../cli/logging';
-import { OUTPUT_FORMAT_JSON, OUTPUT_FORMAT_TEXT } from '../../atlas';
+import { OUTPUT_FORMAT_JSON, OUTPUT_FORMAT_TEXT } from '../../pc';
 
 export async function deployFiles(globPatterns: string[], outputFormat: string): Promise<void> {
   const session = loadAtlasSession();

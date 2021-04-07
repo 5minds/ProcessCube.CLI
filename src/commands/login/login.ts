@@ -59,8 +59,8 @@ export async function login(
       }
     }
   }
-  
-  const engineUrlIsAvailable = await isUrlAvailable(engineUrl)
+
+  const engineUrlIsAvailable = await isUrlAvailable(engineUrl);
   let newSession: AtlasSession;
   if (tryAnonymousRootLogin && engineUrlIsAvailable == true) {
     newSession = await loginViaAnonymousRootAccess(engineUrl);
@@ -85,7 +85,6 @@ export async function login(
 }
 
 async function loginViaAnonymousRootAccess(engineUrl: string): Promise<AtlasSession> {
-
   const newSession: AtlasSession = {
     type: 'session',
     engineUrl: engineUrl,
@@ -113,7 +112,7 @@ async function loginViaIdentityServer(engineUrl: string): Promise<AtlasSession |
         chalk.redBright.bold(`If you're in a development setting, your engine might also allow anonymous root access:`)
       );
       console.warn('');
-      console.warn(chalk.redBright.bold(`  $ atlas login ${engineUrl} --root`));
+      console.warn(chalk.redBright.bold(`  $ pc login ${engineUrl} --root`));
       console.warn('');
       console.warn(
         chalk.redBright.bold(`If you're in a production setting, you should avoid enabling anonymous root access.`)

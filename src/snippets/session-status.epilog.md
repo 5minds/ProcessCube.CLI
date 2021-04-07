@@ -2,4 +2,4 @@
 
 To display the current session status:
 
-    $ atlas session-status
+    $ pc session-status
