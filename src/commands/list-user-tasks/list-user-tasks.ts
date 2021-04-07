@@ -22,7 +22,6 @@ export async function listUserTasks(
   sortByProcessModelId: string,
   sortByState: string,
   limit: number,
-  showAllFields: boolean,
   outputFormat: string
 ) {
   const session = loadAtlasSession();

@@ -492,7 +492,7 @@ program
 
   .command(
     ['list-user-tasks', 'lut'],
-    'Lists, sorts and filters user tasks by state and/or process model from the connected engine.',
+    'List, sort and filter user tasks by state and/or process model',
     (yargs) => {
       return yargs
         .usage(
@@ -542,14 +542,8 @@ program
           choices: ['', 'asc', 'desc']
         })
         .option('limit', {
-          description: 'List a maximum of <limit> process instances',
+          description: 'List a maximum of <limit> user tasks',
           type: 'number'
-        })
-        .option('all-fields', {
-          alias: 'F',
-          description: 'Show all fields',
-          type: 'boolean',
-          default: false
         })
         .group(
           [
@@ -571,6 +565,7 @@ program
       const pipedProcessModelIds = stdinPipeReader.getPipedProcessModelIds();
       const sortByProcessModelId = argv.sortByProcessModelId === '' ? 'asc' : argv.sortByProcessModelId;
       const sortByState = argv.sortByState === '' ? 'asc' : argv.sortByState;
+
       listUserTasks(
         pipedProcessInstanceIds,
         pipedProcessModelIds,
@@ -583,7 +578,6 @@ program
         sortByProcessModelId,
         sortByState,
         argv.limit,
-        argv.allFields,
         argv.output
       );
     }
@@ -591,10 +585,10 @@ program
 
   .command(
     ['finish-user-task [flowNodeInstanceId]', 'finish'],
-    'Finish a suspended instance of an user task',
+    'Finish a given user task',
     (yargs) => {
       return yargs
-        .usage(usageString('finish-user-task [flowNodeInstanceId]', 'Finish a suspended instance of an user task.'))
+        .usage(usageString('finish-user-task [flowNodeInstanceId]', 'Finishes a given user task.'))
         .positional('flowNodeInstanceId', {
           description: 'ID of user task to finish'
         })

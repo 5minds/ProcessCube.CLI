@@ -1,18 +1,18 @@
 ## EXAMPLES
 
-To finish a user task, provide its flow node instance id:
+To finish a user task, provide its flow node instance ID:
 
     $ pc finish-user-task 23f4b54a-a7ef-462c-9afc-707fdd3592ec
 
-Providing result values with --result:
+Providing result values with `--result`:
 
-    $ pc finish-user-task  23f4b54a-a7ef-462c-9afc-707fdd3592ec --result '{"firstName": "Max", "lastName": "Mustermann"}'
+    $ pc finish-user-task 23f4b54a-a7ef-462c-9afc-707fdd3592ec --result '{"firstName": "Max", "lastName": "Mustermann"}'
 
-Providing result values from a JSON file can be achieved with --result-from-file:
+Providing result values from a JSON file can be achieved with `--result-from-file`:
 
-    $ pc finish-user-task  23f4b54a-a7ef-462c-9afc-707fdd3592ec --result-from-file result.json
+    $ pc finish-user-task 23f4b54a-a7ef-462c-9afc-707fdd3592ec --result-from-file result.json
 
-... or by simply piping a JSON file into the process.
+Or by simply piping a JSON file into the process:
 
     $ cat result.json | pc finish-user-task 23f4b54a-a7ef-462c-9afc-707fdd3592ec
 

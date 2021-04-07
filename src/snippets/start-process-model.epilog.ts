@@ -21,7 +21,7 @@ Setting a specific correlation ID with \`--correlation-id\`:
 
     $ pc start Registration.EmailCoupons StartEvent_1 --correlation-id "my-correlation-id-1234"
 
-Waiting for the process to finish before exiting the CLI:
+Waiting for the process to finish before exiting the CLI with \`--wait\`:
 
     $ pc start Registration.EmailCoupons StartEvent_1 --wait
 
