@@ -4,7 +4,7 @@ import * as moment from 'moment';
 import { AtlasSession, loadAtlasSession } from '../../session/atlas_session';
 import { logWarning } from '../../cli/logging';
 
-import { OUTPUT_FORMAT_JSON, OUTPUT_FORMAT_TEXT } from '../../atlas';
+import { OUTPUT_FORMAT_JSON, OUTPUT_FORMAT_TEXT } from '../../pc';
 
 export async function printSessionStatus(outputFormat: string): Promise<void> {
   const session = loadAtlasSession(true);

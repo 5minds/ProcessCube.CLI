@@ -1,12 +1,17 @@
-import { DataModels } from '@process-engine/management_api_contracts';    
+import { DataModels } from '@process-engine/management_api_contracts';
 
 import { ApiClient } from '../../client/api_client';
 import { AtlasSession, loadAtlasSession } from '../../session/atlas_session';
 import { addJsonPipingHintToResultJson, createResultJson } from '../../cli/result_json';
-import { filterProcessInstancesByEndTimeAfter, filterProcessInstancesByEndTimeBefore, filterProcessInstancesByExecutionTime, 
-  filterProcessInstancesDateAfter, filterProcessInstancesDateBefore} from '../../client/filtering';
+import {
+  filterProcessInstancesByEndTimeAfter,
+  filterProcessInstancesByEndTimeBefore,
+  filterProcessInstancesByExecutionTime,
+  filterProcessInstancesDateAfter,
+  filterProcessInstancesDateBefore
+} from '../../client/filtering';
 import { logJsonResult, logNoValidSessionError } from '../../cli/logging';
-import { OUTPUT_FORMAT_JSON, OUTPUT_FORMAT_TEXT } from '../../atlas';
+import { OUTPUT_FORMAT_JSON, OUTPUT_FORMAT_TEXT } from '../../pc';
 import { sortProcessInstances } from './sorting';
 
 export type ProcessInstance = DataModels.Correlations.ProcessInstance;

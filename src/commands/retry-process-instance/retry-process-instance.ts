@@ -2,7 +2,7 @@ import { RetriedProcessInstanceInfo } from '../../contracts/api_client_types';
 
 import { addJsonPipingHintToResultJson, createResultJson } from '../../cli/result_json';
 import { loadAtlasSession } from '../../session/atlas_session';
-import { OUTPUT_FORMAT_JSON, OUTPUT_FORMAT_TEXT } from '../../atlas';
+import { OUTPUT_FORMAT_JSON, OUTPUT_FORMAT_TEXT } from '../../pc';
 import { logError, logJsonResult } from '../../cli/logging';
 import { ApiClient } from '../../client/api_client';
 

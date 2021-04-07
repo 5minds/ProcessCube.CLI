@@ -3,7 +3,7 @@ import { addJsonPipingHintToResultJson, createResultJson } from '../../cli/resul
 import { loadAtlasSession } from '../../session/atlas_session';
 import { logError, logJsonResult } from '../../cli/logging';
 
-import { OUTPUT_FORMAT_JSON, OUTPUT_FORMAT_TEXT } from '../../atlas';
+import { OUTPUT_FORMAT_JSON, OUTPUT_FORMAT_TEXT } from '../../pc';
 import { StoppedProcessInstanceInfo } from '../../contracts/api_client_types';
 
 export async function stopProcessInstance(processInstanceIds: string[], outputFormat: string): Promise<void> {
