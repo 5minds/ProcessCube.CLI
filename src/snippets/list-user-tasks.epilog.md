@@ -34,7 +34,7 @@ Filter options compound, meaning that they allow to look for more than one patte
 
 ... piping the result into another execution of list-user-tasks leads to an AND query:
 
-    $ pc list-user-tasks --filter-by-process-model-id "Registration" --output json | pc list-user-tasks --filter-by-process-model-id "Email"
+    $ pc list-user-tasks --filter-by-process-model-id "Registration" | pc list-user-tasks --filter-by-process-model-id "Email"
 
 Combinations of all switches are possible:
 

@@ -42,6 +42,8 @@ export const OUTPUT_FORMAT_TEXT = 'text';
 
 const VERSION = require('../package.json').version;
 
+const defaultFormat = Boolean(process.stdout.isTTY) ? OUTPUT_FORMAT_TEXT : OUTPUT_FORMAT_JSON;
+
 const usageString = (commandName: string, synopsis: string): string => {
   return heading('USAGE') + `\n  $0 ${commandName} [options]\n\n` + heading('SYNOPSIS') + `\n  ${synopsis}`;
 };
@@ -60,7 +62,7 @@ program
     alias: 'o',
     description: 'Set output',
     type: 'string',
-    default: OUTPUT_FORMAT_TEXT,
+    default: defaultFormat,
     choices: [OUTPUT_FORMAT_TEXT, OUTPUT_FORMAT_JSON]
   })
 

@@ -166,7 +166,7 @@ Ergebnisse von Befehlen können mithilfe der ProcessCube CLI auch als Eingangspa
 So ist es möglich zunächst alle fehlgeschlagenen Prozess-Instanzen zu ermitteln und diese im Anschluss zu wiederholen:
 
 ```shell
-pc list-process-instances --filter-by-state error --output json | pc retry-process-instance
+pc list-process-instances --filter-by-state error | pc retry-process-instance
 ```
 
 Unabhängig davon, ob Sie eine einzelne oder alle fehlgeschlagenen Prozess-Instanzen wiederholt haben, wird folgende Ausgabe angezeigt:
