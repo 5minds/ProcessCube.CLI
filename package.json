@@ -23,8 +23,8 @@
   },
   "author": "5Minds IT-Solutions GmbH & Co. KG",
   "license": "MIT",
-  "dependencies": {},
   "devDependencies": {
+    "@atlas-engine/atlas_engine_client": "^2.3.2",
     "@essential-projects/eslint-config": "^1.0.6",
     "@essential-projects/http": "^2.5.0",
     "@process-engine/ci_tools": "^3.2.1",

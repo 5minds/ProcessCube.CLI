@@ -36,6 +36,9 @@ import epilogSnippetStartProcessModel from './snippets/start-process-model.epilo
 import epilogSnippetStopProcessInstance from './snippets/stop-process-instance.epilog.md';
 import epilogSnippetSessionStatus from './snippets/session-status.epilog.md';
 import epilogSnippetFinishUserTask from './snippets/finish-user-task.epilog.md';
+import { CommandLineInterface } from './cli';
+import { onLoad as onLoadListProcessInstances } from './commands/list-process-instances';
+import { registerCommandInYargs } from './registerCommandInYargs';
 
 export const OUTPUT_FORMAT_JSON = 'json';
 export const OUTPUT_FORMAT_TEXT = 'text';
@@ -44,9 +47,42 @@ const VERSION = require('../package.json').version;
 
 const defaultFormat = Boolean(process.stdout.isTTY) ? OUTPUT_FORMAT_TEXT : OUTPUT_FORMAT_JSON;
 
-const usageString = (commandName: string, synopsis: string): string => {
+export const usageString = (commandName: string, synopsis: string): string => {
   return heading('USAGE') + `\n  $0 ${commandName} [options]\n\n` + heading('SYNOPSIS') + `\n  ${synopsis}`;
 };
+
+const cli = new CommandLineInterface();
+
+// cli.registerCommand(
+//   {
+//     name: 'login2',
+//     description: 'Log in two the given engine',
+//     synopsis: 'Logs in two the given engine (starting or renewing a session)',
+//     arguments: [
+//       {
+//         name: 'engineUrl',
+//         type: 'string',
+//         description: 'URL of engine to connect to',
+//         mandatory: true
+//       }
+//     ],
+//     options: [
+//       {
+//         name: 'root',
+//         type: 'boolean',
+//         default: false,
+//         description: 'Try to use anonymous root login'
+//       }
+//     ]
+//   },
+//   async (inputs: any): Promise<void> => {
+//     console.log('[login2] I WAS CALLED!');
+//     await login(inputs.engineUrl, inputs.root, inputs.output);
+//   },
+//   async (inputs: any): Promise<any[]> => {
+//     return [];
+//   }
+// );
 
 program
   .version(VERSION)
@@ -642,4 +678,19 @@ program
   })
   .wrap(null)
   .strict()
-  .recommendCommands().argv;
+  .recommendCommands();
+
+(async () => {
+  const onLoadFunctions = [
+    // TODO: load functions from extensions
+    onLoadListProcessInstances
+  ];
+
+  for (const onLoad of onLoadFunctions) {
+    await onLoad(cli);
+  }
+
+  cli.forEachCommand((command) => registerCommandInYargs(cli, command, program));
+
+  program.argv;
+})();
