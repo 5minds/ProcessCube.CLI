@@ -134,9 +134,9 @@ async function runCommand(inputs) {
   const pipedProcessInstanceIds = stdinPipeReader.getPipedProcessInstanceIds();
   const pipedProcessModelIds = stdinPipeReader.getPipedProcessModelIds();
 
-  const sortByCreatedAt = inputs.options.sortByCreatedAt === '' ? 'asc' : inputs.options.sortByCreatedAt;
-  const sortByProcessModelId = inputs.options.sortByProcessModelId === '' ? 'asc' : inputs.options.sortByProcessModelId;
-  const sortByState = inputs.options.sortByState === '' ? 'asc' : inputs.options.sortByState;
+  const sortByCreatedAt = inputs.options.sortByCreatedAt ? 'asc' : inputs.options.sortByCreatedAt;
+  const sortByProcessModelId = inputs.options.sortByProcessModelId ? 'asc' : inputs.options.sortByProcessModelId;
+  const sortByState = inputs.options.sortByState ? 'asc' : inputs.options.sortByState;
 
   listProcessInstances(
     pipedProcessInstanceIds,

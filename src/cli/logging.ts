@@ -78,3 +78,7 @@ function unescapeHtmlEntities(html: string): string {
     return '';
   });
 }
+
+export function usageString(commandName: string, synopsis: string): string {
+  return heading('USAGE') + `\n  $0 ${commandName} [options]\n\n` + heading('SYNOPSIS') + `\n  ${synopsis}`;
+}

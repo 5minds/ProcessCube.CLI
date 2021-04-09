@@ -11,8 +11,8 @@ import {
   filterProcessInstancesDateBefore
 } from '../../client/filtering';
 import { logJsonResult, logNoValidSessionError } from '../../cli/logging';
-import { OUTPUT_FORMAT_JSON, OUTPUT_FORMAT_TEXT } from '../../pc';
 import { sortProcessInstances } from './sorting';
+import { OUTPUT_FORMAT_JSON, OUTPUT_FORMAT_TEXT } from '../../pc';
 
 export type ProcessInstance = DataModels.Correlations.ProcessInstance;
 

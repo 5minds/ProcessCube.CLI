@@ -1,3 +1,7 @@
+import { AtlasEngineClient } from '@atlas-engine/atlas_engine_client';
+import { IIdentity } from '@atlas-engine/iam.contracts';
+import { AtlasSession, loadAtlasSession } from './session/atlas_session';
+
 export type Command = {
   name: string;
   alias?: string;
@@ -11,7 +15,7 @@ export type Command = {
   optionGroups?: CommandOptionGroup[];
 };
 
-type CommandArgument = {
+export type CommandArgument = {
   name: string;
   type?: string;
   description?: string;
@@ -19,7 +23,7 @@ type CommandArgument = {
   default?: any;
 };
 
-type CommandOption = {
+export type CommandOption = {
   name: string;
   alias?: string;
   type?: string;
@@ -41,11 +45,17 @@ type CommandWithCallbacks = Command & {
 // eslint-disable-next-line
 export interface CLI {
   executeCommand(commandName: string, argv): void;
+
   registerCommand(commandOptions: Command, executeCallbackFn: Function, validationCallbackFn?: Function): void;
+
+  getIdentityFromSession(): IIdentity | null;
+
+  getEngineClient(givenEngineUrl?: string, identity?: IIdentity): AtlasEngineClient;
 }
 
 export class CommandLineInterface implements CLI {
   private commands: { [name: string]: CommandWithCallbacks } = {};
+  private generalCommandOptions: CommandOption[] = [];
 
   executeCommand(commandName: string, inputs): void {
     const command = this.commands[commandName];
@@ -77,9 +87,56 @@ export class CommandLineInterface implements CLI {
     this.commands[command.name] = command;
   }
 
+  registerGeneralOptions(commandOptions: CommandOption[]): void {
+    this.generalCommandOptions = commandOptions;
+  }
+
   forEachCommand(callbackFn: (command: Command) => void): void {
     for (const command of Object.values(this.commands)) {
       callbackFn(command);
     }
+  }
+
+  postInitialize(): void {
+    this.forEachCommand((command) => {
+      command.options = [...command.options, ...this.generalCommandOptions];
+
+      if (command.optionGroups != null) {
+        const generalOptionNames = this.generalCommandOptions.map((option) => option.name);
+
+        command.optionGroups = [...command.optionGroups, { heading: 'GENERAL OPTIONS', options: generalOptionNames }];
+      }
+    });
+  }
+
+  getIdentityFromSession(): IIdentity | null {
+    const session = this.getSession();
+    if (session == null) {
+      return null;
+    }
+
+    return {
+      userId: session.idToken,
+      token: session.accessToken
+    };
+  }
+
+  getEngineClient(givenEngineUrl?: string, identity?: IIdentity): AtlasEngineClient {
+    let engineUrl = givenEngineUrl;
+    if (engineUrl == null) {
+      const session = this.getSession();
+
+      engineUrl = session?.engineUrl;
+
+      if (engineUrl == null) {
+        throw new Error('Could not create EngineClient: No `engineUrl` given and no session found.');
+      }
+    }
+
+    return new AtlasEngineClient(engineUrl, identity || this.getIdentityFromSession());
+  }
+
+  getSession(): AtlasSession | null {
+    return loadAtlasSession();
   }
 }

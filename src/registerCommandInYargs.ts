@@ -1,6 +1,7 @@
 import { CLI, Command } from './cli';
-import { formatHelpText } from './cli/logging';
-import { usageString } from './pc';
+import { formatHelpText, usageString } from './cli/logging';
+
+export function initializeCLI(cli: CLI, program) {}
 
 export function registerCommandInYargs(cli: CLI, command: Command, program) {
   const aliases = command.alias ? [command.alias] : [];
@@ -40,14 +41,16 @@ export function registerCommandInYargs(cli: CLI, command: Command, program) {
         options: {}
       };
 
-      console.log('argv', argv);
-
       command.arguments.forEach((arg) => {
-        inputs.arguments[arg.name] = argv[arg.name];
+        var camelCased = arg.name.replace(/-([a-z])/g, (g) => g[1].toUpperCase());
+
+        inputs.arguments[camelCased] = argv[arg.name];
       });
 
       command.options.forEach((option) => {
-        inputs.options[option.name] = argv[option.name];
+        var camelCased = option.name.replace(/-([a-z])/g, (g) => g[1].toUpperCase());
+
+        inputs.options[camelCased] = argv[option.name];
       });
 
       cli.executeCommand(command.name, inputs);
