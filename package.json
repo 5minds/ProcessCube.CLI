@@ -6,7 +6,7 @@
   "scripts": {
     "clean": "rm -rf dist",
     "reinstall": "./reinstall.sh",
-    "build": "esbuild src/pc.ts --bundle --outfile=dist/pc.js --platform=node --loader:.md=text",
+    "build": "esbuild src/pc.ts --bundle --outfile=dist/pc.js --platform=node --target=node10 --loader:.md=text",
     "lint": "eslint \"src/**/*.ts\"",
     "test": "npm run test:unit",
     "test:unit": "mocha -r ts-node/register -r choma \"src/**/*.test.ts\"",
