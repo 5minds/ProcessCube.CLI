@@ -6,9 +6,10 @@ import * as JSON5 from 'json5';
 const ATLAS_EXECUTABLE = 'node ./dist/pc.js';
 
 export function execAsJson(cmd: string): any {
-  console.log(cmd);
+  const prefix = '      | ';
+  console.log(`${prefix}$ ${cmd}`);
   const output = getShellOutput(`${ATLAS_EXECUTABLE} ${cmd} --output json`);
-  console.log(`>>> ${output}`);
+  console.log(prefix + output.split('\n').join('\n' + prefix));
 
   try {
     return JSON5.parse(output);
