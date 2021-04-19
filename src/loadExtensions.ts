@@ -1,5 +1,4 @@
-import { existsSync, readFileSync } from 'fs';
-import { readdir } from 'fs/promises';
+import { existsSync, readFileSync, readdirSync } from 'fs';
 import { join } from 'path';
 import { CLI } from './cli';
 import { logWarning } from './cli/logging';
@@ -17,7 +16,7 @@ type LoadedModule = {
 
 export async function loadExtensions(cli: CLI): Promise<void> {
   const extensionsDir = getExtensionsDir();
-  const subdirNames = await readdir(extensionsDir);
+  const subdirNames = readdirSync(extensionsDir);
 
   for (const subdir of subdirNames) {
     const filename = join(extensionsDir, subdir, 'package.json');
