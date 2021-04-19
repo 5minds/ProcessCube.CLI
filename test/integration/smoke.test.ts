@@ -1,5 +1,5 @@
 import * as assert from 'assert';
-import { execAsDefault, execAsJson, execAsText } from './exec_as';
+import { execAsJson, execAsText } from './exec_as';
 
 describe('atlas', () => {
   it('should work with JSON output', async () => {
@@ -105,15 +105,15 @@ describe('atlas', () => {
 
   it('should fail and show help output if no or invalid command was given', async () => {
     try {
-      execAsDefault('');
+      execAsText('');
     } catch (error) {
-      assert.ok(error.message.includes(execAsDefault('--help')));
+      assert.ok(error.message.includes(execAsText('--help')));
     }
 
     try {
-      execAsDefault('nonexistingcommand');
+      execAsText('nonexistingcommand');
     } catch (error) {
-      assert.ok(error.message.includes(execAsDefault('--help')));
+      assert.ok(error.message.includes(execAsText('--help')));
     }
   });
 });

@@ -1,7 +1,7 @@
 import * as assert from 'assert';
 import { execAsJson, execAsText } from './exec_as';
 
-describe('atlas', () => {
+describe('pc finish-user-task', () => {
   it('should work with JSON output', async () => {
     execAsText('login http://localhost:10560 --root');
 

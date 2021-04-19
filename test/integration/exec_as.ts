@@ -23,10 +23,6 @@ export function execAsText(cmd: string): any {
   return getShellOutput(`${ATLAS_EXECUTABLE} ${cmd} --output text`);
 }
 
-export function execAsDefault(cmd: string): any {
-  return getShellOutput(`${ATLAS_EXECUTABLE} ${cmd}`);
-}
-
 function getShellOutput(cmd: string): string {
   const output = execSync(cmd, { encoding: 'utf-8' });
 
