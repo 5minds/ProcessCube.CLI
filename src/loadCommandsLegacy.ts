@@ -521,12 +521,6 @@ export function DEPRECATED_initializePackagedCommandsViaYargs(program) {
             description: 'List a maximum of <limit> process instances',
             type: 'number'
           })
-          .option('all-fields', {
-            alias: 'F',
-            description: 'Show all fields',
-            type: 'boolean',
-            default: false
-          })
           .group(
             [
               'filter-by-correlation-id',
@@ -559,7 +553,6 @@ export function DEPRECATED_initializePackagedCommandsViaYargs(program) {
           sortByProcessModelId,
           sortByState,
           argv.limit,
-          argv.allFields,
           argv.output
         );
       }
