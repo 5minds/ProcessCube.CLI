@@ -1,17 +1,16 @@
 import { CLI } from '../../cli';
 import { StdinPipeReader } from '../../cli/piped_data';
 import { listProcessInstances } from './list-process-instances';
-import epilogSnippetListProcessInstances from '../../snippets/list-process-instances.epilog.md';
 
 export async function onLoad(cli: CLI): Promise<void> {
   cli.registerCommand(
     {
-      name: 'list-process-instances2',
-      alias: 'lsi2',
+      name: 'list-process-instances',
+      alias: 'lsi',
       description: 'List, sort and filter process instances by date, state, process model and/or correlation',
       synopsis:
         'Lists, sorts and filters process instances by date, state, process model and/or correlation from the connected engine.',
-      examples: epilogSnippetListProcessInstances,
+      examples: require('./examples.md'),
       options: [
         {
           name: 'created-after',
@@ -130,32 +129,29 @@ export async function onLoad(cli: CLI): Promise<void> {
 }
 
 async function runCommand(inputs) {
+  const options = inputs.options;
   const stdinPipeReader = await StdinPipeReader.create();
   const pipedProcessInstanceIds = stdinPipeReader.getPipedProcessInstanceIds();
   const pipedProcessModelIds = stdinPipeReader.getPipedProcessModelIds();
 
-  const sortByCreatedAt = inputs.options.sortByCreatedAt ? 'asc' : inputs.options.sortByCreatedAt;
-  const sortByProcessModelId = inputs.options.sortByProcessModelId ? 'asc' : inputs.options.sortByProcessModelId;
-  const sortByState = inputs.options.sortByState ? 'asc' : inputs.options.sortByState;
-
   listProcessInstances(
     pipedProcessInstanceIds,
     pipedProcessModelIds,
-    inputs.options.createdAfter,
-    inputs.options.createdBefore,
-    inputs.options.completedAfter,
-    inputs.options.completedBefore,
-    inputs.options.completedIn,
-    inputs.options.filterByCorrelationId,
-    inputs.options.filterByProcessModelId,
-    inputs.options.rejectByProcessModelId,
-    inputs.options.filterByState,
-    inputs.options.rejectByState,
-    sortByProcessModelId,
-    sortByState,
-    sortByCreatedAt,
-    inputs.options.limit,
-    inputs.options.allFields,
-    inputs.options.output
+    options.createdAfter,
+    options.createdBefore,
+    options.completedAfter,
+    options.completedBefore,
+    options.completedIn,
+    options.filterByCorrelationId,
+    options.filterByProcessModelId,
+    options.rejectByProcessModelId,
+    options.filterByState,
+    options.rejectByState,
+    options.sortByProcessModelId ?? 'asc',
+    options.sortByState ?? 'asc',
+    options.sortByCreatedAt ?? 'asc',
+    options.limit,
+    options.allFields,
+    options.output
   );
 }
