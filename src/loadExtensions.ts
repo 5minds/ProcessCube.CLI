@@ -16,6 +16,10 @@ type LoadedModule = {
 
 export async function loadExtensions(cli: CLI): Promise<void> {
   const extensionsDir = getExtensionsDir();
+  if (!existsSync(extensionsDir)) {
+    return;
+  }
+
   const subdirNames = readdirSync(extensionsDir);
 
   for (const subdir of subdirNames) {
