@@ -1,5 +1,6 @@
 import { AtlasEngineClient } from '@atlas-engine/atlas_engine_client';
 import { IIdentity } from '@atlas-engine/iam.contracts';
+import { StdinPipeReader } from './cli/piped_data';
 import { AtlasSession, loadAtlasSession } from './session/atlas_session';
 
 export type Command = {
@@ -42,11 +43,20 @@ type CommandWithCallbacks = Command & {
   validationCallbackFn: Function;
 };
 
+export type Inputs = {
+  arguments: { [name: string]: any };
+  options: { [name: string]: any };
+};
+
 // eslint-disable-next-line
 export interface CLI {
   executeCommand(commandName: string, argv): void;
 
-  registerCommand(commandOptions: Command, executeCallbackFn: Function, validationCallbackFn?: Function): void;
+  registerCommand(
+    commandOptions: Command,
+    executeCallbackFn: (inputs: Inputs) => Promise<void>,
+    validationCallbackFn?: (inputs: Inputs) => Promise<boolean>
+  ): void;
 
   getIdentityFromSession(): IIdentity | null;
 
@@ -66,11 +76,25 @@ export class CommandLineInterface implements CLI {
     command.executeCallbackFn(inputs, this);
   }
 
-  registerCommand(commandOptions: Command, executeCallbackFn: Function, validationCallbackFn?: Function): void {
+  registerCommand(
+    commandOptions: Command,
+    executeCallbackFn: (inputs: Inputs) => Promise<void>,
+    validationCallbackFn?: (inputs: Inputs) => Promise<boolean>
+  ): void {
     const options = commandOptions.options ?? [];
     const args = commandOptions.arguments ?? [];
     const usage =
-      commandOptions.usage ?? (commandOptions.name + ' ' + args.map((arg) => `[${arg.name}]`).join(' ')).trim();
+      commandOptions.usage ??
+      (
+        commandOptions.name +
+        ' ' +
+        args
+          .map((arg) => {
+            const suffix = arg.type === 'array' ? '...' : '';
+            return `[${arg.name}${suffix}]`;
+          })
+          .join(' ')
+      ).trim();
 
     const command = {
       name: commandOptions.name,
@@ -78,8 +102,10 @@ export class CommandLineInterface implements CLI {
       description: commandOptions.description,
       usage: usage,
       synopsis: commandOptions.synopsis,
+      examples: commandOptions.examples,
       arguments: args,
       options,
+      optionGroups: commandOptions.optionGroups,
       executeCallbackFn,
       validationCallbackFn
     };
