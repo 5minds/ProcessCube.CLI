@@ -17,7 +17,7 @@ import { stopProcessInstance } from './commands/stop-process-instance/stop-proce
 import { showProcessInstance } from './commands/show-process-instance/show-process-instance';
 import { deployFiles } from './commands/deploy-files/deploy-files';
 import { removeProcessModels } from './commands/remove-process-models/remove-process-models';
-import { formatHelpText, heading } from './cli/logging';
+import { formatHelpText, heading, logError } from './cli/logging';
 import { readFileSync } from 'fs';
 import { retryProcessInstance } from './commands/retry-process-instance/retry-process-instance';
 import { finishUserTask } from './commands/finish-user-task/finish-user-task';
@@ -47,6 +47,11 @@ const defaultFormat = Boolean(process.stdout.isTTY) ? OUTPUT_FORMAT_TEXT : OUTPU
 const usageString = (commandName: string, synopsis: string): string => {
   return heading('USAGE') + `\n  $0 ${commandName} [options]\n\n` + heading('SYNOPSIS') + `\n  ${synopsis}`;
 };
+
+process.on('unhandledRejection', (err) => {
+  logError(err.toString());
+  process.exit(2);
+});
 
 program
   .version(VERSION)
