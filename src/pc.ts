@@ -11,7 +11,6 @@ import epilogSnippetAtlas from './snippets/atlas.epilog.md';
 import { CommandLineInterface } from './cli';
 import { registerCommandInYargs } from './registerCommandInYargs';
 
-import { DEPRECATED_initializePackagedCommandsViaYargs } from './loadCommandsLegacy';
 import { loadPackagedExtensions } from './loadPackagedExtensions';
 import { loadExtensions } from './loadExtensions';
 
@@ -34,19 +33,6 @@ process.on('unhandledRejection', (err) => {
 program
   .version(VERSION)
   .scriptName('pc')
-  .option('output', {
-    alias: 'o',
-    description: 'Set output',
-    type: 'string',
-    default: defaultFormat,
-    choices: [OUTPUT_FORMAT_TEXT, OUTPUT_FORMAT_JSON]
-  })
-  .option('help', {
-    alias: 'h',
-    description: 'Show help',
-    type: 'boolean',
-    default: false
-  })
   .showHelpOnFail(true)
   .demandCommand(1, '')
   .usage(
@@ -82,12 +68,10 @@ program
       alias: 'o',
       description: 'Set output',
       type: 'string',
-      default: OUTPUT_FORMAT_TEXT,
+      default: defaultFormat,
       choices: [OUTPUT_FORMAT_TEXT, OUTPUT_FORMAT_JSON]
     }
   ]);
-
-  DEPRECATED_initializePackagedCommandsViaYargs(program);
 
   await loadPackagedExtensions(cli);
 

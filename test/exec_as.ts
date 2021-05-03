@@ -30,7 +30,7 @@ export function execAsJson(cmd: string, assertRegexMatches?: RegExp | string): a
 }
 
 export function execAsJsonPipes(cmds: string[], assertRegexMatches?: RegExp | string): any {
-  const cmd = cmds.map((cmd) => `${ATLAS_EXECUTABLE} ${cmd} --output json`).join(' | ');
+  const cmd = cmds.map((cmd) => `${ATLAS_EXECUTABLE} ${cmd}`).join(' | ') + ' --output json';
 
   console.log(cmd);
   const output = getShellOutput(cmd);
