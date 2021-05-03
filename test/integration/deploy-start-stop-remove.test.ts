@@ -42,10 +42,6 @@ describe('deploy start/stop/remove', () => {
 
       execAsText('list-process-instances --all-fields');
 
-      // execAsText(`stop-process-instance ${processInstanceId}`);
-
-      // execAsText(`show-process-instance ${processInstanceId}`);
-
       execAsText('list-process-models');
 
       execAsText('list-process-models --all-fields');
