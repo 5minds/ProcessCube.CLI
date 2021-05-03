@@ -1,5 +1,5 @@
 import * as assert from 'assert';
-import { execAsJson, execAsText } from './exec_as';
+import { execAsJson, execAsText } from '../exec_as';
 
 describe('atlas', () => {
   it('should work with JSON output', async () => {

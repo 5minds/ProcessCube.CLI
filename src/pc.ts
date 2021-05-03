@@ -4,7 +4,7 @@ import 'reflect-metadata';
 
 import program = require('yargs');
 
-import { formatHelpText, heading } from './cli/logging';
+import { formatHelpText, heading, logError } from './cli/logging';
 
 import epilogSnippetAtlas from './snippets/atlas.epilog.md';
 
@@ -25,6 +25,11 @@ const defaultFormat = Boolean(process.stdout.isTTY) ? OUTPUT_FORMAT_TEXT : OUTPU
 export const usageString = (commandName: string, synopsis: string): string => {
   return heading('USAGE') + `\n  $0 ${commandName} [options]\n\n` + heading('SYNOPSIS') + `\n  ${synopsis}`;
 };
+
+process.on('unhandledRejection', (err) => {
+  logError(err.toString());
+  process.exit(2);
+});
 
 program
   .version(VERSION)
