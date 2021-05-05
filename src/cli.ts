@@ -50,7 +50,7 @@ export type Inputs = {
 
 // eslint-disable-next-line
 export interface CLI {
-  executeCommand(commandName: string, argv): void;
+  executeCommand(commandName: string, inputs: Inputs): any;
 
   registerCommand(
     commandOptions: Command,
@@ -67,13 +67,13 @@ export class CommandLineInterface implements CLI {
   private commands: { [name: string]: CommandWithCallbacks } = {};
   private generalCommandOptions: CommandOption[] = [];
 
-  executeCommand(commandName: string, inputs): void {
+  executeCommand(commandName: string, inputs: Inputs): any {
     const command = this.commands[commandName];
     if (command == null) {
       throw new Error(`Command not found: ${commandName}`);
     }
 
-    command.executeCallbackFn(inputs, this);
+    return command.executeCallbackFn(inputs, this);
   }
 
   registerCommand(
@@ -91,9 +91,11 @@ export class CommandLineInterface implements CLI {
         args
           .map((arg) => {
             const suffix = arg.type === 'array' ? '...' : '';
-            return `[${arg.name}${suffix}]`;
+
+            return arg.mandatory ? `<${arg.name}${suffix}>` : `[${arg.name}${suffix}]`;
           })
-          .join(' ')
+          .join(' ') +
+        (options.length > 0 ? ' [options]' : '')
       ).trim();
 
     const command = {

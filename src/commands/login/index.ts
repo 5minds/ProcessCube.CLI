@@ -11,7 +11,8 @@ export async function onLoad(cli: CLI): Promise<void> {
       arguments: [
         {
           name: 'engineUrl',
-          description: 'URL of engine to connect to'
+          description: 'URL of engine to connect to',
+          mandatory: true
         }
       ],
       options: [
