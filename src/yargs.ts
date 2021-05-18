@@ -1,7 +1,8 @@
-import { CLI, Command, CommandLineInterface, Inputs } from './cli';
+import { Command, CommandLineInterface, Inputs } from './cli';
 import { formatHelpText, heading, usageString } from './cli/logging';
 import epilogSnippetAtlas from './snippets/atlas.epilog.md';
 
+const SCRIPT_NAME = 'pc';
 const VERSION = require('../package.json').version;
 
 export async function useYargsForCommandLineInterface(cli: CommandLineInterface): Promise<void> {
@@ -9,7 +10,7 @@ export async function useYargsForCommandLineInterface(cli: CommandLineInterface)
 
   program
     .version(VERSION)
-    .scriptName('pc')
+    .scriptName(SCRIPT_NAME)
     .showHelpOnFail(true)
     .demandCommand(1, '')
     .usage(
@@ -34,7 +35,7 @@ export async function useYargsForCommandLineInterface(cli: CommandLineInterface)
   program.argv;
 }
 
-export function registerCommandInYargs(cli: CLI, command: Command, program) {
+export function registerCommandInYargs(cli: CommandLineInterface, command: Command, program) {
   const aliases = command.alias ? [command.alias] : [];
   const argumentsAndOptionsInYargsFormat = command.arguments
     .map((arg) => {
@@ -83,32 +84,36 @@ export function registerCommandInYargs(cli: CLI, command: Command, program) {
       return yargs;
     },
     async (argv: any) => {
-      const inputs = convertYargsArgvToInputs(command, argv);
+      const inputs = await convertYargsArgvToInputs(command, argv, cli);
 
       cli.executeCommand(command.name, inputs);
     }
   );
 }
 
-function convertYargsArgvToInputs(command: Command, argv: any): Inputs {
-  let inputs: Inputs = {
-    arguments: {},
-    options: {}
+function convertYargsArgvToInputs(command: Command, argv: any, cli: CommandLineInterface): Inputs {
+  return {
+    argv: getParsedFromYargsArgv(command, argv),
+    stdin: cli.stdin
   };
+}
+
+function getParsedFromYargsArgv(command: Command, argv: any): { [name: string]: any } {
+  const parsed: { [name: string]: any } = {};
 
   command.arguments.forEach((arg) => {
     var camelCased = dasherizedToCamelCased(arg.name);
 
-    inputs.arguments[camelCased] = argv[arg.name];
+    parsed[camelCased] = argv[arg.name];
   });
 
   command.options.forEach((option) => {
     var camelCased = dasherizedToCamelCased(option.name);
 
-    inputs.options[camelCased] = argv[option.name];
+    parsed[camelCased] = argv[option.name];
   });
 
-  return inputs;
+  return parsed;
 }
 
 function dasherizedToCamelCased(name: string): string {

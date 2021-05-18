@@ -4,7 +4,7 @@ import * as JSON5 from 'json5';
 
 import { CLI, Inputs } from '../../cli';
 import { logWarning } from '../../cli/logging';
-import { StdinPipeReader } from '../../cli/piped_data';
+import { LegacyStdinPipeReader } from '../../cli/LegacyStdinPipeReader';
 import { finishUserTask } from './finish-user-task';
 
 export async function onLoad(cli: CLI): Promise<void> {
@@ -40,8 +40,8 @@ export async function onLoad(cli: CLI): Promise<void> {
 }
 
 async function runCommand(inputs: Inputs): Promise<void> {
-  const stdinPipeReader = await StdinPipeReader.create();
-  const flowNodeInstanceId = stdinPipeReader.getPipedFlowNodeInstanceIds()?.[0] || inputs.arguments.flowNodeInstanceId;
+  const stdinPipeReader = await LegacyStdinPipeReader.create(inputs.stdin);
+  const flowNodeInstanceId = stdinPipeReader.getPipedFlowNodeInstanceIds()?.[0] || inputs.argv.flowNodeInstanceId;
 
   if (stdinPipeReader.getPipedFlowNodeInstanceIds()?.length > 1) {
     logWarning('Only using first piped flowNodeInstanceId from stdin to finish user task.');
@@ -49,13 +49,13 @@ async function runCommand(inputs: Inputs): Promise<void> {
 
   let resultValues: any;
 
-  if (inputs.options.resultFromFile != null) {
-    const contents = readFileSync(inputs.options.resultFromFile);
+  if (inputs.argv.resultFromFile != null) {
+    const contents = readFileSync(inputs.argv.resultFromFile);
     resultValues = JSON5.parse(contents.toString());
   }
-  if (inputs.options.result != null) {
-    resultValues = JSON5.parse(inputs.options.result);
+  if (inputs.argv.result != null) {
+    resultValues = JSON5.parse(inputs.argv.result);
   }
 
-  await finishUserTask(flowNodeInstanceId, resultValues, inputs.options.output);
+  await finishUserTask(flowNodeInstanceId, resultValues, inputs.argv.output);
 }

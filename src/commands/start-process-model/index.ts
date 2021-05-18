@@ -2,7 +2,7 @@ import { readFileSync } from 'fs';
 import * as JSON5 from 'json5';
 
 import { CLI, Inputs } from '../../cli';
-import { StdinPipeReader } from '../../cli/piped_data';
+import { LegacyStdinPipeReader } from '../../cli/LegacyStdinPipeReader';
 import { startProcessInstance } from './start-process-model';
 
 export async function onLoad(cli: CLI): Promise<void> {
@@ -58,31 +58,30 @@ export async function onLoad(cli: CLI): Promise<void> {
 }
 
 async function runCommand(inputs: Inputs): Promise<void> {
-  const stdinPipeReader = await StdinPipeReader.create();
+  const stdinPipeReader = await LegacyStdinPipeReader.create(inputs.stdin);
   const pipedProcessModelIds =
     stdinPipeReader.getPipedProcessModelIds() || stdinPipeReader.getPipedProcessModelIdsInDeployedFiles();
 
   let inputValues: any;
 
-  if (inputs.options.inputValuesFromStdin === true) {
-    const stdinPipeReader = await StdinPipeReader.create();
-    inputValues = stdinPipeReader.getPipedData();
+  if (inputs.argv.inputValuesFromStdin === true) {
+    inputValues = await inputs.stdin.getJson();
   }
-  if (inputs.options.inputValuesFromFile != null) {
-    const contents = readFileSync(inputs.options.inputValuesFromFile);
+  if (inputs.argv.inputValuesFromFile != null) {
+    const contents = readFileSync(inputs.argv.inputValuesFromFile);
     inputValues = JSON5.parse(contents.toString());
   }
-  if (inputs.options.inputValues != null) {
-    inputValues = JSON5.parse(inputs.options.inputValues);
+  if (inputs.argv.inputValues != null) {
+    inputValues = JSON5.parse(inputs.argv.inputValues);
   }
 
   await startProcessInstance(
     pipedProcessModelIds,
-    inputs.arguments.processModelId,
-    inputs.arguments.startEventId,
-    inputs.options.correlationId,
+    inputs.argv.processModelId,
+    inputs.argv.startEventId,
+    inputs.argv.correlationId,
     inputValues,
-    inputs.options.wait,
-    inputs.options.output
+    inputs.argv.wait,
+    inputs.argv.output
   );
 }

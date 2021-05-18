@@ -1,5 +1,5 @@
 import { CLI, Inputs } from '../../cli';
-import { StdinPipeReader } from '../../cli/piped_data';
+import { LegacyStdinPipeReader } from '../../cli/LegacyStdinPipeReader';
 import { retryProcessInstance } from './retry-process-instance';
 
 export async function onLoad(cli: CLI): Promise<void> {
@@ -23,13 +23,13 @@ export async function onLoad(cli: CLI): Promise<void> {
 }
 
 async function runCommand(inputs: Inputs): Promise<void> {
-  const stdinPipeReader = await StdinPipeReader.create();
-  const processInstanceIds = stdinPipeReader.getPipedProcessInstanceIds() || inputs.arguments.processInstanceIds;
+  const stdinPipeReader = await LegacyStdinPipeReader.create(inputs.stdin);
+  const processInstanceIds = stdinPipeReader.getPipedProcessInstanceIds() || inputs.argv.processInstanceIds;
 
   if (processInstanceIds == null || processInstanceIds.length === 0) {
     // TODO: add validation errors
     return;
   }
 
-  await retryProcessInstance(processInstanceIds, inputs.options.output);
+  await retryProcessInstance(processInstanceIds, inputs.argv.output);
 }

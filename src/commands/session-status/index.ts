@@ -15,5 +15,5 @@ export async function onLoad(cli: CLI): Promise<void> {
 }
 
 async function runCommand(inputs: Inputs): Promise<void> {
-  printSessionStatus(inputs.options.output);
+  printSessionStatus(inputs.argv.output);
 }

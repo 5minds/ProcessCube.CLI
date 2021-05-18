@@ -1,5 +1,5 @@
 import { CLI, Inputs } from '../../cli';
-import { StdinPipeReader } from '../../cli/piped_data';
+import { LegacyStdinPipeReader } from '../../cli/LegacyStdinPipeReader';
 import { listUserTasks } from './list-user-tasks';
 
 export async function onLoad(cli: CLI): Promise<void> {
@@ -92,25 +92,25 @@ export async function onLoad(cli: CLI): Promise<void> {
 }
 
 async function runCommand(inputs: Inputs): Promise<void> {
-  const stdinPipeReader = await StdinPipeReader.create();
+  const stdinPipeReader = await LegacyStdinPipeReader.create(inputs.stdin);
   const pipedProcessInstanceIds = stdinPipeReader.getPipedProcessInstanceIds();
   const pipedProcessModelIds = stdinPipeReader.getPipedProcessModelIds();
 
-  const sortByProcessModelId = inputs.options.sortByProcessModelId === '' ? 'asc' : inputs.options.sortByProcessModelId;
-  const sortByState = inputs.options.sortByState === '' ? 'asc' : inputs.options.sortByState;
+  const sortByProcessModelId = inputs.argv.sortByProcessModelId === '' ? 'asc' : inputs.argv.sortByProcessModelId;
+  const sortByState = inputs.argv.sortByState === '' ? 'asc' : inputs.argv.sortByState;
 
   listUserTasks(
     pipedProcessInstanceIds,
     pipedProcessModelIds,
-    inputs.options.filterByFlowNodeInstanceId,
-    inputs.options.filterByCorrelationId,
-    inputs.options.filterByProcessModelId,
-    inputs.options.rejectByProcessModelId,
-    inputs.options.filterByState,
-    inputs.options.rejectByState,
+    inputs.argv.filterByFlowNodeInstanceId,
+    inputs.argv.filterByCorrelationId,
+    inputs.argv.filterByProcessModelId,
+    inputs.argv.rejectByProcessModelId,
+    inputs.argv.filterByState,
+    inputs.argv.rejectByState,
     sortByProcessModelId,
     sortByState,
-    inputs.options.limit,
-    inputs.options.output
+    inputs.argv.limit,
+    inputs.argv.output
   );
 }

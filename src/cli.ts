@@ -1,7 +1,9 @@
+import chalk from 'chalk';
 import { AtlasEngineClient } from '@atlas-engine/atlas_engine_client';
 import { IIdentity } from '@atlas-engine/iam.contracts';
-import { StdinPipeReader } from './cli/piped_data';
+import { LegacyStdinPipeReader } from './cli/LegacyStdinPipeReader';
 import { AtlasSession, loadAtlasSession } from './session/atlas_session';
+import { StdinPipeReader } from './StdinPipeReader';
 
 export type Command = {
   name: string;
@@ -43,9 +45,15 @@ type CommandWithCallbacks = Command & {
   validationCallbackFn: Function;
 };
 
+export type Stdin = {
+  getJson(): Promise<any | null>;
+  getText(): Promise<string | null>;
+  isPipe(): boolean;
+};
+
 export type Inputs = {
-  arguments: { [name: string]: any };
-  options: { [name: string]: any };
+  argv: { [name: string]: any };
+  stdin: Stdin;
 };
 
 // eslint-disable-next-line
@@ -64,8 +72,14 @@ export interface CLI {
 }
 
 export class CommandLineInterface implements CLI {
+  public stdin: StdinPipeReader;
+
   private commands: { [name: string]: CommandWithCallbacks } = {};
   private generalCommandOptions: CommandOption[] = [];
+
+  constructor() {
+    this.stdin = new StdinPipeReader();
+  }
 
   executeCommand(commandName: string, inputs: Inputs): any {
     const command = this.commands[commandName];

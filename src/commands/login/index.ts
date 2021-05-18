@@ -28,5 +28,5 @@ export async function onLoad(cli: CLI): Promise<void> {
 }
 
 async function runCommand(inputs: Inputs): Promise<void> {
-  await login(inputs.arguments.engineUrl, inputs.options.root, inputs.options.output);
+  await login(inputs.argv.engineUrl, inputs.argv.root, inputs.argv.output);
 }

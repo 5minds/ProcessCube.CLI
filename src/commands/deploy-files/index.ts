@@ -23,10 +23,10 @@ export async function onLoad(cli: CLI): Promise<void> {
 }
 
 async function runCommand(inputs: Inputs): Promise<void> {
-  if (inputs.arguments.filenames?.length === 0) {
+  if (inputs.argv.filenames?.length === 0) {
     // program.showHelp();
     return;
   }
 
-  deployFiles(inputs.arguments.filenames, inputs.options.output);
+  deployFiles(inputs.argv.filenames, inputs.argv.output);
 }

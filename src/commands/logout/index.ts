@@ -14,5 +14,5 @@ export async function onLoad(cli: CLI): Promise<void> {
 }
 
 async function runCommand(inputs: Inputs): Promise<void> {
-  await logout(inputs.options.output);
+  await logout(inputs.argv.output);
 }

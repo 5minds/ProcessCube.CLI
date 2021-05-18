@@ -8,6 +8,7 @@
     "reinstall": "./reinstall.sh",
     "build": "esbuild src/pc.ts --bundle --outfile=dist/pc.js --platform=node --target=node10 --loader:.md=text",
     "lint": "eslint \"src/**/*.ts\"",
+    "start": "node dist/pc.js",
     "test": "npm run test:unit",
     "test:unit": "mocha -r ts-node/register -r choma \"src/**/*.test.ts\"",
     "test:integration": "mocha --timeout 60000 --slow 10000 -r ts-node/register -r choma \"test/integration/*.test.ts\""

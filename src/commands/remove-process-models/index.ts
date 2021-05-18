@@ -31,10 +31,10 @@ export async function onLoad(cli: CLI): Promise<void> {
 }
 
 async function runCommand(inputs: Inputs): Promise<void> {
-  if (inputs.arguments.processModelIds?.length === 0) {
+  if (inputs.argv.processModelIds?.length === 0) {
     // program.showHelp();
     return;
   }
 
-  removeProcessModels(inputs.arguments.processModelIds, inputs.options.yes, inputs.options.output);
+  removeProcessModels(inputs.argv.processModelIds, inputs.argv.yes, inputs.argv.output);
 }

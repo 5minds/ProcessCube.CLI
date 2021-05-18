@@ -1,5 +1,5 @@
 import { CLI, Inputs } from '../../cli';
-import { StdinPipeReader } from '../../cli/piped_data';
+import { LegacyStdinPipeReader } from '../../cli/LegacyStdinPipeReader';
 import { showProcessInstance } from './show-process-instance';
 
 export async function onLoad(cli: CLI): Promise<void> {
@@ -40,13 +40,8 @@ export async function onLoad(cli: CLI): Promise<void> {
 }
 
 async function runCommand(inputs: Inputs): Promise<void> {
-  const stdinPipeReader = await StdinPipeReader.create();
-  let processInstanceIds = stdinPipeReader.getPipedProcessInstanceIds() || inputs.arguments.processInstanceIds;
+  const stdinPipeReader = await LegacyStdinPipeReader.create(inputs.stdin);
+  let processInstanceIds = stdinPipeReader.getPipedProcessInstanceIds() || inputs.argv.processInstanceIds;
 
-  await showProcessInstance(
-    processInstanceIds,
-    inputs.options.correlation,
-    inputs.options.allFields,
-    inputs.options.output
-  );
+  await showProcessInstance(processInstanceIds, inputs.argv.correlation, inputs.argv.allFields, inputs.argv.output);
 }
