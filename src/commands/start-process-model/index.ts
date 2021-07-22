@@ -38,7 +38,7 @@ export async function onLoad(cli: CLI): Promise<void> {
         },
         {
           name: 'input-values',
-          description: 'Set input values for the process instance from <json> string',
+          description: 'Set input values for the process instance from a <json> string',
           type: 'string'
         },
         {
