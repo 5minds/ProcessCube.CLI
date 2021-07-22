@@ -1,7 +1,5 @@
-import chalk from 'chalk';
 import { AtlasEngineClient } from '@atlas-engine/atlas_engine_client';
 import { IIdentity } from '@atlas-engine/iam.contracts';
-import { LegacyStdinPipeReader } from './cli/LegacyStdinPipeReader';
 import { AtlasSession, loadAtlasSession } from './session/atlas_session';
 import { StdinPipeReader } from './StdinPipeReader';
 
@@ -9,8 +7,8 @@ export type Command = {
   name: string;
   alias?: string;
   description?: string;
+  descriptionLong?: string;
   usage?: string;
-  synopsis?: string;
   examples?: string;
 
   arguments?: CommandArgument[];
@@ -116,8 +114,8 @@ export class CommandLineInterface implements CLI {
       name: commandOptions.name,
       alias: commandOptions.alias,
       description: commandOptions.description,
+      descriptionLong: commandOptions.descriptionLong,
       usage: usage,
-      synopsis: commandOptions.synopsis,
       examples: commandOptions.examples,
       arguments: args,
       options,

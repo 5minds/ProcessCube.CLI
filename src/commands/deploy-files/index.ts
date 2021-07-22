@@ -8,7 +8,7 @@ export async function onLoad(cli: CLI): Promise<void> {
       name: 'deploy-files',
       alias: 'deploy',
       description: 'Deploy BPMN files to the engine',
-      synopsis: 'Deploys BPMN files to the connected engine.',
+      descriptionLong: 'Deploys BPMN files to the connected engine.',
       examples: require('./examples.md'),
       arguments: [
         {

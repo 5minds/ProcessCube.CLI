@@ -6,7 +6,7 @@ export async function onLoad(cli: CLI): Promise<void> {
     {
       name: 'login',
       description: 'Log in to the given engine',
-      synopsis: 'Starts or renews a session with the given engine.',
+      descriptionLong: 'Starts or renews a session with the given engine.',
       examples: require('./examples.md'),
       arguments: [
         {

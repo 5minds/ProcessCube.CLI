@@ -8,7 +8,7 @@ export async function onLoad(cli: CLI): Promise<void> {
       name: 'list-process-instances',
       alias: 'lsi',
       description: 'List, sort and filter process instances by date, state, process model and/or correlation',
-      synopsis:
+      descriptionLong:
         'Lists, sorts and filters process instances by date, state, process model and/or correlation from the connected engine.',
       examples: require('./examples.md'),
       options: [

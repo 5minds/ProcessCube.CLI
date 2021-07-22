@@ -8,7 +8,7 @@ export async function onLoad(cli: CLI): Promise<void> {
       name: 'list-process-models',
       alias: 'lsp',
       description: 'List, sort and filter process models by ID',
-      synopsis: 'Lists, sorts and filters process models by ID from the connected engine.',
+      descriptionLong: 'Lists, sorts and filters process models by ID from the connected engine.',
       examples: require('./examples.md'),
       options: [
         {

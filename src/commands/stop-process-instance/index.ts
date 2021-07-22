@@ -8,7 +8,7 @@ export async function onLoad(cli: CLI): Promise<void> {
       name: 'stop-process-instance',
       alias: 'stop',
       description: 'Stop the process instances with the given process instance IDs',
-      synopsis: 'Stops the process instances with the given process instance IDs on the connected engine.',
+      descriptionLong: 'Stops the process instances with the given process instance IDs on the connected engine.',
       examples: require('./examples.md'),
       arguments: [
         {

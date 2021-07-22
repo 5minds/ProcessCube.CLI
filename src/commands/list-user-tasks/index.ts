@@ -8,7 +8,7 @@ export async function onLoad(cli: CLI): Promise<void> {
       name: 'list-user-tasks',
       alias: 'lsu',
       description: 'List, sort and filter user tasks',
-      synopsis: 'Lists, sorts and filters user tasks by state and/or process model from the connected engine.',
+      descriptionLong: 'Lists, sorts and filters user tasks by state and/or process model from the connected engine.',
       examples: require('./examples.md'),
       options: [
         {

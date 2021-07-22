@@ -49,7 +49,7 @@ export function registerCommandInYargs(cli: CommandLineInterface, command: Comma
     [`${command.name} ${argumentsAndOptionsInYargsFormat}`.trim(), ...aliases],
     command.description,
     (yargs) => {
-      yargs.usage(usageString(command.usage, command.synopsis));
+      yargs.usage(usageString(command.usage, command.descriptionLong));
 
       command.arguments.forEach((arg) => {
         const defaultArgDefault = arg.type === 'array' ? [] : undefined;

@@ -8,7 +8,7 @@ export async function onLoad(cli: CLI): Promise<void> {
       name: 'remove-process-models',
       alias: 'remove',
       description: 'Remove deployed process models from the engine',
-      synopsis: 'Removes deployed process models from the connected engine.',
+      descriptionLong: 'Removes deployed process models from the connected engine.',
       examples: require('./examples.md'),
       arguments: [
         {

@@ -8,7 +8,7 @@ export async function onLoad(cli: CLI): Promise<void> {
       name: 'show-process-instance',
       alias: 'show',
       description: 'Show detailed information about individual process instances or correlations',
-      synopsis:
+      descriptionLong:
         'Shows detailed information about individual process instances or correlations from the connected engine.',
       examples: require('./examples.md'),
       arguments: [

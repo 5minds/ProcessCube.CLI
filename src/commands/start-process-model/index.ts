@@ -11,7 +11,7 @@ export async function onLoad(cli: CLI): Promise<void> {
       name: 'start-process-model',
       alias: 'start',
       description: 'Start an instance of a deployed process model',
-      synopsis: 'Starts an instance of a deployed process model on the connected engine.',
+      descriptionLong: 'Starts an instance of a deployed process model on the connected engine.',
       examples: require('./examples.md'),
       arguments: [
         {

@@ -13,7 +13,7 @@ export async function onLoad(cli: CLI): Promise<void> {
       name: 'finish-user-task',
       alias: 'finish',
       description: 'Finish a suspended instance of a User Task',
-      synopsis: 'Finishes a suspended instance of a User Task.',
+      descriptionLong: 'Finishes a suspended instance of a User Task.',
       examples: require('./examples.md'),
       arguments: [
         {

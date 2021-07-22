@@ -6,7 +6,7 @@ export async function onLoad(cli: CLI): Promise<void> {
     {
       name: 'logout',
       description: 'Log out from the current session',
-      synopsis: 'Logs out from the current session.',
+      descriptionLong: 'Logs out from the current session.',
       examples: require('./examples.md')
     },
     runCommand

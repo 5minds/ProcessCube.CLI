@@ -8,7 +8,7 @@ export async function onLoad(cli: CLI): Promise<void> {
       name: 'retry-process-instance',
       alias: 'retry',
       description: 'Restart failed process instances with the given process instance IDs',
-      synopsis: 'Restarts failed process instances with the given process instance IDs on the connected engine.',
+      descriptionLong: 'Restarts failed process instances with the given process instance IDs on the connected engine.',
       examples: require('./examples.md'),
       arguments: [
         {
