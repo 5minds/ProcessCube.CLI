@@ -29,7 +29,7 @@ export async function onLoad(cli: CLI): Promise<void> {
         },
         {
           name: 'result-from-file',
-          description: 'Read result values as JSON from <file>',
+          description: 'Read result values for the finished User Task as JSON from a <file>',
           type: 'string'
         }
       ],
