@@ -21,7 +21,7 @@ export function getSessionStorageFilename(): string {
 }
 
 /**
- * Returns the local directory that extensions are stored under.
+ * Returns the local directory that contains extensions for the cli.
  */
 export function getExtensionsDir(givenCharonExtensionsDir?: string): string {
   if (givenCharonExtensionsDir == null) {
