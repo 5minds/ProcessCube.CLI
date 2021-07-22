@@ -1,4 +1,4 @@
-import * as express from 'express';
+import express from 'express';
 import open = require('open');
 import { getModalHtml } from './html_message';
 

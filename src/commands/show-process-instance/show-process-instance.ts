@@ -1,5 +1,5 @@
 import chalk from 'chalk';
-import * as moment from 'moment';
+import moment from 'moment';
 
 import { DataModels } from '@process-engine/management_api_contracts';
 

@@ -4,7 +4,7 @@ To start a process model, provide its model ID and start event ID:
 
     $ pc start-process-model Registration.EmailCoupons StartEvent_1
 
-Alternatively, use the convenience alias `retry`:
+Alternatively, use the convenience alias `start`:
 
     $ pc start Registration.EmailCoupons StartEvent_1
 

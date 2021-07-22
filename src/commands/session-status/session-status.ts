@@ -1,5 +1,5 @@
 import chalk from 'chalk';
-import * as moment from 'moment';
+import moment from 'moment';
 
 import { AtlasSession, loadAtlasSession } from '../../session/atlas_session';
 import { logJsonResult, logWarning } from '../../cli/logging';

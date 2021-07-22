@@ -60,7 +60,7 @@ export class ApiClient {
     } catch (error) {
       throw new Error(`The specified file is invalid! Please enter a valid BPMN file. ${error}`);
     }
-  
+
     const processModelId: string = bpmnDocument.getProcessModelId();
     if (processModelId == null) {
       throw new Error('Unexpected value: `processModelId` should not be null here');
@@ -193,7 +193,6 @@ export class ApiClient {
       const result = await this.managementApiClient.getProcessModels(this.identity, offset, limit);
 
       return result.processModels;
-
     } catch (error) {
       await this.warnAndExitIfEnginerUrlNotAvailable();
       throw error;
@@ -205,11 +204,9 @@ export class ApiClient {
       const processModels = await this.getProcessModels();
 
       return processModels.filter((processModel: any) => processModelIds.includes(processModel.id));
-
     } catch (error) {
       await this.warnAndExitIfEnginerUrlNotAvailable();
       throw error;
-      
     }
   }
 
@@ -233,7 +230,7 @@ export class ApiClient {
     } catch (error) {
       await this.warnAndExitIfEnginerUrlNotAvailable();
       throw error;
-    }                      
+    }
     allProcessInstances = filterProcessInstancesByProcessModelId(allProcessInstances, filterByProcessModelId);
     allProcessInstances = filterProcessInstancesByState(allProcessInstances, filterByState);
     allProcessInstances = rejectProcessInstancesByProcessModelId(allProcessInstances, rejectByProcessModelId);
@@ -251,10 +248,10 @@ export class ApiClient {
     rejectByState: string[]
   ): Promise<UserTask[]> {
     let allUserTasks: UserTask[];
-     try {
+    try {
       const userTaskList = await this.atlasEngineClient.userTasks.query(this.identity);
       allUserTasks = userTaskList.userTasks;
-      
+
       if (filterByCorrelationId.length > 0) {
         allUserTasks = await this.getAllUserTasksViaCorrelations(filterByCorrelationId);
       } else if (filterByState.length > 0) {
@@ -262,27 +259,23 @@ export class ApiClient {
       } else if (filterByProcessModelId.length > 0) {
         allUserTasks = await this.getAllUserTasksViaAllProcessModels(filterByProcessModelId);
       } else if (filterByFlowNodeInstanceId.length > 0) {
-        allUserTasks = await this.getAllUserTasksViaFlowNodeInstances(filterByFlowNodeInstanceId)
+        allUserTasks = await this.getAllUserTasksViaFlowNodeInstances(filterByFlowNodeInstanceId);
       }
     } catch (error) {
       await this.warnAndExitIfEnginerUrlNotAvailable();
       throw error;
     }
-     allUserTasks = filterProcessInstancesByState(allUserTasks, filterByState);
-     allUserTasks = filterProcessInstancesByProcessModelId(allUserTasks, filterByProcessModelId);
-     allUserTasks = rejectProcessInstancesByProcessModelId(allUserTasks, rejectByProcessModelId);
-     allUserTasks = rejectProcessInstancesByState(allUserTasks, rejectByState);
+    allUserTasks = filterProcessInstancesByState(allUserTasks, filterByState);
+    allUserTasks = filterProcessInstancesByProcessModelId(allUserTasks, filterByProcessModelId);
+    allUserTasks = rejectProcessInstancesByProcessModelId(allUserTasks, rejectByProcessModelId);
+    allUserTasks = rejectProcessInstancesByState(allUserTasks, rejectByState);
 
     return allUserTasks;
   }
 
   async finishSuspendedUserTask(flowNodeInstanceId: string, payload: any = {}): Promise<FinishedUserTaskInfo> {
     try {
-      await this.atlasEngineClient.userTasks.finishUserTask(
-        flowNodeInstanceId,
-        payload,
-        this.identity
-        );
+      await this.atlasEngineClient.userTasks.finishUserTask(flowNodeInstanceId, payload, this.identity);
 
       const result: FinishedUserTaskInfo = {
         success: true,
@@ -298,21 +291,19 @@ export class ApiClient {
   }
 
   async getAllUserTasksViaCorrelations(correlationIds: string[]): Promise<UserTask[]> {
-      try {
-        const result = await this.atlasEngineClient.userTasks.query({
-          correlationId: correlationIds,
-        });
-        
-        return result.userTasks;
-      } catch (error) {
-        await this.warnAndExitIfEnginerUrlNotAvailable();
-        throw error;
-      }
+    try {
+      const result = await this.atlasEngineClient.userTasks.query({
+        correlationId: correlationIds
+      });
+
+      return result.userTasks;
+    } catch (error) {
+      await this.warnAndExitIfEnginerUrlNotAvailable();
+      throw error;
+    }
   }
 
-  private async getAllUserTasksViaAllProcessModels(
-    filterByProcessModelId: string[]
-  ): Promise<UserTask[]> {
+  private async getAllUserTasksViaAllProcessModels(filterByProcessModelId: string[]): Promise<UserTask[]> {
     const allProcessModels = await this.getProcessModels();
 
     const processModels = filterProcessModelsById(allProcessModels, filterByProcessModelId);
@@ -320,18 +311,13 @@ export class ApiClient {
     let allUserTasks = [];
     for (const processModel of processModels) {
       try {
-
         const result = await this.atlasEngineClient.userTasks.query({
-          processModelId: processModel.id,
+          processModelId: processModel.id
         });
 
         allUserTasks = allUserTasks.concat(result.userTasks);
       } catch (e) {
-        if (
-          e.message.includes('No ProcessInstances for ProcessModel') ||
-          e.message.includes('not found')
-        ) {
-          
+        if (e.message.includes('No ProcessInstances for ProcessModel') || e.message.includes('not found')) {
         } else {
           throw e;
         }
@@ -341,29 +327,28 @@ export class ApiClient {
   }
 
   private async getAllUserTasksViaState(filterByState: string[]): Promise<UserTask[]> {
-      try {
-        const result = await this.atlasEngineClient.userTasks.query({
-          state: filterByState as unknown as FlowNodeInstanceState[],
-        });
-  
-       return result.userTasks;
-      } catch (error) {
-        await this.warnAndExitIfEnginerUrlNotAvailable();
-        throw error;
-      }
+    try {
+      const result = await this.atlasEngineClient.userTasks.query({
+        state: (filterByState as unknown) as FlowNodeInstanceState[]
+      });
+
+      return result.userTasks;
+    } catch (error) {
+      await this.warnAndExitIfEnginerUrlNotAvailable();
+      throw error;
+    }
   }
 
   async getAllUserTasksViaFlowNodeInstances(flowNodeInstanceId: string[]): Promise<UserTask[]> {
     try {
       const result = await this.atlasEngineClient.userTasks.query({
-        flowNodeInstanceId: flowNodeInstanceId,
+        flowNodeInstanceId: flowNodeInstanceId
       });
 
       return result.userTasks;
     } catch (error) {
       await this.warnAndExitIfEnginerUrlNotAvailable();
     }
-
   }
 
   async getAllProcessInstancesViaCorrelations(correlationIds: string[]): Promise<ProcessInstance[]> {
@@ -376,7 +361,6 @@ export class ApiClient {
         await this.warnAndExitIfEnginerUrlNotAvailable();
         throw error;
       }
-      
     }
 
     return allProcessInstances;
@@ -391,7 +375,6 @@ export class ApiClient {
           processInstanceId
         );
         allProcessInstances.push(rawProcessInstance);
-
       } catch (error) {
         await this.warnAndExitIfEnginerUrlNotAvailable();
         throw error;
@@ -403,7 +386,6 @@ export class ApiClient {
 
   async getLatestProcessInstance(): Promise<ProcessInstance> {
     try {
-
       const sortByCreatedAtDescFn = (a: any, b: any) => {
         if (a.createdAt > b.createdAt) {
           return -1;
@@ -413,18 +395,16 @@ export class ApiClient {
         }
         return 0;
       };
-  
+
       const correlationResult = await this.managementApiClient.getAllCorrelations(this.identity);
       const latestCorrelation = correlationResult.correlations.sort(sortByCreatedAtDescFn)[0];
       const processInstances = latestCorrelation.processInstances;
-  
-      return processInstances.sort(sortByCreatedAtDescFn)[0];
 
+      return processInstances.sort(sortByCreatedAtDescFn)[0];
     } catch (error) {
       await this.warnAndExitIfEnginerUrlNotAvailable();
       throw error;
     }
-    
   }
 
   async addTokensToProcessInstances(rawProcessInstances: ProcessInstance[]): Promise<ProcessInstanceWithTokens[]> {
@@ -482,21 +462,19 @@ export class ApiClient {
           this.identity,
           state as DataModels.Correlations.CorrelationState
         );
-  
-        allProcessInstances = allProcessInstances.concat(result.processInstances);
 
+        allProcessInstances = allProcessInstances.concat(result.processInstances);
       } catch (error) {
         await this.warnAndExitIfEnginerUrlNotAvailable();
         throw error;
       }
-      
     }
 
     return allProcessInstances;
   }
 
   private async warnAndExitIfEnginerUrlNotAvailable(): Promise<void> {
-    if (! await isUrlAvailable(this.engineUrl)) {
+    if (!(await isUrlAvailable(this.engineUrl))) {
       logError(`Could not connect to engine: Please make sure it is running.`);
       process.exit(1);
     }

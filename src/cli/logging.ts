@@ -1,5 +1,5 @@
 import chalk from 'chalk';
-import * as marked from 'marked';
+import marked from 'marked';
 import { MarkdownRenderer } from './MarkdownRenderer';
 
 const HTML_ENTITY_REGEX = /&(#(?:\d+)|(?:#x[0-9A-Fa-f]+)|(?:\w+));?/gi;
@@ -77,4 +77,8 @@ function unescapeHtmlEntities(html: string): string {
     }
     return '';
   });
+}
+
+export function usageString(usage: string, descriptionLong: string): string {
+  return heading('USAGE') + `\n  $0 ${usage}\n\n` + heading('DESCRIPTION') + `\n  ${descriptionLong}`;
 }

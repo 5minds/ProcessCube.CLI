@@ -6,9 +6,9 @@ import * as JSON5 from 'json5';
 const ATLAS_EXECUTABLE = 'node ./dist/pc.js';
 
 export function execAsJson(cmd: string, assertRegexMatches?: RegExp | string): any {
-  console.log(cmd);
+  logCommand(cmd);
   const output = getShellOutput(`${ATLAS_EXECUTABLE} ${cmd} --output json`);
-  console.log(`>>> ${output}`);
+  logCommandOutput(output);
 
   if (assertRegexMatches != null) {
     if (typeof assertRegexMatches == 'string') {
@@ -30,11 +30,11 @@ export function execAsJson(cmd: string, assertRegexMatches?: RegExp | string): a
 }
 
 export function execAsJsonPipes(cmds: string[], assertRegexMatches?: RegExp | string): any {
-  const cmd = cmds.map((cmd) => `${ATLAS_EXECUTABLE} ${cmd} --output json`).join(' | ');
+  const cmd = cmds.map((cmd) => `${ATLAS_EXECUTABLE} ${cmd}`).join(' | ') + ' --output json';
 
-  console.log(cmd);
+  logCommand(cmd);
   const output = getShellOutput(cmd);
-  console.log(`>>> ${output}`);
+  logCommandOutput(output);
 
   if (assertRegexMatches != null) {
     if (typeof assertRegexMatches == 'string') {
@@ -56,17 +56,15 @@ export function execAsJsonPipes(cmds: string[], assertRegexMatches?: RegExp | st
 }
 
 export function execAsText(cmd: string, assertRegexMatches?: RegExp): any {
+  logCommand(cmd);
   const output = getShellOutput(`${ATLAS_EXECUTABLE} ${cmd} --output text`);
+  logCommandOutput(output);
 
   if (assertRegexMatches != null) {
     assert.ok(output.match(assertRegexMatches) != null, `Did expect ${assertRegexMatches} to match:\n\n${output}`);
   }
 
   return output;
-}
-
-export function execAsDefault(cmd: string): any {
-  return getShellOutput(`${ATLAS_EXECUTABLE} ${cmd}`);
 }
 
 function getShellOutput(cmd: string): string {
@@ -87,4 +85,14 @@ export async function loginAsRoot(testCallbackFn: () => Promise<void>) {
 
 export function assertCorrelationIdInResult(result: any, correlationId: string): void {
   assert.ok(result.result.some((processInstance) => processInstance.correlationId === correlationId));
+}
+
+const LOG_PREFIX = '      | ';
+function logCommand(cmd: string): void {
+  console.log('');
+  console.log(`${LOG_PREFIX}$ ${cmd}`);
+}
+
+function logCommandOutput(output: string): void {
+  console.log(LOG_PREFIX + output.split('\n').join('\n' + LOG_PREFIX));
 }

@@ -1,4 +1,4 @@
-import * as marked from 'marked';
+import marked from 'marked';
 import chalk from 'chalk';
 
 import { padLeftMultiline } from './logging';
