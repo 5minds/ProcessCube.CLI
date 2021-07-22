@@ -18,7 +18,7 @@ export async function onLoad(cli: CLI): Promise<void> {
       arguments: [
         {
           name: 'flowNodeInstanceId',
-          description: 'ID of user task to finish'
+          description: 'ID of the User Task instance to finish'
         }
       ],
       options: [
