@@ -24,7 +24,7 @@ export async function onLoad(cli: CLI): Promise<void> {
       options: [
         {
           name: 'result',
-          description: 'Set result values for the finished user task from <json> string',
+          description: 'Set result values for the finished User Task from a <json> string',
           type: 'string'
         },
         {
