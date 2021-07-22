@@ -61,7 +61,7 @@ export interface CLI {
   executeCommand(commandName: string, inputs: Inputs): any;
 
   registerCommand(
-    commandOptions: Command,
+    command: Command,
     executeCallbackFn: (inputs: Inputs) => Promise<void>,
     validationCallbackFn?: (inputs: Inputs) => Promise<boolean>
   ): void;

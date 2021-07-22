@@ -1,4 +1,5 @@
 import { CLI, Inputs } from '../../cli';
+import { logWarning } from '../../cli/logging';
 import { deployFiles } from './deploy-files';
 
 export async function onLoad(cli: CLI): Promise<void> {
@@ -24,7 +25,7 @@ export async function onLoad(cli: CLI): Promise<void> {
 
 async function runCommand(inputs: Inputs): Promise<void> {
   if (inputs.argv.filenames?.length === 0) {
-    // program.showHelp();
+    logWarning('No files given. Aborting.');
     return;
   }
 

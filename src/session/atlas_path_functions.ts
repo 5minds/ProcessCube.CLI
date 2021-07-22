@@ -23,10 +23,10 @@ export function getSessionStorageFilename(): string {
 /**
  * Returns the local directory that contains extensions for the cli.
  */
-export function getExtensionsDir(givenCharonExtensionsDir?: string): string {
-  if (givenCharonExtensionsDir == null) {
+export function getExtensionsDir(givenCliExtensionDir?: string): string {
+  if (givenCliExtensionDir == null) {
     return join(getCliHomeDir(), ATLAS_CLI_EXTENSIONS_SUBDIRNAME);
   }
 
-  return resolve(givenCharonExtensionsDir);
+  return resolve(givenCliExtensionDir);
 }

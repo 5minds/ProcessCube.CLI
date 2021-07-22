@@ -1,4 +1,5 @@
 import { CLI, Inputs } from '../../cli';
+import { logWarning } from '../../cli/logging';
 import { removeProcessModels } from './remove-process-models';
 
 export async function onLoad(cli: CLI): Promise<void> {
@@ -32,7 +33,7 @@ export async function onLoad(cli: CLI): Promise<void> {
 
 async function runCommand(inputs: Inputs): Promise<void> {
   if (inputs.argv.processModelIds?.length === 0) {
-    // program.showHelp();
+    logWarning('No IDs given. Aborting.');
     return;
   }
 
