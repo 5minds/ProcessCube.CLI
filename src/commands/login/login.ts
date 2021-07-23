@@ -4,6 +4,7 @@ import fetch, { FetchError } from 'node-fetch';
 import {
   ANONYMOUS_IDENTITY_SERVER_URL,
   AtlasSession,
+  ROOT_ACCESS_TOKEN_IDENTITY_SERVER_URL,
   loadAtlasSession,
   saveAtlasSession
 } from '../../session/atlas_session';
@@ -19,6 +20,7 @@ const DEFAULT_IDENTITY_SERVER_URL = 'http://localhost:5000/';
 export async function login(
   givenEngineUrl: string,
   tryAnonymousRootLogin: boolean,
+  useRootAccessToken: string | null,
   outputFormat: string
 ): Promise<void> {
   let engineUrl = givenEngineUrl;
@@ -61,12 +63,22 @@ export async function login(
   }
 
   const engineUrlIsAvailable = await isUrlAvailable(engineUrl);
+  if (engineUrlIsAvailable === false) {
+    logError(`Could not connect to engine: ${engineUrl}`);
+    process.exit(1);
+  }
+
   let newSession: AtlasSession;
-  if (tryAnonymousRootLogin && engineUrlIsAvailable == true) {
+  if (tryAnonymousRootLogin) {
     newSession = await loginViaAnonymousRootAccess(engineUrl);
 
     console.log('');
     console.log(chalk.yellow('Anonymous root login successful. No further steps required.'));
+  } else if (useRootAccessToken != null) {
+    newSession = await loginViaRootAccessToken(engineUrl, useRootAccessToken);
+
+    console.log('');
+    console.log(chalk.yellow('Login via root access token successful. No further steps required.'));
   } else {
     newSession = await loginViaIdentityServer(engineUrl);
 
@@ -91,6 +103,19 @@ async function loginViaAnonymousRootAccess(engineUrl: string): Promise<AtlasSess
     identityServerUrl: ANONYMOUS_IDENTITY_SERVER_URL,
     idToken: '',
     accessToken: 'ZHVtbXlfdG9rZW4=',
+    expiresAt: Date.now() + ANONYMOUS_TOKEN_LIFETIME_IN_MILLISECONDS
+  };
+
+  return newSession;
+}
+
+async function loginViaRootAccessToken(engineUrl: string, token: string): Promise<AtlasSession> {
+  const newSession: AtlasSession = {
+    type: 'session',
+    engineUrl: engineUrl,
+    identityServerUrl: ROOT_ACCESS_TOKEN_IDENTITY_SERVER_URL,
+    idToken: '',
+    accessToken: token,
     expiresAt: Date.now() + ANONYMOUS_TOKEN_LIFETIME_IN_MILLISECONDS
   };
 
