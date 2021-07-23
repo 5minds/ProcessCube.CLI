@@ -69,12 +69,12 @@ export async function login(
   }
 
   let newSession: AtlasSession;
-  if (tryAnonymousRootLogin && engineUrlIsAvailable == true) {
+  if (tryAnonymousRootLogin) {
     newSession = await loginViaAnonymousRootAccess(engineUrl);
 
     console.log('');
     console.log(chalk.yellow('Anonymous root login successful. No further steps required.'));
-  } else if (useRootAccessToken != null && engineUrlIsAvailable == true) {
+  } else if (useRootAccessToken != null) {
     newSession = await loginViaRootAccessToken(engineUrl, useRootAccessToken);
 
     console.log('');
