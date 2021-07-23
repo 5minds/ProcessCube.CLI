@@ -23,6 +23,7 @@ type ExpireInfo = {
 };
 
 export const ANONYMOUS_IDENTITY_SERVER_URL = '<anonymous>';
+export const ROOT_ACCESS_TOKEN_IDENTITY_SERVER_URL = '<root_access_token>';
 
 export function loadAtlasSession(returnInvalidSession: boolean = false): AtlasSession | null {
   const filename = getSessionStorageFilename();

@@ -20,6 +20,11 @@ export async function onLoad(cli: CLI): Promise<void> {
           name: 'root',
           description: 'Try to use anonymous root login',
           type: 'boolean'
+        },
+        {
+          name: 'root-access-token',
+          description: 'Use root access token for login',
+          type: 'string'
         }
       ]
     },
@@ -28,5 +33,5 @@ export async function onLoad(cli: CLI): Promise<void> {
 }
 
 async function runCommand(inputs: Inputs): Promise<void> {
-  await login(inputs.argv.engineUrl, inputs.argv.root, inputs.argv.output);
+  await login(inputs.argv.engineUrl, inputs.argv.root, inputs.argv.rootAccessToken, inputs.argv.output);
 }
