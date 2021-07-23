@@ -13,6 +13,7 @@ import { onLoad as onLoadSessionStatus } from './commands/session-status';
 import { onLoad as onLoadShowProcessInstance } from './commands/show-process-instance';
 import { onLoad as onLoadStartProcessModel } from './commands/start-process-model';
 import { onLoad as onLoadStopProcessInstance } from './commands/stop-process-instance';
+import { onLoad as onLoadGenerateRootAccessToken } from './commands/generate-root-access-token';
 
 const packagedOnLoadFunctions = [
   onLoadDeployFiles,
@@ -27,7 +28,8 @@ const packagedOnLoadFunctions = [
   onLoadSessionStatus,
   onLoadShowProcessInstance,
   onLoadStartProcessModel,
-  onLoadStopProcessInstance
+  onLoadStopProcessInstance,
+  onLoadGenerateRootAccessToken
 ];
 
 export async function loadPackagedExtensions(cli: CLI): Promise<void> {
