@@ -1,7 +1,7 @@
 import chalk from 'chalk';
 
 import { logJsonResult } from '../../cli/logging';
-import { addJsonPipingHintToResultJson, createResultJson } from '../../cli/result_json';
+import { createResultJson } from '../../cli/result_json';
 import { OUTPUT_FORMAT_JSON, OUTPUT_FORMAT_TEXT } from '../../pc';
 
 export async function generateRootAccessToken(size: number, printRaw: boolean, outputFormat: string): Promise<void> {

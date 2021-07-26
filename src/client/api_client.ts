@@ -66,13 +66,8 @@ export class ApiClient {
       throw new Error('Unexpected value: `processModelId` should not be null here');
     }
 
-    const payload = {
-      xml: xml,
-      overwriteExisting: true
-    };
-
     try {
-      await this.managementApiClient.updateProcessDefinitionsByName(this.identity, processModelId, payload);
+      await this.atlasEngineClient.processDefinitions.deployFiles(filename, true, this.identity);
     } catch (error) {
       await this.warnAndExitIfEnginerUrlNotAvailable();
 
