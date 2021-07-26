@@ -79,7 +79,11 @@ export class ApiClient {
 
   async removeProcessModel(processModelId: string): Promise<RemovedProcessModelInfo> {
     try {
-      await this.managementApiClient.deleteProcessDefinitionsByProcessModelId(this.identity, processModelId);
+      const processDefinition = await this.atlasEngineClient.processDefinitions.getByProcessModelId(
+        processModelId,
+        this.identity
+      );
+      await this.atlasEngineClient.processDefinitions.deleteById(processDefinition.processDefinitionId);
 
       return { success: true, processModelId };
     } catch (error) {
@@ -96,16 +100,26 @@ export class ApiClient {
     waitForProcessToFinish: boolean
   ): Promise<StartedProcessModelInfo> {
     try {
-      const callbackType = waitForProcessToFinish
-        ? DataModels.ProcessModels.StartCallbackType.CallbackOnProcessInstanceFinished
-        : DataModels.ProcessModels.StartCallbackType.CallbackOnProcessInstanceCreated;
-      const response = await this.managementApiClient.startProcessInstance(
-        this.identity,
-        processModelId,
-        payload,
-        callbackType,
-        startEventId
-      );
+      let response;
+      if (waitForProcessToFinish) {
+        response = await this.atlasEngineClient.processDefinitions.startProcessInstanceAndAwaitEndEvent(
+          {
+            processModelId,
+            startEventId,
+            initialToken: payload
+          },
+          this.identity
+        );
+      } else {
+        response = await this.atlasEngineClient.processDefinitions.startProcessInstance(
+          {
+            processModelId,
+            startEventId,
+            initialToken: payload
+          },
+          this.identity
+        );
+      }
 
       const result: StartedProcessModelInfo = {
         success: true,
@@ -114,19 +128,9 @@ export class ApiClient {
         processInstanceId: response.processInstanceId,
         correlationId: response.correlationId,
         inputValues: payload.inputValues,
-        endEventId: response.endEventId
+        endEventId: response.endEventId,
+        payload: response.tokenPayload
       };
-
-      if (waitForProcessToFinish === true) {
-        const tokenHistoryGroup = await this.managementApiClient.getTokensForProcessInstance(
-          this.identity,
-          response.processInstanceId
-        );
-
-        const token = this.getToken(tokenHistoryGroup, -1, 'onExit');
-
-        return { ...result, payload: token.payload };
-      }
 
       return result;
     } catch (error) {
