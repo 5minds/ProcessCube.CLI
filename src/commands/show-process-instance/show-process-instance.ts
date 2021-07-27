@@ -7,7 +7,7 @@ import { OUTPUT_FORMAT_JSON, OUTPUT_FORMAT_TEXT } from '../../pc';
 import { BpmnDocument } from '../../cli/bpmn_document';
 import { sortProcessInstances } from '../list-process-instances/sorting';
 import { logError, logJsonResult } from '../../cli/logging';
-import { ApiClient, ProcessInstance, ProcessInstanceWithTokens } from '../../client/api_client';
+import { ApiClient, ProcessInstance, ProcessInstanceWithFlowNodeInstances } from '../../client/api_client';
 
 export async function showProcessInstance(
   processInstanceOrCorrelationIds: string[],
@@ -36,7 +36,7 @@ export async function showProcessInstance(
   }
 
   const sortedProcssInstances = sortProcessInstances(rawProcessInstances, null, null, 'asc');
-  const processInstancesWithTokens = await apiClient.addTokensToProcessInstances(sortedProcssInstances);
+  const processInstancesWithTokens = await apiClient.addFlowNodeInstancesToProcessInstances(sortedProcssInstances);
 
   let resultProcessInstances: any[];
   if (showAllFields) {
@@ -66,7 +66,10 @@ export async function showProcessInstance(
   }
 }
 
-async function logProcessInstanceAsText(processInstance: ProcessInstanceWithTokens, showSeparator: boolean = false) {
+async function logProcessInstanceAsText(
+  processInstance: ProcessInstanceWithFlowNodeInstances,
+  showSeparator: boolean = false
+) {
   if (showSeparator) {
     console.log(chalk.cyan('---------------------------------- >8 ---------------------------------------------'));
   }
@@ -107,7 +110,7 @@ async function logProcessInstanceAsText(processInstance: ProcessInstanceWithToke
   console.log('');
 }
 
-async function logHistory(processInstance: ProcessInstanceWithTokens): Promise<void> {
+async function logHistory(processInstance: ProcessInstanceWithFlowNodeInstances): Promise<void> {
   const flowNodeIds = getFlowNodeIdsInChronologicalOrder(processInstance);
   const firstToken = findToken(processInstance, flowNodeIds[0], 'onEnter');
   const lastTokenOnExit = findToken(processInstance, flowNodeIds[flowNodeIds.length - 1], 'onExit');
@@ -166,27 +169,11 @@ async function logHistory(processInstance: ProcessInstanceWithTokens): Promise<v
   }
 }
 
-function getFlowNodeIdsInChronologicalOrder(processInstance: ProcessInstanceWithTokens): string[] {
-  const tokens = processInstance.tokens;
-  const flowNodeIds = Object.keys(tokens);
-
-  const sortFlowNodeIdsChronologically = (a: string, b: string) => {
-    const createdAtA = tokens[a].tokenHistoryEntries[0]?.createdAt;
-    const createdAtB = tokens[b].tokenHistoryEntries[0]?.createdAt;
-
-    if (createdAtA < createdAtB) {
-      return -1;
-    }
-    if (createdAtA > createdAtB) {
-      return 1;
-    }
-    return 0;
-  };
-
-  return flowNodeIds.sort(sortFlowNodeIdsChronologically);
+function getFlowNodeIdsInChronologicalOrder(processInstance: ProcessInstanceWithFlowNodeInstances): string[] {
+  return processInstance.flowNodeInstances.reverse().map((x) => x.flowNodeId);
 }
 
-function logErrorIfAny(processInstance: ProcessInstanceWithTokens): void {
+function logErrorIfAny(processInstance: ProcessInstanceWithFlowNodeInstances): void {
   if (processInstance.state === 'error') {
     // it seems error contains more info than is mentioned in the types
     const error = processInstance.error as any;
@@ -213,8 +200,12 @@ function stateToColoredString(state: string): string {
   }
 }
 
-function findToken(processInstance: ProcessInstanceWithTokens, flowNodeId: string, tokenEventType: string): any | null {
-  const token = processInstance.tokens[flowNodeId];
+function findToken(
+  processInstance: ProcessInstanceWithFlowNodeInstances,
+  flowNodeId: string,
+  tokenEventType: string
+): any | null {
+  const token = processInstance.flowNodeInstances[flowNodeId];
   if (token == null) {
     return null;
   }
@@ -228,18 +219,8 @@ function printMultiLineString(text: string | string[], linePrefix: string = ''):
   lines.forEach((line: string): void => console.log(`${linePrefix}${line}`));
 }
 
-function getDoneAt(processInstance: ProcessInstanceWithTokens): moment.Moment | null {
-  const flowNodeIds = Object.keys(processInstance.tokens).reverse();
-
-  const lastTokenOnExit =
-    findToken(processInstance, flowNodeIds[flowNodeIds.length - 1], 'onExit') ||
-    findToken(processInstance, flowNodeIds[flowNodeIds.length - 1], 'onEnter');
-
-  if (lastTokenOnExit == null) {
-    return null;
-  }
-
-  return moment(lastTokenOnExit.createdAt);
+function getDoneAt(processInstance: ProcessInstanceWithFlowNodeInstances): moment.Moment | null {
+  return moment(processInstance.finishedAt);
 }
 
 function mapToLong(list: any): any[] {

@@ -42,10 +42,7 @@ export function execAsJson(
     });
 
     if (resultContainsError) {
-      // TODO: this issue has to be solved before we can use this "error checker" without false positives
-      //        https://github.com/atlas-engine/AtlasEngine/issues/617
-      //
-      // assert.ok(false, `A result from \`${cmd}\` indicated an error:\n\n${output}`);
+      assert.ok(false, `A result from \`${cmd}\` indicated an error:\n\n${output}`);
     }
   }
 

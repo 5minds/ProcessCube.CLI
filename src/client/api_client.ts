@@ -32,8 +32,8 @@ type Identity = any;
 type UserTask = AtlasEngineDataModels.FlowNodeInstances.UserTask;
 
 export type ProcessInstance = AtlasEngineDataModels.ProcessInstances.ProcessInstance;
-export type ProcessInstanceWithTokens = ProcessInstance & {
-  tokens: DataModels.TokenHistory.TokenHistoryGroup;
+export type ProcessInstanceWithFlowNodeInstances = ProcessInstance & {
+  flowNodeInstances: AtlasEngineDataModels.FlowNodeInstances.FlowNodeInstance[];
 };
 
 export class ApiClient {
@@ -386,14 +386,16 @@ export class ApiClient {
     }
   }
 
-  async addTokensToProcessInstances(rawProcessInstances: ProcessInstance[]): Promise<ProcessInstanceWithTokens[]> {
-    const processInstancesWithTokens: ProcessInstanceWithTokens[] = [];
+  async addFlowNodeInstancesToProcessInstances(
+    rawProcessInstances: ProcessInstance[]
+  ): Promise<ProcessInstanceWithFlowNodeInstances[]> {
+    const processInstancesWithTokens: ProcessInstanceWithFlowNodeInstances[] = [];
     for (const rawProcessInstance of rawProcessInstances) {
-      const tokens = await this.managementApiClient.getTokensForProcessInstance(
-        this.identity,
-        rawProcessInstance.processInstanceId
+      const tokens = await this.atlasEngineClient.flowNodeInstances.queryFlowNodeInstances(
+        { processInstanceId: rawProcessInstance.processInstanceId },
+        this.identity
       );
-      const processInstance = { ...rawProcessInstance, tokens };
+      const processInstance = { ...rawProcessInstance, flowNodeInstances: tokens.flowNodeInstances };
 
       processInstancesWithTokens.push(processInstance);
     }
