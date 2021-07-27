@@ -1,20 +1,13 @@
 import chalk from 'chalk';
 import moment from 'moment';
 
-import { DataModels } from '@process-engine/management_api_contracts';
-
 import { addJsonPipingHintToResultJson, createResultJson } from '../../cli/result_json';
 import { loadAtlasSession } from '../../session/atlas_session';
 import { OUTPUT_FORMAT_JSON, OUTPUT_FORMAT_TEXT } from '../../pc';
 import { BpmnDocument } from '../../cli/bpmn_document';
 import { sortProcessInstances } from '../list-process-instances/sorting';
 import { logError, logJsonResult } from '../../cli/logging';
-import { ApiClient } from '../../client/api_client';
-
-type ProcessInstance = DataModels.Correlations.ProcessInstance;
-type ProcessInstanceWithTokens = ProcessInstance & {
-  tokens: DataModels.TokenHistory.TokenHistoryGroup;
-};
+import { ApiClient, ProcessInstance, ProcessInstanceWithTokens } from '../../client/api_client';
 
 export async function showProcessInstance(
   processInstanceOrCorrelationIds: string[],
@@ -85,7 +78,7 @@ async function logProcessInstanceAsText(processInstance: ProcessInstanceWithToke
   console.log(
     'Model:     ',
     chalk.cyan(processInstance.processModelId),
-    chalk.dim(`(Definition: ${processInstance.processDefinitionName})`)
+    chalk.dim(`(Definition: ${processInstance.processDefinitionId})`)
   );
   console.log(
     'Instance:  ',
@@ -105,7 +98,7 @@ async function logProcessInstanceAsText(processInstance: ProcessInstanceWithToke
     chalk.dim(`(${moment(processInstance.createdAt).fromNow()})`)
   );
   console.log('Finished:  ', doneAtFormatted, chalk.dim(durationHint));
-  console.log('User:      ', processInstance.identity.userId);
+  console.log('User:      ', processInstance.ownerId);
   console.log('State:     ', stateToColoredString(processInstance.state));
 
   await logHistory(processInstance);

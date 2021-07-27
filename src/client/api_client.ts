@@ -31,8 +31,8 @@ type Identity = any;
 
 type UserTask = AtlasEngineDataModels.FlowNodeInstances.UserTask;
 
-type ProcessInstance = DataModels.Correlations.ProcessInstance;
-type ProcessInstanceWithTokens = ProcessInstance & {
+export type ProcessInstance = AtlasEngineDataModels.ProcessInstances.ProcessInstance;
+export type ProcessInstanceWithTokens = ProcessInstance & {
   tokens: DataModels.TokenHistory.TokenHistoryGroup;
 };
 
@@ -347,55 +347,39 @@ export class ApiClient {
   }
 
   async getAllProcessInstancesViaCorrelations(correlationIds: string[]): Promise<ProcessInstance[]> {
-    let allProcessInstances = [];
-    for (const correlationId of correlationIds) {
-      try {
-        const result = await this.managementApiClient.getProcessInstancesForCorrelation(this.identity, correlationId);
-        allProcessInstances = allProcessInstances.concat(result.processInstances);
-      } catch (error) {
-        await this.warnAndExitIfEnginerUrlNotAvailable();
-        throw error;
-      }
+    try {
+      const result = await this.atlasEngineClient.processInstances.query(
+        { correlationId: correlationIds },
+        this.identity
+      );
+      return result.processInstances;
+    } catch (error) {
+      await this.warnAndExitIfEnginerUrlNotAvailable();
+      throw error;
     }
-
-    return allProcessInstances;
   }
 
   async getAllProcessInstancesViaIds(processInstanceIds: string[]): Promise<ProcessInstance[]> {
-    let allProcessInstances = [];
-    for (const processInstanceId of processInstanceIds) {
-      try {
-        const rawProcessInstance = await this.managementApiClient.getProcessInstanceById(
-          this.identity,
-          processInstanceId
-        );
-        allProcessInstances.push(rawProcessInstance);
-      } catch (error) {
-        await this.warnAndExitIfEnginerUrlNotAvailable();
-        throw error;
-      }
+    try {
+      const rawProcessInstance = await this.atlasEngineClient.processInstances.query(
+        { processInstanceId: processInstanceIds },
+        this.identity
+      );
+      return rawProcessInstance.processInstances;
+    } catch (error) {
+      await this.warnAndExitIfEnginerUrlNotAvailable();
+      throw error;
     }
-
-    return allProcessInstances;
   }
 
   async getLatestProcessInstance(): Promise<ProcessInstance> {
     try {
-      const sortByCreatedAtDescFn = (a: any, b: any) => {
-        if (a.createdAt > b.createdAt) {
-          return -1;
-        }
-        if (a.createdAt < b.createdAt) {
-          return 1;
-        }
-        return 0;
-      };
+      const result = await this.atlasEngineClient.processInstances.query({}, this.identity, undefined, 1, {
+        sortBy: AtlasEngineDataModels.ProcessInstances.ProcessInstanceSortableColumns.createdAt,
+        sortDir: 'DESC'
+      });
 
-      const correlationResult = await this.managementApiClient.getAllCorrelations(this.identity);
-      const latestCorrelation = correlationResult.correlations.sort(sortByCreatedAtDescFn)[0];
-      const processInstances = latestCorrelation.processInstances;
-
-      return processInstances.sort(sortByCreatedAtDescFn)[0];
+      return result.processInstances[0];
     } catch (error) {
       await this.warnAndExitIfEnginerUrlNotAvailable();
       throw error;
@@ -427,9 +411,9 @@ export class ApiClient {
     let allProcessInstances = [];
     for (const processModel of processModels) {
       try {
-        const result = await this.managementApiClient.getProcessInstancesForProcessModel(
-          this.identity,
-          processModel.id
+        const result = await this.atlasEngineClient.processInstances.query(
+          { processModelId: processModel.id },
+          this.identity
         );
 
         allProcessInstances = allProcessInstances.concat(result.processInstances);
@@ -450,13 +434,12 @@ export class ApiClient {
   }
 
   private async getAllProcessInstancesViaState(filterByState: string[]): Promise<ProcessInstance[]> {
+    const states = filterByState as AtlasEngineDataModels.ProcessInstances.ProcessInstanceState[];
+
     let allProcessInstances: ProcessInstance[] = [];
-    for (const state of filterByState) {
+    for (const state of states) {
       try {
-        const result = await this.managementApiClient.getProcessInstancesByState(
-          this.identity,
-          state as DataModels.Correlations.CorrelationState
-        );
+        const result = await this.atlasEngineClient.processInstances.query({ state }, this.identity);
 
         allProcessInstances = allProcessInstances.concat(result.processInstances);
       } catch (error) {
