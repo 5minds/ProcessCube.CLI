@@ -27,9 +27,7 @@
   "devDependencies": {
     "@atlas-engine/atlas_engine_client": "^2.3.8",
     "@essential-projects/eslint-config": "^1.0.6",
-    "@essential-projects/http": "^2.5.0",
     "@process-engine/ci_tools": "^3.2.1",
-    "@process-engine/management_api_client": "^6.2.0",
     "@types/mocha": "^5.2.7",
     "@types/node": "^12.12.28",
     "@types/yargs": "^15.0.4",
@@ -44,6 +42,7 @@
     "marked": "^0.8.0",
     "mime-types": "^2.1.18",
     "mocha": "^6.1.4",
+    "moment": "^2.29.0",
     "node-fetch": "^2.6.0",
     "open": "^7.0.2",
     "os": "^0.1.1",

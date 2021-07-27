@@ -1,10 +1,8 @@
 import * as fs from 'fs';
 
-import { DataModels } from '@process-engine/management_api_contracts';
 import { AtlasEngineClient, DataModels as AtlasEngineDataModels } from '@atlas-engine/atlas_engine_client';
 
-import { getIdentityAndManagementApiClient } from './management_api_client';
-import { ManagementApiClient } from '@process-engine/management_api_client';
+import { getIdentity } from './identity';
 
 import { AtlasSession } from '../session/atlas_session';
 import { BpmnDocument } from '../cli/bpmn_document';
@@ -39,15 +37,11 @@ export type ProcessInstanceWithFlowNodeInstances = ProcessInstance & {
 export class ApiClient {
   private engineUrl: string;
   private identity: Identity;
-  private managementApiClient: ManagementApiClient;
   private atlasEngineClient: AtlasEngineClient;
 
   constructor(session: AtlasSession) {
     this.engineUrl = session.engineUrl;
-    const { identity, managementApiClient } = getIdentityAndManagementApiClient(session);
-
-    this.identity = identity;
-    this.managementApiClient = managementApiClient;
+    this.identity = getIdentity(session);
     this.atlasEngineClient = new AtlasEngineClient(session.engineUrl, this.identity);
   }
 
