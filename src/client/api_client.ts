@@ -106,7 +106,8 @@ export class ApiClient {
           {
             processModelId,
             startEventId,
-            initialToken: payload
+            initialToken: payload.inputValues,
+            correlationId: payload.correlationId
           },
           this.identity
         );
@@ -115,7 +116,8 @@ export class ApiClient {
           {
             processModelId,
             startEventId,
-            initialToken: payload
+            initialToken: payload.inputValues,
+            correlationId: payload.correlationId
           },
           this.identity
         );
@@ -140,26 +142,9 @@ export class ApiClient {
     }
   }
 
-  private getToken(
-    tokenHistoryGroup: DataModels.TokenHistory.TokenHistoryGroup,
-    index: number,
-    tokenEventType: string
-  ): any | null {
-    const flowNodeIds = Object.keys(tokenHistoryGroup).reverse();
-    const tokenIndex = index >= 0 ? index : flowNodeIds.length + index;
-    const flowNodeId: string = flowNodeIds[tokenIndex];
-    const token = tokenHistoryGroup[flowNodeId];
-    if (token == null) {
-      return null;
-    }
-    const tokenHistoryEntries = token.tokenHistoryEntries;
-
-    return tokenHistoryEntries.find((entry) => entry.tokenEventType === tokenEventType);
-  }
-
   async stopProcessInstance(processInstanceId: string): Promise<StoppedProcessInstanceInfo> {
     try {
-      await this.managementApiClient.terminateProcessInstance(this.identity, processInstanceId);
+      await this.atlasEngineClient.processInstances.terminateProcessInstance(processInstanceId, this.identity);
 
       return {
         success: true,
@@ -187,11 +172,22 @@ export class ApiClient {
     }
   }
 
-  async getProcessModels(offset?: number, limit?: number): Promise<any[]> {
+  async getProcessModels(
+    offset?: number,
+    limit?: number
+  ): Promise<AtlasEngineDataModels.ProcessDefinitions.ProcessModel[]> {
     try {
-      const result = await this.managementApiClient.getProcessModels(this.identity, offset, limit);
+      const result = await this.atlasEngineClient.processDefinitions.getAll(this.identity, offset, limit);
 
-      return result.processModels;
+      let processModels = [];
+      result.processDefinitions.forEach((definition) => {
+        const modelsWithXml = definition.processModels.map((model) => {
+          return { ...model, xml: definition.xml, id: model.processModelId, name: model.processModelName };
+        });
+        processModels = processModels.concat(...modelsWithXml);
+      });
+
+      return processModels;
     } catch (error) {
       await this.warnAndExitIfEnginerUrlNotAvailable();
       throw error;

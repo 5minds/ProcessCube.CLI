@@ -5,7 +5,11 @@ import * as JSON5 from 'json5';
 
 const ATLAS_EXECUTABLE = 'node ./dist/pc.js';
 
-export function execAsJson(cmd: string, assertRegexMatches?: RegExp | string): any {
+export function execAsJson(
+  cmd: string,
+  assertRegexMatches: RegExp | string | null = null,
+  checkOutputForErrors: boolean = true
+): any {
   logCommand(cmd);
   const output = getShellOutput(`${ATLAS_EXECUTABLE} ${cmd} --output json`);
   logCommandOutput(output);
@@ -21,12 +25,31 @@ export function execAsJson(cmd: string, assertRegexMatches?: RegExp | string): a
     }
   }
 
+  let parsedOutput;
   try {
-    return JSON5.parse(output);
+    parsedOutput = JSON5.parse(output);
   } catch (error) {
     console.error(error);
     assert.ok(false, `Could not parse output from \`${cmd}\` as json:\n\n${output}`);
   }
+
+  if (checkOutputForErrors === true && Array.isArray(parsedOutput?.result)) {
+    const resultContainsError = parsedOutput?.result?.some((resultItem) => {
+      const isNotAnErroredProcessInstance = resultItem.state != 'error';
+      const containsError = resultItem.error != null;
+
+      return isNotAnErroredProcessInstance && containsError;
+    });
+
+    if (resultContainsError) {
+      // TODO: this issue has to be solved before we can use this "error checker" without false positives
+      //        https://github.com/atlas-engine/AtlasEngine/issues/617
+      //
+      // assert.ok(false, `A result from \`${cmd}\` indicated an error:\n\n${output}`);
+    }
+  }
+
+  return parsedOutput;
 }
 
 export function execAsJsonPipes(cmds: string[], assertRegexMatches?: RegExp | string): any {
@@ -84,7 +107,10 @@ export async function loginAsRoot(testCallbackFn: () => Promise<void>) {
 }
 
 export function assertCorrelationIdInResult(result: any, correlationId: string): void {
-  assert.ok(result.result.some((processInstance) => processInstance.correlationId === correlationId));
+  assert.ok(
+    result.result.some((processInstance) => processInstance.correlationId === correlationId),
+    `Correlation ID \`${correlationId}\` not found in ${JSON.stringify(result.result, null, 2)}`
+  );
 }
 
 const LOG_PREFIX = '      | ';
