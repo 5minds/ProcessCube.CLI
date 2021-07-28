@@ -119,22 +119,22 @@ Output "String umgedreht" (EndEvent_00hkafj)
 
 Der  Grund ist, dass wir keinen `string` als Eingabewert angegeben haben.
 
-Eingabewerte können per `--input-values` an die Engine übergeben werden:
+Eingabewerte können per `--start-token` an die Engine übergeben werden:
 
 ```shell
-pc start Wartung.StringUmdrehen StartEvent_1 --input-values '{"string": "5Minds"}' --output json
+pc start Wartung.StringUmdrehen StartEvent_1 --start-token '{"string": "5Minds"}' --output json
 ```
 
 Rufen wir `pc start` mit dem Schalter `--wait` auf, so beendet sich die CLI erst, nachdem der Prozess zu Ende gelaufen ist und gibt das Resultat  des Prozesses (in Form der Payload des letzten Tokens)als Teil des JSON-Ergebnisses zurück.
 
 ```shell
-pc start Wartung.StringUmdrehen StartEvent_1 --input-values '{"string": "5Minds"}' --wait --output json
+pc start Wartung.StringUmdrehen StartEvent_1 --start-token '{"string": "5Minds"}' --wait --output json
 ```
 
-Eingabewerte können auch als Datei mittels `--input-values-from-file <filename>` oder als Pipe übergeben werden:
+Eingabewerte können auch als Datei mittels `--start-token-from-file <filename>` oder als Pipe übergeben werden:
 
 ```shell
-cat fixtures/input-values-example.json | pc start Wartung.StringUmdrehen StartEvent_1 --input-values-from-stdin --wait --output json
+cat fixtures/input-values-example.json | pc start Wartung.StringUmdrehen StartEvent_1 --start-token-from-stdin --wait --output json
 ```
 
 Zu allen Kommandos existieren umfangreiche Hilfetexte.

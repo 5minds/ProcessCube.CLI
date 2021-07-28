@@ -8,7 +8,7 @@ describe('deploy start/stop/remove', () => {
 
       execAsJson('deploy-files fixtures/wait-demo.bpmn');
 
-      const result = execAsJson('start-process-model wait_demo StartEvent_1 --input-values \'{"seconds": 1}\'');
+      const result = execAsJson('start-process-model wait_demo StartEvent_1 --start-token \'{"seconds": 1}\'');
       const processInstanceId = result?.result[0]?.processInstanceId;
       assert.notEqual(processInstanceId, null);
 
@@ -36,7 +36,7 @@ describe('deploy start/stop/remove', () => {
     await loginAsRoot(async () => {
       execAsText('deploy-files fixtures/wait-demo.bpmn');
 
-      execAsText('start-process-model wait_demo StartEvent_1 --input-values \'{"seconds": 1}\'');
+      execAsText('start-process-model wait_demo StartEvent_1 --start-token \'{"seconds": 1}\'');
 
       execAsText('list-process-instances');
 
@@ -59,7 +59,7 @@ describe('deploy start/stop/remove', () => {
       execAsJsonPipes(
         [
           'deploy-files fixtures/wait-demo.bpmn',
-          `start-process-model wait_demo StartEvent_1 --input-values '{"seconds": 1}' --correlation-id ${correlationId}`,
+          `start-process-model wait_demo StartEvent_1 --start-token '{"seconds": 1}' --correlation-id ${correlationId}`,
           'list-process-instances --all-fields --limit 1',
           'show-process-instance'
         ],

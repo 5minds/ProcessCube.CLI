@@ -9,7 +9,7 @@ describe('atlas', () => {
 
     execAsJson('deploy-files fixtures/wait-demo.bpmn');
 
-    const result = execAsJson('start-process-model wait_demo StartEvent_1 --input-values \'{"seconds": 1}\'');
+    const result = execAsJson('start-process-model wait_demo StartEvent_1 --start-token \'{"seconds": 1}\'');
     const processInstanceId = result?.result[0]?.processInstanceId;
     assert.notEqual(processInstanceId, null);
 
@@ -46,7 +46,7 @@ describe('atlas', () => {
 
     execAsText('deploy-files fixtures/wait-demo.bpmn');
 
-    const result = execAsJson('start-process-model wait_demo StartEvent_1 --input-values \'{"seconds": 1}\'');
+    const result = execAsJson('start-process-model wait_demo StartEvent_1 --start-token \'{"seconds": 1}\'');
     const processInstanceId = result?.result[0]?.processInstanceId;
     assert.notEqual(processInstanceId, null);
 

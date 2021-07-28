@@ -6,7 +6,7 @@ describe('list-user-tasks finish-user-task', () => {
     await loginAsRoot(async () => {
       execAsJson('deploy-files fixtures/E-Mail-Adresse-Generieren.bpmn');
 
-      execAsJson('start-process-model E-Mail-Adresse-Generieren StartEvent_1mox3jl --input-values \'{"seconds": 1}\'');
+      execAsJson('start-process-model E-Mail-Adresse-Generieren StartEvent_1mox3jl --start-token \'{"seconds": 1}\'');
 
       await new Promise((resolve) => setTimeout(resolve, 1000));
 

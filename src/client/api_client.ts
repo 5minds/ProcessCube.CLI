@@ -100,7 +100,7 @@ export class ApiClient {
           {
             processModelId,
             startEventId,
-            initialToken: payload.inputValues,
+            initialToken: payload.startToken,
             correlationId: payload.correlationId
           },
           this.identity
@@ -110,7 +110,7 @@ export class ApiClient {
           {
             processModelId,
             startEventId,
-            initialToken: payload.inputValues,
+            initialToken: payload.startToken,
             correlationId: payload.correlationId
           },
           this.identity
@@ -123,9 +123,9 @@ export class ApiClient {
         startEventId: startEventId,
         processInstanceId: response.processInstanceId,
         correlationId: response.correlationId,
-        inputValues: payload.inputValues,
+        startToken: payload.startToken,
         endEventId: response.endEventId,
-        payload: response.tokenPayload
+        endToken: response.tokenPayload
       };
 
       return result;

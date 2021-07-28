@@ -31,6 +31,7 @@ export type CommandOption = {
   description?: string;
   default?: any;
   choices?: any[];
+  deprecated?: boolean;
 };
 
 type CommandOptionGroup = {

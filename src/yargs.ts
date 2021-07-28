@@ -1,3 +1,4 @@
+import { options } from 'yargs';
 import { Command, CommandLineInterface, Inputs } from './cli';
 import { formatHelpText, heading, usageString } from './cli/logging';
 import epilogSnippetAtlas from './snippets/atlas.epilog.md';
@@ -67,7 +68,8 @@ export function registerCommandInYargs(cli: CommandLineInterface, command: Comma
           description: option.description,
           type: option.type,
           default: option.default,
-          choices: option.choices
+          choices: option.choices,
+          hidden: option.deprecated === true
         });
       });
 

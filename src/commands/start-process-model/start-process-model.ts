@@ -10,7 +10,7 @@ export async function startProcessInstance(
   givenProcessModelId: string,
   givenStartEventId: string,
   correlationId: string,
-  inputValues: any,
+  startToken: any,
   waitForProcessToFinish: boolean,
   outputFormat: string
 ): Promise<void> {
@@ -38,7 +38,7 @@ export async function startProcessInstance(
     }
   }
 
-  const startRequestPayload = { correlationId, inputValues };
+  const startRequestPayload = { correlationId, startToken };
   const processInstance = await apiClient.startProcessModel(
     processModelId,
     startEventId,

@@ -18,7 +18,7 @@ describe('list-process-instances', () => {
       const correlationId1 = 'b' + Date.now() + Math.random();
       execAsJson(
         `start-process-model wait_demo StartEvent_1 \
-          --input-values '{"seconds": 2}' \
+          --start-token '{"seconds": 2}' \
           --correlation-id ${correlationId1} \
           --wait`
       );
@@ -40,7 +40,7 @@ describe('list-process-instances', () => {
       const correlationId1 = 'b' + Date.now() + Math.random();
       execAsJson(
         `start-process-model wait_demo StartEvent_1 \
-          --input-values '{"seconds": 2}' \
+          --start-token '{"seconds": 2}' \
           --correlation-id ${correlationId1} \
           --wait`
       );
@@ -71,7 +71,7 @@ describe('list-process-instances', () => {
       const correlationId1 = 'b' + Date.now() + Math.random();
       execAsJson(
         `start-process-model wait_demo StartEvent_1 \
-          --input-values '{"seconds": 2}' \
+          --start-token '{"seconds": 2}' \
           --correlation-id ${correlationId1} \
           --wait`
       );
@@ -103,7 +103,7 @@ describe('list-process-instances', () => {
       const correlationId = 'b' + Date.now();
       execAsJson(
         `start-process-model Wartung.StringUmdrehen StartEvent_1 \
-          --input-values '{"string": "5Minds"}' \
+          --start-token '{"string": "5Minds"}' \
           --correlation-id ${correlationId} \
           --wait`
       );
