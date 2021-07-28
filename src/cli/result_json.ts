@@ -17,7 +17,9 @@ export function addJsonPipingHintToResultJson(resultJson: any): any {
 
 export function useMessageForResultJsonErrors(results: any): any {
   results.forEach((result) => {
-    result.error = result.error.message;
+    if (result.error != null) {
+      result.error = result.error.message;
+    }
   });
 
   return results;
