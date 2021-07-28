@@ -65,7 +65,7 @@ export class ApiClient {
     } catch (error) {
       await this.warnAndExitIfEnginerUrlNotAvailable();
 
-      return { success: false, filename, processModelId, error };
+      return { success: false, filename, processModelId, error: error.message };
     }
 
     return { success: true, filename, processModelId };
@@ -83,7 +83,7 @@ export class ApiClient {
     } catch (error) {
       await this.warnAndExitIfEnginerUrlNotAvailable();
 
-      return { success: false, processModelId, error };
+      return { success: false, processModelId, error: error.message };
     }
   }
 
@@ -132,7 +132,7 @@ export class ApiClient {
     } catch (error) {
       await this.warnAndExitIfEnginerUrlNotAvailable();
 
-      return { success: false, processModelId, startEventId, error };
+      return { success: false, processModelId, startEventId, error: error.message };
     }
   }
 
@@ -147,7 +147,7 @@ export class ApiClient {
     } catch (error) {
       await this.warnAndExitIfEnginerUrlNotAvailable();
 
-      return { success: false, processInstanceId, error };
+      return { success: false, processInstanceId, error: error.message };
     }
   }
 
@@ -162,7 +162,7 @@ export class ApiClient {
     } catch (error) {
       await this.warnAndExitIfEnginerUrlNotAvailable();
 
-      return { success: false, processInstanceId, error };
+      return { success: false, processInstanceId, error: error.message };
     }
   }
 
@@ -271,11 +271,12 @@ export class ApiClient {
         flowNodeInstanceId: flowNodeInstanceId,
         resultValues: payload.resultValues
       };
+
       return result;
     } catch (error) {
       await this.warnAndExitIfEnginerUrlNotAvailable();
 
-      return { success: false, flowNodeInstanceId, error };
+      return { success: false, flowNodeInstanceId, error: error.message };
     }
   }
 
