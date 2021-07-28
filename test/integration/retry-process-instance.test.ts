@@ -6,7 +6,7 @@ describe('retry-process-instance', () => {
     await loginAsRoot(async () => {
       execAsJson('deploy-files fixtures/Maintenance.RetryProcessInstance.bpmn');
 
-      execAsJson('start-process-model Maintenance.RetryProcessInstance StartEvent_1 --wait', null, false);
+      execAsJson('start-process-model Maintenance.RetryProcessInstance StartEvent_1 --wait');
       const resultStart = execAsJson(
         'list-process-instances --filter-by-process-model-id Maintenance.RetryProcessInstance --limit 1'
       );

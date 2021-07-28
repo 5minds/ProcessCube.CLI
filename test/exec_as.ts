@@ -5,11 +5,7 @@ import * as JSON5 from 'json5';
 
 const ATLAS_EXECUTABLE = 'node ./dist/pc.js';
 
-export function execAsJson(
-  cmd: string,
-  assertRegexMatches: RegExp | string | null = null,
-  checkOutputForErrors: boolean = true
-): any {
+export function execAsJson(cmd: string, assertRegexMatches: RegExp | string | null = null): any {
   logCommand(cmd);
   const output = getShellOutput(`${ATLAS_EXECUTABLE} ${cmd} --output json`);
   logCommandOutput(output);
@@ -31,19 +27,6 @@ export function execAsJson(
   } catch (error) {
     console.error(error);
     assert.ok(false, `Could not parse output from \`${cmd}\` as json:\n\n${output}`);
-  }
-
-  if (checkOutputForErrors === true && Array.isArray(parsedOutput?.result)) {
-    const resultContainsError = parsedOutput?.result?.some((resultItem) => {
-      const isNotAnErroredProcessInstance = resultItem.state != 'error';
-      const containsError = resultItem.error != null;
-
-      return isNotAnErroredProcessInstance && containsError;
-    });
-
-    if (resultContainsError) {
-      assert.ok(false, `A result from \`${cmd}\` indicated an error:\n\n${output}`);
-    }
   }
 
   return parsedOutput;
