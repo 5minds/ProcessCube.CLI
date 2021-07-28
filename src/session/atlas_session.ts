@@ -1,4 +1,6 @@
-const moment = require('moment');
+const dayjs = require('dayjs');
+const relativeTime = require('dayjs/plugin/relativeTime');
+dayjs.extend(relativeTime);
 
 import { dirname } from 'path';
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs';
@@ -82,7 +84,7 @@ export function getExpiresIn(session: AtlasSession): ExpireInfo {
 
   return {
     seconds: seconds,
-    inWords: moment(session.expiresAt).fromNow()
+    inWords: dayjs(session.expiresAt).fromNow()
   };
 }
 

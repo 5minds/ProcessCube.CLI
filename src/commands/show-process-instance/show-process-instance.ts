@@ -1,5 +1,7 @@
 import chalk from 'chalk';
-import moment from 'moment';
+import dayjs from 'dayjs';
+var relativeTime = require('dayjs/plugin/relativeTime');
+dayjs.extend(relativeTime);
 
 import { addJsonPipingHintToResultJson, createResultJson } from '../../cli/result_json';
 import { loadAtlasSession } from '../../session/atlas_session';
@@ -89,7 +91,7 @@ async function logProcessInstanceAsText(
     chalk.dim(`(Correlation: ${processInstance.correlationId}, ${parentHint})`)
   );
 
-  const createdAt = moment(processInstance.createdAt);
+  const createdAt = dayjs(processInstance.createdAt);
   const doneAt = getDoneAt(processInstance);
   const doneAtFormatted = doneAt == null ? '' : doneAt.format('YYYY-MM-DD hh:mm:ss');
   const durationInWords = doneAt == null ? '' : doneAt.from(processInstance.createdAt).replace('in ', 'took ');
@@ -98,7 +100,7 @@ async function logProcessInstanceAsText(
   console.log(
     'Created:   ',
     createdAt.format('YYYY-MM-DD hh:mm:ss'),
-    chalk.dim(`(${moment(processInstance.createdAt).fromNow()})`)
+    chalk.dim(`(${dayjs(processInstance.createdAt).fromNow()})`)
   );
   console.log('Finished:  ', doneAtFormatted, chalk.dim(durationHint));
   console.log('User:      ', processInstance.ownerId);
@@ -219,8 +221,8 @@ function printMultiLineString(text: string | string[], linePrefix: string = ''):
   lines.forEach((line: string): void => console.log(`${linePrefix}${line}`));
 }
 
-function getDoneAt(processInstance: ProcessInstanceWithFlowNodeInstances): moment.Moment | null {
-  return moment(processInstance.finishedAt);
+function getDoneAt(processInstance: ProcessInstanceWithFlowNodeInstances): dayjs.Moment | null {
+  return dayjs(processInstance.finishedAt);
 }
 
 function mapToLong(list: any): any[] {

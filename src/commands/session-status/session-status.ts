@@ -1,5 +1,5 @@
 import chalk from 'chalk';
-import moment from 'moment';
+import dayjs from 'dayjs';
 
 import { AtlasSession, loadAtlasSession } from '../../session/atlas_session';
 import { logJsonResult, logWarning } from '../../cli/logging';
@@ -44,7 +44,7 @@ function log(session: AtlasSession): void {
   console.log('Engine:   ', chalk.cyan(session.engineUrl), chalk.dim(`(Authority: ${session.identityServerUrl})`));
   console.log(
     'Expires:  ',
-    `${moment(session.expiresAt).format('YYYY-MM-DD hh:mm:ss')}`,
+    `${dayjs(session.expiresAt).format('YYYY-MM-DD hh:mm:ss')}`,
     chalk.dim(`(${session.expiresIn?.inWords})`)
   );
 }
