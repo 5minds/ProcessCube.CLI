@@ -65,7 +65,7 @@ export class ApiClient {
     } catch (error) {
       await this.warnAndExitIfEnginerUrlNotAvailable();
 
-      return { success: false, filename, processModelId, error: error.message };
+      return { success: false, filename, processModelId, error: normalizeError(error) };
     }
 
     return { success: true, filename, processModelId };
@@ -83,7 +83,7 @@ export class ApiClient {
     } catch (error) {
       await this.warnAndExitIfEnginerUrlNotAvailable();
 
-      return { success: false, processModelId, error: error.message };
+      return { success: false, processModelId, error: normalizeError(error) };
     }
   }
 
@@ -132,7 +132,7 @@ export class ApiClient {
     } catch (error) {
       await this.warnAndExitIfEnginerUrlNotAvailable();
 
-      return { success: false, processModelId, startEventId, error: error.message };
+      return { success: false, processModelId, startEventId, error: normalizeError(error) };
     }
   }
 
@@ -147,7 +147,7 @@ export class ApiClient {
     } catch (error) {
       await this.warnAndExitIfEnginerUrlNotAvailable();
 
-      return { success: false, processInstanceId, error: error.message };
+      return { success: false, processInstanceId, error: normalizeError(error) };
     }
   }
 
@@ -162,7 +162,7 @@ export class ApiClient {
     } catch (error) {
       await this.warnAndExitIfEnginerUrlNotAvailable();
 
-      return { success: false, processInstanceId, error: error.message };
+      return { success: false, processInstanceId, error: normalizeError(error) };
     }
   }
 
@@ -276,7 +276,7 @@ export class ApiClient {
     } catch (error) {
       await this.warnAndExitIfEnginerUrlNotAvailable();
 
-      return { success: false, flowNodeInstanceId, error: error.message };
+      return { success: false, flowNodeInstanceId, error: normalizeError(error) };
     }
   }
 
@@ -454,4 +454,13 @@ export class ApiClient {
       process.exit(1);
     }
   }
+}
+
+function normalizeError(error: any): any {
+  return {
+    name: error.name,
+    code: error.code,
+    message: error.message,
+    additionalInformation: error.additionalInformation
+  };
 }

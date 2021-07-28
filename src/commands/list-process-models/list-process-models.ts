@@ -1,3 +1,5 @@
+import chalk from 'chalk';
+
 import { ApiClient } from '../../client/api_client';
 import { addJsonPipingHintToResultJson, createResultJson } from '../../cli/result_json';
 import { loadAtlasSession } from '../../session/atlas_session';
@@ -47,7 +49,11 @@ export async function listProcessModels(
       logJsonResult(resultJson);
       break;
     case OUTPUT_FORMAT_TEXT:
-      console.table(resultJson.result, ['id', 'startEventIds']);
+      console.table(resultJson.result, ['id', 'name', 'startEventIds']);
+      console.log(
+        `${resultJson.result.length} results shown` +
+          chalk.gray(' - use `--help` to learn more about filtering and sorting.')
+      );
       break;
   }
 }

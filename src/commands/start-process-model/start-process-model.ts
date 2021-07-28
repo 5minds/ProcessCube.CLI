@@ -1,5 +1,5 @@
 import { ApiClient } from '../../client/api_client';
-import { addJsonPipingHintToResultJson, createResultJson } from '../../cli/result_json';
+import { addJsonPipingHintToResultJson, createResultJson, useMessageForResultJsonErrors } from '../../cli/result_json';
 import { loadAtlasSession } from '../../session/atlas_session';
 import { logError, logJsonResult } from '../../cli/logging';
 
@@ -55,7 +55,7 @@ export async function startProcessInstance(
       logJsonResult(resultJson);
       break;
     case OUTPUT_FORMAT_TEXT:
-      console.table(processInstances, [
+      console.table(useMessageForResultJsonErrors(processInstances), [
         'success',
         'processModelId',
         'startEventId',

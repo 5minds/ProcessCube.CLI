@@ -1,4 +1,4 @@
-import { addJsonPipingHintToResultJson, createResultJson } from '../../cli/result_json';
+import { addJsonPipingHintToResultJson, createResultJson, useMessageForResultJsonErrors } from '../../cli/result_json';
 import { FinishedUserTaskInfo } from '../../contracts/api_client_types';
 import { loadAtlasSession } from '../../session/atlas_session';
 import { OUTPUT_FORMAT_JSON, OUTPUT_FORMAT_TEXT } from '../../pc';
@@ -28,7 +28,7 @@ export async function finishUserTask(
       logJsonResult(resultJson);
       break;
     case OUTPUT_FORMAT_TEXT:
-      console.table([result], ['success', 'flowNodeInstanceId', 'error']);
+      console.table(useMessageForResultJsonErrors([result]), ['success', 'flowNodeInstanceId', 'error']);
       break;
   }
 }

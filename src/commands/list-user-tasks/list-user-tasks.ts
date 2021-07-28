@@ -1,3 +1,4 @@
+import chalk from 'chalk';
 import { DataModels as AtlasEngineDataModels } from '@atlas-engine/atlas_engine_client';
 
 import { ApiClient } from '../../client/api_client';
@@ -52,6 +53,10 @@ export async function listUserTasks(
     logJsonResult(resultJson);
   } else if (outputFormat === OUTPUT_FORMAT_TEXT) {
     console.table(userTasks, ['processModelId', 'processInstanceId', 'state', 'correlationId', 'flowNodeInstanceId']);
+    console.log(
+      `${resultJson.result.length} results shown` +
+        chalk.gray(' - use `--help` to learn more about filtering and sorting.')
+    );
   }
 }
 
