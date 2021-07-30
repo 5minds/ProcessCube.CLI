@@ -12,6 +12,7 @@ import {
 import { isUrlAvailable } from '../../client/is_url_available';
 import { logError, logWarning } from '../../cli/logging';
 import { startServerToLoginAndWaitForAccessTokenFromIdentityServer } from './express_server';
+import { getAccessTokenFromIdentityServer } from './m2m';
 
 const ONE_YEAR_IN_MILLISECONDS = 365 * 86400 * 1000;
 const ANONYMOUS_TOKEN_LIFETIME_IN_MILLISECONDS = 99 * ONE_YEAR_IN_MILLISECONDS;
@@ -19,6 +20,9 @@ const DEFAULT_IDENTITY_SERVER_URL = 'http://localhost:5000/';
 
 export async function login(
   givenEngineUrl: string,
+  clientId: string,
+  clientSecret: string,
+  scope: string,
   tryAnonymousRootLogin: boolean,
   useRootAccessToken: string | null,
   outputFormat: string
@@ -79,8 +83,15 @@ export async function login(
 
     console.log('');
     console.log(chalk.yellow('Login via root access token successful. No further steps required.'));
+  } else if (clientSecret != null) {
+    newSession = await loginViaM2M(engineUrl, clientId, clientSecret, scope);
+
+    if (newSession == null) {
+      logError(`Could not connect to engine: ${engineUrl}`);
+      process.exit(1);
+    }
   } else {
-    newSession = await loginViaIdentityServer(engineUrl);
+    newSession = await loginViaIdentityServerImplicitFlow(engineUrl);
 
     if (newSession == null) {
       logError(`Could not connect to engine: ${engineUrl}`);
@@ -98,7 +109,7 @@ export async function login(
 
 async function loginViaAnonymousRootAccess(engineUrl: string): Promise<AtlasSession> {
   const newSession: AtlasSession = {
-    type: 'session',
+    type: 'root',
     engineUrl: engineUrl,
     identityServerUrl: ANONYMOUS_IDENTITY_SERVER_URL,
     idToken: '',
@@ -111,7 +122,7 @@ async function loginViaAnonymousRootAccess(engineUrl: string): Promise<AtlasSess
 
 async function loginViaRootAccessToken(engineUrl: string, token: string): Promise<AtlasSession> {
   const newSession: AtlasSession = {
-    type: 'session',
+    type: 'root-access-token',
     engineUrl: engineUrl,
     identityServerUrl: ROOT_ACCESS_TOKEN_IDENTITY_SERVER_URL,
     idToken: '',
@@ -122,7 +133,7 @@ async function loginViaRootAccessToken(engineUrl: string, token: string): Promis
   return newSession;
 }
 
-async function loginViaIdentityServer(engineUrl: string): Promise<AtlasSession | null> {
+async function loginViaIdentityServerImplicitFlow(engineUrl: string): Promise<AtlasSession | null> {
   const identityServerUrl = await getIdentityServerUrlForEngine(engineUrl);
   if (identityServerUrl == null) {
     return null;
@@ -154,7 +165,58 @@ async function loginViaIdentityServer(engineUrl: string): Promise<AtlasSession |
   );
 
   const newSession: AtlasSession = {
-    type: 'session',
+    type: 'implicit',
+    engineUrl,
+    identityServerUrl,
+    accessToken,
+    idToken,
+    expiresAt
+  };
+
+  return newSession;
+}
+
+async function loginViaM2M(
+  engineUrl: string,
+  clientId: string,
+  clientSecret: string,
+  scope?: string
+): Promise<AtlasSession | null> {
+  const identityServerUrl = await getIdentityServerUrlForEngine(engineUrl);
+  if (identityServerUrl == null) {
+    return null;
+  }
+
+  const identityServerIsAvailable = await isUrlAvailable(identityServerUrl);
+  if (identityServerIsAvailable === false) {
+    logError(`The engine returned this unreachable authority URL: ${identityServerUrl}`);
+    console.warn('');
+    if (identityServerUrl === DEFAULT_IDENTITY_SERVER_URL) {
+      console.warn(
+        chalk.redBright.bold(`If you're in a development setting, your engine might also allow anonymous root access:`)
+      );
+      console.warn('');
+      console.warn(chalk.redBright.bold(`  $ pc login ${engineUrl} --root`));
+      console.warn('');
+      console.warn(
+        chalk.redBright.bold(`If you're in a production setting, you should avoid enabling anonymous root access.`)
+      );
+    } else {
+      console.warn(chalk.redBright.bold(`To be able to login, please ensure the authority is reachable.`));
+    }
+
+    process.exit(1);
+  }
+
+  const { accessToken, idToken, expiresAt } = await getAccessTokenFromIdentityServer(
+    identityServerUrl,
+    clientId,
+    clientSecret,
+    scope
+  );
+
+  const newSession: AtlasSession = {
+    type: 'm2m',
     engineUrl,
     identityServerUrl,
     accessToken,
