@@ -35,7 +35,7 @@ function sanitizeSensibleInformation(session: AtlasSession): AtlasSession {
   return {
     ...session,
     accessToken: `${session.accessToken.substr(0, 7)}...`,
-    idToken: `${session.idToken.substr(0, 7)}...`
+    idToken: session.idToken ? `${session.idToken.substr(0, 7)}...` : undefined
   };
 }
 
