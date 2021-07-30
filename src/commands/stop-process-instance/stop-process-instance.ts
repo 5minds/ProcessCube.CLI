@@ -1,7 +1,7 @@
 import { ApiClient } from '../../client/api_client';
-import { addJsonPipingHintToResultJson, createResultJson, useMessageForResultJsonErrors } from '../../cli/result_json';
+import { addJsonPipingHintToResultJson, createResultJson } from '../../cli/result_json';
 import { loadSession } from '../../session/session';
-import { logError, logJsonResult } from '../../cli/logging';
+import { logError, logJsonResult, logJsonResultAsTextTable } from '../../cli/logging';
 
 import { OUTPUT_FORMAT_JSON, OUTPUT_FORMAT_TEXT } from '../../pc';
 import { StoppedProcessInstanceInfo } from '../../contracts/api_client_types';
@@ -29,7 +29,11 @@ export async function stopProcessInstance(processInstanceIds: string[], outputFo
       logJsonResult(resultJson);
       break;
     case OUTPUT_FORMAT_TEXT:
-      console.table(useMessageForResultJsonErrors(results), ['success', 'processInstanceId', 'correlationId', 'error']);
+      logJsonResultAsTextTable(
+        resultJson,
+        ['success', 'processInstanceId', 'correlationId', 'error'],
+        'Stopped Process Instances'
+      );
       break;
   }
 }

@@ -3,7 +3,7 @@ import yesno from 'yesno';
 import { loadSession } from '../../session/session';
 import { createResultJson, useMessageForResultJsonErrors } from '../../cli/result_json';
 import { OUTPUT_FORMAT_JSON, OUTPUT_FORMAT_TEXT } from '../../pc';
-import { logError, logJsonResult } from '../../cli/logging';
+import { logError, logJsonResult, logJsonResultAsTextTable } from '../../cli/logging';
 import { ApiClient } from '../../client/api_client';
 
 export async function removeProcessModels(
@@ -44,7 +44,7 @@ export async function removeProcessModels(
       logJsonResult(resultJson);
       break;
     case OUTPUT_FORMAT_TEXT:
-      console.table(useMessageForResultJsonErrors(results), ['success', 'processModelId', 'error']);
+      logJsonResultAsTextTable(resultJson, ['success', 'processModelId', 'error'], 'Stopped Process Instances');
       break;
   }
 }

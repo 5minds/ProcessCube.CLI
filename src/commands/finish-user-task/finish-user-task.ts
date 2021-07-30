@@ -2,7 +2,7 @@ import { addJsonPipingHintToResultJson, createResultJson, useMessageForResultJso
 import { FinishedUserTaskInfo } from '../../contracts/api_client_types';
 import { loadSession } from '../../session/session';
 import { OUTPUT_FORMAT_JSON, OUTPUT_FORMAT_TEXT } from '../../pc';
-import { logJsonResult, logNoValidSessionError } from '../../cli/logging';
+import { logJsonResult, logJsonResultAsTextTable, logNoValidSessionError } from '../../cli/logging';
 import { ApiClient } from '../../client/api_client';
 
 export async function finishUserTask(
@@ -28,7 +28,7 @@ export async function finishUserTask(
       logJsonResult(resultJson);
       break;
     case OUTPUT_FORMAT_TEXT:
-      console.table(useMessageForResultJsonErrors([result]), ['success', 'flowNodeInstanceId', 'error']);
+      logJsonResultAsTextTable(resultJson, ['success', 'flowNodeInstanceId', 'error'], 'Finished User Tasks');
       break;
   }
 }

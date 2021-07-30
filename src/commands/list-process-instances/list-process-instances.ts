@@ -1,5 +1,3 @@
-import chalk from 'chalk';
-
 import { ApiClient, ProcessInstance } from '../../client/api_client';
 import { Session, loadSession } from '../../session/session';
 import { addJsonPipingHintToResultJson, createResultJson } from '../../cli/result_json';
@@ -10,7 +8,7 @@ import {
   filterProcessInstancesDateAfter,
   filterProcessInstancesDateBefore
 } from '../../client/filtering';
-import { logJsonResult, logNoValidSessionError } from '../../cli/logging';
+import { logJsonResult, logJsonResultAsTextTable, logNoValidSessionError } from '../../cli/logging';
 import { sortProcessInstances } from './sorting';
 import { OUTPUT_FORMAT_JSON, OUTPUT_FORMAT_TEXT } from '../../pc';
 
@@ -73,17 +71,10 @@ export async function listProcessInstances(
   if (outputFormat === OUTPUT_FORMAT_JSON) {
     logJsonResult(resultJson);
   } else if (outputFormat === OUTPUT_FORMAT_TEXT) {
-    console.table(processInstances, [
-      'createdAt',
-      'finishedAt',
-      'processModelId',
-      'processInstanceId',
-      'state',
-      'correlationId'
-    ]);
-    console.log(
-      `${resultJson.result.length} results shown` +
-        chalk.gray(' - use `--help` to learn more about filtering and sorting.')
+    logJsonResultAsTextTable(
+      resultJson,
+      ['createdAt', 'finishedAt', 'processModelId', 'processInstanceId', 'state', 'correlationId'],
+      'List of Process Instances'
     );
   }
 }

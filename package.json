@@ -30,6 +30,7 @@
     "@process-engine/ci_tools": "^3.2.1",
     "@types/mocha": "^5.2.7",
     "@types/node": "^12.12.28",
+    "@types/table": "^6.3.2",
     "@types/yargs": "^15.0.4",
     "bpmn-moddle": "^6.0.2",
     "chalk": "^2.4.2",
@@ -49,10 +50,15 @@
     "os": "^0.1.1",
     "prettier": "^1.18.2",
     "reflect-metadata": "^0.1.13",
+    "table": "^6.7.0",
     "ts-node": "^8.1.0",
     "tsconfig": "^7.0.0",
     "typescript": "^3.7.5",
     "yargs": "^15.4.1",
     "yesno": "^0.3.1"
+  },
+  "dependencies": {
+    "@types/lodash.mapvalues": "^4.6.6",
+    "lodash.mapvalues": "^4.6.0"
   }
 }

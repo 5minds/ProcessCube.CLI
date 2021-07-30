@@ -1,7 +1,7 @@
 import { ApiClient } from '../../client/api_client';
 import { addJsonPipingHintToResultJson, createResultJson, useMessageForResultJsonErrors } from '../../cli/result_json';
 import { loadSession } from '../../session/session';
-import { logError, logJsonResult } from '../../cli/logging';
+import { logError, logJsonResult, logJsonResultAsTextTable } from '../../cli/logging';
 
 import { OUTPUT_FORMAT_JSON, OUTPUT_FORMAT_TEXT } from '../../pc';
 
@@ -55,14 +55,11 @@ export async function startProcessInstance(
       logJsonResult(resultJson);
       break;
     case OUTPUT_FORMAT_TEXT:
-      console.table(useMessageForResultJsonErrors(processInstances), [
-        'success',
-        'processModelId',
-        'startEventId',
-        'processInstanceId',
-        'correlationId',
-        'error'
-      ]);
+      logJsonResultAsTextTable(
+        resultJson,
+        ['success', 'processModelId', 'startEventId', 'processInstanceId', 'correlationId', 'error'],
+        'Started Process Instances'
+      );
       break;
   }
 }
