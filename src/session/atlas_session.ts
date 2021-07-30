@@ -10,7 +10,7 @@ import * as JSON5 from 'json5';
 import { getSessionStorageFilename } from './atlas_path_functions';
 
 export type AtlasSession = {
-  type: 'session';
+  type: 'session' | 'implicit' | 'm2m' | 'root' | 'root-access-token' | string;
   engineUrl: string;
   identityServerUrl: string;
   accessToken: string;
