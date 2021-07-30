@@ -9,7 +9,7 @@ import * as JSON5 from 'json5';
 
 import { getSessionStorageFilename } from './atlas_path_functions';
 
-export type AtlasSession = {
+export type Session = {
   type: 'session' | 'implicit' | 'm2m' | 'root' | 'root-access-token' | string;
   engineUrl: string;
   identityServerUrl: string;
@@ -27,7 +27,7 @@ type ExpireInfo = {
 export const ANONYMOUS_IDENTITY_SERVER_URL = '<anonymous>';
 export const ROOT_ACCESS_TOKEN_IDENTITY_SERVER_URL = '<root_access_token>';
 
-export function loadAtlasSession(returnInvalidSession: boolean = false): AtlasSession | null {
+export function loadSession(returnInvalidSession: boolean = false): Session | null {
   const filename = getSessionStorageFilename();
 
   if (!existsSync(filename)) {
@@ -42,7 +42,7 @@ export function loadAtlasSession(returnInvalidSession: boolean = false): AtlasSe
   try {
     const rawSession = JSON5.parse(contents);
 
-    const session: AtlasSession = { ...rawSession, expiresIn: getExpiresIn(rawSession) };
+    const session: Session = { ...rawSession, expiresIn: getExpiresIn(rawSession) };
     if (isValidSession(session) || returnInvalidSession) {
       return session;
     }
@@ -53,7 +53,7 @@ export function loadAtlasSession(returnInvalidSession: boolean = false): AtlasSe
   return null;
 }
 
-export function saveAtlasSession(session: AtlasSession): void {
+export function saveSession(session: Session): void {
   const dump = JSON5.parse(JSON.stringify(session));
   delete dump.expiresIn;
 
@@ -65,7 +65,7 @@ export function saveAtlasSession(session: AtlasSession): void {
   writeFileSync(filename, JSON.stringify(session, null, 2), 'utf-8');
 }
 
-export function removeAtlasSession(): void {
+export function removeSession(): void {
   const filename = getSessionStorageFilename();
 
   if (!existsSync(filename)) {
@@ -74,7 +74,7 @@ export function removeAtlasSession(): void {
   writeFileSync(filename, '', 'utf-8');
 }
 
-export function getExpiresIn(session: AtlasSession): ExpireInfo {
+function getExpiresIn(session: Session): ExpireInfo {
   if (session?.expiresAt == null) {
     throw new Error('Should not be null: session?.expiresAt');
   }
@@ -88,6 +88,6 @@ export function getExpiresIn(session: AtlasSession): ExpireInfo {
   };
 }
 
-export function isValidSession(session: AtlasSession | null): boolean {
+function isValidSession(session: Session | null): boolean {
   return session?.expiresIn?.seconds > 0;
 }

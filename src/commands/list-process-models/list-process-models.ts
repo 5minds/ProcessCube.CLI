@@ -2,7 +2,7 @@ import chalk from 'chalk';
 
 import { ApiClient } from '../../client/api_client';
 import { addJsonPipingHintToResultJson, createResultJson } from '../../cli/result_json';
-import { loadAtlasSession } from '../../session/atlas_session';
+import { loadSession } from '../../session/session';
 import { logError, logJsonResult } from '../../cli/logging';
 import { toFilterRegexes } from '../../cli/filter_regexes';
 
@@ -15,7 +15,7 @@ export async function listProcessModels(
   showAllFields: boolean,
   outputFormat: string
 ) {
-  const session = loadAtlasSession();
+  const session = loadSession();
   if (session == null) {
     logError('No session found. Aborting.');
     return;

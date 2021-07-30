@@ -4,7 +4,7 @@ var relativeTime = require('dayjs/plugin/relativeTime');
 dayjs.extend(relativeTime);
 
 import { addJsonPipingHintToResultJson, createResultJson } from '../../cli/result_json';
-import { loadAtlasSession } from '../../session/atlas_session';
+import { loadSession } from '../../session/session';
 import { OUTPUT_FORMAT_JSON, OUTPUT_FORMAT_TEXT } from '../../pc';
 import { BpmnDocument } from '../../cli/bpmn_document';
 import { sortProcessInstances } from '../list-process-instances/sorting';
@@ -17,7 +17,7 @@ export async function showProcessInstance(
   showAllFields: boolean,
   outputFormat: string
 ): Promise<void> {
-  const session = loadAtlasSession();
+  const session = loadSession();
   if (session == null) {
     logError('No session found. Aborting.');
     return;

@@ -3,11 +3,11 @@ import fetch, { FetchError } from 'node-fetch';
 
 import {
   ANONYMOUS_IDENTITY_SERVER_URL,
-  AtlasSession,
   ROOT_ACCESS_TOKEN_IDENTITY_SERVER_URL,
-  loadAtlasSession,
-  saveAtlasSession
-} from '../../session/atlas_session';
+  Session,
+  loadSession,
+  saveSession
+} from '../../session/session';
 
 import { isUrlAvailable } from '../../client/is_url_available';
 import { logError, logWarning } from '../../cli/logging';
@@ -30,7 +30,7 @@ export async function login(
   let engineUrl = givenEngineUrl;
 
   if (engineUrl == null || engineUrl.trim() == '') {
-    const oldSession = loadAtlasSession(true);
+    const oldSession = loadSession(true);
     if (oldSession == null) {
       logError('No session found. Aborting.');
       return;
@@ -72,7 +72,7 @@ export async function login(
     process.exit(1);
   }
 
-  let newSession: AtlasSession;
+  let newSession: Session;
   if (tryAnonymousRootLogin) {
     newSession = await loginViaAnonymousRootAccess(engineUrl);
 
@@ -98,7 +98,7 @@ export async function login(
       process.exit(1);
     }
   }
-  saveAtlasSession(newSession);
+  saveSession(newSession);
 
   console.log('');
   console.log(chalk.green('You are now logged in.'));
@@ -107,8 +107,8 @@ export async function login(
   process.exit(0);
 }
 
-async function loginViaAnonymousRootAccess(engineUrl: string): Promise<AtlasSession> {
-  const newSession: AtlasSession = {
+async function loginViaAnonymousRootAccess(engineUrl: string): Promise<Session> {
+  const newSession: Session = {
     type: 'root',
     engineUrl: engineUrl,
     identityServerUrl: ANONYMOUS_IDENTITY_SERVER_URL,
@@ -120,8 +120,8 @@ async function loginViaAnonymousRootAccess(engineUrl: string): Promise<AtlasSess
   return newSession;
 }
 
-async function loginViaRootAccessToken(engineUrl: string, token: string): Promise<AtlasSession> {
-  const newSession: AtlasSession = {
+async function loginViaRootAccessToken(engineUrl: string, token: string): Promise<Session> {
+  const newSession: Session = {
     type: 'root-access-token',
     engineUrl: engineUrl,
     identityServerUrl: ROOT_ACCESS_TOKEN_IDENTITY_SERVER_URL,
@@ -133,7 +133,7 @@ async function loginViaRootAccessToken(engineUrl: string, token: string): Promis
   return newSession;
 }
 
-async function loginViaIdentityServerImplicitFlow(engineUrl: string): Promise<AtlasSession | null> {
+async function loginViaIdentityServerImplicitFlow(engineUrl: string): Promise<Session | null> {
   const identityServerUrl = await getIdentityServerUrlForEngine(engineUrl);
   if (identityServerUrl == null) {
     return null;
@@ -164,7 +164,7 @@ async function loginViaIdentityServerImplicitFlow(engineUrl: string): Promise<At
     identityServerUrl
   );
 
-  const newSession: AtlasSession = {
+  const newSession: Session = {
     type: 'implicit',
     engineUrl,
     identityServerUrl,
@@ -181,7 +181,7 @@ async function loginViaM2M(
   clientId: string,
   clientSecret: string,
   scope?: string
-): Promise<AtlasSession | null> {
+): Promise<Session | null> {
   const identityServerUrl = await getIdentityServerUrlForEngine(engineUrl);
   if (identityServerUrl == null) {
     return null;
@@ -215,7 +215,7 @@ async function loginViaM2M(
     scope
   );
 
-  const newSession: AtlasSession = {
+  const newSession: Session = {
     type: 'm2m',
     engineUrl,
     identityServerUrl,

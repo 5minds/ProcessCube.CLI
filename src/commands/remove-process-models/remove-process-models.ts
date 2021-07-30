@@ -1,6 +1,6 @@
 import yesno from 'yesno';
 
-import { loadAtlasSession } from '../../session/atlas_session';
+import { loadSession } from '../../session/session';
 import { createResultJson, useMessageForResultJsonErrors } from '../../cli/result_json';
 import { OUTPUT_FORMAT_JSON, OUTPUT_FORMAT_TEXT } from '../../pc';
 import { logError, logJsonResult } from '../../cli/logging';
@@ -11,7 +11,7 @@ export async function removeProcessModels(
   autoYes: boolean,
   outputFormat: string
 ): Promise<void> {
-  const session = loadAtlasSession();
+  const session = loadSession();
   if (session == null) {
     logError('No session found. Aborting.');
     return;

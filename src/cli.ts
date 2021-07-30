@@ -1,74 +1,13 @@
 import { AtlasEngineClient } from '@atlas-engine/atlas_engine_client';
 import { IIdentity } from '@atlas-engine/iam.contracts';
-import { AtlasSession, loadAtlasSession } from './session/atlas_session';
+import { CLI, Command, CommandOption, Inputs } from './contracts/cli_types';
+import { Session, loadSession, removeSession, saveSession } from './session/session';
 import { StdinPipeReader } from './StdinPipeReader';
-
-export type Command = {
-  name: string;
-  alias?: string;
-  description?: string;
-  descriptionLong?: string;
-  usage?: string;
-  examples?: string;
-
-  arguments?: CommandArgument[];
-  options?: CommandOption[];
-  optionGroups?: CommandOptionGroup[];
-};
-
-export type CommandArgument = {
-  name: string;
-  type?: string;
-  description?: string;
-  mandatory?: boolean;
-  default?: any;
-};
-
-export type CommandOption = {
-  name: string;
-  alias?: string;
-  type?: string;
-  description?: string;
-  default?: any;
-  choices?: any[];
-  deprecated?: boolean;
-};
-
-type CommandOptionGroup = {
-  heading: string;
-  options: string[];
-};
 
 type CommandWithCallbacks = Command & {
   executeCallbackFn: Function;
   validationCallbackFn: Function;
 };
-
-export type Stdin = {
-  getJson(): Promise<any | null>;
-  getText(): Promise<string | null>;
-  isPipe(): boolean;
-};
-
-export type Inputs = {
-  argv: { [name: string]: any };
-  stdin: Stdin;
-};
-
-// eslint-disable-next-line
-export interface CLI {
-  executeCommand(commandName: string, inputs: Inputs): any;
-
-  registerCommand(
-    command: Command,
-    executeCallbackFn: (inputs: Inputs) => Promise<void>,
-    validationCallbackFn?: (inputs: Inputs) => Promise<boolean>
-  ): void;
-
-  getIdentityFromSession(): IIdentity | null;
-
-  getEngineClient(givenEngineUrl?: string, identity?: IIdentity): AtlasEngineClient;
-}
 
 export class CommandLineInterface implements CLI {
   public stdin: StdinPipeReader;
@@ -150,8 +89,20 @@ export class CommandLineInterface implements CLI {
     });
   }
 
+  loadSession(): Session | null {
+    return loadSession();
+  }
+
+  saveSession(session: Session): void {
+    saveSession(session);
+  }
+
+  removeSession(): void {
+    removeSession();
+  }
+
   getIdentityFromSession(): IIdentity | null {
-    const session = this.getSession();
+    const session = this.loadSession();
     if (session == null) {
       return null;
     }
@@ -165,7 +116,7 @@ export class CommandLineInterface implements CLI {
   getEngineClient(givenEngineUrl?: string, identity?: IIdentity): AtlasEngineClient {
     let engineUrl = givenEngineUrl;
     if (engineUrl == null) {
-      const session = this.getSession();
+      const session = this.loadSession();
 
       engineUrl = session?.engineUrl;
 
@@ -175,9 +126,5 @@ export class CommandLineInterface implements CLI {
     }
 
     return new AtlasEngineClient(engineUrl, identity || this.getIdentityFromSession());
-  }
-
-  getSession(): AtlasSession | null {
-    return loadAtlasSession();
   }
 }

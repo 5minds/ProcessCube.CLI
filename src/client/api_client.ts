@@ -4,7 +4,7 @@ import { AtlasEngineClient, DataModels as AtlasEngineDataModels } from '@atlas-e
 
 import { getIdentity } from './identity';
 
-import { AtlasSession } from '../session/atlas_session';
+import { Session } from '../session/session';
 import { BpmnDocument } from '../cli/bpmn_document';
 import {
   DeployedProcessModelInfo,
@@ -39,7 +39,7 @@ export class ApiClient {
   private identity: Identity;
   private atlasEngineClient: AtlasEngineClient;
 
-  constructor(session: AtlasSession) {
+  constructor(session: Session) {
     this.engineUrl = session.engineUrl;
     this.identity = getIdentity(session);
     this.atlasEngineClient = new AtlasEngineClient(session.engineUrl, this.identity);
