@@ -1,7 +1,7 @@
 import chalk from 'chalk';
 
 import { ApiClient, ProcessInstance } from '../../client/api_client';
-import { AtlasSession, loadAtlasSession } from '../../session/atlas_session';
+import { Session, loadSession } from '../../session/session';
 import { addJsonPipingHintToResultJson, createResultJson } from '../../cli/result_json';
 import {
   filterProcessInstancesByEndTimeAfter,
@@ -34,7 +34,7 @@ export async function listProcessInstances(
   showAllFields: boolean,
   outputFormat: string
 ) {
-  const session = loadAtlasSession();
+  const session = loadSession();
   if (session == null) {
     logNoValidSessionError();
     return;
@@ -89,7 +89,7 @@ export async function listProcessInstances(
 }
 
 async function getProcessInstances(
-  session: AtlasSession,
+  session: Session,
   pipedProcessInstanceIds: string[] | null,
   pipedProcessModelIds: string[] | null,
   createdAfter: string,

@@ -1,11 +1,11 @@
-import { AtlasSession } from '../session/atlas_session';
+import { Session } from '../session/session';
 
 export type Identity = {
   userId: string;
   token: string;
 };
 
-export function getIdentity(session: AtlasSession): Identity {
+export function getIdentity(session: Session): Identity {
   const identity = {
     // TODO: do we need a user id? what for?
     userId: session.idToken,

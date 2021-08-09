@@ -6,7 +6,7 @@
   "scripts": {
     "clean": "rm -rf dist",
     "reinstall": "./reinstall.sh",
-    "build": "esbuild src/pc.ts --bundle --outfile=dist/pc.js --platform=node --target=node10 --loader:.md=text",
+    "build": "esbuild src/pc.ts --bundle --outfile=dist/pc.js --platform=node --target=node12 --loader:.md=text",
     "lint": "eslint \"src/**/*.ts\"",
     "start": "node dist/pc.js",
     "test": "npm run test:unit",
@@ -45,6 +45,7 @@
     "mocha": "^6.1.4",
     "node-fetch": "^2.6.0",
     "open": "^7.0.2",
+    "openid-client": "^4.7.4",
     "os": "^0.1.1",
     "prettier": "^1.18.2",
     "reflect-metadata": "^0.1.13",

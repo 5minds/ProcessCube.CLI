@@ -1,6 +1,6 @@
 import { ApiClient } from '../../client/api_client';
 import { addJsonPipingHintToResultJson, createResultJson, useMessageForResultJsonErrors } from '../../cli/result_json';
-import { loadAtlasSession } from '../../session/atlas_session';
+import { loadSession } from '../../session/session';
 import { logError, logJsonResult } from '../../cli/logging';
 
 import { OUTPUT_FORMAT_JSON, OUTPUT_FORMAT_TEXT } from '../../pc';
@@ -14,7 +14,7 @@ export async function startProcessInstance(
   waitForProcessToFinish: boolean,
   outputFormat: string
 ): Promise<void> {
-  const session = loadAtlasSession();
+  const session = loadSession();
   if (session == null) {
     logError('No session found. Aborting.');
     return;
