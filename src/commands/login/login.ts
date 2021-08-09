@@ -22,7 +22,7 @@ export async function login(
   givenEngineUrl: string,
   clientId: string,
   clientSecret: string,
-  scope: string,
+  givenScope: string,
   tryAnonymousRootLogin: boolean,
   useRootAccessToken: string | null,
   outputFormat: string
@@ -84,6 +84,8 @@ export async function login(
     console.log('');
     console.log(chalk.yellow('Login via root access token successful. No further steps required.'));
   } else if (clientSecret != null) {
+    const scope = typeof givenScope === 'string' ? givenScope.split(',').join(' ') : givenScope;
+
     newSession = await loginViaM2M(engineUrl, clientId, clientSecret, scope);
 
     if (newSession == null) {
