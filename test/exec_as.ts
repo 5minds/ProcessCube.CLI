@@ -96,7 +96,7 @@ export function assertCorrelationIdInResult(result: any, correlationId: string):
 const LOG_PREFIX = '      | ';
 function logCommand(cmd: string): void {
   console.log('');
-  console.log(`${LOG_PREFIX}$ ${cmd}`);
+  console.log(`${LOG_PREFIX}$ pc ${cmd}`);
 }
 
 function logCommandOutput(output: string): void {
