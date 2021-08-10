@@ -384,18 +384,18 @@ export class ApiClient {
   async addFlowNodeInstancesToProcessInstances(
     rawProcessInstances: ProcessInstance[]
   ): Promise<ProcessInstanceWithFlowNodeInstances[]> {
-    const processInstancesWithTokens: ProcessInstanceWithFlowNodeInstances[] = [];
+    const processInstancesWithFlowNodeInstances: ProcessInstanceWithFlowNodeInstances[] = [];
     for (const rawProcessInstance of rawProcessInstances) {
-      const tokens = await this.atlasEngineClient.flowNodeInstances.queryFlowNodeInstances(
+      const flowNodeInstanceResult = await this.atlasEngineClient.flowNodeInstances.queryFlowNodeInstances(
         { processInstanceId: rawProcessInstance.processInstanceId },
         this.identity
       );
-      const processInstance = { ...rawProcessInstance, flowNodeInstances: tokens.flowNodeInstances };
+      const processInstance = { ...rawProcessInstance, flowNodeInstances: flowNodeInstanceResult.flowNodeInstances };
 
-      processInstancesWithTokens.push(processInstance);
+      processInstancesWithFlowNodeInstances.push(processInstance);
     }
 
-    return processInstancesWithTokens;
+    return processInstancesWithFlowNodeInstances;
   }
 
   private async getAllProcessInstancesViaAllProcessModels(

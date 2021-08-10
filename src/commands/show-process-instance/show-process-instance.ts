@@ -1,6 +1,7 @@
 import chalk from 'chalk';
 import dayjs from 'dayjs';
-var relativeTime = require('dayjs/plugin/relativeTime');
+import relativeTime from 'dayjs/plugin/relativeTime';
+
 dayjs.extend(relativeTime);
 
 import { addJsonPipingHintToResultJson, createResultJson } from '../../cli/result_json';
@@ -10,6 +11,8 @@ import { BpmnDocument } from '../../cli/bpmn_document';
 import { sortProcessInstances } from '../list-process-instances/sorting';
 import { logError, logJsonResult } from '../../cli/logging';
 import { ApiClient, ProcessInstance, ProcessInstanceWithFlowNodeInstances } from '../../client/api_client';
+import { FlowNodeInstance } from '@atlas-engine/atlas_engine_client/dist/types/data_models/flow_node_instance';
+import { FlowNode } from 'bpmn-moddle';
 
 export async function showProcessInstance(
   processInstanceOrCorrelationIds: string[],
@@ -172,7 +175,9 @@ async function logHistory(processInstance: ProcessInstanceWithFlowNodeInstances)
 }
 
 function getFlowNodeIdsInChronologicalOrder(processInstance: ProcessInstanceWithFlowNodeInstances): string[] {
-  return processInstance.flowNodeInstances.reverse().map((x) => x.flowNodeId);
+  return processInstance.flowNodeInstances
+    .sort((a: FlowNodeInstance, b: FlowNodeInstance) => (a.tokens[0].createdAt > b.tokens[0].createdAt ? 1 : -1))
+    .map((x) => x.flowNodeId);
 }
 
 function logErrorIfAny(processInstance: ProcessInstanceWithFlowNodeInstances): void {
@@ -207,13 +212,15 @@ function findToken(
   flowNodeId: string,
   tokenEventType: string
 ): any | null {
-  const token = processInstance.flowNodeInstances[flowNodeId];
-  if (token == null) {
+  const flowNodeInstance = processInstance.flowNodeInstances.find(
+    (flowNodeInstance) => flowNodeInstance.flowNodeId === flowNodeId
+  );
+  if (flowNodeInstance == null) {
     return null;
   }
-  const tokenHistoryEntries = token.tokenHistoryEntries;
+  const tokenHistoryEntries = flowNodeInstance.tokens;
 
-  return tokenHistoryEntries.find((entry) => entry.tokenEventType === tokenEventType);
+  return tokenHistoryEntries.find((entry) => entry.type === tokenEventType);
 }
 
 function printMultiLineString(text: string | string[], linePrefix: string = ''): void {
@@ -221,7 +228,7 @@ function printMultiLineString(text: string | string[], linePrefix: string = ''):
   lines.forEach((line: string): void => console.log(`${linePrefix}${line}`));
 }
 
-function getDoneAt(processInstance: ProcessInstanceWithFlowNodeInstances): dayjs.Moment | null {
+function getDoneAt(processInstance: ProcessInstanceWithFlowNodeInstances): dayjs.Dayjs | null {
   return dayjs(processInstance.finishedAt);
 }
 
