@@ -1,13 +1,13 @@
 import { RetriedProcessInstanceInfo } from '../../contracts/api_client_types';
 
-import { addJsonPipingHintToResultJson, createResultJson } from '../../cli/result_json';
-import { loadAtlasSession } from '../../session/atlas_session';
+import { addJsonPipingHintToResultJson, createResultJson, useMessageForResultJsonErrors } from '../../cli/result_json';
+import { loadSession } from '../../session/session';
 import { OUTPUT_FORMAT_JSON, OUTPUT_FORMAT_TEXT } from '../../pc';
 import { logError, logJsonResult } from '../../cli/logging';
 import { ApiClient } from '../../client/api_client';
 
 export async function retryProcessInstance(processInstanceIds: string[], outputFormat: string): Promise<void> {
-  const session = loadAtlasSession();
+  const session = loadSession();
   if (session == null) {
     logError('No session found. Aborting.');
     return;
@@ -29,7 +29,7 @@ export async function retryProcessInstance(processInstanceIds: string[], outputF
       logJsonResult(resultJson);
       break;
     case OUTPUT_FORMAT_TEXT:
-      console.table(results, ['success', 'processInstanceId', 'error']);
+      console.table(useMessageForResultJsonErrors(results), ['success', 'processInstanceId', 'error']);
       break;
   }
 }

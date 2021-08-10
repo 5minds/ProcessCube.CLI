@@ -1,18 +1,18 @@
 import chalk from 'chalk';
 
-import { ANONYMOUS_IDENTITY_SERVER_URL, loadAtlasSession, removeAtlasSession } from '../../session/atlas_session';
+import { ANONYMOUS_IDENTITY_SERVER_URL, loadSession, removeSession } from '../../session/session';
 
 import { startServerToLogoutAndWaitForSessionEnd } from './express_server';
 import { logError } from '../../cli/logging';
 
 export async function logout(outputFormat: string): Promise<void> {
-  const oldSession = loadAtlasSession();
+  const oldSession = loadSession();
   if (oldSession == null) {
     logError('No session found. Aborting.');
     return;
   }
 
-  removeAtlasSession();
+  removeSession();
   if (oldSession.identityServerUrl === ANONYMOUS_IDENTITY_SERVER_URL) {
     console.log('');
     console.log(chalk.yellow('You were logged out from anonymous root login. No further steps required.'));

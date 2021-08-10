@@ -1,7 +1,8 @@
+import chalk from 'chalk';
 import { DataModels as AtlasEngineDataModels } from '@atlas-engine/atlas_engine_client';
 
 import { ApiClient } from '../../client/api_client';
-import { AtlasSession, loadAtlasSession } from '../../session/atlas_session';
+import { Session, loadSession } from '../../session/session';
 import { addJsonPipingHintToResultJson, createResultJson } from '../../cli/result_json';
 import { logJsonResult, logNoValidSessionError } from '../../cli/logging';
 import { OUTPUT_FORMAT_JSON, OUTPUT_FORMAT_TEXT } from '../../pc';
@@ -24,7 +25,7 @@ export async function listUserTasks(
   limit: number,
   outputFormat: string
 ) {
-  const session = loadAtlasSession();
+  const session = loadSession();
   if (session == null) {
     logNoValidSessionError();
     return;
@@ -52,11 +53,15 @@ export async function listUserTasks(
     logJsonResult(resultJson);
   } else if (outputFormat === OUTPUT_FORMAT_TEXT) {
     console.table(userTasks, ['processModelId', 'processInstanceId', 'state', 'correlationId', 'flowNodeInstanceId']);
+    console.log(
+      `${resultJson.result.length} results shown` +
+        chalk.gray(' - use `--help` to learn more about filtering and sorting.')
+    );
   }
 }
 
 async function getUserTasks(
-  session: AtlasSession,
+  session: Session,
   pipedProcessInstanceIds: string[] | null,
   pipedProcessModelIds: string[] | null,
   flowNodeInstanceId: string[],

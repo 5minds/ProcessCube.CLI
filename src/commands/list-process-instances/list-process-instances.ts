@@ -1,7 +1,7 @@
-import { DataModels } from '@process-engine/management_api_contracts';
+import chalk from 'chalk';
 
-import { ApiClient } from '../../client/api_client';
-import { AtlasSession, loadAtlasSession } from '../../session/atlas_session';
+import { ApiClient, ProcessInstance } from '../../client/api_client';
+import { Session, loadSession } from '../../session/session';
 import { addJsonPipingHintToResultJson, createResultJson } from '../../cli/result_json';
 import {
   filterProcessInstancesByEndTimeAfter,
@@ -13,8 +13,6 @@ import {
 import { logJsonResult, logNoValidSessionError } from '../../cli/logging';
 import { sortProcessInstances } from './sorting';
 import { OUTPUT_FORMAT_JSON, OUTPUT_FORMAT_TEXT } from '../../pc';
-
-export type ProcessInstance = DataModels.Correlations.ProcessInstance;
 
 export async function listProcessInstances(
   pipedProcessInstanceIds: string[] | null,
@@ -36,7 +34,7 @@ export async function listProcessInstances(
   showAllFields: boolean,
   outputFormat: string
 ) {
-  const session = loadAtlasSession();
+  const session = loadSession();
   if (session == null) {
     logNoValidSessionError();
     return;
@@ -83,11 +81,15 @@ export async function listProcessInstances(
       'state',
       'correlationId'
     ]);
+    console.log(
+      `${resultJson.result.length} results shown` +
+        chalk.gray(' - use `--help` to learn more about filtering and sorting.')
+    );
   }
 }
 
 async function getProcessInstances(
-  session: AtlasSession,
+  session: Session,
   pipedProcessInstanceIds: string[] | null,
   pipedProcessModelIds: string[] | null,
   createdAfter: string,

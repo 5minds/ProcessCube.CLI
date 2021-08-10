@@ -14,3 +14,13 @@ export function addJsonPipingHintToResultJson(resultJson: any): any {
     __hint__: isPipedAndNoOutputGiven ? NO_TTY_HINT : TTY_HINT
   };
 }
+
+export function useMessageForResultJsonErrors(results: any): any {
+  results.forEach((result) => {
+    if (result.error != null) {
+      result.error = result.error.message;
+    }
+  });
+
+  return results;
+}

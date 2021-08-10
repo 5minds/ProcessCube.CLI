@@ -39,16 +39,34 @@ export async function onLoad(cli: CLI): Promise<void> {
         {
           name: 'input-values',
           description: 'Set input values for the process instance from a <json> string',
-          type: 'string'
+          type: 'string',
+          deprecated: true
         },
         {
           name: 'input-values-from-stdin',
           description: 'Read input values as JSON from STDIN',
-          type: 'boolean'
+          type: 'boolean',
+          deprecated: true
         },
         {
           name: 'input-values-from-file',
           description: 'Read input values as JSON from <file>',
+          type: 'string',
+          deprecated: true
+        },
+        {
+          name: 'start-token',
+          description: 'Set start token for the process instance from a <json> string',
+          type: 'string'
+        },
+        {
+          name: 'start-token-from-stdin',
+          description: 'Read start token as JSON from STDIN',
+          type: 'boolean'
+        },
+        {
+          name: 'start-token-from-file',
+          description: 'Read start token as JSON from <file>',
           type: 'string'
         }
       ]
@@ -62,17 +80,28 @@ async function runCommand(inputs: Inputs): Promise<void> {
   const pipedProcessModelIds =
     stdinPipeReader.getPipedProcessModelIds() || stdinPipeReader.getPipedProcessModelIdsInDeployedFiles();
 
-  let inputValues: any;
+  let startToken: any;
 
   if (inputs.argv.inputValuesFromStdin === true) {
-    inputValues = await inputs.stdin.getJson();
+    startToken = await inputs.stdin.getJson();
   }
   if (inputs.argv.inputValuesFromFile != null) {
     const contents = readFileSync(inputs.argv.inputValuesFromFile);
-    inputValues = JSON5.parse(contents.toString());
+    startToken = JSON5.parse(contents.toString());
   }
   if (inputs.argv.inputValues != null) {
-    inputValues = JSON5.parse(inputs.argv.inputValues);
+    startToken = JSON5.parse(inputs.argv.inputValues);
+  }
+
+  if (inputs.argv.startTokenFromStdin === true) {
+    startToken = await inputs.stdin.getJson();
+  }
+  if (inputs.argv.startTokenFromFile != null) {
+    const contents = readFileSync(inputs.argv.startTokenFromFile);
+    startToken = JSON5.parse(contents.toString());
+  }
+  if (inputs.argv.startToken != null) {
+    startToken = JSON5.parse(inputs.argv.startToken);
   }
 
   await startProcessInstance(
@@ -80,7 +109,7 @@ async function runCommand(inputs: Inputs): Promise<void> {
     inputs.argv.processModelId,
     inputs.argv.startEventId,
     inputs.argv.correlationId,
-    inputValues,
+    startToken,
     inputs.argv.wait,
     inputs.argv.output
   );

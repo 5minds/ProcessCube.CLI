@@ -1,4 +1,4 @@
-import moment from 'moment';
+import dayjs from 'dayjs';
 
 import { toFilterRegexes } from '../cli/filter_regexes';
 
@@ -20,10 +20,10 @@ export function filterProcessInstancesDateAfter(
   }
 
   // TODO: validation of input
-  const afterDate = moment(createdAfter);
+  const afterDate = dayjs(createdAfter);
 
   return processInstances.filter((processInstance: FilterableProcessInstance) =>
-    moment(processInstance[fieldName]).isAfter(afterDate)
+    dayjs(processInstance[fieldName]).isAfter(afterDate)
   );
 }
 
@@ -37,10 +37,10 @@ export function filterProcessInstancesDateBefore(
   }
 
   // TODO: validation of input
-  const beforeDate = moment(createdBefore);
+  const beforeDate = dayjs(createdBefore);
 
   return processInstances.filter((processInstance: FilterableProcessInstance) =>
-    moment(processInstance[fieldName]).isBefore(beforeDate)
+    dayjs(processInstance[fieldName]).isBefore(beforeDate)
   );
 }
 
@@ -142,17 +142,17 @@ export function filterProcessInstancesByEndTimeAfter(
   if (completedAfter == null) {
     return processInstances;
   }
-  if (!moment(completedAfter).isValid()) {
+  if (!dayjs(completedAfter).isValid()) {
     throw new Error(`Invalid date format '${completedAfter}'! Please enter a valid date format.`);
   }
-  const afterDate = moment(completedAfter);
+  const afterDate = dayjs(completedAfter);
 
   return processInstances.filter((processInstance: FilterableProcessInstance) => {
     if (!processInstance['finishedAt']) {
       return false;
     }
 
-    return moment(processInstance['finishedAt']).isAfter(afterDate);
+    return dayjs(processInstance['finishedAt']).isAfter(afterDate);
   });
 }
 
@@ -163,18 +163,18 @@ export function filterProcessInstancesByEndTimeBefore(
   if (completedBefore == null) {
     return processInstances;
   }
-  if (!moment(completedBefore).isValid()) {
+  if (!dayjs(completedBefore).isValid()) {
     throw new Error(`Invalid date format '${completedBefore}'! Please enter a valid date format.`);
   }
 
-  const beforeDate = moment(completedBefore);
+  const beforeDate = dayjs(completedBefore);
 
   return processInstances.filter((processInstance: FilterableProcessInstance) => {
     if (!processInstance['finishedAt']) {
       return false;
     }
 
-    return moment(processInstance['finishedAt']).isBefore(beforeDate);
+    return dayjs(processInstance['finishedAt']).isBefore(beforeDate);
   });
 }
 
@@ -207,7 +207,7 @@ export function filterProcessInstancesByExecutionTime(
   );
 }
 
-function getUnitOfTimeForAbbreviation(abbreviation: string): moment.unitOfTime.Diff {
+function getUnitOfTimeForAbbreviation(abbreviation: string): dayjs.OpUnitType {
   switch (abbreviation) {
     case 'd':
       return 'days';
@@ -224,14 +224,14 @@ function isCompletedIn(
   processInstance: FilterableProcessInstance,
   comparisonType: string,
   time: number,
-  unitOfTime: moment.unitOfTime.Diff
+  unitOfTime: dayjs.OpUnitType
 ): boolean {
   if (comparisonType === '>') {
-    return moment(processInstance.createdAt)
+    return dayjs(processInstance.createdAt)
       .add(time, unitOfTime)
       .isBefore(processInstance.finishedAt);
   } else if (comparisonType === '<') {
-    return moment(processInstance.createdAt)
+    return dayjs(processInstance.createdAt)
       .add(time, unitOfTime)
       .isAfter(processInstance.finishedAt);
   }

@@ -1,6 +1,6 @@
 import { ApiClient } from '../../client/api_client';
-import { addJsonPipingHintToResultJson, createResultJson } from '../../cli/result_json';
-import { loadAtlasSession } from '../../session/atlas_session';
+import { addJsonPipingHintToResultJson, createResultJson, useMessageForResultJsonErrors } from '../../cli/result_json';
+import { loadSession } from '../../session/session';
 import { logError, logJsonResult } from '../../cli/logging';
 
 import { OUTPUT_FORMAT_JSON, OUTPUT_FORMAT_TEXT } from '../../pc';
@@ -10,11 +10,11 @@ export async function startProcessInstance(
   givenProcessModelId: string,
   givenStartEventId: string,
   correlationId: string,
-  inputValues: any,
+  startToken: any,
   waitForProcessToFinish: boolean,
   outputFormat: string
 ): Promise<void> {
-  const session = loadAtlasSession();
+  const session = loadSession();
   if (session == null) {
     logError('No session found. Aborting.');
     return;
@@ -38,7 +38,7 @@ export async function startProcessInstance(
     }
   }
 
-  const startRequestPayload = { correlationId, inputValues };
+  const startRequestPayload = { correlationId, startToken };
   const processInstance = await apiClient.startProcessModel(
     processModelId,
     startEventId,
@@ -55,7 +55,7 @@ export async function startProcessInstance(
       logJsonResult(resultJson);
       break;
     case OUTPUT_FORMAT_TEXT:
-      console.table(processInstances, [
+      console.table(useMessageForResultJsonErrors(processInstances), [
         'success',
         'processModelId',
         'startEventId',
