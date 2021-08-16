@@ -46,9 +46,9 @@ type StartedProcessModelInfo_Success = {
 
   processInstanceId?: string;
   correlationId: string;
-  inputValues: any;
+  startToken: any;
   endEventId?: string;
-  payload?: any;
+  endToken?: any;
 };
 
 type StartedProcessModelInfo_Failure = {
@@ -102,7 +102,7 @@ export type FinishedUserTaskInfo = FinishedUserTaskInfoSuccess | FinishedUserTas
 
 type FinishedUserTaskInfoSuccess = {
   success: true;
-  
+
   flowNodeInstanceId: string;
   resultValues: any;
   payload?: any;

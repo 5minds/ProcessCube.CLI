@@ -1,0 +1,16 @@
+import { Session } from '../session/session';
+
+export type Identity = {
+  userId: string;
+  token: string;
+};
+
+export function getIdentity(session: Session): Identity {
+  const identity = {
+    // TODO: do we need a user id? what for?
+    userId: session.idToken,
+    token: session.accessToken
+  };
+
+  return identity;
+}

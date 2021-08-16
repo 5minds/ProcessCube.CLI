@@ -1,15 +1,15 @@
 import * as assert from 'assert';
-import { execAsDefault, execAsJson, execAsText } from './exec_as';
+import { execAsJson, execAsText } from '../exec_as';
 
 describe('atlas', () => {
   it('should work with JSON output', async () => {
-    execAsText('login http://localhost:8000 --root');
+    execAsText('login http://localhost:10560 --root');
 
     execAsJson('session-status');
 
     execAsJson('deploy-files fixtures/wait-demo.bpmn');
 
-    const result = execAsJson('start-process-model wait_demo StartEvent_1 --input-values \'{"seconds": 1}\'');
+    const result = execAsJson('start-process-model wait_demo StartEvent_1 --start-token \'{"seconds": 1}\'');
     const processInstanceId = result?.result[0]?.processInstanceId;
     assert.notEqual(processInstanceId, null);
 
@@ -40,13 +40,13 @@ describe('atlas', () => {
   });
 
   it('should work with text output', async () => {
-    execAsText('login http://localhost:8000 --root');
+    execAsText('login http://localhost:10560 --root');
 
     execAsText('session-status');
 
     execAsText('deploy-files fixtures/wait-demo.bpmn');
 
-    const result = execAsJson('start-process-model wait_demo StartEvent_1 --input-values \'{"seconds": 1}\'');
+    const result = execAsJson('start-process-model wait_demo StartEvent_1 --start-token \'{"seconds": 1}\'');
     const processInstanceId = result?.result[0]?.processInstanceId;
     assert.notEqual(processInstanceId, null);
 
@@ -76,7 +76,7 @@ describe('atlas', () => {
   it('should work with help output', async () => {
     execAsText('--help');
 
-    execAsText('login http://localhost:8000 --root --help');
+    execAsText('login http://localhost:10560 --root --help');
 
     execAsText('session-status --help');
 
@@ -105,15 +105,15 @@ describe('atlas', () => {
 
   it('should fail and show help output if no or invalid command was given', async () => {
     try {
-      execAsDefault('');
-    } catch(error) {
-      assert.ok(error.message.includes(execAsDefault('--help')));
+      execAsText('');
+    } catch (error) {
+      assert.ok(error.message.includes(execAsText('--help')));
     }
 
     try {
-      execAsDefault('nonexistingcommand');
-    } catch(error) {
-      assert.ok(error.message.includes(execAsDefault('--help')));
+      execAsText('nonexistingcommand');
+    } catch (error) {
+      assert.ok(error.message.includes(execAsText('--help')));
     }
   });
 });

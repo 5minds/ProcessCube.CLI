@@ -1,5 +1,8 @@
 import chalk from 'chalk';
-import * as marked from 'marked';
+import { getBorderCharacters, table } from 'table';
+import mapValues from 'lodash.mapvalues';
+
+import marked from 'marked';
 import { MarkdownRenderer } from './MarkdownRenderer';
 
 const HTML_ENTITY_REGEX = /&(#(?:\d+)|(?:#x[0-9A-Fa-f]+)|(?:\w+));?/gi;
@@ -8,16 +11,81 @@ export function logJsonResult(result: any): void {
   console.log(JSON.stringify(result, null, 2));
 }
 
+export function logJsonResultAsTextTable(resultJson: any, fields: string[], title?: string): void {
+  const capitalize = (s: string): string => s.charAt(0).toUpperCase() + s.substring(1);
+  const partCapitalization = {
+    id: 'ID',
+    Id: 'ID',
+    Ids: 'IDs'
+  };
+  const headerRow = fields.map((fieldName) => {
+    const header = fieldName
+      .split(/(?=[A-Z])/)
+      .map((part) => partCapitalization[part] || capitalize(part))
+      .join(' ');
+
+    return chalk.bold(header);
+  });
+  const rows = resultJson.result.map((object) => {
+    return fields.map((fieldName) => {
+      let value = object[fieldName];
+
+      if (value === undefined) {
+        value = '';
+      }
+      if (value instanceof Date) {
+        value = value.toISOString();
+      }
+      if (Array.isArray(value)) {
+        value = value.join('\n');
+      }
+      if (fieldName === 'state') {
+        if (value === 'error') {
+          value = chalk.black.bgRedBright('ERROR');
+        }
+        if (value === 'finished') {
+          value = chalk.greenBright(value);
+        }
+        if (value === 'terminated') {
+          value = chalk.redBright(value);
+        }
+        if (value === 'running') {
+          value = chalk.cyanBright(value);
+        }
+      }
+      return value;
+    });
+  });
+
+  const tableData = [headerRow, ...rows];
+
+  const border = getDimmedTableBorder();
+  const header = title == null ? undefined : { content: chalk.bold.blueBright(title) };
+  const tableConfig = { border, header };
+
+  console.log(table(tableData, tableConfig).trimRight());
+  if (Array.isArray(resultJson.result)) {
+    console.log(
+      `  ${resultJson.result.length} results shown` +
+        chalk.gray(' - use `--help` to learn more about filtering and sorting.')
+    );
+  }
+}
+
+function getDimmedTableBorder(): any {
+  return mapValues(getBorderCharacters('norc'), (char) => chalk.dim(char));
+}
+
 export function logError(error: string): void {
-  console.warn(chalk.redBright.bold(`** (Atlas) ${error}`));
+  console.warn(chalk.redBright.bold(`** (pc) ${error}`));
 }
 
 export function logNoValidSessionError(): void {
-  logError('No session found. Please use `atlas login <engine_url>` to log in.');
+  logError('No session found. Please use `pc login <engine_url>` to log in.');
 }
 
 export function logWarning(warning: string): void {
-  console.warn(chalk.yellowBright(`** (Atlas) ${warning}`));
+  console.warn(chalk.yellowBright(`** (pc) ${warning}`));
 }
 
 export function logMultiline(text: string): void {
@@ -77,4 +145,8 @@ function unescapeHtmlEntities(html: string): string {
     }
     return '';
   });
+}
+
+export function usageString(usage: string, descriptionLong: string): string {
+  return heading('USAGE') + `\n  $0 ${usage}\n\n` + heading('DESCRIPTION') + `\n  ${descriptionLong}`;
 }

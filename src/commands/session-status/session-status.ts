@@ -1,13 +1,14 @@
 import chalk from 'chalk';
-import * as moment from 'moment';
+import dayjs from 'dayjs';
 
-import { AtlasSession, loadAtlasSession } from '../../session/atlas_session';
-import { logWarning } from '../../cli/logging';
+import { Session, loadSession } from '../../session/session';
+import { logJsonResult, logWarning } from '../../cli/logging';
+import { addJsonPipingHintToResultJson } from '../../cli/result_json';
 
-import { OUTPUT_FORMAT_JSON, OUTPUT_FORMAT_TEXT } from '../../atlas';
+import { OUTPUT_FORMAT_JSON, OUTPUT_FORMAT_TEXT } from '../../pc';
 
 export async function printSessionStatus(outputFormat: string): Promise<void> {
-  const session = loadAtlasSession(true);
+  const session = loadSession(true);
   if (session == null) {
     switch (outputFormat) {
       case OUTPUT_FORMAT_JSON:
@@ -22,7 +23,7 @@ export async function printSessionStatus(outputFormat: string): Promise<void> {
 
   switch (outputFormat) {
     case OUTPUT_FORMAT_JSON:
-      console.log(JSON.stringify(sanitizeSensibleInformation(session), null, 2));
+      logJsonResult(addJsonPipingHintToResultJson(sanitizeSensibleInformation(session)));
       break;
     case OUTPUT_FORMAT_TEXT:
       log(session);
@@ -30,20 +31,20 @@ export async function printSessionStatus(outputFormat: string): Promise<void> {
   }
 }
 
-function sanitizeSensibleInformation(session: AtlasSession): AtlasSession {
+function sanitizeSensibleInformation(session: Session): Session {
   return {
     ...session,
     accessToken: `${session.accessToken.substr(0, 7)}...`,
-    idToken: `${session.idToken.substr(0, 7)}...`
+    idToken: session.idToken ? `${session.idToken.substr(0, 7)}...` : undefined
   };
 }
 
-function log(session: AtlasSession): void {
+function log(session: Session): void {
   console.log('Status:   ', chalk.greenBright('logged in'));
   console.log('Engine:   ', chalk.cyan(session.engineUrl), chalk.dim(`(Authority: ${session.identityServerUrl})`));
   console.log(
     'Expires:  ',
-    `${moment(session.expiresAt).format('YYYY-MM-DD hh:mm:ss')}`,
+    `${dayjs(session.expiresAt).format('YYYY-MM-DD hh:mm:ss')}`,
     chalk.dim(`(${session.expiresIn?.inWords})`)
   );
 }

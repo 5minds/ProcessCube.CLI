@@ -1,20 +1,18 @@
 import chalk from 'chalk';
-import * as moment from 'moment';
+import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime';
 
-import { DataModels } from '@process-engine/management_api_contracts';
+dayjs.extend(relativeTime);
 
 import { addJsonPipingHintToResultJson, createResultJson } from '../../cli/result_json';
-import { loadAtlasSession } from '../../session/atlas_session';
-import { OUTPUT_FORMAT_JSON, OUTPUT_FORMAT_TEXT } from '../../atlas';
+import { loadSession } from '../../session/session';
+import { OUTPUT_FORMAT_JSON, OUTPUT_FORMAT_TEXT } from '../../pc';
 import { BpmnDocument } from '../../cli/bpmn_document';
 import { sortProcessInstances } from '../list-process-instances/sorting';
 import { logError, logJsonResult } from '../../cli/logging';
-import { ApiClient } from '../../client/api_client';
-
-type ProcessInstance = DataModels.Correlations.ProcessInstance;
-type ProcessInstanceWithTokens = ProcessInstance & {
-  tokens: DataModels.TokenHistory.TokenHistoryGroup;
-};
+import { ApiClient, ProcessInstance, ProcessInstanceWithFlowNodeInstances } from '../../client/api_client';
+import { FlowNodeInstance } from '@atlas-engine/atlas_engine_client/dist/types/data_models/flow_node_instance';
+import { FlowNode } from 'bpmn-moddle';
 
 export async function showProcessInstance(
   processInstanceOrCorrelationIds: string[],
@@ -22,7 +20,7 @@ export async function showProcessInstance(
   showAllFields: boolean,
   outputFormat: string
 ): Promise<void> {
-  const session = loadAtlasSession();
+  const session = loadSession();
   if (session == null) {
     logError('No session found. Aborting.');
     return;
@@ -43,7 +41,7 @@ export async function showProcessInstance(
   }
 
   const sortedProcssInstances = sortProcessInstances(rawProcessInstances, null, null, 'asc');
-  const processInstancesWithTokens = await apiClient.addTokensToProcessInstances(sortedProcssInstances);
+  const processInstancesWithTokens = await apiClient.addFlowNodeInstancesToProcessInstances(sortedProcssInstances);
 
   let resultProcessInstances: any[];
   if (showAllFields) {
@@ -73,7 +71,10 @@ export async function showProcessInstance(
   }
 }
 
-async function logProcessInstanceAsText(processInstance: ProcessInstanceWithTokens, showSeparator: boolean = false) {
+async function logProcessInstanceAsText(
+  processInstance: ProcessInstanceWithFlowNodeInstances,
+  showSeparator: boolean = false
+) {
   if (showSeparator) {
     console.log(chalk.cyan('---------------------------------- >8 ---------------------------------------------'));
   }
@@ -85,7 +86,7 @@ async function logProcessInstanceAsText(processInstance: ProcessInstanceWithToke
   console.log(
     'Model:     ',
     chalk.cyan(processInstance.processModelId),
-    chalk.dim(`(Definition: ${processInstance.processDefinitionName})`)
+    chalk.dim(`(Definition: ${processInstance.processDefinitionId})`)
   );
   console.log(
     'Instance:  ',
@@ -93,7 +94,7 @@ async function logProcessInstanceAsText(processInstance: ProcessInstanceWithToke
     chalk.dim(`(Correlation: ${processInstance.correlationId}, ${parentHint})`)
   );
 
-  const createdAt = moment(processInstance.createdAt);
+  const createdAt = dayjs(processInstance.createdAt);
   const doneAt = getDoneAt(processInstance);
   const doneAtFormatted = doneAt == null ? '' : doneAt.format('YYYY-MM-DD hh:mm:ss');
   const durationInWords = doneAt == null ? '' : doneAt.from(processInstance.createdAt).replace('in ', 'took ');
@@ -102,10 +103,10 @@ async function logProcessInstanceAsText(processInstance: ProcessInstanceWithToke
   console.log(
     'Created:   ',
     createdAt.format('YYYY-MM-DD hh:mm:ss'),
-    chalk.dim(`(${moment(processInstance.createdAt).fromNow()})`)
+    chalk.dim(`(${dayjs(processInstance.createdAt).fromNow()})`)
   );
   console.log('Finished:  ', doneAtFormatted, chalk.dim(durationHint));
-  console.log('User:      ', processInstance.identity.userId);
+  console.log('User:      ', processInstance.ownerId);
   console.log('State:     ', stateToColoredString(processInstance.state));
 
   await logHistory(processInstance);
@@ -114,7 +115,7 @@ async function logProcessInstanceAsText(processInstance: ProcessInstanceWithToke
   console.log('');
 }
 
-async function logHistory(processInstance: ProcessInstanceWithTokens): Promise<void> {
+async function logHistory(processInstance: ProcessInstanceWithFlowNodeInstances): Promise<void> {
   const flowNodeIds = getFlowNodeIdsInChronologicalOrder(processInstance);
   const firstToken = findToken(processInstance, flowNodeIds[0], 'onEnter');
   const lastTokenOnExit = findToken(processInstance, flowNodeIds[flowNodeIds.length - 1], 'onExit');
@@ -173,27 +174,13 @@ async function logHistory(processInstance: ProcessInstanceWithTokens): Promise<v
   }
 }
 
-function getFlowNodeIdsInChronologicalOrder(processInstance: ProcessInstanceWithTokens): string[] {
-  const tokens = processInstance.tokens;
-  const flowNodeIds = Object.keys(tokens);
-
-  const sortFlowNodeIdsChronologically = (a: string, b: string) => {
-    const createdAtA = tokens[a].tokenHistoryEntries[0]?.createdAt;
-    const createdAtB = tokens[b].tokenHistoryEntries[0]?.createdAt;
-
-    if (createdAtA < createdAtB) {
-      return -1;
-    }
-    if (createdAtA > createdAtB) {
-      return 1;
-    }
-    return 0;
-  };
-
-  return flowNodeIds.sort(sortFlowNodeIdsChronologically);
+function getFlowNodeIdsInChronologicalOrder(processInstance: ProcessInstanceWithFlowNodeInstances): string[] {
+  return processInstance.flowNodeInstances
+    .sort((a: FlowNodeInstance, b: FlowNodeInstance) => (a.tokens[0].createdAt > b.tokens[0].createdAt ? 1 : -1))
+    .map((x) => x.flowNodeId);
 }
 
-function logErrorIfAny(processInstance: ProcessInstanceWithTokens): void {
+function logErrorIfAny(processInstance: ProcessInstanceWithFlowNodeInstances): void {
   if (processInstance.state === 'error') {
     // it seems error contains more info than is mentioned in the types
     const error = processInstance.error as any;
@@ -220,14 +207,20 @@ function stateToColoredString(state: string): string {
   }
 }
 
-function findToken(processInstance: ProcessInstanceWithTokens, flowNodeId: string, tokenEventType: string): any | null {
-  const token = processInstance.tokens[flowNodeId];
-  if (token == null) {
+function findToken(
+  processInstance: ProcessInstanceWithFlowNodeInstances,
+  flowNodeId: string,
+  tokenEventType: string
+): any | null {
+  const flowNodeInstance = processInstance.flowNodeInstances.find(
+    (flowNodeInstance) => flowNodeInstance.flowNodeId === flowNodeId
+  );
+  if (flowNodeInstance == null) {
     return null;
   }
-  const tokenHistoryEntries = token.tokenHistoryEntries;
+  const tokenHistoryEntries = flowNodeInstance.tokens;
 
-  return tokenHistoryEntries.find((entry) => entry.tokenEventType === tokenEventType);
+  return tokenHistoryEntries.find((entry) => entry.type === tokenEventType);
 }
 
 function printMultiLineString(text: string | string[], linePrefix: string = ''): void {
@@ -235,18 +228,8 @@ function printMultiLineString(text: string | string[], linePrefix: string = ''):
   lines.forEach((line: string): void => console.log(`${linePrefix}${line}`));
 }
 
-function getDoneAt(processInstance: ProcessInstanceWithTokens): moment.Moment | null {
-  const flowNodeIds = Object.keys(processInstance.tokens).reverse();
-
-  const lastTokenOnExit =
-    findToken(processInstance, flowNodeIds[flowNodeIds.length - 1], 'onExit') ||
-    findToken(processInstance, flowNodeIds[flowNodeIds.length - 1], 'onEnter');
-
-  if (lastTokenOnExit == null) {
-    return null;
-  }
-
-  return moment(lastTokenOnExit.createdAt);
+function getDoneAt(processInstance: ProcessInstanceWithFlowNodeInstances): dayjs.Dayjs | null {
+  return dayjs(processInstance.finishedAt);
 }
 
 function mapToLong(list: any): any[] {
