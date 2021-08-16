@@ -3,7 +3,7 @@ import chalk from 'chalk';
 import { ApiClient } from '../../client/api_client';
 import { addJsonPipingHintToResultJson, createResultJson } from '../../cli/result_json';
 import { loadSession } from '../../session/session';
-import { logError, logJsonResult } from '../../cli/logging';
+import { logError, logJsonResult, logJsonResultAsTextTable } from '../../cli/logging';
 import { toFilterRegexes } from '../../cli/filter_regexes';
 
 import { OUTPUT_FORMAT_JSON, OUTPUT_FORMAT_TEXT } from '../../pc';
@@ -49,11 +49,7 @@ export async function listProcessModels(
       logJsonResult(resultJson);
       break;
     case OUTPUT_FORMAT_TEXT:
-      console.table(resultJson.result, ['id', 'name', 'startEventIds']);
-      console.log(
-        `${resultJson.result.length} results shown` +
-          chalk.gray(' - use `--help` to learn more about filtering and sorting.')
-      );
+      logJsonResultAsTextTable(resultJson, ['id', 'name', 'startEventIds'], 'List of Process Models');
       break;
   }
 }
