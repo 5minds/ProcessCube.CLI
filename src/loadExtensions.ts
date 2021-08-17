@@ -37,14 +37,21 @@ export async function loadExtensions(cli: CLI): Promise<void> {
       }
 
       const entrypoint = join(extensionsDir, subdir, packageJson.main);
-      const module = await loadFile(entrypoint);
+      if (existsSync(entrypoint)) {
+        try {
+          const module = await loadFile(entrypoint);
+          const extensionModule: ExtensionModule = { ...packageJson, ...module };
 
-      const extensionModule: ExtensionModule = { ...packageJson, ...module };
-
-      if (extensionModule.exports.onLoad) {
-        await extensionModule.exports.onLoad(cli);
+          if (extensionModule.exports.onLoad) {
+            await extensionModule.exports.onLoad(cli);
+          } else {
+            logWarning(`Expected extension to export an \`onLoad\` hook: ${subdir}`);
+          }
+        } catch (e) {
+          logWarning(`Error while loading 'main' script for extension '${subdir}': ${e.message}`);
+        }
       } else {
-        logWarning(`Expected extension to export an \`onLoad\` hook: ${subdir}`);
+        logWarning(`Expected 'main' script for extension '${subdir}' to exist: ${entrypoint}`);
       }
     }
   }
@@ -57,24 +64,17 @@ async function loadFile(filename: string): Promise<LoadedModule> {
 
   const code = readFileSync(filename).toString();
 
-  loadStringIntoModule(code, require, module);
+  loadStringIntoModule(code, require, module, filename);
 
   return module;
 }
 
-function loadStringIntoModule(code: string, require: Function, module: any): void {
+function loadStringIntoModule(code: string, require: Function, module: any, filename: string): void {
   const exports = module.exports;
 
-  try {
-    const wrappedCode = `(function evaluate(require, module, exports) {
+  const wrappedCode = `(function evaluate(require, module, exports) {
         ${code}
       })`;
 
-    (0, eval)(wrappedCode).apply(this, [require, module, exports]);
-  } catch (e) {
-    console.error('Error while loading module:', e);
-    e.loaderError = true;
-
-    throw e;
-  }
+  (0, eval)(wrappedCode).apply(this, [require, module, exports]);
 }
