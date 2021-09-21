@@ -2,6 +2,7 @@ import { CLI } from './cli';
 
 import { onLoad as onLoadDeployFiles } from './commands/deploy-files';
 import { onLoad as onLoadFinishUserTask } from './commands/finish-user-task';
+import { onLoad as onLoadInstallExtension } from './commands/install-extension';
 import { onLoad as onLoadListProcessInstances } from './commands/list-process-instances';
 import { onLoad as onLoadListProcessModels } from './commands/list-process-models';
 import { onLoad as onLoadListUserTasks } from './commands/list-user-tasks';
@@ -18,6 +19,7 @@ import { onLoad as onLoadGenerateRootAccessToken } from './commands/generate-roo
 const packagedOnLoadFunctions = [
   onLoadDeployFiles,
   onLoadFinishUserTask,
+  onLoadInstallExtension,
   onLoadListProcessInstances,
   onLoadListProcessModels,
   onLoadListUserTasks,
