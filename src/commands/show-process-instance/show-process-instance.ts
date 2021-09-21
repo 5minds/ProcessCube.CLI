@@ -117,9 +117,16 @@ async function logProcessInstanceAsText(
 
 async function logHistory(processInstance: ProcessInstanceWithFlowNodeInstances): Promise<void> {
   const flowNodeIds = getFlowNodeIdsInChronologicalOrder(processInstance);
-  const firstToken = findToken(processInstance, flowNodeIds[0], 'onEnter');
-  const lastTokenOnExit = findToken(processInstance, flowNodeIds[flowNodeIds.length - 1], 'onExit');
-  const lastTokenOnEnter = findToken(processInstance, flowNodeIds[flowNodeIds.length - 1], 'onEnter');
+  const firstTokenFlowNodeId = flowNodeIds[0];
+  const lastTokenFlowNodeId = flowNodeIds[flowNodeIds.length - 1];
+  const firstTokenFlowNodeName = processInstance.flowNodeInstances.find(
+    (fni) => fni.flowNodeId === firstTokenFlowNodeId
+  )?.flowNodeName;
+  const lastTokenFlowNodeName = processInstance.flowNodeInstances.find((fni) => fni.flowNodeId === lastTokenFlowNodeId)
+    ?.flowNodeName;
+  const firstToken = findToken(processInstance, firstTokenFlowNodeId, 'onEnter');
+  const lastTokenOnExit = findToken(processInstance, lastTokenFlowNodeId, 'onExit');
+  const lastTokenOnEnter = findToken(processInstance, lastTokenFlowNodeId, 'onEnter');
 
   console.log('');
   console.log('--- HISTORY -----------------------------------------------------------------------');
@@ -142,33 +149,21 @@ async function logHistory(processInstance: ProcessInstanceWithFlowNodeInstances)
 
   if (firstToken != null) {
     console.log('');
-    console.log(
-      'Input',
-      chalk.cyanBright(`"${bpmnDocument.getElementNameById(firstToken.flowNodeId)}"`),
-      chalk.dim(`(${firstToken.flowNodeId})`)
-    );
+    console.log('Input', chalk.cyanBright(`"${firstTokenFlowNodeName}"`), chalk.dim(`(${firstTokenFlowNodeId})`));
     console.log('');
     printMultiLineString(JSON.stringify(firstToken.payload, null, 2), '    ');
   }
 
   if (processInstance.error != null) {
     console.log('');
-    console.log(
-      'Input',
-      chalk.cyanBright(`"${bpmnDocument.getElementNameById(lastTokenOnEnter.flowNodeId)}"`),
-      chalk.dim(`(${lastTokenOnEnter.flowNodeId})`)
-    );
+    console.log('Input', chalk.cyanBright(`"${lastTokenFlowNodeName}"`), chalk.dim(`(${lastTokenFlowNodeId})`));
     console.log('');
     printMultiLineString(JSON.stringify(lastTokenOnEnter.payload, null, 2), '    ');
   }
 
   if (lastTokenOnExit != null) {
     console.log('');
-    console.log(
-      'Output',
-      chalk.cyanBright(`"${bpmnDocument.getElementNameById(lastTokenOnExit.flowNodeId)}"`),
-      chalk.dim(`(${lastTokenOnExit.flowNodeId})`)
-    );
+    console.log('Output', chalk.cyanBright(`"${lastTokenFlowNodeName}"`), chalk.dim(`(${lastTokenFlowNodeId})`));
     console.log('');
     printMultiLineString(JSON.stringify(lastTokenOnExit.payload, null, 2), '    ');
   }
