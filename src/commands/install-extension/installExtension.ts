@@ -59,9 +59,9 @@ export async function installExtension(
         chalk.reset(`has been installed to ${newPath}`)
       )
     );
-
-    rmdirSync(cacheDirOfExtension, { recursive: true });
   }
+
+  rmdirSync(cacheDir, { recursive: true });
 }
 
 async function download(filename: string): Promise<string> {
@@ -122,18 +122,31 @@ async function moveExtensionToDestination(
 ): Promise<string> {
   const newPath = join(EXTENSION_DIRS[type], name);
 
-  if (autoYes !== true && existsSync(newPath)) {
-    const yes = await yesno({
-      question: `Extension path already exists: ${newPath}. Overwrite it? [Yn]`
-    });
+  if (existsSync(newPath)) {
+    if (autoYes !== true) {
+      const yes = await yesno({
+        question: `Extension path already exists: ${newPath}. Overwrite it? [Yn]`
+      });
 
-    if (yes !== true) {
-      console.log('User cancelled operation. Aborting.');
-      process.exit(255);
+      if (yes !== true) {
+        console.log('User cancelled operation. Aborting.');
+        process.exit(255);
+      }
     }
+
+    rmdirSync(newPath, { recursive: true });
   }
 
-  await new Promise((resolve) => rename(cacheDirOfExtension, newPath, resolve));
+  ensureDir(EXTENSION_DIRS[type]);
+
+  await new Promise<void>((resolve, reject) => {
+    rename(cacheDirOfExtension, newPath, (error) => {
+      if (error) {
+        return reject(error);
+      }
+      resolve();
+    });
+  });
 
   return newPath;
 }
