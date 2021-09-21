@@ -1,6 +1,6 @@
 {
   "name": "@atlas-engine/cli",
-  "version": "2.0.0-alpha.11",
+  "version": "2.0.0-alpha.12",
   "description": "Command Line Utilities for 5Minds ProcessCube",
   "main": "dist/pc.js",
   "scripts": {
