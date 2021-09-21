@@ -43,8 +43,8 @@ async function createCommandLineInterface(): Promise<CommandLineInterface> {
   return cli;
 }
 
-process.on('unhandledRejection', (err) => {
-  logError(err.toString());
+process.on('unhandledRejection', (err: any) => {
+  logError(err.stack || err.toString());
   process.exit(2);
 });
 
