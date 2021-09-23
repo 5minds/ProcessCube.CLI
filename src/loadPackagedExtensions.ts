@@ -19,6 +19,7 @@ import { onLoad as onLoadGenerateRootAccessToken } from './commands/generate-roo
 const packagedOnLoadFunctions = [
   onLoadDeployFiles,
   onLoadFinishUserTask,
+  onLoadGenerateRootAccessToken,
   onLoadInstallExtension,
   onLoadListProcessInstances,
   onLoadListProcessModels,
@@ -30,8 +31,7 @@ const packagedOnLoadFunctions = [
   onLoadSessionStatus,
   onLoadShowProcessInstance,
   onLoadStartProcessModel,
-  onLoadStopProcessInstance,
-  onLoadGenerateRootAccessToken
+  onLoadStopProcessInstance
 ];
 
 export async function loadPackagedExtensions(cli: CLI): Promise<void> {

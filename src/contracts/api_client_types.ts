@@ -56,6 +56,8 @@ type StartedProcessModelInfo_Failure = {
 
   processModelId: string;
   startEventId: string;
+  processInstanceId?: string;
+  correlationId?: string;
 
   error: Error;
 };

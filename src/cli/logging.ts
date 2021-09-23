@@ -77,7 +77,9 @@ function getDimmedTableBorder(): any {
 }
 
 export function logError(error: string): void {
-  console.warn(chalk.redBright.bold(`** (pc) ${error}`));
+  error.split('\n').forEach((line) => {
+    console.warn(chalk.redBright.bold(`** (pc) ${line}`));
+  });
 }
 
 export function logNoValidSessionError(): void {
@@ -85,7 +87,9 @@ export function logNoValidSessionError(): void {
 }
 
 export function logWarning(warning: string): void {
-  console.warn(chalk.yellowBright(`** (pc) ${warning}`));
+  warning.split('\n').forEach((line) => {
+    console.warn(chalk.yellowBright(`** (pc) ${line}`));
+  });
 }
 
 export function logMultiline(text: string): void {
