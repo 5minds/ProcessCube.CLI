@@ -1,4 +1,4 @@
-import * as BpmnModdle from 'bpmn-moddle';
+import BpmnModdle from 'bpmn-moddle';
 
 export class BpmnDocument {
   private definitions: any;

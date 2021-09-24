@@ -12,8 +12,8 @@ assignees: S3bastianGriesa,ElRaptorus,SteffenKn
 
 - Betriebssystem (`Windows`, `macOS` oder `Linux` + Distribution/Version):
 - Datenbankmanagementsystem (`MySQL`, `MSSQL`, `PostgreSQL` oder `SQLite` + Distribution/Version):
-- Atlas-Engine-Version:
-- BPMN-Studio-Version:
+- Engine-Version:
+- Studio-Version:
 - Docker-Version:
 
 ## Was wurde getan?

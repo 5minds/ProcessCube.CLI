@@ -1,4 +1,4 @@
-import * as marked from 'marked';
+import marked from 'marked';
 import chalk from 'chalk';
 
 import { padLeftMultiline } from './logging';
@@ -7,7 +7,7 @@ export class MarkdownRenderer extends marked.Renderer {
   code(code: string, language: string | undefined, isEscaped: boolean): string {
     let result = code;
     if (code.startsWith('$')) {
-      const codeWithHightlightedShellPrompt = code.replace(/(\$ )(atlas \S+)/gim, (...args) => {
+      const codeWithHightlightedShellPrompt = code.replace(/(\$ )(pc \S+)/gim, (...args) => {
         return `${chalk.greenBright(args[1])}${args[2]}`;
       });
       result = codeWithHightlightedShellPrompt;

@@ -5,4 +5,4 @@ set batdir=%~dp0
 :: set batdir=%CD%
 pushd "%batdir%"
 
-call atlas remove-process-models BuchAusleihen_erfolgreich BuchAusleihen_fehlerhaft BuchAusleihen_laufend --yes
+call pc remove-process-models BuchAusleihen_erfolgreich BuchAusleihen_fehlerhaft BuchAusleihen_laufend --yes

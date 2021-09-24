@@ -1,9 +1,9 @@
-import * as yesno from 'yesno';
+import yesno from 'yesno';
 
-import { loadAtlasSession } from '../../session/atlas_session';
-import { createResultJson } from '../../cli/result_json';
-import { OUTPUT_FORMAT_JSON, OUTPUT_FORMAT_TEXT } from '../../atlas';
-import { logError, logJsonResult } from '../../cli/logging';
+import { loadSession } from '../../session/session';
+import { createResultJson, useMessageForResultJsonErrors } from '../../cli/result_json';
+import { OUTPUT_FORMAT_JSON, OUTPUT_FORMAT_TEXT } from '../../pc';
+import { logError, logJsonResult, logJsonResultAsTextTable } from '../../cli/logging';
 import { ApiClient } from '../../client/api_client';
 
 export async function removeProcessModels(
@@ -11,7 +11,7 @@ export async function removeProcessModels(
   autoYes: boolean,
   outputFormat: string
 ): Promise<void> {
-  const session = loadAtlasSession();
+  const session = loadSession();
   if (session == null) {
     logError('No session found. Aborting.');
     return;
@@ -44,7 +44,7 @@ export async function removeProcessModels(
       logJsonResult(resultJson);
       break;
     case OUTPUT_FORMAT_TEXT:
-      console.table(results, ['success', 'processModelId', 'error']);
+      logJsonResultAsTextTable(resultJson, ['success', 'processModelId', 'error'], 'Stopped Process Instances');
       break;
   }
 }

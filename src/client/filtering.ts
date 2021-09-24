@@ -1,4 +1,4 @@
-import * as moment from 'moment';
+import dayjs from 'dayjs';
 
 import { toFilterRegexes } from '../cli/filter_regexes';
 
@@ -7,6 +7,7 @@ type FilterableProcessInstance = {
   finishedAt?: any;
   processModelId: string;
   state: string;
+  flowNodeInstanceId?: any;
 };
 
 export function filterProcessInstancesDateAfter(
@@ -19,10 +20,10 @@ export function filterProcessInstancesDateAfter(
   }
 
   // TODO: validation of input
-  const afterDate = moment(createdAfter);
+  const afterDate = dayjs(createdAfter);
 
   return processInstances.filter((processInstance: FilterableProcessInstance) =>
-    moment(processInstance[fieldName]).isAfter(afterDate)
+    dayjs(processInstance[fieldName]).isAfter(afterDate)
   );
 }
 
@@ -36,10 +37,10 @@ export function filterProcessInstancesDateBefore(
   }
 
   // TODO: validation of input
-  const beforeDate = moment(createdBefore);
+  const beforeDate = dayjs(createdBefore);
 
   return processInstances.filter((processInstance: FilterableProcessInstance) =>
-    moment(processInstance[fieldName]).isBefore(beforeDate)
+    dayjs(processInstance[fieldName]).isBefore(beforeDate)
   );
 }
 
@@ -87,6 +88,24 @@ export function filterProcessInstancesByProcessModelId(
   });
 }
 
+export function filterUserTasksByFlowNodeInstanceId(
+  processInstances: FilterableProcessInstance[],
+  filterByFlowNodeInstanceId: string[]
+): any[] {
+  if (filterByFlowNodeInstanceId.length === 0) {
+    return processInstances;
+  }
+
+  const filterRegexes = toFilterRegexes(filterByFlowNodeInstanceId);
+
+  return processInstances.filter((processInstance: FilterableProcessInstance) => {
+    const anyFilterMatched = filterRegexes.some(
+      (regex: RegExp) => processInstance.flowNodeInstanceId.match(regex) != null
+    );
+    return anyFilterMatched;
+  });
+}
+
 export function rejectProcessInstancesByProcessModelId(
   processInstances: FilterableProcessInstance[],
   filterByProcessModelId: string[]
@@ -123,20 +142,17 @@ export function filterProcessInstancesByEndTimeAfter(
   if (completedAfter == null) {
     return processInstances;
   }
-  if (!moment(completedAfter).isValid()) {
-
+  if (!dayjs(completedAfter).isValid()) {
     throw new Error(`Invalid date format '${completedAfter}'! Please enter a valid date format.`);
   }
-  const afterDate = moment(completedAfter);
+  const afterDate = dayjs(completedAfter);
 
   return processInstances.filter((processInstance: FilterableProcessInstance) => {
-
     if (!processInstance['finishedAt']) {
       return false;
     }
-    
-    return moment(processInstance['finishedAt']).isAfter(afterDate);
-  
+
+    return dayjs(processInstance['finishedAt']).isAfter(afterDate);
   });
 }
 
@@ -147,55 +163,52 @@ export function filterProcessInstancesByEndTimeBefore(
   if (completedBefore == null) {
     return processInstances;
   }
-  if (!moment(completedBefore).isValid()){
-
+  if (!dayjs(completedBefore).isValid()) {
     throw new Error(`Invalid date format '${completedBefore}'! Please enter a valid date format.`);
   }
 
-  const beforeDate = moment(completedBefore);
+  const beforeDate = dayjs(completedBefore);
 
   return processInstances.filter((processInstance: FilterableProcessInstance) => {
-
     if (!processInstance['finishedAt']) {
       return false;
     }
-    
-    return moment(processInstance['finishedAt']).isBefore(beforeDate);
-  
+
+    return dayjs(processInstance['finishedAt']).isBefore(beforeDate);
   });
-  
 }
 
 export function filterProcessInstancesByExecutionTime(
   processInstances: FilterableProcessInstance[],
   filterByExecutionTime: string
 ): any[] {
+  if (filterByExecutionTime == null) {
+    return processInstances;
+  }
+  const regexExecutionTime = /([<]|[>]) *([ 0-9]{1,}) *([smhd])/g;
+  const executionTimeMatches = regexExecutionTime.exec(filterByExecutionTime);
 
-    if (filterByExecutionTime == null) {
-      return processInstances;
-    }
-      const regexExecutionTime = /([<]|[>]) *([ 0-9]{1,}) *([smhd])/g;
-      const executionTimeMatches = regexExecutionTime.exec(filterByExecutionTime);
-    
-      const lastIndexOfExecutionTime = filterByExecutionTime.substr(filterByExecutionTime.length - 1);
+  if (executionTimeMatches == null) {
+    throw new Error(
+      `Unable to parse completed-in parameter '${filterByExecutionTime}'. Format has to be "[<|>] [TIME] [d|h|m|s]". Please refer to 'lsi --help' for more detailed information.`
+    );
+  }
 
-      if (executionTimeMatches == null){
-        throw new Error(`Unable to parse completed-in parameter '${filterByExecutionTime}'. Format has to be "[<|>] [TIME] [d|h|m|s]". Please refer to 'lsi --help' for more detailed information.`);
-      }
-      
-      const parsedComparisonType = executionTimeMatches[1];
+  const parsedComparisonType = executionTimeMatches[1];
 
-      const parsedTime = executionTimeMatches[2];
-      const time = parseInt(parsedTime);
+  const parsedTime = executionTimeMatches[2];
+  const time = parseInt(parsedTime);
 
-      const parsedUnitOfTime = executionTimeMatches[3];
-      const unitOfTime = getUnitOfTimeForAbbreviation(parsedUnitOfTime);
- 
-      return processInstances.filter((processInstance: FilterableProcessInstance) => isCompletedIn(processInstance, parsedComparisonType, time, unitOfTime));  
+  const parsedUnitOfTime = executionTimeMatches[3];
+  const unitOfTime = getUnitOfTimeForAbbreviation(parsedUnitOfTime);
+
+  return processInstances.filter((processInstance: FilterableProcessInstance) =>
+    isCompletedIn(processInstance, parsedComparisonType, time, unitOfTime)
+  );
 }
 
-function getUnitOfTimeForAbbreviation(abbreviation: string): moment.unitOfTime.Diff {
-  switch(abbreviation) {
+function getUnitOfTimeForAbbreviation(abbreviation: string): dayjs.OpUnitType {
+  switch (abbreviation) {
     case 'd':
       return 'days';
     case 'h':
@@ -207,16 +220,21 @@ function getUnitOfTimeForAbbreviation(abbreviation: string): moment.unitOfTime.D
   }
 }
 
-function isCompletedIn(processInstance: FilterableProcessInstance, comparisonType: string, time: number, unitOfTime: moment.unitOfTime.Diff): boolean {
+function isCompletedIn(
+  processInstance: FilterableProcessInstance,
+  comparisonType: string,
+  time: number,
+  unitOfTime: dayjs.OpUnitType
+): boolean {
   if (comparisonType === '>') {
-    return moment(processInstance.createdAt)
+    return dayjs(processInstance.createdAt)
       .add(time, unitOfTime)
       .isBefore(processInstance.finishedAt);
   } else if (comparisonType === '<') {
-    return moment(processInstance.createdAt)
+    return dayjs(processInstance.createdAt)
       .add(time, unitOfTime)
       .isAfter(processInstance.finishedAt);
-  } 
+  }
 
   throw new Error(`Unknown comparison type: '${comparisonType}'. It should be > or <.`);
 }

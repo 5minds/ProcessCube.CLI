@@ -1,4 +1,4 @@
-import * as express from 'express';
+import express from 'express';
 import open = require('open');
 import { getModalHtml } from './html_message';
 
@@ -8,8 +8,8 @@ export type IdTokenAccessTokenAndExpiresAt = {
   expiresAt: number;
 };
 
-const DEFAULT_PORT = 9000; // 56073;
-const DEFAULT_CLIENT_ID = 'bpmn_studio';
+const DEFAULT_PORT = 12560;
+const DEFAULT_CLIENT_ID = 'pc_cli';
 
 export function startServerToLoginAndWaitForAccessTokenFromIdentityServer(
   identityServerUrl: string,
@@ -83,11 +83,11 @@ export function startServerToLoginAndWaitForAccessTokenFromIdentityServer(
           `
           # You are now logged in!
 
-          $ atlas list-process-models
+          $ pc list-process-models
 
-          $ atlas list-process-instances
+          $ pc list-process-instances
 
-          $ atlas --help
+          $ pc --help
           `
         )
       );

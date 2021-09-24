@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="Definition_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="BPMN Studio" exporterVersion="1">
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="Definition_z06BQgmsUAv" targetNamespace="http://bpmn.io/schema/bpmn" exporter="BPMN Studio" exporterVersion="1">
   <bpmn:collaboration id="Collaboration_1cidyxu" name="">
     <bpmn:participant id="Participant_0px403d" name="Elements" processRef="Elements" />
     <bpmn:participant id="Participant_01950sa" processRef="Process_1sbed4i" />
@@ -390,12 +390,6 @@
       <bpmndi:BPMNShape id="ParallelGateway_1sxwvl7_di" bpmnElement="ExclusiveGateway_1iatb8v">
         <dc:Bounds x="1310" y="159" width="50" height="50" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Task_1epxegz_di" bpmnElement="Task_1epxegz">
-        <dc:Bounds x="773" y="1954" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Task_0u4aj4o_di" bpmnElement="Task_0u4aj4o">
-        <dc:Bounds x="773" y="2068" width="100" height="80" />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="SubProcess_0j0aq61_di" bpmnElement="SubProcess_0j0aq61" isExpanded="true">
         <dc:Bounds x="1507" y="67" width="350" height="200" />
       </bpmndi:BPMNShape>
@@ -495,8 +489,20 @@
       <bpmndi:BPMNShape id="Event_013j85m_di" bpmnElement="Event_1u40wf7">
         <dc:Bounds x="1642" y="1942" width="36" height="36" />
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_1epxegz_di" bpmnElement="Task_1epxegz">
+        <dc:Bounds x="773" y="1954" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_0u4aj4o_di" bpmnElement="Task_0u4aj4o">
+        <dc:Bounds x="773" y="2068" width="100" height="80" />
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="TextAnnotation_1dxyt6o_di" bpmnElement="TextAnnotation_1dxyt6o">
         <dc:Bounds x="1926" y="82" width="84" height="44" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BoundaryEvent_1d7fg3w_di" bpmnElement="BoundaryEvent_0stj4jm">
+        <dc:Bounds x="830" y="2130" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BoundaryEvent_0fuvbwz_di" bpmnElement="BoundaryEvent_1ma8jiu">
+        <dc:Bounds x="830" y="2016" width="36" height="36" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BoundaryEvent_0ip9ldh_di" bpmnElement="BoundaryEvent_0tcplz8">
         <dc:Bounds x="830" y="1723" width="36" height="36" />
@@ -538,12 +544,6 @@
         <di:waypoint x="1857" y="128" />
         <di:waypoint x="1926" y="113" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="BoundaryEvent_0fuvbwz_di" bpmnElement="BoundaryEvent_1ma8jiu">
-        <dc:Bounds x="830" y="2016" width="36" height="36" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BoundaryEvent_1d7fg3w_di" bpmnElement="BoundaryEvent_0stj4jm">
-        <dc:Bounds x="830" y="2130" width="36" height="36" />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Participant_01950sa_di" bpmnElement="Participant_01950sa" isHorizontal="true">
         <dc:Bounds x="-116" y="2270" width="600" height="250" />
       </bpmndi:BPMNShape>

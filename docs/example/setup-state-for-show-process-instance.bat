@@ -5,8 +5,8 @@ set batdir=%~dp0
 :: set batdir=%CD%
 pushd "%batdir%"
 
-call atlas deploy-files %batdir%\Processes\*.bpmn
+call pc deploy-files %batdir%\Processes\*.bpmn
 
-call atlas start-process-model BuchAusleihen_erfolgreich
-call atlas start-process-model BuchAusleihen_fehlerhaft
-call atlas start-process-model BuchAusleihen_laufend
+call pc start-process-model BuchAusleihen_erfolgreich
+call pc start-process-model BuchAusleihen_fehlerhaft
+call pc start-process-model BuchAusleihen_laufend

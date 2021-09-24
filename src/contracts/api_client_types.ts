@@ -46,9 +46,9 @@ type StartedProcessModelInfo_Success = {
 
   processInstanceId?: string;
   correlationId: string;
-  inputValues: any;
+  startToken: any;
   endEventId?: string;
-  payload?: any;
+  endToken?: any;
 };
 
 type StartedProcessModelInfo_Failure = {
@@ -56,6 +56,8 @@ type StartedProcessModelInfo_Failure = {
 
   processModelId: string;
   startEventId: string;
+  processInstanceId?: string;
+  correlationId?: string;
 
   error: Error;
 };
@@ -92,6 +94,26 @@ type RetriedProcessInstanceInfo_Failure = {
   success: false;
 
   processInstanceId: string;
+
+  error: Error;
+};
+
+//
+
+export type FinishedUserTaskInfo = FinishedUserTaskInfoSuccess | FinishedUserTaskInfoFailure;
+
+type FinishedUserTaskInfoSuccess = {
+  success: true;
+
+  flowNodeInstanceId: string;
+  resultValues: any;
+  payload?: any;
+};
+
+type FinishedUserTaskInfoFailure = {
+  success: false;
+
+  flowNodeInstanceId: string;
 
   error: Error;
 };

@@ -1,20 +1,20 @@
 import { ApiClient } from '../../client/api_client';
-import { addJsonPipingHintToResultJson, createResultJson } from '../../cli/result_json';
-import { loadAtlasSession } from '../../session/atlas_session';
-import { logError, logJsonResult } from '../../cli/logging';
+import { addJsonPipingHintToResultJson, createResultJson, useMessageForResultJsonErrors } from '../../cli/result_json';
+import { loadSession } from '../../session/session';
+import { logError, logJsonResult, logJsonResultAsTextTable } from '../../cli/logging';
 
-import { OUTPUT_FORMAT_JSON, OUTPUT_FORMAT_TEXT } from '../../atlas';
+import { OUTPUT_FORMAT_JSON, OUTPUT_FORMAT_TEXT } from '../../pc';
 
 export async function startProcessInstance(
   pipedProcessModelIds: string[] | null,
   givenProcessModelId: string,
   givenStartEventId: string,
   correlationId: string,
-  inputValues: any,
+  startToken: any,
   waitForProcessToFinish: boolean,
   outputFormat: string
 ): Promise<void> {
-  const session = loadAtlasSession();
+  const session = loadSession();
   if (session == null) {
     logError('No session found. Aborting.');
     return;
@@ -38,7 +38,7 @@ export async function startProcessInstance(
     }
   }
 
-  const startRequestPayload = { correlationId, inputValues };
+  const startRequestPayload = { correlationId, startToken };
   const processInstance = await apiClient.startProcessModel(
     processModelId,
     startEventId,
@@ -55,14 +55,11 @@ export async function startProcessInstance(
       logJsonResult(resultJson);
       break;
     case OUTPUT_FORMAT_TEXT:
-      console.table(processInstances, [
-        'success',
-        'processModelId',
-        'startEventId',
-        'processInstanceId',
-        'correlationId',
-        'error'
-      ]);
+      logJsonResultAsTextTable(
+        resultJson,
+        ['success', 'processModelId', 'startEventId', 'processInstanceId', 'correlationId', 'error'],
+        'Started Process Instances'
+      );
       break;
   }
 }
@@ -71,7 +68,7 @@ async function getSingleStartEventIdOrNull(apiClient: ApiClient, processModelId:
   const processModels = await apiClient.getProcessModelsByIds([processModelId]);
   const processModel = processModels[0];
   if (processModel == null) {
-    logError('No process model with the id "'+ processModelId + '" was found. Please check the spelling.');
+    logError('No process model with the id "' + processModelId + '" was found. Please check the spelling.');
     process.exit(1);
   }
   if (processModel.startEvents.length === 1) {
