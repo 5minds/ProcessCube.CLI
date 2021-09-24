@@ -40,6 +40,21 @@ export async function onLoad(cli: CLI): Promise<void> {
           name: 'm2m-scope',
           description: 'Request this scope for Machine to Machine (M2M) authorization',
           type: 'string'
+        },
+        {
+          name: 'client-id',
+          description: 'Use this client id for Web flow authorization',
+          type: 'string'
+        },
+        {
+          name: 'response-type',
+          description: 'Use this response type for Web flow authorization',
+          type: 'string'
+        },
+        {
+          name: 'scope',
+          description: 'Request this scope for Web flow authorization',
+          type: 'string'
         }
       ]
     },
@@ -53,6 +68,9 @@ async function runCommand(inputs: Inputs): Promise<void> {
     inputs.argv.m2mClientId,
     inputs.argv.m2mClientSecret,
     inputs.argv.m2mScope,
+    inputs.argv.clientId,
+    inputs.argv.responseType?.split(',')?.join(' '),
+    inputs.argv.scope?.split(',')?.join(' '),
     inputs.argv.root,
     inputs.argv.rootAccessToken,
     inputs.argv.output

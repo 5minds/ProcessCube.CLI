@@ -1,6 +1,7 @@
 import express from 'express';
 import open = require('open');
 import { getModalHtml } from './html_message';
+import fetch from 'node-fetch';
 
 export type IdTokenAccessTokenAndExpiresAt = {
   accessToken: string;
@@ -10,21 +11,25 @@ export type IdTokenAccessTokenAndExpiresAt = {
 
 const DEFAULT_PORT = 12560;
 const DEFAULT_CLIENT_ID = 'pc_cli';
+const DEFAULT_SCOPE = 'openid profile test_resource';
+const DEFAULT_RESPONSE_TYPE = 'id_token token';
 
 export function startServerToLoginAndWaitForAccessTokenFromIdentityServer(
   identityServerUrl: string,
   givenPort?: number,
-  givenClientId?: number
+  givenClientId?: string,
+  givenResponseType?: string,
+  givenScope?: string
 ): Promise<IdTokenAccessTokenAndExpiresAt | null> {
   return new Promise((resolve: Function, reject: Function) => {
     const app = express();
     const port = givenPort ?? DEFAULT_PORT;
     const clientId = givenClientId ?? DEFAULT_CLIENT_ID;
 
-    app.get('/login', (req, res) => {
+    app.get('/login', async (req, res) => {
       const redirectUri = `http://localhost:${port}/signin-oidc`;
-      const scope = 'openid profile test_resource';
-      const responseType = 'id_token token';
+      const scope = givenScope ?? DEFAULT_SCOPE;
+      const responseType = givenResponseType ?? DEFAULT_RESPONSE_TYPE;
       const state = Math.random().toString(36);
       const nonce = Math.random().toString(36);
 
@@ -33,31 +38,37 @@ export function startServerToLoginAndWaitForAccessTokenFromIdentityServer(
       )}&response_type=${encodeURIComponent(responseType)}&scope=${encodeURIComponent(
         scope
       )}&state=${encodeURIComponent(state)}&nonce=${encodeURIComponent(nonce)}&display=popup`;
-      const uri = `${identityServerUrl.replace(/\/$/, '')}/connect/authorize?${params}`;
 
-      res.redirect(uri);
+      const discoveryUri = `${identityServerUrl.replace(/\/$/, '')}/.well-known/openid-configuration`;
+
+      const result = await fetch(discoveryUri);
+      const payload = await result.json();
+
+      const connectUri = `${payload.authorization_endpoint}?${params}`;
+
+      console.log(`Connecting to ${connectUri}`);
+
+      res.redirect(connectUri);
     });
 
     app.get('/signin-oidc', (req, res) => {
       res.send(`
         <script>
           var hashWithoutHash = window.location.hash.substr(1);
-          var pairs = hashWithoutHash.split("&");
-          var accessToken = pairs.find(function (pair) {
-            return pair.startsWith('access_token=')
-          }).replace(/^access_token=/, '');
-          var idToken = pairs.find(function (pair) {
-            return pair.startsWith('id_token=')
-          }).replace(/^id_token=/, '');
-          var expiresIn = pairs.find(function (pair) {
-            return pair.startsWith('expires_in=')
-          }).replace(/^expires_in=/, '');
-
-          window.location.href = '/signin-oidc-done/'+expiresIn+'/'+accessToken+'/'+idToken;
+          window.location.href = '/signin-oidc-extract?'+hashWithoutHash;
         </script>
       `);
     });
-
+    app.get('/signin-oidc-extract', (req, res) => {
+      const accessToken = req.query.access_token;
+      const idToken = req.query.id_token;
+      const expiresIn = req.query.expires_in;
+      if (accessToken && idToken && expiresIn) {
+        res.redirect(`/signin-oidc-done/${expiresIn}/${accessToken}/${idToken}`);
+      } else {
+        res.send(`<pre>${JSON.stringify(req.query, null, 2)}</pre>`);
+      }
+    });
     app.get('/signin-oidc-done/:expires_in/:access_token/:id_token', (req, res) => {
       const accessToken = req.params.access_token;
       const idToken = req.params.id_token;
