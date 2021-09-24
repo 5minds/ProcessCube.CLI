@@ -4,7 +4,7 @@ import { execAsJson, execAsText, loginAsRoot } from '../exec_as';
 describe('show-process-instance', () => {
   it('should show-process-instance with JSON output', async () => {
     await loginAsRoot(async () => {
-      execAsJson('deploy-files fixtures/Maintenance.RetryProcessInstance.bpmn');
+      execAsJson('deploy-files fixtures/Wartung.StringUmdrehen.bpmn');
 
       const correlationId = 'c' + Date.now();
       execAsJson(

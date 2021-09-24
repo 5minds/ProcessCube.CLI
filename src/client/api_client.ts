@@ -132,7 +132,17 @@ export class ApiClient {
     } catch (error) {
       await this.warnAndExitIfEnginerUrlNotAvailable();
 
-      return { success: false, processModelId, startEventId, error: normalizeError(error) };
+      const processInstanceId = error?.additionalInformation?.processInstanceId;
+      const correlationId = error?.additionalInformation?.correlationId;
+
+      return {
+        success: false,
+        processModelId,
+        startEventId,
+        processInstanceId,
+        correlationId,
+        error: normalizeError(error)
+      };
     }
   }
 

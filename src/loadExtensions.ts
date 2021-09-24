@@ -1,7 +1,8 @@
 import { existsSync, readFileSync, readdirSync } from 'fs';
 import { join } from 'path';
-import { CLI } from './cli';
+
 import { logWarning } from './cli/logging';
+import { CLI } from './contracts/cli_types';
 import { getExtensionsDir } from './session/atlas_path_functions';
 
 export type ExtensionModule = {
@@ -37,14 +38,21 @@ export async function loadExtensions(cli: CLI): Promise<void> {
       }
 
       const entrypoint = join(extensionsDir, subdir, packageJson.main);
-      const module = await loadFile(entrypoint);
+      if (existsSync(entrypoint)) {
+        try {
+          const module = await loadFile(entrypoint);
+          const extensionModule: ExtensionModule = { ...packageJson, ...module };
 
-      const extensionModule: ExtensionModule = { ...packageJson, ...module };
-
-      if (extensionModule.exports.onLoad) {
-        await extensionModule.exports.onLoad(cli);
+          if (extensionModule.exports.onLoad) {
+            await extensionModule.exports.onLoad(cli);
+          } else {
+            logWarning(`Expected 'main' script for extension '${subdir}' to export an \`onLoad\` hook: ${entrypoint}`);
+          }
+        } catch (e) {
+          logWarning(`Error while loading 'main' script for extension '${subdir}' (${entrypoint}): ${e.message}`);
+        }
       } else {
-        logWarning(`Expected extension to export an \`onLoad\` hook: ${subdir}`);
+        logWarning(`Expected 'main' script for extension '${subdir}' to exist: ${entrypoint}`);
       }
     }
   }
@@ -65,16 +73,9 @@ async function loadFile(filename: string): Promise<LoadedModule> {
 function loadStringIntoModule(code: string, require: Function, module: any): void {
   const exports = module.exports;
 
-  try {
-    const wrappedCode = `(function evaluate(require, module, exports) {
+  const wrappedCode = `(function evaluate(require, module, exports) {
         ${code}
       })`;
 
-    (0, eval)(wrappedCode).apply(this, [require, module, exports]);
-  } catch (e) {
-    console.error('Error while loading module:', e);
-    e.loaderError = true;
-
-    throw e;
-  }
+  (0, eval)(wrappedCode).apply(this, [require, module, exports]);
 }
