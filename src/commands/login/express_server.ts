@@ -62,17 +62,7 @@ export function startServerToLoginAndWaitForAccessTokenFromIdentityServer(
     app.get('/signin-oidc-extract', (req, res) => {
       const accessToken = req.query.access_token;
       const idToken = req.query.id_token;
-      const expiresIn = req.query.expires_in;
-      if (accessToken && idToken && expiresIn) {
-        res.redirect(`/signin-oidc-done/${expiresIn}/${accessToken}/${idToken}`);
-      } else {
-        res.send(`<pre>${JSON.stringify(req.query, null, 2)}</pre>`);
-      }
-    });
-    app.get('/signin-oidc-done/:expires_in/:access_token/:id_token', (req, res) => {
-      const accessToken = req.params.access_token;
-      const idToken = req.params.id_token;
-      const expiresInSeconds = parseInt(req.params.expires_in);
+      const expiresInSeconds = parseInt(req.query.expires_in as string);
       const expiresAt = Date.now() + expiresInSeconds * 1000;
 
       res.set('Connection', 'close');
