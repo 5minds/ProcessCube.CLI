@@ -1,0 +1,92 @@
+---
+id: 'start-process-model'
+slug: '/cli/commands/start-process-model'
+---
+
+# `pc start-process-model`
+
+## Verwendung
+
+```shell
+pc start-process-model [processModelId] [startEventId] [options]
+pc start [processModelId] [startEventId] [options]
+```
+
+## Beschreibung
+
+Startet Prozessmodelle auf der verbundenen Engine.
+
+## Argumente
+
+| Name           | Obligatorisch | Beschreibung                         |
+| -------------- | ------------- | ------------------------------------ |
+| processModelId | Ja            | IDs der zu startenden Prozessmodells |
+| startEventId   | Ja            | IDs der zu startenden Start-Events   |
+
+## Filter-Optionen
+
+| Name, Kürzel             | Default | Beschreibung                                                                    |
+| ------------------------ | ------- | ------------------------------------------------------------------------------- |
+| --correlation-id         |         | Set a predefined correlation id for the process instance                        |
+| --output, -o             | text    | Steuert das Ausgabeformat: `text` oder `json`                                   |
+| --start-token            | `{}`    | Set start token for the process instance from a `<json>` string                 |
+| --start-token-from-file  |         | Read start token as JSON from `<file>`                                          |
+| --start-token-from-stdin |         | Read start token as JSON from `STDIN`                                           |
+| --wait                   |         | Wait for the started process instance to finish execution and report the result |
+
+## Beispiele
+
+### Kurzform
+
+Ein Prozessmodell kann über seine ID und das zu startende Start-Event gestartet werden:
+
+```shell
+pc start-process-model Registration.EmailCoupons StartEvent_1
+```
+
+Alternativ kann die Kurzform `start` genutzt werden:
+
+```shell
+pc start Registration.EmailCoupons StartEvent_1
+```
+
+### Correlation ID setzen
+
+Für die zu startende Prozessinstanz kann per `--correlation-id` eine individuelle Correlation ID gesetzt werden:
+
+```shell
+pc start Registration.EmailCoupons StartEvent_1 --correlation-id "my-correlation-id-1234"
+```
+
+### Start-Token setzen
+
+Ein individueller Start-Token kann entweder per `--start-token` gesetzt werden:
+
+```shell
+pc start Registration.EmailCoupons StartEvent_1 --start-token '{"answer": 42, "email": "jobs@5minds.de"}'
+```
+
+Der individuelle Start-Token kann per `--start-token-from-file` auf einer Datei gelesen werden:
+
+```shell
+pc start Registration.EmailCoupons StartEvent_1 --start-token-from-file input.json
+```
+
+Der individuelle Start-Token kann per `--start-token-from-stdin` von `STDIN` gelesen werden:
+
+```shell
+cat input.json | pc start Registration.EmailCoupons StartEvent_1 --start-token-from-stdin
+```
+
+:::info
+Als Eingabe-Format wird [JSON5](https://json5.org) verwendet, dessen Regeln weniger strikt sind als bei normalem JSON (bspw. erlaubt JSON5 Kommentare).
+Die Ausgabe der ProcesCube CLI ist immer striktes, standard-konformes JSON.
+:::
+
+### Auf Prozessabschluss warten
+
+Die CLI kann per `--wait` angewiesen werden, zu warten, bis die gestartete Prozessinstanz zu Ende gelaufen ist:
+
+```shell
+pc start Registration.EmailCoupons StartEvent_1 --wait
+```
