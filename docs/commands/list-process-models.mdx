@@ -1,0 +1,80 @@
+---
+id: 'list-process-models'
+slug: '/cli/commands/list-process-models'
+---
+
+# `pc list-process-models`
+
+## Verwendung
+
+```shell
+pc list-process-models [options]
+pc lsp [options]
+```
+
+## Beschreibung
+
+Listet, sortiert und filtert Prozessmodelle von der verbundenen Engine.
+
+Erlaubt die Ver-UND-ung und Ver-ODER-ung dieser Filter durch "piping".
+
+## Argumente
+
+_keine_
+
+## Filter-Optionen
+
+| Name, Kürzel               | Default | Beschreibung                                                                                                    |
+| -------------------------- | ------- | --------------------------------------------------------------------------------------------------------------- |
+  --filter-by-id |  | Prozessinstanzen nach Prozess-Modell-ID filtern (unterstützt reguläre Ausdrücke)
+  --reject-by-id |  | Prozessinstanzen nach Prozessmodell-ID ausschließen (unterstützt reguläre Ausdrücke)
+
+## Ausgabe-Optionen
+
+| Name, Kürzel | Default | Beschreibung                                  |
+| ------------ | ------- | --------------------------------------------- |
+| --output, -o | text    | Steuert das Ausgabeformat: `text` oder `json` |
+
+## Beispiele
+
+
+Ohne Filter werden alle Prozessmodelle der verbundenen Engine gelistet:
+
+```shell
+pc list-process-models
+```
+
+### Filter nach ID
+
+Die Filterung nach Prozessmodell-ID unterstützt das Auffinden von Wortteilen:
+
+```shell
+# alle Prozessinstanzen, deren Prozessmodell das Wort "Registration" in seiner ID enthält
+pc list-process-models --filter-by-id "Registration"
+```
+
+Die Filterung nach Prozessmodell-ID unterstützt auch reguläre Ausdrücke:
+
+```shell
+# alle Prozessinstanzen, deren Prozessmodell-ID mit dem Wort "Registration" anfängt
+pc list-process-models --filter-by-id "^Registration.+$"
+```
+
+### Ver-ODER-ung und Ver-UND-ung
+
+Filter-Optionen bauen aufeinander auf, das heisst, dass sie nach mehr als einem Status filtern können.
+
+Das bedeutet, dass mehrere verkettete Filter-Optionen einer ODER-Verknüpfung entsprechen:
+
+```shell
+# Suche nach Prozessmodellen in deren ID sowohl "Registration" als auch "Email" verkommt
+pc list-process-models --filter-by-id "Registration" \
+                          --filter-by-id "Email"
+```
+
+Das Ergebnis in einen erneuten Aufruf zu Pipen führt zu einer UND-Verknüpfung, da das Ergebnis des ersten Aufrufs als Ausganzmenge für den zweiten Aufruf genutzt wird:
+
+```shell
+pc list-process-models --filter-by-id "Registration" \
+| pc list-process-models --filter-by-id "Email"
+```

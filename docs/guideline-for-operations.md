@@ -2,12 +2,12 @@
 
 ## Vorraussetzungen
 
-* Sie müssen die ProcessCube CLI installiert haben, siehe [Installationsanleitung ProcessCube CLI](./install.md).
+* Sie müssen die ProcessCube CLI installiert haben, siehe [Installationsanleitung ProcessCube CLI](./installation.mdx).
 * Sie müssen sich zuvor mithilfe der ProcessCube CLI mit einer 5Minds Engine verbunden haben, siehe [ProcessCube CLI: Verbindung aufbauen](./guideline-CLI-connect.md).
 
 ## Vorbereitung
 
-1. Laden Sie sich das [Beispiel](./example) herunter und extrahieren Sie das Zip-Archiv.
+1. Laden Sie sich das [Beispiel](#example) herunter und extrahieren Sie das Zip-Archiv.
 2. Navigieren Sie in der Konsole/Eingabeaufforderung mithilfe des `cd`-Befehls in den extrahierten Ordner.
 
 ---

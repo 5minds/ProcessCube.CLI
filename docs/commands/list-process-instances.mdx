@@ -1,0 +1,163 @@
+---
+id: 'list-process-instances'
+slug: '/cli/commands/list-process-instances'
+---
+
+# `pc list-process-instances`
+
+## Verwendung
+
+```shell
+pc list-process-instances [options]
+pc lsi [options]
+```
+
+## Beschreibung
+
+Listet, sortiert und filtert Prozessinstanzen von der verbundenen Engine nach Datum, Status, Prozessmodell und/oder Korrelation.
+
+Erlaubt die Ver-UND-ung und Ver-ODER-ung dieser Filter durch "piping".
+
+## Argumente
+
+_keine_
+
+## Filter-Optionen
+
+| Name, Kürzel               | Default | Beschreibung                                                                                                    |
+| -------------------------- | ------- | --------------------------------------------------------------------------------------------------------------- |
+  --created-after              |  | Nur Prozessinstanzen anzeigen, die nach dem angegebenen Zeitpunkt erstellt wurden
+  --created-before             |  | Nur Prozessinstanzen anzeigen, die vor dem angegebenen Zeitpunkt erstellt wurden
+  --completed-after            |  | Nur Prozessinstanzen anzeigen, die nach dem angegebenen Zeitpunkt abgeschlossen wurden
+  --completed-before           |  | Nur Prozessinstanzen anzeigen, die vor dem angegebenen Zeitpunkt abgeschlossen wurden
+  --completed-in               |  | Nur Prozessinstanzen anzeigen, die innerhalb der angegebenen Zeitspanne abgeschlossen wurden
+  --filter-by-correlation-id   |  | Prozessinstanzen nach `correlationId` filtern
+  --filter-by-process-model-id |  | Prozessinstanzen nach Prozess-Modell-ID filtern (unterstützt reguläre Ausdrücke)
+  --filter-by-state            |  | Prozessinstanzen nach Status filtern: `running`, `finished` oder `error`
+  --reject-by-process-model-id |  | Prozessinstanzen nach Prozessmodell-ID ausschließen (unterstützt reguläre Ausdrücke)
+  --reject-by-state            |  | Prozessinstanzen nach Prozessmodell-ID ausschließen: `running`, `finished` oder `error`
+## Sortier-Optionen
+
+| Name, Kürzel               | Default | Beschreibung                                                                                                    |
+| -------------------------- | ------- | --------------------------------------------------------------------------------------------------------------- |
+| --sort-by-created-at       |         | Sortiert Prozessinstanzen nach ihrem Erstellungszeitpunkt entweder aufsteigend (`asc`) oder absteigend (`desc`) |
+| --sort-by-process-model-id |         | Sortiert Prozessinstanzen nach ihrer Prozessmodell-ID entweder aufsteigend (`asc`) oder absteigend (`desc`)     |
+| --sort-by-state            |         | Sortiert Prozessinstanzen nach ihrem Status entweder aufsteigend (`asc`) oder absteigend (`desc`)               |
+| --limit                    |         | Listet maximal die gegebene Zahl Prozessinstanzen                                                               |
+
+## Ausgabe-Optionen
+
+| Name, Kürzel | Default | Beschreibung                                  |
+| ------------ | ------- | --------------------------------------------- |
+| --output, -o | text    | Steuert das Ausgabeformat: `text` oder `json` |
+
+## Beispiele
+
+
+Ohne Filter werden alle Prozessinstanzen der verbundenen Engine gelistet:
+
+```shell
+pc list-process-instances
+```
+
+### Filter nach Zeitpunkten
+
+Filter nach Startzeitpunkt akzeptieren das Format `YYYY-MM-DD` (Jahr-Monat-Tag).
+
+```shell
+pc list-process-instances --created-after "2020-01-01" --created-before "2020-01-31"
+```
+
+Filter nach Endzeitpunkt akzeptieren das Format `YYYY-MM-DD` (Jahr-Monat-Tag).
+
+```shell
+pc list-process-instances --completed-after "2020-01-01" --completed-before "2020-10-31"
+```
+
+### Filter nach Dauer
+
+Filter nach Ausführungsdauer funktionieren für die Zeiteinheiten Tage (`d`), Stunden (`h`), Minuten (`m`) oder Sekunden (`s`):
+
+```shell
+# alle Prozessinstanzen, die länger als eine Stunde bis zum Abschluss brauchten
+pc list-process-instances --completed-in "> 1h"
+
+# alle Prozessinstanzen, die weniger als 45 Minuten bis zum Abschluss brauchten
+pc list-process-instances --completed-in "< 45m"
+```
+
+:::caution
+Die Zeiteinheiten in diesen Filtern sind nicht kombinierbar:
+
+Die Abfrage nach  `> 1h 30m` funktioniert nicht, sie muss als `> 90m` notiert werden.
+:::
+
+### Filter nach Status
+
+Die Filterung nach Status (`running`, `finished` oder `error`)
+
+```shell
+# alle Prozessinstanzen, die in einen Fehler gelaufen sind
+pc list-process-instances --filter-by-state error
+
+# alle Prozessinstanzen, die noch laufen oder erfolgreich abgeschlossen sind
+pc list-process-instances --filter-by-state running --filter-by-state finished
+```
+
+### Filter nach Prozessmodell
+
+Die Filterung nach Prozessmodell-ID unterstützt das Auffinden von Wortteilen:
+
+```shell
+# alle Prozessinstanzen, deren Prozessmodell das Wort "Registration" in seiner ID enthält
+pc list-process-instances --filter-by-process-model-id "Registration"
+```
+
+Die Filterung nach Prozessmodell-ID unterstützt auch reguläre Ausdrücke:
+
+```shell
+# alle Prozessinstanzen, deren Prozessmodell-ID mit dem Wort "Registration" anfängt
+pc list-process-instances --filter-by-process-model-id "^Registration.+$"
+```
+
+### Ver-ODER-ung und Ver-UND-ung
+
+Filter-Optionen bauen aufeinander auf, das heisst, dass sie nach mehr als einem Status filtern können:
+
+```shell
+pc list-process-instances --filter-by-state error --filter-by-state finished
+```
+
+Das bedeutet, dass mehrere verkettete Filter-Optionen einer ODER-Verknüpfung entsprechen:
+
+```shell
+# Suche nach Prozessmodellen in deren ID sowohl "Registration" als auch "Email" verkommt
+pc list-process-instances --filter-by-process-model-id "Registration" \
+                          --filter-by-process-model-id "Email"
+```
+
+Das Ergebnis in einen erneuten Aufruf zu Pipen führt zu einer UND-Verknüpfung, da das Ergebnis des ersten Aufrufs als Ausganzmenge für den zweiten Aufruf genutzt wird:
+
+```shell
+pc list-process-instances --filter-by-process-model-id "Registration" \
+| pc list-process-instances --filter-by-process-model-id "Email"
+```
+
+Kombinationen dieser Optionen sind selbstverständlich möglich, wie folgendes Beispiel illustriert:
+
+```shell
+pc list-process-instances --created-after "2020-01-01" --created-before "2020-01-31" \
+                          --completed-after "2020-01-01" --completed-before "2020-10-31" \
+                          --completed-in "> 1h" \
+                          --filter-by-process-model-id "^Registration.+$" \
+                          --reject-by-process-model-id "Internal" \
+                          --filter-by-state error \
+                          --filter-by-state finished \
+                          --sort-by-process-model-id asc \
+                          --sort-by-state desc \
+                          --sort-by-created-at asc
+```
+
+Dieses Beispiel listet alle Prozessinstanzen, die im Januar 2020 von einem Prozessmodell mit dem Präfix `Registration.` gestartet wurden, deren Prozessmodell-ID jedoch nicht das Wort `Internal` beinhaltet, die zwischen Januar und Oktober 2020 abgeschlossen wurden und länger als eine Stunde zum Abschluss benötigten und entweder erfolgreich zu Ende oder in einen Fehler gelaufen sind.
+
+Die resultierenden Prozessinstanzen werden absteigend nach Prozessmodell-ID und innerhalb eines Prozessmodells nach Status und innerhalb jedes Status' nach Alter von der ältesten zur neusten Prozessinstanz sortiert.

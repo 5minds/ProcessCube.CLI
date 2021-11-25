@@ -1,0 +1,54 @@
+---
+id: 'remove-process-models'
+slug: '/cli/commands/remove-process-models'
+---
+
+# `pc remove-process-models`
+
+## Verwendung
+
+```shell
+pc remove-process-models [processModelIds...] [options]
+pc remove [processModelIds...] [options]
+```
+
+## Beschreibung
+
+Entfernt Prozessmodelle von der verbundenen Engine.
+
+## Argumente
+
+| Name            | Obligatorisch | Beschreibung                           |
+| --------------- | ------------- | -------------------------------------- |
+| processModelIds | Ja            | IDs der zu entfernenden Prozessmodelle |
+
+## Filter-Optionen
+
+| Name, Kürzel | Default | Beschreibung                                       |
+| ------------ | ------- | -------------------------------------------------- |
+| --output, -o | text    | Steuert das Ausgabeformat: `text` oder `json`      |
+| --yes        |         | Fragt beim Entfernen der Prozessmodelle nicht nach |
+
+## Beispiele
+
+### Kurzform
+
+Ein Prozessmodell kann durch Angabe seiner ID entfernt werden:
+
+```shell
+pc remove-process-models Registration.EmailCoupons
+```
+
+Alternativ kann die Kurzform `remove` genutzt werden:
+
+```shell
+pc remove Registration.EmailCoupons
+```
+
+### Automatisierung
+
+Wenn die Sicherheitsabfrage automatisch bejaht werden soll, kann `--yes` verwendet werden:
+
+```shell
+pc remove Registration.EmailCoupons --yes
+```

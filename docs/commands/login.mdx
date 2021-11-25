@@ -1,0 +1,83 @@
+---
+id: 'login'
+slug: '/cli/commands/login'
+---
+
+# `pc login`
+
+## Verwendung
+
+```shell
+pc login <engineUrl> [options]
+```
+
+## Beschreibung
+
+Beginnt oder erneuert eine Session mit der angegebenen Engine.
+
+Alle anschließenden Kommandoaufrufe zum Auflisten von und Interagieren mit Prozessen verwendet die aus dem Login resultierende Identität.
+
+## Argumente
+
+| Name      | Obligatorisch | Beschreibung                   |
+| --------- | ------------- | ------------------------------ |
+| engineUrl | Ja            | URL der zu verbindenden Engine |
+
+## Optionen
+
+| Name, Kürzel        | Default | Beschreibung                                                                      |
+| ------------------- | ------- | --------------------------------------------------------------------------------- |
+| --m2m-client-id     |         | Nutzt die gegebene "Client ID" für die Machine-to-Machine-Autorisierung (M2M)     |
+| --m2m-client-secret |         | Nutzt das gegebene "Client Secret" für die Machine-to-Machine-Autorisierung (M2M) |
+| --m2m-scope         |         | Fragt die gegebenen Scopes für die Machine-to-Machine-Autorisierung (M2M) an      |
+| --output, -o        | text    | Steuert das Ausgabeformat: `text` oder `json`                                     |
+| --root              |         | Nutzt eine anonyme Root Access Sitzung zu erstellen                               |
+| --root-access-token |         | Nutzt den gegebenen String als Root Access Token                                  |
+
+## Beispiele
+
+### Login per Browser
+
+Für den Login in eine Engine muss die URL dieser Engine angegeben werden:
+
+    pc login http://localhost:56000
+
+Das Protokoll (HTTP/HTTPS) kann dabei weggelassen werden:
+
+    pc login localhost:56000
+
+Ist zudem kein Host angegeben, wird `localhost` verbunden:
+
+    pc login :56000
+
+### Login per Machine-to-Machine-Autorisierung (M2M)
+
+Das Einloggen per Machine-to-Machine-Autorisierung (M2M) ist per `--m2m-client-id`/`--m2m-client-secret` möglich:
+
+    pc login http://localhost:56200 --m2m-client-id $CLIENT_ID --m2m-client-secret $CLIENT_SECRET
+
+### Login per Root Access Token
+
+Das Einloggen mittels eines Root Access Tokens ist per `--root-access-token` möglich:
+
+    pc login http://localhost:56000 --root-access-token $ROOT_ACCESS_TOKEN
+
+:::tip
+
+Sichere Root Access Tokens lassen sich ebenfalls über die CLI generieren:
+
+    pc generate-root-access-token
+
+:::
+
+### Login per Root-Zugang
+
+Wird eine 5Minds Engine mit der Standard-Konfiguration gestartet, so ist sie auf dem lokalen Rechner ungesichert erreichbar, um einen schnellen Zugang und einfaches Experimentieren zu ermöglichen (natürlich ist diese Konfigurationsform für einen Produktionsbetrieb gänzlich ungeeignet).
+
+Das Einloggen mittels des anonymen Root-Zugriffs ist per `--root` möglich:
+
+    pc login http://localhost:56000 --root
+
+:::caution
+ACHTUNG: Diese Konfigurationsform ist für einen Produktionsbetrieb aus Sicherheitsgründen nicht geeignet!
+:::
