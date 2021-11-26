@@ -30,7 +30,7 @@ jobs:
       - name: Upload build artifacts
         uses: azure/cli@v1
         with:
-          azcliversion: 2.14.1
+          azcliversion: 2.30.0
           inlineScript: |
             az storage blob upload-batch \
               --account-name 5mindsproducts \
