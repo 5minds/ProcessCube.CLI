@@ -1,0 +1,26 @@
+---
+id: "quickstart"
+slug: "/cli/quickstart"
+---
+
+# Erste Schritte
+
+## Einstieg mit 5Minds Studio
+
+Nach Start des 5Minds Studio ist die Studio-interne Engine-Instanz unter http://localhost:56000 verfügbar.
+
+Um sich mit der CLI mit dieser zu verbinden, kann folgender Befehl genutzt werden:
+
+```shell
+pc login http://localhost:56000 --root
+```
+
+Mit `pc login` wird eine Verbindung zu einer Engine-Instanz über die URL hergestellt (hier: http://localhost:56000).
+
+:::info
+
+Der Parameter `--root` wird für Engine-Instanzen verwendet, welche einen anonymen Zugriff erlauben (siehe [Referenz](/docs/cli/commands/login#root)).
+
+:::
+
+Alle weiteren Befehle beziehen sich dann automatisch auf diese Engine-Instanz.
