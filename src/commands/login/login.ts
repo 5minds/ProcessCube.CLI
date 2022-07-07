@@ -20,8 +20,11 @@ const DEFAULT_IDENTITY_SERVER_URL = 'http://localhost:5000/';
 
 export async function login(
   givenEngineUrl: string,
-  clientId: string,
-  clientSecret: string,
+  m2mClientId: string,
+  m2mClientSecret: string,
+  m2mScope: string,
+  givenClientId: string,
+  givenResponseType: string,
   givenScope: string,
   tryAnonymousRootLogin: boolean,
   useRootAccessToken: string | null,
@@ -83,17 +86,17 @@ export async function login(
 
     console.log('');
     console.log(chalk.yellow('Login via root access token successful. No further steps required.'));
-  } else if (clientSecret != null) {
-    const scope = typeof givenScope === 'string' ? givenScope.split(',').join(' ') : givenScope;
+  } else if (m2mClientSecret != null) {
+    const scope = typeof m2mScope === 'string' ? m2mScope.split(',').join(' ') : m2mScope;
 
-    newSession = await loginViaM2M(engineUrl, clientId, clientSecret, scope);
+    newSession = await loginViaM2M(engineUrl, m2mClientId, m2mClientSecret, scope);
 
     if (newSession == null) {
       logError(`Could not connect to engine: ${engineUrl}`);
       process.exit(1);
     }
   } else {
-    newSession = await loginViaIdentityServerImplicitFlow(engineUrl);
+    newSession = await loginViaIdentityServerImplicitFlow(engineUrl, givenClientId, givenResponseType, givenScope);
 
     if (newSession == null) {
       logError(`Could not connect to engine: ${engineUrl}`);
@@ -135,7 +138,12 @@ async function loginViaRootAccessToken(engineUrl: string, token: string): Promis
   return newSession;
 }
 
-async function loginViaIdentityServerImplicitFlow(engineUrl: string): Promise<Session | null> {
+async function loginViaIdentityServerImplicitFlow(
+  engineUrl: string,
+  givenClientId: string,
+  givenResponseType: string,
+  givenScope: string
+): Promise<Session | null> {
   const identityServerUrl = await getIdentityServerUrlForEngine(engineUrl);
   if (identityServerUrl == null) {
     return null;
@@ -163,7 +171,11 @@ async function loginViaIdentityServerImplicitFlow(engineUrl: string): Promise<Se
   }
 
   const { accessToken, idToken, expiresAt } = await startServerToLoginAndWaitForAccessTokenFromIdentityServer(
-    identityServerUrl
+    identityServerUrl,
+    undefined,
+    givenClientId,
+    givenResponseType,
+    givenScope
   );
 
   const newSession: Session = {

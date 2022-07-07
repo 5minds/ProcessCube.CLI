@@ -12,9 +12,13 @@ You can omit the protocol, if it is `http`:
 
     $ pc login :56000
 
+To log into an engine using an OpenID provider with custom values for `client_id`, `response_type` and/or `scope`:
+
+    $ pc login http://localhost:56000 --client-id $CLIENT_ID --response-type $RESPONSE_TYPE --scope $SCOPE
+
 To log into an engine using Machine to Machine (M2M) authorization, use `--m2m-client-id`/`--m2m-client-secret`:
 
-    $ pc login http://localhost:56200 --m2m-client-id $CLIENT_ID --m2m-client-secret $CLIENT_SECRET
+    $ pc login http://localhost:56000 --m2m-client-id $CLIENT_ID --m2m-client-secret $CLIENT_SECRET
 
 To log into an engine configured to use a root access token, use `--root-access-token`:
 

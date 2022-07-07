@@ -2,8 +2,8 @@
 
 ## Voraussetzungen
 
-* Die 5Minds Engine muss auf dem lokalen oder auf einem entfernten System installiert sein, siehe [Installationsanleitung 5Minds Engine](./install.md) //ToDo: Link anpassen. Alternativ können Sie sich auch das BPMN Studio / 5Minds Studio mit einer integrierten 5Minds Engine installieren, siehe [Installationsanleitung BPMN Studio / 5Minds Studio](./install.md).
-* Die ProcessCube CLI muss auf dem lokalen System installiert sein, siehe [Installationsanleitung ProcessCube CLI](./install.md).
+* Die 5Minds Engine muss auf dem lokalen oder auf einem entfernten System installiert sein, siehe [Installationsanleitung 5Minds Engine](#) //ToDo: Link anpassen. Alternativ können Sie sich auch das BPMN Studio / 5Minds Studio mit einer integrierten 5Minds Engine installieren, siehe [Installationsanleitung BPMN Studio / 5Minds Studio](#).
+* Die ProcessCube CLI muss auf dem lokalen System installiert sein, siehe [Installationsanleitung ProcessCube CLI](#).
 
 ## Einloggen in die ProcessCube CLI
 
@@ -47,13 +47,13 @@ Geben Sie Ihre Anmeldeinformationen ein und bestätigen Sie mit "Login". Abhäng
 
 ---
 **Info:**
-Die 5Minds Authority ist für die Authentifizierung und Autorisierung in der ProcessCube-Plattform zuständig. Wenn Sie mehr dazu erfahren möchten, können Sie sich im Abschnitt [5Minds Authority](ToDo) detaillierter informieren.
+Die 5Minds Authority ist für die Authentifizierung und Autorisierung in der ProcessCube-Plattform zuständig. Wenn Sie mehr dazu erfahren möchten, können Sie sich im Abschnitt [5Minds Authority](#ToDo) detaillierter informieren.
 
 ---
 
 ### Entwicklungssystem
 
-Wenn Sie sich auf einem Entwicklungssystem befinden empfiehlt sich die Option für anonymen "Root-Zugriff" in der 5Minds Engine freizuschalten. Bei einer 5Minds Engine können Sie diese Einstellung [konfigurieren](.install.md). Bei der im BPMN Studio / 5Minds Studio integrierten 5Minds Engine ist diese Option standardmäßig eingeschaltet.
+Wenn Sie sich auf einem Entwicklungssystem befinden empfiehlt sich die Option für anonymen "Root-Zugriff" in der 5Minds Engine freizuschalten. Bei einer 5Minds Engine können Sie diese Einstellung [konfigurieren](#). Bei der im BPMN Studio / 5Minds Studio integrierten 5Minds Engine ist diese Option standardmäßig eingeschaltet.
 
 Mit einer im BPMN Studio / 5Minds Studio integrierten 5Minds Engine aus dem 'stable' Freigabekanal, die lokal installiert wurde und dessen anonymen "Root-Zugriff" erlaubt ist, können Sie sich wie folgt einloggen:
 

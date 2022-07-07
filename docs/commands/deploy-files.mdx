@@ -1,0 +1,43 @@
+---
+id: 'deploy-files'
+slug: '/cli/commands/deploy-files'
+---
+
+# `pc deploy-files`
+
+## Verwendung
+
+```shell
+pc deploy-files [filenames...] [options]
+pc deploy [filenames...] [options]
+```
+
+## Beschreibung
+
+Transportiert ein oder mehrere Diagramme auf die verbundene Engine.
+
+## Argumente
+
+| Name      | Obligatorisch | Beschreibung                   |
+| --------- | ------------- | ------------------------------ |
+| filenames | Ja            | Dateinamen zu transportierenden Diagramme |
+
+## Optionen
+
+| Name, Kürzel        | Default | Beschreibung                                                                      |
+| ------------------- | ------- | --------------------------------------------------------------------------------- |
+| --output, -o        | text    | Steuert das Ausgabeformat: `text` oder `json`                                     |
+
+## Beispiele
+
+Deployment einer einzelnen Datei mit ihrem Namen:
+
+    $ pc deploy-files registration_email_coupons.bpmn
+
+Deployment mehrerer Dateien mit ihren Namen:
+
+    $ pc deploy-files registration_email_coupons.bpmn registration_fraud_detection.bpmn
+
+Deployment mehrerer Dateien mit einem "glob" (`*.bpmn`):
+
+    $ pc deploy-files *.bpmn
