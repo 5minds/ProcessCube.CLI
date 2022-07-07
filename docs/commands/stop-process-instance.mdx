@@ -1,0 +1,45 @@
+---
+id: 'stop-process-instance'
+slug: '/cli/commands/stop-process-instance'
+---
+
+# `pc stop-process-instance`
+
+## Verwendung
+
+```shell
+pc stop-process-instance [processInstanceIds...] [options]
+pc stop [processInstanceIds...] [options]
+```
+
+## Beschreibung
+
+Stoppt die Prozessinstanzen mit den gegebenen Prozessinstanz-IDs auf der verbundenen Engine.
+
+## Argumente
+
+| Name               | Obligatorisch | Beschreibung                         |
+| ------------------ | ------------- | ------------------------------------ |
+| processInstanceIds | Ja            | IDs der zu stoppenden Prozessmodells |
+
+## Optionen
+
+| Name, Kürzel             | Default | Beschreibung                                                                    |
+| ------------------------ | ------- | ------------------------------------------------------------------------------- |
+| --output, -o | text    | Steuert das Ausgabeformat: `text` oder `json` |
+
+## Beispiele
+
+### Kurzform
+
+Eine Prozessinstanz kann über ihre ID gestoppt werden:
+
+```shell
+pc stop-process-instance 56a89c11-ee0d-4539-b4cb-84a0339262fd
+```
+
+Alternativ kann die Kurzform `start` genutzt werden:
+
+```shell
+pc stop 56a89c11-ee0d-4539-b4cb-84a0339262fd
+```
