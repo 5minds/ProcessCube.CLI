@@ -9,6 +9,8 @@ import chalk from 'chalk';
 import yesno from 'yesno';
 
 import { logError } from '../../cli/logging';
+import { isPackage } from './isPackage';
+import { downloadPackage } from './downloadPackage';
 
 const EXTENSION_DIRS = {
   cli: join(os.homedir(), '.atlas', 'cli', 'extensions'),
@@ -25,14 +27,14 @@ const EXTENSION_TYPE_TO_WORDING = {
 };
 
 export async function installExtension(
-  urlOrFilename: string,
+  urlOrFilenameOrPackage: string,
   givenType: string,
   autoYes: boolean,
   output: string
 ): Promise<void> {
-  console.log(`Fetching file at ${urlOrFilename} ...`);
+  console.log(`Fetching file/package ${urlOrFilenameOrPackage} ...`);
 
-  const filename = await download(urlOrFilename);
+  const filename = await download(urlOrFilenameOrPackage);
 
   console.log(`Using file at ${filename}`);
 
@@ -65,8 +67,15 @@ export async function installExtension(
 }
 
 async function download(filename: string): Promise<string> {
-  if (existsSync(filename)) {
-    return filename;
+  const hasNoProtocol = filename.match(/:\/\//) == null;
+  if (hasNoProtocol) {
+    if (existsSync(filename)) {
+      return filename;
+    }
+
+    if (await isPackage(filename)) {
+      return downloadPackage(filename);
+    }
   }
 
   const filenameFromUri = filename.match(/\/([^?\/]+)$/)[1];
