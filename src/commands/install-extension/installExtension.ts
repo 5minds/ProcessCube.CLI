@@ -44,7 +44,7 @@ export async function installExtension(
   const cacheDirOfExtensions = await extractExtensionToCacheDir(filename, cacheDir);
   for (const cacheDirOfExtension of cacheDirOfExtensions) {
     const packageJson = readPackageJson(cacheDirOfExtension);
-    const name = packageJson.name;
+    const name = packageNameToPath(packageJson.name);
     const engines = packageJson.engines || {};
     const type = givenType || Object.keys(engines)[0] || 'cli';
 
@@ -182,4 +182,8 @@ function readPackageJson(dir: string): any {
     logError(content);
     process.exit(1);
   }
+}
+
+function packageNameToPath(name: string): string {
+  return name.replace(/\//, '__');
 }
