@@ -8,7 +8,7 @@ import AdmZip from 'adm-zip';
 import chalk from 'chalk';
 import yesno from 'yesno';
 
-import { logError } from '../../cli/logging';
+import { logError, logWarning } from '../../cli/logging';
 import { isPackage } from './isPackage';
 import { downloadPackage } from './downloadPackage';
 
@@ -46,7 +46,27 @@ export async function installExtension(
     const packageJson = readPackageJson(cacheDirOfExtension);
     const name = packageNameToPath(packageJson.name);
     const engines = packageJson.engines || {};
-    const type = givenType || Object.keys(engines)[0] || 'cli';
+    let type = givenType || Object.keys(engines)[0];
+
+    if (type == null) {
+      logWarning(
+        `Package ${name} does not specify its type.
+
+If you are the author, please specify it under \`engines\` in \`package.json\`:
+
+      {
+        "name": "${name}",
+        "engines": {
+          "<type>": "> 0.0.0"
+        },
+        ...
+      }
+
+Replace \`<type>\` with any of: ${VALID_TYPES.join(' | ')}
+`.trim()
+      );
+      type = 'cli';
+    }
 
     if (!VALID_TYPES.includes(type)) {
       logError(`Expected \`type\` to be one of ${JSON.stringify(VALID_TYPES)}, got: ${type}`);
