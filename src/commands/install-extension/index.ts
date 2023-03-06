@@ -28,6 +28,11 @@ export async function onLoad(cli: CLI): Promise<void> {
           description: 'Overwrite existing extensions',
           type: 'boolean',
           default: false
+        },
+        {
+          name: 'extensions-dir',
+          description: 'Overwrite default extensions dir',
+          type: 'string'
         }
       ]
     },
@@ -36,5 +41,11 @@ export async function onLoad(cli: CLI): Promise<void> {
 }
 
 async function runCommand(inputs: Inputs): Promise<void> {
-  await installExtension(inputs.argv.urlOrFilename, inputs.argv.type, inputs.argv.yes, inputs.argv.output);
+  await installExtension(
+    inputs.argv.urlOrFilename,
+    inputs.argv.type,
+    inputs.argv.yes,
+    inputs.argv.extensionsDir,
+    inputs.argv.output
+  );
 }

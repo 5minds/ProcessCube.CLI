@@ -2,7 +2,7 @@ import http from 'http';
 import https from 'https';
 import os from 'os';
 import tar from 'tar';
-import { createWriteStream, existsSync, mkdirSync, readFileSync, readdirSync, rename, rmdirSync } from 'fs';
+import { createWriteStream, existsSync, mkdirSync, readFileSync, readdirSync, rename, rmSync } from 'fs';
 import { join } from 'path';
 import AdmZip from 'adm-zip';
 import chalk from 'chalk';
@@ -18,7 +18,7 @@ const EXTENSION_DIRS = {
   portal: join(os.homedir(), '.atlas', 'portal', 'extensions'),
   studio: join(os.homedir(), '.atlas', 'studio', 'extensions')
 };
-const VALID_TYPES = Object.keys(EXTENSION_DIRS);
+const VALID_TYPES = ['cli', 'engine', 'portal', 'studio'];
 const EXTENSION_TYPE_TO_WORDING = {
   cli: 'CLI Extension',
   engine: 'Engine Extension',
@@ -30,6 +30,7 @@ export async function installExtension(
   urlOrFilenameOrPackage: string,
   givenType: string,
   autoYes: boolean,
+  givenExtensionsDir: string,
   output: string
 ): Promise<void> {
   console.log(`Fetching file/package ${urlOrFilenameOrPackage} ...`);
@@ -62,7 +63,7 @@ If you are the author, please specify it under \`engines\` in \`package.json\`:
         ...
       }
 
-Replace \`<type>\` with any of: ${VALID_TYPES.join(' | ')}
+Replace \`<type>\` with any of: ${VALID_TYPES.join(', ')}
 `.trim()
       );
       type = 'cli';
@@ -72,7 +73,7 @@ Replace \`<type>\` with any of: ${VALID_TYPES.join(' | ')}
       logError(`Expected \`type\` to be one of ${JSON.stringify(VALID_TYPES)}, got: ${type}`);
     }
 
-    const newPath = await moveExtensionToDestination(cacheDirOfExtension, type, name, autoYes);
+    const newPath = await moveExtensionToDestination(cacheDirOfExtension, type, name, autoYes, givenExtensionsDir);
 
     console.log(
       EXTENSION_TYPE_TO_WORDING[type],
@@ -83,7 +84,7 @@ Replace \`<type>\` with any of: ${VALID_TYPES.join(' | ')}
     );
   }
 
-  rmdirSync(cacheDir, { recursive: true });
+  rmSync(cacheDir, { recursive: true });
 }
 
 async function download(filename: string): Promise<string> {
@@ -147,9 +148,11 @@ async function moveExtensionToDestination(
   cacheDirOfExtension: string,
   type: string,
   name: string,
-  autoYes: boolean
+  autoYes: boolean,
+  givenExtensionsDir: string
 ): Promise<string> {
-  const newPath = join(EXTENSION_DIRS[type], name);
+  const extensionDirForType = givenExtensionsDir || EXTENSION_DIRS[type];
+  const newPath = join(extensionDirForType, name);
 
   if (existsSync(newPath)) {
     if (autoYes !== true) {
@@ -163,10 +166,10 @@ async function moveExtensionToDestination(
       }
     }
 
-    rmdirSync(newPath, { recursive: true });
+    rmSync(newPath, { recursive: true });
   }
 
-  ensureDir(EXTENSION_DIRS[type]);
+  ensureDir(extensionDirForType);
 
   await new Promise<void>((resolve, reject) => {
     rename(cacheDirOfExtension, newPath, (error) => {
