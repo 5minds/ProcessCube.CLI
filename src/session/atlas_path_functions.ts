@@ -1,7 +1,10 @@
 import { join, resolve } from 'path';
 import * as os from 'os';
+import { existsSync } from 'fs';
+import { logWarning } from '../cli/logging';
 
-const ATLAS_HOME_DIRNAME = '.atlas';
+const ATLAS_HOME_DIRNAME_LEGACY = '.atlas';
+const ATLAS_HOME_DIRNAME = '.processcube';
 const ATLAS_CLI_SUBDIRNAME = 'cli';
 
 const ATLAS_CLI_EXTENSIONS_SUBDIRNAME = 'extensions';
@@ -10,7 +13,29 @@ const ATLAS_CLI_EXTENSIONS_SUBDIRNAME = 'extensions';
 export const SESSION_STORAGE_FILENAME = 'default.json';
 
 export function getCliHomeDir(): string {
-  return join(os.homedir(), ATLAS_HOME_DIRNAME, ATLAS_CLI_SUBDIRNAME);
+  const homeDir = process.platform == 'win32' ? '%userprofile%' : '~';
+
+  const legacyDir = join(os.homedir(), ATLAS_HOME_DIRNAME_LEGACY, ATLAS_CLI_SUBDIRNAME);
+  const dir = join(os.homedir(), ATLAS_HOME_DIRNAME, ATLAS_CLI_SUBDIRNAME);
+
+  const existsLegacyDir = existsSync(legacyDir);
+  const existsDir = existsSync(dir);
+
+  if (existsLegacyDir) {
+    if (existsDir) {
+      throw new Error(
+        `Found both ${homeDir}/.processcube/cli and ${homeDir}/.atlas/cli as home directory.\n\nPlease rename/remove ${homeDir}/.atlas/cli in favor of ${homeDir}/.processcube/cli.`
+      );
+    }
+
+    logWarning(
+      `Found a ${homeDir}/.atlas/cli home directory.\n\nPlease rename ${homeDir}/.atlas/cli to ${homeDir}/.processcube/cli.`
+    );
+
+    return legacyDir;
+  }
+
+  return dir;
 }
 
 /**
