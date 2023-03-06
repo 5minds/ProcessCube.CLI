@@ -11,7 +11,7 @@ export async function onLoad(cli: CLI): Promise<void> {
       arguments: [
         {
           name: 'urlOrFilename',
-          description: 'URL or filename of an extension ZIP',
+          description: 'NPM package name or URL/filename of an extension ZIP',
           mandatory: true
         }
       ],
