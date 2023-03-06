@@ -1,5 +1,5 @@
+import fs from '@npmcli/fs';
 import { join } from 'path';
-import { rename } from 'fs';
 import { spawn } from 'child_process';
 import os from 'os';
 
@@ -25,13 +25,7 @@ export function downloadPackage(name: string): Promise<string> {
 
       const localFilename = join(os.tmpdir(), filename);
 
-      rename(filename, localFilename, (err) => {
-        if (err) {
-          reject(err);
-        }
-
-        resolve(localFilename);
-      });
+      fs.moveFile(filename, localFilename).then(() => resolve(localFilename));
     });
   });
 }

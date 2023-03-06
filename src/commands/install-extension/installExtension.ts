@@ -1,5 +1,6 @@
 import http from 'http';
 import https from 'https';
+import fs from '@npmcli/fs';
 import os from 'os';
 import tar from 'tar';
 import { createWriteStream, existsSync, mkdirSync, readFileSync, readdirSync, rename, rmSync } from 'fs';
@@ -171,14 +172,7 @@ async function moveExtensionToDestination(
 
   ensureDir(extensionDirForType);
 
-  await new Promise<void>((resolve, reject) => {
-    rename(cacheDirOfExtension, newPath, (error) => {
-      if (error) {
-        return reject(error);
-      }
-      resolve();
-    });
-  });
+  await fs.moveFile(cacheDirOfExtension, newPath);
 
   return newPath;
 }
