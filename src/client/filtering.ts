@@ -207,7 +207,7 @@ export function filterProcessInstancesByExecutionTime(
   );
 }
 
-function getUnitOfTimeForAbbreviation(abbreviation: string): dayjs.OpUnitType {
+function getUnitOfTimeForAbbreviation(abbreviation: string): dayjs.ManipulateType {
   switch (abbreviation) {
     case 'd':
       return 'days';
@@ -224,7 +224,7 @@ function isCompletedIn(
   processInstance: FilterableProcessInstance,
   comparisonType: string,
   time: number,
-  unitOfTime: dayjs.OpUnitType
+  unitOfTime: dayjs.ManipulateType
 ): boolean {
   if (comparisonType === '>') {
     return dayjs(processInstance.createdAt)
