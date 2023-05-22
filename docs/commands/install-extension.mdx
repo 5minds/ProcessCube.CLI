@@ -1,0 +1,75 @@
+---
+id: 'install-extension'
+slug: '/cli/commands/install-extension'
+---
+
+# `pc install-extension`
+
+## Verwendung
+
+```shell
+pc install-extension <nameOrLocation> [options]
+pc install <nameOrLocation> [options]
+```
+
+## Beschreibung
+
+Installiert eine oder mehrere Extensions für
+
+## Argumente
+
+| Name           | Obligatorisch | Beschreibung                                                      |
+| -------------- | ------------- | ----------------------------------------------------------------- |
+| nameOrLocation  | Ja            | NPM-Paketname, URL oder lokaler Dateipfad eines [Extension-ZIP](#extension-zip) |
+
+## Optionen
+
+| Name, Kürzel        | Default | Beschreibung                                                                      |
+| ------------------- | ------- | --------------------------------------------------------------------------------- |
+| --extensions-dir    |         | Überschreibt das Extension-Verzeichnis                                            |
+| --type              |         | Typ der Extension: `cli`, `engine`, `portal` oder `studio`                        |
+| --output, -o        | text    | Steuert das Ausgabeformat: `text` oder `json`                                     |
+| --yes, -y           |         | Existierende Extension ohne Nachfrage überschreiben                               |
+
+## Extension-ZIP
+
+Extensions sind technisch gesehen NPM-Pakete.
+
+"Extension-ZIP" bezeichnet eine einfache ZIP-Datei, die ein NPM-Paket enthält, welches eine Extension darstellt.
+
+
+:::tip
+
+Extensions können den Typ in ihrer `package.json` selbst hinterlegen, um die Installation per CLI zu erleichtern:
+
+    {
+      "name": "my-extension",
+      "engines": {
+        "<type>": "> 0.0.0"
+      },
+      ...
+    }
+
+Der Schlüssel `<type>` kann dieselben Werte annehmen, wie Option `--type`: `cli`, `engine`, `portal` oder `studio`
+
+:::
+
+## Beispiele
+
+### Installation per NPM-Paket
+
+Für die Installation eines NPM-Pakets muss nur dessen Name angegeben werden:
+
+    pc install @5minds/processcube-documentation-plugin
+
+### Installation per URL
+
+Für die Installation über eine URL muss diese angegeben werden und auf ein [Extension-ZIP](#extension-zip) zeigen:
+
+    pc install @5minds/processcube-documentation-plugin
+
+### Installation per Dateipfad
+
+Für die Installation über einen Dateipfad muss dieser angegeben werden und auf ein [Extension-ZIP](#extension-zip) zeigen:
+
+    pc install path/to/processcube-documentation-plugin
