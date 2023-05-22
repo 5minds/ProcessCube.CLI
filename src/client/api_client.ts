@@ -1,6 +1,7 @@
 import * as fs from 'fs';
 
-import { AtlasEngineClient, DataModels as AtlasEngineDataModels } from '@atlas-engine/atlas_engine_client';
+import { DataModels as AtlasEngineDataModels, EngineClient } from '@atlas-engine/atlas_engine_client';
+import { FlowNodeInstanceState } from '@atlas-engine/atlas_engine_sdk/dist/DataModels/FlowNodeInstance';
 
 import { getIdentity } from './identity';
 
@@ -22,12 +23,11 @@ import {
 } from './filtering';
 import { logError } from '../cli/logging';
 import { isUrlAvailable } from './is_url_available';
-import { FlowNodeInstanceState } from '@atlas-engine/atlas_engine_client/dist/types/data_models/flow_node_instance';
 
 // TODO: missing IIdentity here
 type Identity = any;
 
-type UserTask = AtlasEngineDataModels.FlowNodeInstances.UserTask;
+type UserTask = AtlasEngineDataModels.FlowNodeInstances.UserTaskInstance;
 
 export type ProcessInstance = AtlasEngineDataModels.ProcessInstances.ProcessInstance;
 export type ProcessInstanceWithFlowNodeInstances = ProcessInstance & {
@@ -37,12 +37,12 @@ export type ProcessInstanceWithFlowNodeInstances = ProcessInstance & {
 export class ApiClient {
   private engineUrl: string;
   private identity: Identity;
-  private atlasEngineClient: AtlasEngineClient;
+  private engineClient: EngineClient;
 
   constructor(session: Session) {
     this.engineUrl = session.engineUrl;
     this.identity = getIdentity(session);
-    this.atlasEngineClient = new AtlasEngineClient(session.engineUrl, this.identity);
+    this.engineClient = new EngineClient(session.engineUrl, this.identity);
   }
 
   async deployFile(filename: string): Promise<DeployedProcessModelInfo> {
@@ -61,7 +61,10 @@ export class ApiClient {
     }
 
     try {
-      await this.atlasEngineClient.processDefinitions.deployFiles(filename, true, this.identity);
+      await this.engineClient.processDefinitions.deployFiles(filename, {
+        overwriteExisting: true,
+        identity: this.identity
+      });
     } catch (error) {
       await this.warnAndExitIfEnginerUrlNotAvailable();
 
@@ -73,11 +76,11 @@ export class ApiClient {
 
   async removeProcessModel(processModelId: string): Promise<RemovedProcessModelInfo> {
     try {
-      const processDefinition = await this.atlasEngineClient.processDefinitions.getByProcessModelId(
+      const processDefinition = await this.engineClient.processDefinitions.getByProcessModelId(
         processModelId,
         this.identity
       );
-      await this.atlasEngineClient.processDefinitions.deleteById(processDefinition.processDefinitionId);
+      await this.engineClient.processDefinitions.deleteById(processDefinition.processDefinitionId);
 
       return { success: true, processModelId };
     } catch (error) {
@@ -96,7 +99,7 @@ export class ApiClient {
     try {
       let response;
       if (waitForProcessToFinish) {
-        response = await this.atlasEngineClient.processDefinitions.startProcessInstanceAndAwaitEndEvent(
+        response = await this.engineClient.processDefinitions.startProcessInstanceAndAwaitEndEvent(
           {
             processModelId,
             startEventId,
@@ -106,7 +109,7 @@ export class ApiClient {
           this.identity
         );
       } else {
-        response = await this.atlasEngineClient.processDefinitions.startProcessInstance(
+        response = await this.engineClient.processDefinitions.startProcessInstance(
           {
             processModelId,
             startEventId,
@@ -148,7 +151,7 @@ export class ApiClient {
 
   async stopProcessInstance(processInstanceId: string): Promise<StoppedProcessInstanceInfo> {
     try {
-      await this.atlasEngineClient.processInstances.terminateProcessInstance(processInstanceId, this.identity);
+      await this.engineClient.processInstances.terminateProcessInstance(processInstanceId, this.identity);
 
       return {
         success: true,
@@ -163,7 +166,7 @@ export class ApiClient {
 
   async retryProcessInstance(processInstanceId: string): Promise<StoppedProcessInstanceInfo> {
     try {
-      await this.atlasEngineClient.processInstances.retryProcessInstance(processInstanceId);
+      await this.engineClient.processInstances.retryProcessInstance(processInstanceId);
 
       return {
         success: true,
@@ -181,7 +184,11 @@ export class ApiClient {
     limit?: number
   ): Promise<AtlasEngineDataModels.ProcessDefinitions.ProcessModel[]> {
     try {
-      const result = await this.atlasEngineClient.processDefinitions.getAll(this.identity, offset, limit);
+      const result = await this.engineClient.processDefinitions.getAll({
+        identity: this.identity,
+        offset: offset,
+        limit: limit
+      });
 
       let processModels = [];
       result.processDefinitions.forEach((definition) => {
@@ -248,7 +255,7 @@ export class ApiClient {
   ): Promise<UserTask[]> {
     let allUserTasks: UserTask[];
     try {
-      const userTaskList = await this.atlasEngineClient.userTasks.query(this.identity);
+      const userTaskList = await this.engineClient.userTasks.query(this.identity);
       allUserTasks = userTaskList.userTasks;
 
       if (filterByCorrelationId.length > 0) {
@@ -274,7 +281,7 @@ export class ApiClient {
 
   async finishSuspendedUserTask(flowNodeInstanceId: string, payload: any = {}): Promise<FinishedUserTaskInfo> {
     try {
-      await this.atlasEngineClient.userTasks.finishUserTask(flowNodeInstanceId, payload, this.identity);
+      await this.engineClient.userTasks.finishUserTask(flowNodeInstanceId, payload, this.identity);
 
       const result: FinishedUserTaskInfo = {
         success: true,
@@ -292,7 +299,7 @@ export class ApiClient {
 
   async getAllUserTasksViaCorrelations(correlationIds: string[]): Promise<UserTask[]> {
     try {
-      const result = await this.atlasEngineClient.userTasks.query({
+      const result = await this.engineClient.userTasks.query({
         correlationId: correlationIds
       });
 
@@ -311,7 +318,7 @@ export class ApiClient {
     let allUserTasks = [];
     for (const processModel of processModels) {
       try {
-        const result = await this.atlasEngineClient.userTasks.query({
+        const result = await this.engineClient.userTasks.query({
           processModelId: processModel.id
         });
 
@@ -328,7 +335,7 @@ export class ApiClient {
 
   private async getAllUserTasksViaState(filterByState: string[]): Promise<UserTask[]> {
     try {
-      const result = await this.atlasEngineClient.userTasks.query({
+      const result = await this.engineClient.userTasks.query({
         state: (filterByState as unknown) as FlowNodeInstanceState[]
       });
 
@@ -341,7 +348,7 @@ export class ApiClient {
 
   async getAllUserTasksViaFlowNodeInstances(flowNodeInstanceId: string[]): Promise<UserTask[]> {
     try {
-      const result = await this.atlasEngineClient.userTasks.query({
+      const result = await this.engineClient.userTasks.query({
         flowNodeInstanceId: flowNodeInstanceId
       });
 
@@ -353,10 +360,7 @@ export class ApiClient {
 
   async getAllProcessInstancesViaCorrelations(correlationIds: string[]): Promise<ProcessInstance[]> {
     try {
-      const result = await this.atlasEngineClient.processInstances.query(
-        { correlationId: correlationIds },
-        this.identity
-      );
+      const result = await this.engineClient.processInstances.query({ correlationId: correlationIds }, this.identity);
       return result.processInstances;
     } catch (error) {
       await this.warnAndExitIfEnginerUrlNotAvailable();
@@ -366,7 +370,7 @@ export class ApiClient {
 
   async getAllProcessInstancesViaIds(processInstanceIds: string[]): Promise<ProcessInstance[]> {
     try {
-      const rawProcessInstance = await this.atlasEngineClient.processInstances.query(
+      const rawProcessInstance = await this.engineClient.processInstances.query(
         { processInstanceId: processInstanceIds },
         this.identity
       );
@@ -379,11 +383,22 @@ export class ApiClient {
 
   async getLatestProcessInstance(): Promise<ProcessInstance> {
     try {
-      const result = await this.atlasEngineClient.processInstances.query({}, this.identity, undefined, 1, {
+      const result = await this.engineClient.processInstances.query(
+        {},
+        {
+          identity: this.identity,
+          sortSettings: {
+            sortBy: AtlasEngineDataModels.ProcessInstances.ProcessInstanceSortableColumns.createdAt,
+            sortDir: 'DESC'
+          }
+        }
+      );
+
+      /*
+      {}, this.identity, undefined, 1, {
         sortBy: AtlasEngineDataModels.ProcessInstances.ProcessInstanceSortableColumns.createdAt,
         sortDir: 'DESC'
-      });
-
+      }); */
       return result.processInstances[0];
     } catch (error) {
       await this.warnAndExitIfEnginerUrlNotAvailable();
@@ -396,7 +411,7 @@ export class ApiClient {
   ): Promise<ProcessInstanceWithFlowNodeInstances[]> {
     const processInstancesWithFlowNodeInstances: ProcessInstanceWithFlowNodeInstances[] = [];
     for (const rawProcessInstance of rawProcessInstances) {
-      const flowNodeInstanceResult = await this.atlasEngineClient.flowNodeInstances.queryFlowNodeInstances(
+      const flowNodeInstanceResult = await this.engineClient.flowNodeInstances.query(
         { processInstanceId: rawProcessInstance.processInstanceId },
         this.identity
       );
@@ -418,7 +433,7 @@ export class ApiClient {
     let allProcessInstances = [];
     for (const processModel of processModels) {
       try {
-        const result = await this.atlasEngineClient.processInstances.query(
+        const result = await this.engineClient.processInstances.query(
           { processModelId: processModel.id },
           this.identity
         );
@@ -446,7 +461,7 @@ export class ApiClient {
     let allProcessInstances: ProcessInstance[] = [];
     for (const state of states) {
       try {
-        const result = await this.atlasEngineClient.processInstances.query({ state }, this.identity);
+        const result = await this.engineClient.processInstances.query({ state }, this.identity);
 
         allProcessInstances = allProcessInstances.concat(result.processInstances);
       } catch (error) {
