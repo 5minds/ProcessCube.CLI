@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 
-import { DataModels as AtlasEngineDataModels, EngineClient } from '@atlas-engine/atlas_engine_client';
-import { FlowNodeInstanceState } from '@atlas-engine/atlas_engine_sdk/';
+import { EngineClient } from '@atlas-engine/atlas_engine_client';
+import { DataModels as AtlasEngineDataModels, FlowNodeInstanceState } from '@atlas-engine/atlas_engine_sdk/';
 
 import { getIdentity } from './identity';
 
