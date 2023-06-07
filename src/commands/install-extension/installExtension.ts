@@ -1,14 +1,17 @@
 import http from 'http';
 import https from 'https';
+import fs from '@npmcli/fs';
 import os from 'os';
 import tar from 'tar';
-import { createWriteStream, existsSync, mkdirSync, readFileSync, readdirSync, rename, rmdirSync } from 'fs';
+import { createWriteStream, existsSync, mkdirSync, readFileSync, readdirSync, rename, rmSync } from 'fs';
 import { join } from 'path';
 import AdmZip from 'adm-zip';
 import chalk from 'chalk';
 import yesno from 'yesno';
 
-import { logError } from '../../cli/logging';
+import { logError, logWarning } from '../../cli/logging';
+import { isPackage } from './isPackage';
+import { downloadPackage } from './downloadPackage';
 
 const EXTENSION_DIRS = {
   cli: join(os.homedir(), '.atlas', 'cli', 'extensions'),
@@ -16,7 +19,7 @@ const EXTENSION_DIRS = {
   portal: join(os.homedir(), '.atlas', 'portal', 'extensions'),
   studio: join(os.homedir(), '.atlas', 'studio', 'extensions')
 };
-const VALID_TYPES = Object.keys(EXTENSION_DIRS);
+const VALID_TYPES = ['cli', 'engine', 'portal', 'studio'];
 const EXTENSION_TYPE_TO_WORDING = {
   cli: 'CLI Extension',
   engine: 'Engine Extension',
@@ -25,14 +28,15 @@ const EXTENSION_TYPE_TO_WORDING = {
 };
 
 export async function installExtension(
-  urlOrFilename: string,
+  urlOrFilenameOrPackage: string,
   givenType: string,
   autoYes: boolean,
+  givenExtensionsDir: string,
   output: string
 ): Promise<void> {
-  console.log(`Fetching file at ${urlOrFilename} ...`);
+  console.log(`Fetching file/package ${urlOrFilenameOrPackage} ...`);
 
-  const filename = await download(urlOrFilename);
+  const filename = await download(urlOrFilenameOrPackage);
 
   console.log(`Using file at ${filename}`);
 
@@ -42,15 +46,35 @@ export async function installExtension(
   const cacheDirOfExtensions = await extractExtensionToCacheDir(filename, cacheDir);
   for (const cacheDirOfExtension of cacheDirOfExtensions) {
     const packageJson = readPackageJson(cacheDirOfExtension);
-    const name = packageJson.name;
+    const name = packageNameToPath(packageJson.name);
     const engines = packageJson.engines || {};
-    const type = givenType || Object.keys(engines)[0] || 'cli';
+    let type = givenType || Object.keys(engines)[0];
+
+    if (type == null) {
+      logWarning(
+        `Package ${name} does not specify its type.
+
+If you are the author, please specify it under \`engines\` in \`package.json\`:
+
+      {
+        "name": "${name}",
+        "engines": {
+          "<type>": "> 0.0.0"
+        },
+        ...
+      }
+
+Replace \`<type>\` with any of: ${VALID_TYPES.join(', ')}
+`.trim()
+      );
+      type = 'cli';
+    }
 
     if (!VALID_TYPES.includes(type)) {
       logError(`Expected \`type\` to be one of ${JSON.stringify(VALID_TYPES)}, got: ${type}`);
     }
 
-    const newPath = await moveExtensionToDestination(cacheDirOfExtension, type, name, autoYes);
+    const newPath = await moveExtensionToDestination(cacheDirOfExtension, type, name, autoYes, givenExtensionsDir);
 
     console.log(
       EXTENSION_TYPE_TO_WORDING[type],
@@ -61,12 +85,19 @@ export async function installExtension(
     );
   }
 
-  rmdirSync(cacheDir, { recursive: true });
+  rmSync(cacheDir, { recursive: true });
 }
 
 async function download(filename: string): Promise<string> {
-  if (existsSync(filename)) {
-    return filename;
+  const hasNoProtocol = filename.match(/:\/\//) == null;
+  if (hasNoProtocol) {
+    if (existsSync(filename)) {
+      return filename;
+    }
+
+    if (await isPackage(filename)) {
+      return downloadPackage(filename);
+    }
   }
 
   const filenameFromUri = filename.match(/\/([^?\/]+)$/)[1];
@@ -118,9 +149,11 @@ async function moveExtensionToDestination(
   cacheDirOfExtension: string,
   type: string,
   name: string,
-  autoYes: boolean
+  autoYes: boolean,
+  givenExtensionsDir: string
 ): Promise<string> {
-  const newPath = join(EXTENSION_DIRS[type], name);
+  const extensionDirForType = givenExtensionsDir || EXTENSION_DIRS[type];
+  const newPath = join(extensionDirForType, name);
 
   if (existsSync(newPath)) {
     if (autoYes !== true) {
@@ -134,19 +167,12 @@ async function moveExtensionToDestination(
       }
     }
 
-    rmdirSync(newPath, { recursive: true });
+    rmSync(newPath, { recursive: true });
   }
 
-  ensureDir(EXTENSION_DIRS[type]);
+  ensureDir(extensionDirForType);
 
-  await new Promise<void>((resolve, reject) => {
-    rename(cacheDirOfExtension, newPath, (error) => {
-      if (error) {
-        return reject(error);
-      }
-      resolve();
-    });
-  });
+  await fs.moveFile(cacheDirOfExtension, newPath);
 
   return newPath;
 }
@@ -173,4 +199,8 @@ function readPackageJson(dir: string): any {
     logError(content);
     process.exit(1);
   }
+}
+
+function packageNameToPath(name: string): string {
+  return name.replace(/\//, '__');
 }
