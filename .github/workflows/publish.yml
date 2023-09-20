@@ -7,44 +7,35 @@ on:
       - "*/*"
 
 jobs:
-
   build_test_and_publish_linux:
     runs-on: ubuntu-latest
     if: "!(contains(github.actor, 'process-engine-ci') || contains(github.actor, 'admin'))"
 
     services:
       atlas_engine:
-        image: 5minds/atlas_engine_fullstack_server:12
+        image: 5minds/processcube_engine:15
         ports:
         - 10560:10560
         options: --health-cmd true --health-interval 10s --health-timeout 5s --health-retries 5
 
     steps:
-    - uses: actions/checkout@v1
-
-    - name: Use Node.js 14.x
-      uses: actions/setup-node@v1
+    - uses: actions/checkout@v4
       with:
-        version: 14.x
+        fetch-depth: 0
+        token: ${{ secrets.GH_TOKEN }}
+
+    - name: Use Node.js 18.x
+      uses: actions/setup-node@v3
+      with:
+        node-version: 18.x
+        registry-url: 'https://registry.npmjs.org'
 
     - name: 'Install dependencies'
       run: npm ci
 
-    - name: Cache node modules
-      uses: actions/cache@v1
-      with:
-        path: node_modules
-        key: npm-cache-fix-${{ hashFiles('package-lock.json') }}
-
     - name: Prepare version
       run: |
         ./node_modules/.bin/ci_tools prepare-version --allow-dirty-workdir
-
-    - name: Stash package.json
-      uses: actions/upload-artifact@master
-      with:
-        name: package_json
-        path: package.json
 
     - name: 'Build sources'
       run: npm run build
@@ -54,9 +45,6 @@ jobs:
 
     - name: 'Run integration tests'
       run: npm run test:integration
-
-    - name: 'Lint sources'
-      run: npm run lint
 
     - name: 'Commit & tag version'
       run: |
@@ -69,39 +57,4 @@ jobs:
     - name: 'Publish version'
       env:
         NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-      run: |
-          ./node_modules/.bin/ci_tools publish-npm-package --create-tag-from-branch-name
-
-  notify_about_build:
-    name: "Notify About Build"
-    if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/beta'
-    needs: [build_test_and_publish_linux]
-    runs-on: ubuntu-18.04
-
-    steps:
-    - uses: actions/checkout@v1
-
-    - name: Use Node.js 12.x
-      uses: actions/setup-node@v1
-      with:
-        node-version: 12.x
-
-    - name: Unstash package.json
-      uses: actions/download-artifact@master
-      with:
-        name: package_json
-        path: "."
-
-    - name: Get node_modules from Cache
-      uses: actions/cache@v1
-      with:
-        path: node_modules
-        key: npm-cache-fix-${{ hashFiles('package-lock.json') }}
-
-    - name: Announce Release Notes
-      run: |
-        ./node_modules/.bin/ci_tools publish-releasenotes-on-slack
-      env:
-        SLACK_WEBHOOK: ${{ secrets.SLACK_ANNOUNCER_WEBHOOK }}
-        GH_USER: ${{ secrets.GH_USER }}
-        GH_TOKEN: ${{ secrets.GH_TOKEN }}
+      run: ./node_modules/.bin/ci_tools publish-npm-package --create-tag-from-branch-name

@@ -10,9 +10,9 @@ jobs:
 
     steps:
       - name: "Use node"
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3
         with:
-          node-version: '14'
+          node-version: '18'
 
       - name: "Install Download Site plugin"
         run: npm i -g @atlas-engine/atlasdownloadsite
@@ -20,12 +20,12 @@ jobs:
       - name: "Create static html files in outputfolder"
         run: atlasdownloadsite
         env:
-          GITHUB_TOKEN: ${{ secrets.GH_CI_USER_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
 
       - name: Log into Azure
         uses: azure/login@v1
         with:
-          creds: ${{ secrets.AZURE_ATLAS_PLATFORM_CI_CREDENTIALS }}
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
 
       - name: Upload build artifacts
         uses: azure/cli@v1
