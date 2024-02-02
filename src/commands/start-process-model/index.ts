@@ -1,7 +1,7 @@
 import { readFileSync } from 'fs';
 import * as JSON5 from 'json5';
 
-import { CLI, Inputs } from '../../cli';
+import { CLI, Inputs } from '../../contracts/cli_types';
 import { LegacyStdinPipeReader } from '../../cli/LegacyStdinPipeReader';
 import { startProcessInstance } from './start-process-model';
 
@@ -17,61 +17,61 @@ export async function onLoad(cli: CLI): Promise<void> {
         {
           name: 'processModelId',
           description: 'ID of process model to start',
-          type: 'string'
+          type: 'string',
         },
         {
           name: 'startEventId',
           description: 'ID of start event to trigger',
-          type: 'string'
-        }
+          type: 'string',
+        },
       ],
       options: [
         {
           name: 'wait',
           description: 'Wait for the started process instance to finish execution and report the result',
-          type: 'boolean'
+          type: 'boolean',
         },
         {
           name: 'correlation-id',
           description: 'Set a predefined correlation id for the process instance',
-          type: 'string'
+          type: 'string',
         },
         {
           name: 'input-values',
           description: 'Set input values for the process instance from a <json> string',
           type: 'string',
-          deprecated: true
+          deprecated: true,
         },
         {
           name: 'input-values-from-stdin',
           description: 'Read input values as JSON from STDIN',
           type: 'boolean',
-          deprecated: true
+          deprecated: true,
         },
         {
           name: 'input-values-from-file',
           description: 'Read input values as JSON from <file>',
           type: 'string',
-          deprecated: true
+          deprecated: true,
         },
         {
           name: 'start-token',
           description: 'Set start token for the process instance from a <json> string',
-          type: 'string'
+          type: 'string',
         },
         {
           name: 'start-token-from-stdin',
           description: 'Read start token as JSON from STDIN',
-          type: 'boolean'
+          type: 'boolean',
         },
         {
           name: 'start-token-from-file',
           description: 'Read start token as JSON from <file>',
-          type: 'string'
-        }
-      ]
+          type: 'string',
+        },
+      ],
     },
-    runCommand
+    runCommand,
   );
 }
 
@@ -111,6 +111,6 @@ async function runCommand(inputs: Inputs): Promise<void> {
     inputs.argv.correlationId,
     startToken,
     inputs.argv.wait,
-    inputs.argv.output
+    inputs.argv.output,
   );
 }

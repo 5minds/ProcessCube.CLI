@@ -1,4 +1,4 @@
-import { CLI, Inputs } from '../../cli';
+import { CLI, Inputs } from '../../contracts/cli_types';
 import { LegacyStdinPipeReader } from '../../cli/LegacyStdinPipeReader';
 import { listProcessInstances } from './list-process-instances';
 
@@ -15,88 +15,88 @@ export async function onLoad(cli: CLI): Promise<void> {
         {
           name: 'created-after',
           description: 'Only include process instances created after <datetime>',
-          type: 'string'
+          type: 'string',
         },
         {
           name: 'created-before',
           description: 'Only include process instances created before <datetime>',
-          type: 'string'
+          type: 'string',
         },
         {
           name: 'completed-after',
           description: 'Only include process instances completed after <datetime>',
-          type: 'string'
+          type: 'string',
         },
         {
           name: 'completed-before',
           description: 'Only include process instances completed before <datetime>',
-          type: 'string'
+          type: 'string',
         },
         {
           name: 'completed-in',
           description: 'Only include process instances completed in <datetime>',
-          type: 'string'
+          type: 'string',
         },
         {
           name: 'filter-by-correlation-id',
           description: 'Filter process instances by <correlationId>',
           type: 'array',
-          default: []
+          default: [],
         },
         {
           name: 'filter-by-process-model-id',
           description: 'Filter process instances by <pattern> (supports regular expressions)',
           type: 'array',
-          default: []
+          default: [],
         },
         {
           name: 'reject-by-process-model-id',
           description: 'Reject process instances by <pattern> (supports regular expressions)',
           type: 'array',
-          default: []
+          default: [],
         },
         {
           name: 'filter-by-state',
           description: 'Filter process instances by <state> (running, finished, error)',
           type: 'array',
-          default: []
+          default: [],
         },
         {
           name: 'reject-by-state',
           description: 'Reject process instances by <state> (running, finished, error)',
           type: 'array',
-          default: []
+          default: [],
         },
         {
           name: 'sort-by-created-at',
           description: 'Sort process instances by their created at timestamp in <direction> (asc, desc)',
           type: 'string',
-          choices: ['', 'asc', 'desc']
+          choices: ['', 'asc', 'desc'],
         },
         {
           name: 'sort-by-process-model-id',
           description: 'Sort process instances by their process model id in <direction> (asc, desc)',
           type: 'string',
-          choices: ['', 'asc', 'desc']
+          choices: ['', 'asc', 'desc'],
         },
         {
           name: 'sort-by-state',
           description: 'Sort process instances by their state in <direction> (asc, desc)',
           type: 'string',
-          choices: ['', 'asc', 'desc']
+          choices: ['', 'asc', 'desc'],
         },
         {
           name: 'limit',
           description: 'List a maximum of <limit> process instances',
-          type: 'number'
+          type: 'number',
         },
         {
           name: 'all-fields',
           alias: 'F',
           description: 'Show all fields',
           type: 'boolean',
-          default: false
-        }
+          default: false,
+        },
       ],
       optionGroups: [
         {
@@ -111,20 +111,20 @@ export async function onLoad(cli: CLI): Promise<void> {
             'filter-by-process-model-id',
             'filter-by-state',
             'reject-by-process-model-id',
-            'reject-by-state'
-          ]
+            'reject-by-state',
+          ],
         },
         {
           heading: 'SORTING OPTIONS',
-          options: ['sort-by-created-at', 'sort-by-process-model-id', 'sort-by-state', 'limit']
+          options: ['sort-by-created-at', 'sort-by-process-model-id', 'sort-by-state', 'limit'],
         },
         {
           heading: 'OUTPUT OPTIONS',
-          options: ['all-fields', 'output']
-        }
-      ]
+          options: ['all-fields', 'output'],
+        },
+      ],
     },
-    runCommand
+    runCommand,
   );
 }
 
@@ -152,6 +152,6 @@ async function runCommand(inputs: Inputs) {
     options.sortByCreatedAt ?? 'asc',
     options.limit,
     options.allFields,
-    options.output
+    options.output,
   );
 }

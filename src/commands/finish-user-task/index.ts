@@ -2,7 +2,7 @@ import { readFileSync } from 'fs';
 
 import * as JSON5 from 'json5';
 
-import { CLI, Inputs } from '../../cli';
+import { CLI, Inputs } from '../../contracts/cli_types';
 import { logWarning } from '../../cli/logging';
 import { LegacyStdinPipeReader } from '../../cli/LegacyStdinPipeReader';
 import { finishUserTask } from './finish-user-task';
@@ -18,24 +18,24 @@ export async function onLoad(cli: CLI): Promise<void> {
       arguments: [
         {
           name: 'flowNodeInstanceId',
-          description: 'ID of the User Task instance to finish'
-        }
+          description: 'ID of the User Task instance to finish',
+        },
       ],
       options: [
         {
           name: 'result',
           description: 'Set result values for the finished User Task from a <json> string',
-          type: 'string'
+          type: 'string',
         },
         {
           name: 'result-from-file',
           description: 'Read result values for the finished User Task as JSON from a <file>',
-          type: 'string'
-        }
+          type: 'string',
+        },
       ],
-      optionGroups: []
+      optionGroups: [],
     },
-    runCommand
+    runCommand,
   );
 }
 

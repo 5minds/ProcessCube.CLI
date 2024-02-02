@@ -1,4 +1,4 @@
-import { CLI, Inputs } from '../../cli';
+import { CLI, Inputs } from '../../contracts/cli_types';
 import { LegacyStdinPipeReader } from '../../cli/LegacyStdinPipeReader';
 import { showProcessInstance } from './show-process-instance';
 
@@ -15,8 +15,8 @@ export async function onLoad(cli: CLI): Promise<void> {
         {
           name: 'processInstanceIds',
           description: 'IDs of process instances to show; if omitted, the latest process instance is shown',
-          type: 'array'
-        }
+          type: 'array',
+        },
       ],
       options: [
         {
@@ -24,18 +24,18 @@ export async function onLoad(cli: CLI): Promise<void> {
           alias: 'c',
           description: 'All given <processInstanceIds> are interpreted as correlation ids',
           type: 'boolean',
-          default: false
+          default: false,
         },
         {
           name: 'all-fields',
           alias: 'F',
           description: 'Show all fields',
           type: 'boolean',
-          default: false
-        }
-      ]
+          default: false,
+        },
+      ],
     },
-    runCommand
+    runCommand,
   );
 }
 

@@ -1,5 +1,6 @@
-import { AtlasEngineClient, IIdentity } from '@5minds/processcube_engine_client';
+import { EngineClient } from '@5minds/processcube_engine_client';
 import { Session as SessionFromInternalModule } from '../session/session';
+import { Identity } from '../client/identity';
 
 export type Session = SessionFromInternalModule;
 
@@ -17,9 +18,9 @@ export interface CLI {
   saveSession(session: Session): void;
   removeSession(): void;
 
-  getIdentityFromSession(): IIdentity | null;
+  getIdentityFromSession(): Identity | null;
 
-  getEngineClient(givenEngineUrl?: string, identity?: IIdentity): AtlasEngineClient;
+  getEngineClient(givenEngineUrl?: string, identity?: Identity): EngineClient;
 }
 
 export type Command = {

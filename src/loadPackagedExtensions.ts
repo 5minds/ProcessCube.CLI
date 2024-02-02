@@ -1,4 +1,4 @@
-import { CLI } from './cli';
+import { CLI } from './contracts/cli_types';
 
 import { onLoad as onLoadDeployFiles } from './commands/deploy-files';
 import { onLoad as onLoadFinishUserTask } from './commands/finish-user-task';
@@ -31,7 +31,7 @@ const packagedOnLoadFunctions = [
   onLoadSessionStatus,
   onLoadShowProcessInstance,
   onLoadStartProcessModel,
-  onLoadStopProcessInstance
+  onLoadStopProcessInstance,
 ];
 
 export async function loadPackagedExtensions(cli: CLI): Promise<void> {

@@ -1,4 +1,4 @@
-import { CLI, Inputs } from '../../cli';
+import { CLI, Inputs } from '../../contracts/cli_types';
 import { LegacyStdinPipeReader } from '../../cli/LegacyStdinPipeReader';
 import { retryProcessInstance } from './retry-process-instance';
 
@@ -14,11 +14,11 @@ export async function onLoad(cli: CLI): Promise<void> {
         {
           name: 'processInstanceIds',
           description: 'IDs of process instances to restart',
-          type: 'array'
-        }
-      ]
+          type: 'array',
+        },
+      ],
     },
-    runCommand
+    runCommand,
   );
 }
 

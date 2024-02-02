@@ -1,5 +1,4 @@
-import chalk from 'chalk';
-import { DataModels as AtlasEngineDataModels } from '@5minds/processcube_engine_client';
+import { DataModels as EngineDataModels } from '@5minds/processcube_engine_client';
 
 import { ApiClient } from '../../client/api_client';
 import { Session, loadSession } from '../../session/session';
@@ -8,8 +7,8 @@ import { logJsonResult, logJsonResultAsTextTable, logNoValidSessionError } from 
 import { OUTPUT_FORMAT_JSON, OUTPUT_FORMAT_TEXT } from '../../pc';
 import { sortUserTasks } from '../list-user-tasks/sorting';
 
-export type FlowNodeInstance = AtlasEngineDataModels.FlowNodeInstances.FlowNodeInstance;
-export type UserTask = AtlasEngineDataModels.FlowNodeInstances.UserTask;
+export type FlowNodeInstance = EngineDataModels.FlowNodeInstances.FlowNodeInstance;
+export type UserTask = EngineDataModels.FlowNodeInstances.UserTaskInstance;
 
 export async function listUserTasks(
   pipedProcessInstanceIds: string[] | null,

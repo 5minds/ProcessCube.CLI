@@ -4,7 +4,7 @@ import fs from '@npmcli/fs';
 import os from 'os';
 import tar from 'tar';
 import { createWriteStream, existsSync, mkdirSync, readFileSync, readdirSync, rename, rmSync } from 'fs';
-import { join } from 'path';
+import * as path from 'path';
 import AdmZip from 'adm-zip';
 import chalk from 'chalk';
 import yesno from 'yesno';
@@ -14,17 +14,17 @@ import { isPackage } from './isPackage';
 import { downloadPackage } from './downloadPackage';
 
 const EXTENSION_DIRS = {
-  cli: join(os.homedir(), '.processcube', 'cli', 'extensions'),
-  engine: join(os.homedir(), '.processcube', 'engine', 'extensions'),
-  portal: join(os.homedir(), '.processcube', 'portal', 'extensions'),
-  studio: join(os.homedir(), '.processcube', 'studio', 'extensions')
+  cli: path.join(os.homedir(), '.processcube', 'cli', 'extensions'),
+  engine: path.join(os.homedir(), '.processcube', 'engine', 'extensions'),
+  portal: path.join(os.homedir(), '.processcube', 'portal', 'extensions'),
+  studio: path.join(os.homedir(), '.processcube', 'studio', 'extensions'),
 };
 const VALID_TYPES = ['cli', 'engine', 'portal', 'studio'];
 const EXTENSION_TYPE_TO_WORDING = {
   cli: 'CLI Extension',
   engine: 'Engine Extension',
   portal: 'Portal Extension',
-  studio: 'Studio Extension'
+  studio: 'Studio Extension',
 };
 
 export async function installExtension(
@@ -32,7 +32,7 @@ export async function installExtension(
   givenType: string,
   autoYes: boolean,
   givenExtensionsDir: string,
-  output: string
+  output: string,
 ): Promise<void> {
   console.log(`Fetching file/package ${urlOrFilenameOrPackage} ...`);
 
@@ -40,7 +40,7 @@ export async function installExtension(
 
   console.log(`Using file at ${filename}`);
 
-  const cacheDir = join(os.tmpdir(), Date.now().toString());
+  const cacheDir = path.join(os.tmpdir(), Date.now().toString());
   ensureDir(cacheDir);
 
   const cacheDirOfExtensions = await extractExtensionToCacheDir(filename, cacheDir);
@@ -65,7 +65,7 @@ If you are the author, please specify it under \`engines\` in \`package.json\`:
       }
 
 Replace \`<type>\` with any of: ${VALID_TYPES.join(', ')}
-`.trim()
+`.trim(),
       );
       type = 'cli';
     }
@@ -80,8 +80,8 @@ Replace \`<type>\` with any of: ${VALID_TYPES.join(', ')}
       EXTENSION_TYPE_TO_WORDING[type],
       chalk.greenBright(
         `${name} (${packageJson.version ? 'v' + packageJson.version : 'version missing'})`,
-        chalk.reset(`has been installed to ${newPath}`)
-      )
+        chalk.reset(`has been installed to ${newPath}`),
+      ),
     );
   }
 
@@ -101,16 +101,16 @@ async function download(filename: string): Promise<string> {
   }
 
   const filenameFromUri = filename.match(/\/([^?\/]+)$/)[1];
-  const localFilename = join(os.tmpdir(), filenameFromUri);
+  const localFilename = path.join(os.tmpdir(), filenameFromUri);
 
   const file = createWriteStream(localFilename);
   const httpClient = filename.match(/^https:/) == null ? http : https;
 
   await new Promise((resolve) =>
-    httpClient.get(filename, function(response) {
+    httpClient.get(filename, function (response) {
       response.pipe(file);
       file.on('finish', resolve);
-    })
+    }),
   );
 
   return localFilename;
@@ -129,7 +129,7 @@ async function extractExtensionToCacheDir(filename: string, dir: string): Promis
 async function extractTar(filename: string, dir: string): Promise<void> {
   await tar.extract({
     file: filename,
-    cwd: dir
+    cwd: dir,
   });
 }
 
@@ -139,8 +139,8 @@ async function extractZip(filename: string, dir: string): Promise<void> {
 
 function getSubDirectoriesOfExtensions(dir: string): string[] {
   const extensionDirs = readdirSync(dir)
-    .filter((fileEntry) => existsSync(join(dir, fileEntry, 'package.json')))
-    .map((fileEntry) => join(dir, fileEntry));
+    .filter((fileEntry) => existsSync(path.join(dir, fileEntry, 'package.json')))
+    .map((fileEntry) => path.join(dir, fileEntry));
 
   return extensionDirs;
 }
@@ -150,15 +150,15 @@ async function moveExtensionToDestination(
   type: string,
   name: string,
   autoYes: boolean,
-  givenExtensionsDir: string
+  givenExtensionsDir: string,
 ): Promise<string> {
   const extensionDirForType = givenExtensionsDir || EXTENSION_DIRS[type];
-  const newPath = join(extensionDirForType, name);
+  const newPath = path.resolve(path.join(extensionDirForType, name));
 
   if (existsSync(newPath)) {
     if (autoYes !== true) {
       const yes = await yesno({
-        question: `Extension path already exists: ${newPath}. Overwrite it? [Yn]`
+        question: `Extension path already exists: ${newPath}. Overwrite it? [Yn]`,
       });
 
       if (yes !== true) {
@@ -184,7 +184,7 @@ function ensureDir(dir: string): void {
 }
 
 function readPackageJson(dir: string): any {
-  const filename = join(dir, 'package.json');
+  const filename = path.join(dir, 'package.json');
   if (!existsSync(filename)) {
     logError(`File \`package.json\` missing in extension: ${dir}`);
     process.exit(1);

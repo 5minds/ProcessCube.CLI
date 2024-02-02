@@ -1,4 +1,4 @@
-import { CLI, Inputs } from '../../cli';
+import { CLI, Inputs } from '../../contracts/cli_types';
 import { logWarning } from '../../cli/logging';
 import { removeProcessModels } from './remove-process-models';
 
@@ -14,8 +14,8 @@ export async function onLoad(cli: CLI): Promise<void> {
         {
           name: 'processModelIds',
           type: 'array',
-          description: 'IDs of process models to remove'
-        }
+          description: 'IDs of process models to remove',
+        },
       ],
       options: [
         {
@@ -23,11 +23,11 @@ export async function onLoad(cli: CLI): Promise<void> {
           alias: 'y',
           description: 'Do not prompt for confirmation',
           type: 'boolean',
-          default: false
-        }
-      ]
+          default: false,
+        },
+      ],
     },
-    runCommand
+    runCommand,
   );
 }
 

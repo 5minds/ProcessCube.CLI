@@ -1,4 +1,4 @@
-import { CLI, Inputs } from '../../cli';
+import { CLI, Inputs } from '../../contracts/cli_types';
 import { logWarning } from '../../cli/logging';
 import { deployFiles } from './deploy-files';
 
@@ -14,12 +14,12 @@ export async function onLoad(cli: CLI): Promise<void> {
         {
           name: 'filenames',
           type: 'array',
-          description: 'Files to deploy'
-        }
+          description: 'Files to deploy',
+        },
       ],
-      options: []
+      options: [],
     },
-    runCommand
+    runCommand,
   );
 }
 

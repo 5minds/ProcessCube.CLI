@@ -1,4 +1,4 @@
-import { CLI, Inputs } from '../../cli';
+import { CLI, Inputs } from '../../contracts/cli_types';
 import { printSessionStatus } from './session-status';
 
 export async function onLoad(cli: CLI): Promise<void> {
@@ -8,9 +8,9 @@ export async function onLoad(cli: CLI): Promise<void> {
       alias: 'st',
       description: 'Show status of the current session',
       descriptionLong: 'Shows status of the current session.',
-      examples: require('./examples.md')
+      examples: require('./examples.md'),
     },
-    runCommand
+    runCommand,
   );
 }
 

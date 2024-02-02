@@ -1,4 +1,4 @@
-import { CLI, Inputs } from '../../cli';
+import { CLI, Inputs } from '../../contracts/cli_types';
 import { LegacyStdinPipeReader } from '../../cli/LegacyStdinPipeReader';
 import { stopProcessInstance } from './stop-process-instance';
 
@@ -14,11 +14,11 @@ export async function onLoad(cli: CLI): Promise<void> {
         {
           name: 'processInstanceIds',
           description: 'IDs of process instances to stop',
-          type: 'array'
-        }
-      ]
+          type: 'array',
+        },
+      ],
     },
-    runCommand
+    runCommand,
   );
 }
 
