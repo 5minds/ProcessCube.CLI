@@ -2,6 +2,8 @@ import chalk from 'chalk';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 
+import { FlowNodeInstance } from '@5minds/processcube_engine_sdk';
+
 dayjs.extend(relativeTime);
 
 import { addJsonPipingHintToResultJson, createResultJson } from '../../cli/result_json';
@@ -11,14 +13,12 @@ import { BpmnDocument } from '../../cli/bpmn_document';
 import { sortProcessInstances } from '../list-process-instances/sorting';
 import { logError, logJsonResult } from '../../cli/logging';
 import { ApiClient, ProcessInstance, ProcessInstanceWithFlowNodeInstances } from '../../client/api_client';
-import { FlowNodeInstance } from '@atlas-engine/atlas_engine_client/dist/types/data_models/flow_node_instance';
-import { FlowNode } from 'bpmn-moddle';
 
 export async function showProcessInstance(
   processInstanceOrCorrelationIds: string[],
   isCorrelation: boolean,
   showAllFields: boolean,
-  outputFormat: string
+  outputFormat: string,
 ): Promise<void> {
   const session = loadSession();
   if (session == null) {
@@ -73,7 +73,7 @@ export async function showProcessInstance(
 
 async function logProcessInstanceAsText(
   processInstance: ProcessInstanceWithFlowNodeInstances,
-  showSeparator: boolean = false
+  showSeparator: boolean = false,
 ) {
   if (showSeparator) {
     console.log(chalk.cyan('---------------------------------- >8 ---------------------------------------------'));
@@ -86,12 +86,12 @@ async function logProcessInstanceAsText(
   console.log(
     'Model:     ',
     chalk.cyan(processInstance.processModelId),
-    chalk.dim(`(Definition: ${processInstance.processDefinitionId})`)
+    chalk.dim(`(Definition: ${processInstance.processDefinitionId})`),
   );
   console.log(
     'Instance:  ',
     chalk.magentaBright(`${processInstance.processInstanceId}`),
-    chalk.dim(`(Correlation: ${processInstance.correlationId}, ${parentHint})`)
+    chalk.dim(`(Correlation: ${processInstance.correlationId}, ${parentHint})`),
   );
 
   const createdAt = dayjs(processInstance.createdAt);
@@ -103,7 +103,7 @@ async function logProcessInstanceAsText(
   console.log(
     'Created:   ',
     createdAt.format('YYYY-MM-DD hh:mm:ss'),
-    chalk.dim(`(${dayjs(processInstance.createdAt).fromNow()})`)
+    chalk.dim(`(${dayjs(processInstance.createdAt).fromNow()})`),
   );
   console.log('Finished:  ', doneAtFormatted, chalk.dim(durationHint));
   console.log('User:      ', processInstance.ownerId);
@@ -120,10 +120,11 @@ async function logHistory(processInstance: ProcessInstanceWithFlowNodeInstances)
   const firstTokenFlowNodeId = flowNodeIds[0];
   const lastTokenFlowNodeId = flowNodeIds[flowNodeIds.length - 1];
   const firstTokenFlowNodeName = processInstance.flowNodeInstances.find(
-    (fni) => fni.flowNodeId === firstTokenFlowNodeId
+    (fni) => fni.flowNodeId === firstTokenFlowNodeId,
   )?.flowNodeName;
-  const lastTokenFlowNodeName = processInstance.flowNodeInstances.find((fni) => fni.flowNodeId === lastTokenFlowNodeId)
-    ?.flowNodeName;
+  const lastTokenFlowNodeName = processInstance.flowNodeInstances.find(
+    (fni) => fni.flowNodeId === lastTokenFlowNodeId,
+  )?.flowNodeName;
   const firstToken = findToken(processInstance, firstTokenFlowNodeId, 'onEnter');
   const lastTokenOnExit = findToken(processInstance, lastTokenFlowNodeId, 'onExit');
   const lastTokenOnEnter = findToken(processInstance, lastTokenFlowNodeId, 'onEnter');
@@ -205,10 +206,10 @@ function stateToColoredString(state: string): string {
 function findToken(
   processInstance: ProcessInstanceWithFlowNodeInstances,
   flowNodeId: string,
-  tokenEventType: string
+  tokenEventType: string,
 ): any | null {
   const flowNodeInstance = processInstance.flowNodeInstances.find(
-    (flowNodeInstance) => flowNodeInstance.flowNodeId === flowNodeId
+    (flowNodeInstance) => flowNodeInstance.flowNodeId === flowNodeId,
   );
   if (flowNodeInstance == null) {
     return null;
