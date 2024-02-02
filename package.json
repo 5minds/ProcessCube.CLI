@@ -1,6 +1,6 @@
 {
   "name": "@5minds/processcube_cli",
-  "version": "2.2.0",
+  "version": "2.3.0",
   "description": "Command Line Utilities for 5Minds ProcessCube",
   "main": "dist/pc.js",
   "files": [],
