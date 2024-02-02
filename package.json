@@ -28,7 +28,6 @@
   "devDependencies": {
     "@5minds/processcube_engine_client": "^4.4.5",
     "@5minds/processcube_engine_sdk": "^4.0.3",
-    "@5minds/product_ci_tools": "^4.2.0",
     "@npmcli/fs": "^3.1.0",
     "@types/lodash.mapvalues": "^4.6.9",
     "@types/mocha": "^10.0.6",
