@@ -14,10 +14,10 @@ import { isPackage } from './isPackage';
 import { downloadPackage } from './downloadPackage';
 
 const EXTENSION_DIRS = {
-  cli: join(os.homedir(), '.atlas', 'cli', 'extensions'),
-  engine: join(os.homedir(), '.atlas', 'engine', 'extensions'),
-  portal: join(os.homedir(), '.atlas', 'portal', 'extensions'),
-  studio: join(os.homedir(), '.atlas', 'studio', 'extensions')
+  cli: join(os.homedir(), '.processcube', 'cli', 'extensions'),
+  engine: join(os.homedir(), '.processcube', 'engine', 'extensions'),
+  portal: join(os.homedir(), '.processcube', 'portal', 'extensions'),
+  studio: join(os.homedir(), '.processcube', 'studio', 'extensions')
 };
 const VALID_TYPES = ['cli', 'engine', 'portal', 'studio'];
 const EXTENSION_TYPE_TO_WORDING = {
