@@ -8,7 +8,6 @@
     "clean": "rm -rf dist",
     "reinstall": "./reinstall.sh",
     "build": "esbuild src/pc.ts --bundle --outfile=dist/pc.js --platform=node --target=node12 --loader:.md=text",
-    "lint": "eslint \"src/**/*.ts\"",
     "start": "node dist/pc.js",
     "test": "npm run test:unit",
     "test:unit": "mocha -r ts-node/register -r choma \"src/**/*.test.ts\"",
@@ -27,7 +26,6 @@
   "license": "MIT",
   "devDependencies": {
     "@atlas-engine/atlas_engine_client": "^4.3.0",
-    "@essential-projects/eslint-config": "^1.0.6",
     "@npmcli/fs": "^3.1.0",
     "@process-engine/ci_tools": "^3.2.1",
     "@types/lodash.mapvalues": "^4.6.6",
