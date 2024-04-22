@@ -25,6 +25,7 @@
   "author": "5Minds IT-Solutions GmbH & Co. KG",
   "license": "MIT",
   "devDependencies": {
+    "@atlas-engine/atlas_engine_sdk": "^3.3.4",
     "@atlas-engine/atlas_engine_client": "^4.3.0",
     "@npmcli/fs": "^3.1.0",
     "@process-engine/ci_tools": "^3.2.1",
