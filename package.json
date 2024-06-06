@@ -12,6 +12,7 @@
     "reinstall": "./reinstall.sh",
     "build": "esbuild src/pc.ts --bundle --outfile=dist/pc.js --platform=node --target=node20 --loader:.md=text",
     "start": "node dist/pc.js",
+    "lint": "prettier --write --config ./.prettierrc.json ./src ./test",
     "test": "npm run test:unit",
     "test:unit": "mocha -r ts-node/register -r choma \"src/**/*.test.ts\"",
     "test:integration": "mocha --timeout 60000 --slow 10000 -r ts-node/register -r choma \"test/integration/*.test.ts\""
@@ -31,6 +32,7 @@
     "@5minds/processcube_engine_sdk": "^5.0.0",
     "@5minds/processcube_engine_client": "^5.0.0",
     "@npmcli/fs": "^3.1.1",
+    "@trivago/prettier-plugin-sort-imports": "^4.3.0",
     "@types/lodash.mapvalues": "^4.6.9",
     "@types/mocha": "^10.0.6",
     "@types/node": "^20.14.2",
