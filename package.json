@@ -3,6 +3,9 @@
   "version": "2.4.0",
   "description": "Command Line Utilities for 5Minds ProcessCube",
   "main": "dist/pc.js",
+  "engines": {
+    "node": ">=18.12.0"
+  },
   "files": [],
   "scripts": {
     "clean": "rm -rf dist",
