@@ -60,7 +60,7 @@ export async function loadExtensions(cli: CLI): Promise<void> {
 
 async function loadFile(filename: string): Promise<LoadedModule> {
   const module: LoadedModule = {
-    exports: {}
+    exports: {},
   };
 
   const code = readFileSync(filename).toString();

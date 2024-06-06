@@ -44,20 +44,14 @@ To use it for authorization, update your engine config like this:
     iam__rootAccessToken="${safeSecretColored}" atlas-engine
 
 By doing this, you ensure that only clients using this secret token can utilize the API.
-`.trim()
+`.trim(),
   );
 }
 
 function getSecret(size: number) {
-  return require('crypto')
-    .randomBytes(size)
-    .toString('base64')
-    .slice(0, size);
+  return require('crypto').randomBytes(size).toString('base64').slice(0, size);
 }
 
 function makeUrlSafe(str) {
-  return str
-    .replace(/\+/g, '.')
-    .replace(/\//g, '-')
-    .replace(/=/g, '_');
+  return str.replace(/\+/g, '.').replace(/\//g, '-').replace(/=/g, '_');
 }

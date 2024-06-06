@@ -1,19 +1,23 @@
 import * as assert from 'assert';
 
-import { filterProcessInstancesByEndTimeAfter, filterProcessInstancesByEndTimeBefore, filterProcessInstancesByExecutionTime, 
-         filterProcessInstancesByProcessModelId, filterProcessInstancesByState} from './filtering';
-
 import {
-  PROCESS_A_completedIn_24_days_01_error,
   PROCESS_A_completedIn_2_hours_02_error,
   PROCESS_A_completedIn_10_minutes_03_finished,
+  PROCESS_A_completedIn_24_days_01_error,
   PROCESS_B_completedIn_04_running,
   PROCESS_B_completedIn_3_seconds_07_finished,
-  PROCESS_C_completedIn_50_milliseconds_05_finished,
   PROCESS_C_completedIn_1_years_06_error,
+  PROCESS_C_completedIn_50_milliseconds_05_finished,
   getMockedProcessInstances,
-  mapIds
+  mapIds,
 } from './completedIn-test-mocks.test';
+import {
+  filterProcessInstancesByEndTimeAfter,
+  filterProcessInstancesByEndTimeBefore,
+  filterProcessInstancesByExecutionTime,
+  filterProcessInstancesByProcessModelId,
+  filterProcessInstancesByState,
+} from './filtering';
 
 describe('filtering process instances', () => {
   describe('filterProcessInstancesDateBefore()', () => {
@@ -41,7 +45,11 @@ describe('filtering process instances', () => {
       const processInstances = getMockedProcessInstances();
       const result = filterProcessInstancesByState(processInstances, ['error']);
 
-      const expected = [PROCESS_A_completedIn_24_days_01_error, PROCESS_A_completedIn_2_hours_02_error, PROCESS_C_completedIn_1_years_06_error];
+      const expected = [
+        PROCESS_A_completedIn_24_days_01_error,
+        PROCESS_A_completedIn_2_hours_02_error,
+        PROCESS_C_completedIn_1_years_06_error,
+      ];
       const expectedIds = mapIds(expected);
 
       for (const resultId of mapIds(result)) {
@@ -75,7 +83,11 @@ describe('filtering process instances', () => {
       const processInstances = getMockedProcessInstances();
       const result = filterProcessInstancesByProcessModelId(processInstances, ['Process_A']);
 
-      const expected = [PROCESS_A_completedIn_24_days_01_error, PROCESS_A_completedIn_2_hours_02_error, PROCESS_A_completedIn_10_minutes_03_finished];
+      const expected = [
+        PROCESS_A_completedIn_24_days_01_error,
+        PROCESS_A_completedIn_2_hours_02_error,
+        PROCESS_A_completedIn_10_minutes_03_finished,
+      ];
       const expectedIds = mapIds(expected);
 
       for (const resultId of mapIds(result)) {
@@ -91,7 +103,11 @@ describe('filtering process instances', () => {
       const processInstances = getMockedProcessInstances();
       const result = filterProcessInstancesByEndTimeAfter(processInstances, '2019-06-26T11:22:53.252Z');
 
-      const expected = [PROCESS_A_completedIn_24_days_01_error, PROCESS_C_completedIn_50_milliseconds_05_finished, PROCESS_C_completedIn_1_years_06_error];
+      const expected = [
+        PROCESS_A_completedIn_24_days_01_error,
+        PROCESS_C_completedIn_50_milliseconds_05_finished,
+        PROCESS_C_completedIn_1_years_06_error,
+      ];
 
       assert.deepStrictEqual(mapIds(result), mapIds(expected));
     });
@@ -114,11 +130,12 @@ describe('filtering process instances', () => {
 
       const resultForGreaterThanSeconds = filterProcessInstancesByExecutionTime(processInstances, '> 3s');
 
-      const expectedForGreaterThanSeconds = [PROCESS_A_completedIn_24_days_01_error,
+      const expectedForGreaterThanSeconds = [
+        PROCESS_A_completedIn_24_days_01_error,
         PROCESS_A_completedIn_2_hours_02_error,
         PROCESS_A_completedIn_10_minutes_03_finished,
         PROCESS_B_completedIn_04_running,
-        PROCESS_C_completedIn_1_years_06_error
+        PROCESS_C_completedIn_1_years_06_error,
       ];
       assert.deepStrictEqual(mapIds(resultForGreaterThanSeconds), mapIds(expectedForGreaterThanSeconds));
     });
@@ -128,10 +145,11 @@ describe('filtering process instances', () => {
 
       const resultForGreaterThanMinutes = filterProcessInstancesByExecutionTime(processInstances, '> 10m');
 
-      const expectedForGreaterThanMinutes = [PROCESS_A_completedIn_24_days_01_error, 
+      const expectedForGreaterThanMinutes = [
+        PROCESS_A_completedIn_24_days_01_error,
         PROCESS_A_completedIn_2_hours_02_error,
         PROCESS_B_completedIn_04_running,
-        PROCESS_C_completedIn_1_years_06_error
+        PROCESS_C_completedIn_1_years_06_error,
       ];
       assert.deepStrictEqual(mapIds(resultForGreaterThanMinutes), mapIds(expectedForGreaterThanMinutes));
     });
@@ -141,7 +159,11 @@ describe('filtering process instances', () => {
 
       const resultForGreaterThanHours = filterProcessInstancesByExecutionTime(processInstances, '> 2h');
 
-      const expectedForGreaterThanHours = [PROCESS_A_completedIn_24_days_01_error, PROCESS_B_completedIn_04_running, PROCESS_C_completedIn_1_years_06_error];
+      const expectedForGreaterThanHours = [
+        PROCESS_A_completedIn_24_days_01_error,
+        PROCESS_B_completedIn_04_running,
+        PROCESS_C_completedIn_1_years_06_error,
+      ];
 
       assert.deepStrictEqual(mapIds(resultForGreaterThanHours), mapIds(expectedForGreaterThanHours));
     });
@@ -151,7 +173,7 @@ describe('filtering process instances', () => {
 
       const resultForGreaterThanDays = filterProcessInstancesByExecutionTime(processInstances, '> 24d');
 
-      const expectedForGreaterThanDays = [PROCESS_B_completedIn_04_running,PROCESS_C_completedIn_1_years_06_error];
+      const expectedForGreaterThanDays = [PROCESS_B_completedIn_04_running, PROCESS_C_completedIn_1_years_06_error];
 
       assert.deepStrictEqual(mapIds(resultForGreaterThanDays), mapIds(expectedForGreaterThanDays));
     });
@@ -171,7 +193,10 @@ describe('filtering process instances', () => {
 
       const resultForLessThanMinutes = filterProcessInstancesByExecutionTime(processInstances, '< 10m');
 
-      const expectedForLessThanMinutes = [PROCESS_B_completedIn_3_seconds_07_finished, PROCESS_C_completedIn_50_milliseconds_05_finished];
+      const expectedForLessThanMinutes = [
+        PROCESS_B_completedIn_3_seconds_07_finished,
+        PROCESS_C_completedIn_50_milliseconds_05_finished,
+      ];
 
       assert.deepStrictEqual(mapIds(resultForLessThanMinutes), mapIds(expectedForLessThanMinutes));
     });
@@ -181,9 +206,10 @@ describe('filtering process instances', () => {
 
       const resultForLessThanHours = filterProcessInstancesByExecutionTime(processInstances, '< 2h');
 
-      const expectedForLessThanHours = [PROCESS_A_completedIn_10_minutes_03_finished, 
-        PROCESS_B_completedIn_3_seconds_07_finished, 
-        PROCESS_C_completedIn_50_milliseconds_05_finished
+      const expectedForLessThanHours = [
+        PROCESS_A_completedIn_10_minutes_03_finished,
+        PROCESS_B_completedIn_3_seconds_07_finished,
+        PROCESS_C_completedIn_50_milliseconds_05_finished,
       ];
 
       assert.deepStrictEqual(mapIds(resultForLessThanHours), mapIds(expectedForLessThanHours));
@@ -194,14 +220,14 @@ describe('filtering process instances', () => {
 
       const resultForLessThanDays = filterProcessInstancesByExecutionTime(processInstances, '< 24d');
 
-      const expectedForLessThanDays = [PROCESS_A_completedIn_2_hours_02_error,
-        PROCESS_A_completedIn_10_minutes_03_finished, 
-        PROCESS_B_completedIn_3_seconds_07_finished, 
-        PROCESS_C_completedIn_50_milliseconds_05_finished
+      const expectedForLessThanDays = [
+        PROCESS_A_completedIn_2_hours_02_error,
+        PROCESS_A_completedIn_10_minutes_03_finished,
+        PROCESS_B_completedIn_3_seconds_07_finished,
+        PROCESS_C_completedIn_50_milliseconds_05_finished,
       ];
-      
+
       assert.deepStrictEqual(mapIds(resultForLessThanDays), mapIds(expectedForLessThanDays));
     });
-
   });
 });

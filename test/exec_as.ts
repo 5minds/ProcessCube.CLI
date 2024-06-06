@@ -1,6 +1,5 @@
 import * as assert from 'assert';
 import { execSync } from 'child_process';
-
 import * as JSON5 from 'json5';
 
 const ATLAS_EXECUTABLE = 'node ./dist/pc.js';
@@ -14,7 +13,7 @@ export function execAsJson(cmd: string, assertRegexMatches: RegExp | string | nu
     if (typeof assertRegexMatches == 'string') {
       assert.ok(
         output.includes(assertRegexMatches) != null,
-        `Did expect ${JSON.stringify(assertRegexMatches)} to be included in:\n\n${output}`
+        `Did expect ${JSON.stringify(assertRegexMatches)} to be included in:\n\n${output}`,
       );
     } else {
       assert.ok(output.match(assertRegexMatches) != null, `Did expect ${assertRegexMatches} to match:\n\n${output}`);
@@ -43,7 +42,7 @@ export function execAsJsonPipes(cmds: string[], assertRegexMatches?: RegExp | st
     if (typeof assertRegexMatches == 'string') {
       assert.ok(
         output.includes(assertRegexMatches) != null,
-        `Did expect ${JSON.stringify(assertRegexMatches)} to be included in:\n\n${output}`
+        `Did expect ${JSON.stringify(assertRegexMatches)} to be included in:\n\n${output}`,
       );
     } else {
       assert.ok(output.match(assertRegexMatches) != null, `Did expect ${assertRegexMatches} to match:\n\n${output}`);
@@ -89,7 +88,7 @@ export async function loginAsRoot(testCallbackFn: () => Promise<void>) {
 export function assertCorrelationIdInResult(result: any, correlationId: string): void {
   assert.ok(
     result.result.some((processInstance) => processInstance.correlationId === correlationId),
-    `Correlation ID \`${correlationId}\` not found in ${JSON.stringify(result.result, null, 2)}`
+    `Correlation ID \`${correlationId}\` not found in ${JSON.stringify(result.result, null, 2)}`,
   );
 }
 

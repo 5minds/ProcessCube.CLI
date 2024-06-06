@@ -1,9 +1,8 @@
 import chalk from 'chalk';
 
-import { ANONYMOUS_IDENTITY_SERVER_URL, loadSession, removeSession } from '../../session/session';
-
-import { startServerToLogoutAndWaitForSessionEnd } from './express_server';
 import { logError } from '../../cli/logging';
+import { ANONYMOUS_IDENTITY_SERVER_URL, loadSession, removeSession } from '../../session/session';
+import { startServerToLogoutAndWaitForSessionEnd } from './express_server';
 
 export async function logout(outputFormat: string): Promise<void> {
   const oldSession = loadSession();

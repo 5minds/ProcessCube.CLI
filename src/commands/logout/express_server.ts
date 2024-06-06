@@ -1,15 +1,16 @@
 import express from 'express';
-import open = require('open');
 
-import { getModalHtml } from '../login/html_message';
 import { isUrlAvailable } from '../../client/is_url_available';
+import { getModalHtml } from '../login/html_message';
+
+import open = require('open');
 
 const DEFAULT_PORT = 9000; // 56073;
 
 export async function startServerToLogoutAndWaitForSessionEnd(
   identityServerUrl: string,
   idToken: string,
-  givenPort?: number
+  givenPort?: number,
 ): Promise<boolean> {
   const isAvailable = await isUrlAvailable(identityServerUrl);
   if (isAvailable === false) {
@@ -24,7 +25,7 @@ export async function startServerToLogoutAndWaitForSessionEnd(
       const redirectUri = `http://localhost:${port}/signout-oidc`;
 
       const params = `id_token_hint=${encodeURIComponent(idToken)}&post_logout_redirect_uri=${encodeURIComponent(
-        redirectUri
+        redirectUri,
       )}`;
       const uri = `${identityServerUrl.replace(/\/$/, '')}/connect/endsession?${params}`;
 
@@ -48,8 +49,8 @@ export async function startServerToLogoutAndWaitForSessionEnd(
           <b>You can close this browser tab now.</b>
 
           You are now logged out.
-          `
-        )
+          `,
+        ),
       );
 
       resolve();

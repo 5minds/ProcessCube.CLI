@@ -11,7 +11,7 @@ export function sortProcessInstances(
   processInstances: SortableProcessInstance[],
   sortByProcessModelId: SortingDirection | null,
   sortByState: SortingDirection | null,
-  sortByCreatedAt: SortingDirection | null
+  sortByCreatedAt: SortingDirection | null,
 ): any[] {
   const compareFns = [];
   if (sortByProcessModelId != null) {

@@ -14,18 +14,18 @@ export async function onLoad(cli: CLI): Promise<void> {
           alias: 's',
           description: 'Generate a secret token of the given size in bytes',
           type: 'number',
-          default: 128
+          default: 128,
         },
         {
           name: 'raw',
           alias: 'r',
           description: 'Print the secret token without usage instructions',
-          type: 'boolean'
-        }
-      ]
+          type: 'boolean',
+        },
+      ],
     },
     async (inputs: Inputs): Promise<void> => {
       generateRootAccessToken(inputs.argv.size, inputs.argv.raw, inputs.argv.output);
-    }
+    },
   );
 }

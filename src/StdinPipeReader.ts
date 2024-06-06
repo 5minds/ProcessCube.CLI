@@ -1,4 +1,5 @@
 import * as JSON5 from 'json5';
+
 import { logError } from './cli/logging';
 
 export class StdinPipeReader {
@@ -47,10 +48,10 @@ export class StdinPipeReader {
     return new Promise((resolve, reject) => {
       const self = process.openStdin();
       let receivedData: string | null = null;
-      self.on('data', function(chunk) {
+      self.on('data', function (chunk) {
         receivedData = (receivedData || '') + chunk;
       });
-      self.on('end', function() {
+      self.on('end', function () {
         resolve(receivedData);
       });
     });

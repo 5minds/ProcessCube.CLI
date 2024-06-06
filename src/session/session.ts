@@ -1,13 +1,12 @@
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs';
+import * as JSON5 from 'json5';
+import { dirname } from 'path';
+
+import { getSessionStorageFilename } from './atlas_path_functions';
+
 const dayjs = require('dayjs');
 const relativeTime = require('dayjs/plugin/relativeTime');
 dayjs.extend(relativeTime);
-
-import { dirname } from 'path';
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs';
-
-import * as JSON5 from 'json5';
-
-import { getSessionStorageFilename } from './atlas_path_functions';
 
 export type Session = {
   type: 'session' | 'implicit' | 'm2m' | 'root' | 'root-access-token' | string;
@@ -84,7 +83,7 @@ function getExpiresIn(session: Session): ExpireInfo {
 
   return {
     seconds: seconds,
-    inWords: dayjs(session.expiresAt).fromNow()
+    inWords: dayjs(session.expiresAt).fromNow(),
   };
 }
 

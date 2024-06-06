@@ -1,8 +1,8 @@
 import chalk from 'chalk';
-import { getBorderCharacters, table } from 'table';
 import mapValues from 'lodash.mapvalues';
-
 import { marked } from 'marked';
+import { getBorderCharacters, table } from 'table';
+
 import { MarkdownRenderer } from './MarkdownRenderer';
 
 const HTML_ENTITY_REGEX = /&(#(?:\d+)|(?:#x[0-9A-Fa-f]+)|(?:\w+));?/gi;
@@ -16,7 +16,7 @@ export function logJsonResultAsTextTable(resultJson: any, fields: string[], titl
   const partCapitalization = {
     id: 'ID',
     Id: 'ID',
-    Ids: 'IDs'
+    Ids: 'IDs',
   };
   const headerRow = fields.map((fieldName) => {
     const header = fieldName
@@ -67,7 +67,7 @@ export function logJsonResultAsTextTable(resultJson: any, fields: string[], titl
   if (Array.isArray(resultJson.result)) {
     console.log(
       `  ${resultJson.result.length} results shown` +
-        chalk.gray(' - use `--help` to learn more about filtering and sorting.')
+        chalk.gray(' - use `--help` to learn more about filtering and sorting.'),
     );
   }
 }

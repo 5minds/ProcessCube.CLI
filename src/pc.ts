@@ -1,11 +1,10 @@
 #!/usr/bin/env node
-
 import 'reflect-metadata';
 
 import { CommandLineInterface } from './cli';
+import { logError } from './cli/logging';
 import { loadExtensions } from './loadExtensions';
 import { loadPackagedExtensions } from './loadPackagedExtensions';
-import { logError } from './cli/logging';
 import { useYargsForCommandLineInterface } from './yargs';
 
 export const OUTPUT_FORMAT_JSON = 'json';
@@ -22,7 +21,7 @@ async function createCommandLineInterface(): Promise<CommandLineInterface> {
       alias: 'h',
       description: 'Show help',
       type: 'boolean',
-      default: false
+      default: false,
     },
     {
       name: 'output',
@@ -30,8 +29,8 @@ async function createCommandLineInterface(): Promise<CommandLineInterface> {
       description: 'Set output',
       type: 'string',
       default: defaultFormat,
-      choices: [OUTPUT_FORMAT_TEXT, OUTPUT_FORMAT_JSON]
-    }
+      choices: [OUTPUT_FORMAT_TEXT, OUTPUT_FORMAT_JSON],
+    },
   ]);
 
   await loadPackagedExtensions(cli);

@@ -14,11 +14,11 @@ export async function onLoad(cli: CLI): Promise<void> {
         {
           name: 'processInstanceIds',
           description: 'IDs of process instances to restart',
-          type: 'array'
-        }
-      ]
+          type: 'array',
+        },
+      ],
     },
-    runCommand
+    runCommand,
   );
 }
 

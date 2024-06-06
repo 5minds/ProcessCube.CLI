@@ -12,31 +12,31 @@ export async function onLoad(cli: CLI): Promise<void> {
         {
           name: 'urlOrFilename',
           description: 'NPM package name or URL/filename of an extension ZIP',
-          mandatory: true
-        }
+          mandatory: true,
+        },
       ],
       options: [
         {
           name: 'type',
           description: 'Type of the extension',
           type: 'string',
-          choices: ['cli', 'engine', 'portal', 'studio']
+          choices: ['cli', 'engine', 'portal', 'studio'],
         },
         {
           name: 'yes',
           alias: 'y',
           description: 'Overwrite existing extensions',
           type: 'boolean',
-          default: false
+          default: false,
         },
         {
           name: 'extensions-dir',
           description: 'Overwrite default extensions dir',
-          type: 'string'
-        }
-      ]
+          type: 'string',
+        },
+      ],
     },
-    runCommand
+    runCommand,
   );
 }
 
@@ -46,6 +46,6 @@ async function runCommand(inputs: Inputs): Promise<void> {
     inputs.argv.type,
     inputs.argv.yes,
     inputs.argv.extensionsDir,
-    inputs.argv.output
+    inputs.argv.output,
   );
 }

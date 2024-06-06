@@ -1,8 +1,9 @@
 import { EngineClient } from '@5minds/processcube_engine_client';
-import { CLI, Command, CommandOption, Inputs } from './contracts/cli_types';
-import { Session, loadSession, removeSession, saveSession } from './session/session';
+
 import { StdinPipeReader } from './StdinPipeReader';
 import { Identity } from './client/identity';
+import { CLI, Command, CommandOption, Inputs } from './contracts/cli_types';
+import { Session, loadSession, removeSession, saveSession } from './session/session';
 
 type CommandWithCallbacks = Command & {
   executeCallbackFn: Function;
@@ -31,7 +32,7 @@ export class CommandLineInterface implements CLI {
   registerCommand(
     commandOptions: Command,
     executeCallbackFn: (inputs: Inputs) => Promise<void>,
-    validationCallbackFn?: (inputs: Inputs) => Promise<boolean>
+    validationCallbackFn?: (inputs: Inputs) => Promise<boolean>,
   ): void {
     const options = commandOptions.options ?? [];
     const args = commandOptions.arguments ?? [];
@@ -61,7 +62,7 @@ export class CommandLineInterface implements CLI {
       options,
       optionGroups: commandOptions.optionGroups,
       executeCallbackFn,
-      validationCallbackFn
+      validationCallbackFn,
     };
 
     this.commands[command.name] = command;
@@ -109,7 +110,7 @@ export class CommandLineInterface implements CLI {
 
     return {
       userId: session.idToken,
-      token: session.accessToken
+      token: session.accessToken,
     };
   }
 

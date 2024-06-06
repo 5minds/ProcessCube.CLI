@@ -1,6 +1,8 @@
 import express from 'express';
-import open = require('open');
+
 import { getModalHtml } from './html_message';
+
+import open = require('open');
 
 export type IdTokenAccessTokenAndExpiresAt = {
   accessToken: string;
@@ -18,7 +20,7 @@ export function startServerToLoginAndWaitForAccessTokenFromIdentityServer(
   givenPort?: number,
   givenClientId?: string,
   givenResponseType?: string,
-  givenScope?: string
+  givenScope?: string,
 ): Promise<IdTokenAccessTokenAndExpiresAt | null> {
   return new Promise((resolve: Function, reject: Function) => {
     const app = express();
@@ -33,9 +35,9 @@ export function startServerToLoginAndWaitForAccessTokenFromIdentityServer(
       const nonce = Math.random().toString(36);
 
       const params = `client_id=${encodeURIComponent(clientId)}&redirect_uri=${encodeURIComponent(
-        redirectUri
+        redirectUri,
       )}&response_type=${encodeURIComponent(responseType)}&scope=${encodeURIComponent(
-        scope
+        scope,
       )}&state=${encodeURIComponent(state)}&nonce=${encodeURIComponent(nonce)}&display=popup`;
 
       const discoveryUri = `${identityServerUrl.replace(/\/$/, '')}/.well-known/openid-configuration`;
@@ -88,8 +90,8 @@ export function startServerToLoginAndWaitForAccessTokenFromIdentityServer(
           $ pc list-process-instances
 
           $ pc --help
-          `
-        )
+          `,
+        ),
       );
 
       resolve({ accessToken, idToken, expiresAt });

@@ -1,15 +1,18 @@
 import * as assert from 'assert';
 
-import { filterProcessInstancesByProcessModelId, filterProcessInstancesByState, filterUserTasksByFlowNodeInstanceId} from './filtering';
-
 import {
   PROCESS_A_userTask_01_error,
   PROCESS_A_userTask_02_error,
   PROCESS_A_userTask_03_finished,
   PROCESS_C_userTask_06_error,
   getMockedUserTasks,
-  mapIds
+  mapIds,
 } from '../commands/list-user-tasks/test-mocks.test';
+import {
+  filterProcessInstancesByProcessModelId,
+  filterProcessInstancesByState,
+  filterUserTasksByFlowNodeInstanceId,
+} from './filtering';
 
 describe('filtering user tasks', () => {
   describe('filterUserTasksByState()', () => {

@@ -15,34 +15,34 @@ export async function onLoad(cli: CLI): Promise<void> {
           name: 'filter-by-id',
           description: 'Filter process models by <pattern> (supports regular expressions)',
           type: 'array',
-          default: []
+          default: [],
         },
         {
           name: 'reject-by-id',
           description: 'Reject process models by <pattern> (supports regular expressions)',
           type: 'array',
-          default: []
+          default: [],
         },
         {
           name: 'all-fields',
           alias: 'F',
           description: 'Show all fields',
           type: 'boolean',
-          default: false
-        }
+          default: false,
+        },
       ],
       optionGroups: [
         {
           heading: 'FILTERING OPTIONS',
-          options: ['filter-by-id', 'reject-by-id']
+          options: ['filter-by-id', 'reject-by-id'],
         },
         {
           heading: 'OUTPUT OPTIONS',
-          options: ['all-fields', 'output']
-        }
-      ]
+          options: ['all-fields', 'output'],
+        },
+      ],
     },
-    runCommand
+    runCommand,
   );
 }
 
@@ -56,6 +56,6 @@ async function runCommand(inputs: Inputs): Promise<void> {
     inputs.argv.filterById,
     inputs.argv.rejectById,
     inputs.argv.allFields,
-    inputs.argv.output
+    inputs.argv.output,
   );
 }

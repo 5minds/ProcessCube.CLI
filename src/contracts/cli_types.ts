@@ -1,4 +1,5 @@
 import { EngineClient, Identity } from '@5minds/processcube_engine_client';
+
 import { Session as SessionFromInternalModule } from '../session/session';
 
 export type Session = SessionFromInternalModule;
@@ -9,7 +10,7 @@ export interface CLI {
   registerCommand(
     command: Command,
     executeCallbackFn: (inputs: Inputs) => Promise<void>,
-    validationCallbackFn?: (inputs: Inputs) => Promise<boolean>
+    validationCallbackFn?: (inputs: Inputs) => Promise<boolean>,
   ): void;
 
   loadSession(): Session | null;

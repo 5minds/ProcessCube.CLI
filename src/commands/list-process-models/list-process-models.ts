@@ -1,19 +1,18 @@
 import chalk from 'chalk';
 
-import { ApiClient } from '../../client/api_client';
-import { addJsonPipingHintToResultJson, createResultJson } from '../../cli/result_json';
-import { loadSession } from '../../session/session';
-import { logError, logJsonResult, logJsonResultAsTextTable } from '../../cli/logging';
 import { toFilterRegexes } from '../../cli/filter_regexes';
-
+import { logError, logJsonResult, logJsonResultAsTextTable } from '../../cli/logging';
+import { addJsonPipingHintToResultJson, createResultJson } from '../../cli/result_json';
+import { ApiClient } from '../../client/api_client';
 import { OUTPUT_FORMAT_JSON, OUTPUT_FORMAT_TEXT } from '../../pc';
+import { loadSession } from '../../session/session';
 
 export async function listProcessModels(
   pipedProcessModelIds: string[] | null,
   filterById: string[],
   rejectById: string[],
   showAllFields: boolean,
-  outputFormat: string
+  outputFormat: string,
 ) {
   const session = loadSession();
   if (session == null) {

@@ -11,7 +11,7 @@ export function addJsonPipingHintToResultJson(resultJson: any): any {
 
   return {
     ...resultJson,
-    __hint__: isPipedAndNoOutputGiven ? NO_TTY_HINT : TTY_HINT
+    __hint__: isPipedAndNoOutputGiven ? NO_TTY_HINT : TTY_HINT,
   };
 }
 

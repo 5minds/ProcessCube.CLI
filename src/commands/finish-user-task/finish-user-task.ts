@@ -1,14 +1,14 @@
-import { addJsonPipingHintToResultJson, createResultJson, useMessageForResultJsonErrors } from '../../cli/result_json';
-import { FinishedUserTaskInfo } from '../../contracts/api_client_types';
-import { loadSession } from '../../session/session';
-import { OUTPUT_FORMAT_JSON, OUTPUT_FORMAT_TEXT } from '../../pc';
 import { logJsonResult, logJsonResultAsTextTable, logNoValidSessionError } from '../../cli/logging';
+import { addJsonPipingHintToResultJson, createResultJson, useMessageForResultJsonErrors } from '../../cli/result_json';
 import { ApiClient } from '../../client/api_client';
+import { FinishedUserTaskInfo } from '../../contracts/api_client_types';
+import { OUTPUT_FORMAT_JSON, OUTPUT_FORMAT_TEXT } from '../../pc';
+import { loadSession } from '../../session/session';
 
 export async function finishUserTask(
   flowNodeInstanceId: string,
   resultValues: any,
-  outputFormat: string
+  outputFormat: string,
 ): Promise<void> {
   const session = loadSession();
   if (session == null) {

@@ -14,12 +14,12 @@ export async function onLoad(cli: CLI): Promise<void> {
         {
           name: 'filenames',
           type: 'array',
-          description: 'Files to deploy'
-        }
+          description: 'Files to deploy',
+        },
       ],
-      options: []
+      options: [],
     },
-    runCommand
+    runCommand,
   );
 }
 

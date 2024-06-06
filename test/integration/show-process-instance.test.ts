@@ -1,5 +1,6 @@
-import 'mocha';
 import * as assert from 'assert';
+import 'mocha';
+
 import { execAsJson, execAsText, loginAsRoot } from '../exec_as';
 
 describe('show-process-instance', () => {

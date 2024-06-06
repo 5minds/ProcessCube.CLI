@@ -2,8 +2,8 @@ import * as fs from 'fs';
 
 import { EngineClient } from '@5minds/processcube_engine_client';
 import {
-  FlowNodeInstanceState,
   FlowNodeInstance,
+  FlowNodeInstanceState,
   ProcessInstance,
   ProcessInstanceSortableColumns,
   ProcessInstanceState,
@@ -11,25 +11,24 @@ import {
   UserTaskInstance,
 } from '@5minds/processcube_engine_sdk/';
 
-import { getIdentity } from './identity';
-
-import { Session } from '../session/session';
 import { BpmnDocument } from '../cli/bpmn_document';
+import { logError } from '../cli/logging';
 import {
   DeployedProcessModelInfo,
   FinishedUserTaskInfo,
   RemovedProcessModelInfo,
   StartedProcessModelInfo,
-  StoppedProcessInstanceInfo
+  StoppedProcessInstanceInfo,
 } from '../contracts/api_client_types';
+import { Session } from '../session/session';
 import {
   filterProcessInstancesByProcessModelId,
   filterProcessInstancesByState,
   filterProcessModelsById,
   rejectProcessInstancesByProcessModelId,
-  rejectProcessInstancesByState
+  rejectProcessInstancesByState,
 } from './filtering';
-import { logError } from '../cli/logging';
+import { getIdentity } from './identity';
 import { isUrlAvailable } from './is_url_available';
 
 // TODO: missing IIdentity here
@@ -68,7 +67,7 @@ export class ApiClient {
     try {
       await this.engineClient.processDefinitions.deployFiles(filename, {
         overwriteExisting: true,
-        identity: this.identity
+        identity: this.identity,
       });
     } catch (error) {
       await this.warnAndExitIfEnginerUrlNotAvailable();
@@ -83,7 +82,7 @@ export class ApiClient {
     try {
       const processDefinition = await this.engineClient.processDefinitions.getByProcessModelId(
         processModelId,
-        this.identity
+        this.identity,
       );
       await this.engineClient.processDefinitions.deleteById(processDefinition.processDefinitionId);
 
@@ -99,7 +98,7 @@ export class ApiClient {
     processModelId: string,
     startEventId: string,
     payload: any = {},
-    waitForProcessToFinish: boolean
+    waitForProcessToFinish: boolean,
   ): Promise<StartedProcessModelInfo> {
     try {
       let response;
@@ -109,9 +108,9 @@ export class ApiClient {
             processModelId,
             startEventId,
             initialToken: payload.startToken,
-            correlationId: payload.correlationId
+            correlationId: payload.correlationId,
           },
-          this.identity
+          this.identity,
         );
       } else {
         response = await this.engineClient.processDefinitions.startProcessInstance(
@@ -119,9 +118,9 @@ export class ApiClient {
             processModelId,
             startEventId,
             initialToken: payload.startToken,
-            correlationId: payload.correlationId
+            correlationId: payload.correlationId,
           },
-          this.identity
+          this.identity,
         );
       }
 
@@ -133,7 +132,7 @@ export class ApiClient {
         correlationId: response.correlationId,
         startToken: payload.startToken,
         endEventId: response.endEventId,
-        endToken: response.tokenPayload
+        endToken: response.tokenPayload,
       };
 
       return result;
@@ -149,7 +148,7 @@ export class ApiClient {
         startEventId,
         processInstanceId,
         correlationId,
-        error: normalizeError(error)
+        error: normalizeError(error),
       };
     }
   }
@@ -160,7 +159,7 @@ export class ApiClient {
 
       return {
         success: true,
-        processInstanceId
+        processInstanceId,
       };
     } catch (error) {
       await this.warnAndExitIfEnginerUrlNotAvailable();
@@ -175,7 +174,7 @@ export class ApiClient {
 
       return {
         success: true,
-        processInstanceId
+        processInstanceId,
       };
     } catch (error) {
       await this.warnAndExitIfEnginerUrlNotAvailable();
@@ -184,15 +183,12 @@ export class ApiClient {
     }
   }
 
-  async getProcessModels(
-    offset?: number,
-    limit?: number
-  ): Promise<ProcessModel[]> {
+  async getProcessModels(offset?: number, limit?: number): Promise<ProcessModel[]> {
     try {
       const result = await this.engineClient.processDefinitions.getAll({
         identity: this.identity,
         offset: offset,
-        limit: limit
+        limit: limit,
       });
 
       let processModels = [];
@@ -226,7 +222,7 @@ export class ApiClient {
     filterByProcessModelId: string[],
     rejectByProcessModelId: string[],
     filterByState: string[],
-    rejectByState: string[]
+    rejectByState: string[],
   ): Promise<ProcessInstance[]> {
     let allProcessInstances: ProcessInstance[];
 
@@ -256,7 +252,7 @@ export class ApiClient {
     rejectByProcessModelId: string[],
     filterByState: string[],
     filterByFlowNodeInstanceId: string[],
-    rejectByState: string[]
+    rejectByState: string[],
   ): Promise<UserTaskInstance[]> {
     let allUserTasks: UserTaskInstance[];
     try {
@@ -291,7 +287,7 @@ export class ApiClient {
       const result: FinishedUserTaskInfo = {
         success: true,
         flowNodeInstanceId: flowNodeInstanceId,
-        resultValues: payload.resultValues
+        resultValues: payload.resultValues,
       };
 
       return result;
@@ -305,7 +301,7 @@ export class ApiClient {
   async getAllUserTasksViaCorrelations(correlationIds: string[]): Promise<UserTaskInstance[]> {
     try {
       const result = await this.engineClient.userTasks.query({
-        correlationId: correlationIds
+        correlationId: correlationIds,
       });
 
       return result.userTasks;
@@ -324,7 +320,7 @@ export class ApiClient {
     for (const processModel of processModels) {
       try {
         const result = await this.engineClient.userTasks.query({
-          processModelId: processModel.id
+          processModelId: processModel.id,
         });
 
         allUserTasks = allUserTasks.concat(result.userTasks);
@@ -341,7 +337,7 @@ export class ApiClient {
   private async getAllUserTasksViaState(filterByState: string[]): Promise<UserTaskInstance[]> {
     try {
       const result = await this.engineClient.userTasks.query({
-        state: (filterByState as unknown) as FlowNodeInstanceState[]
+        state: filterByState as unknown as FlowNodeInstanceState[],
       });
 
       return result.userTasks;
@@ -354,7 +350,7 @@ export class ApiClient {
   async getAllUserTasksViaFlowNodeInstances(flowNodeInstanceId: string[]): Promise<UserTaskInstance[]> {
     try {
       const result = await this.engineClient.userTasks.query({
-        flowNodeInstanceId: flowNodeInstanceId
+        flowNodeInstanceId: flowNodeInstanceId,
       });
 
       return result.userTasks;
@@ -377,7 +373,7 @@ export class ApiClient {
     try {
       const rawProcessInstance = await this.engineClient.processInstances.query(
         { processInstanceId: processInstanceIds },
-        this.identity
+        this.identity,
       );
       return rawProcessInstance.processInstances;
     } catch (error) {
@@ -394,9 +390,9 @@ export class ApiClient {
           identity: this.identity,
           sortSettings: {
             sortBy: ProcessInstanceSortableColumns.createdAt,
-            sortDir: 'DESC'
-          }
-        }
+            sortDir: 'DESC',
+          },
+        },
       );
 
       /*
@@ -412,13 +408,13 @@ export class ApiClient {
   }
 
   async addFlowNodeInstancesToProcessInstances(
-    rawProcessInstances: ProcessInstance[]
+    rawProcessInstances: ProcessInstance[],
   ): Promise<ProcessInstanceWithFlowNodeInstances[]> {
     const processInstancesWithFlowNodeInstances: ProcessInstanceWithFlowNodeInstances[] = [];
     for (const rawProcessInstance of rawProcessInstances) {
       const flowNodeInstanceResult = await this.engineClient.flowNodeInstances.query(
         { processInstanceId: rawProcessInstance.processInstanceId },
-        this.identity
+        this.identity,
       );
       const processInstance = { ...rawProcessInstance, flowNodeInstances: flowNodeInstanceResult.flowNodeInstances };
 
@@ -429,7 +425,7 @@ export class ApiClient {
   }
 
   private async getAllProcessInstancesViaAllProcessModels(
-    filterByProcessModelId: string[]
+    filterByProcessModelId: string[],
   ): Promise<ProcessInstance[]> {
     const allProcessModels = await this.getProcessModels();
 
@@ -440,7 +436,7 @@ export class ApiClient {
       try {
         const result = await this.engineClient.processInstances.query(
           { processModelId: processModel.id },
-          this.identity
+          this.identity,
         );
 
         allProcessInstances = allProcessInstances.concat(result.processInstances);
@@ -491,6 +487,6 @@ function normalizeError(error: any): any {
     name: error.name,
     code: error.code,
     message: error.message,
-    additionalInformation: error.additionalInformation
+    additionalInformation: error.additionalInformation,
   };
 }

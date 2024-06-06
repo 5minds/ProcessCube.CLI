@@ -1,15 +1,15 @@
 import yesno from 'yesno';
 
-import { loadSession } from '../../session/session';
-import { createResultJson, useMessageForResultJsonErrors } from '../../cli/result_json';
-import { OUTPUT_FORMAT_JSON, OUTPUT_FORMAT_TEXT } from '../../pc';
 import { logError, logJsonResult, logJsonResultAsTextTable } from '../../cli/logging';
+import { createResultJson, useMessageForResultJsonErrors } from '../../cli/result_json';
 import { ApiClient } from '../../client/api_client';
+import { OUTPUT_FORMAT_JSON, OUTPUT_FORMAT_TEXT } from '../../pc';
+import { loadSession } from '../../session/session';
 
 export async function removeProcessModels(
   processModelIds: string[],
   autoYes: boolean,
-  outputFormat: string
+  outputFormat: string,
 ): Promise<void> {
   const session = loadSession();
   if (session == null) {
@@ -19,7 +19,7 @@ export async function removeProcessModels(
 
   if (autoYes !== true) {
     const yes = await yesno({
-      question: 'Are you sure you want to continue?'
+      question: 'Are you sure you want to continue?',
     });
 
     if (yes !== true) {

@@ -1,17 +1,16 @@
 import * as assert from 'assert';
 
 import { sortProcessInstances } from './sorting';
-
 import {
-  getMockedProcessInstances,
   PROCESS_A_createdAt_01_error,
   PROCESS_A_createdAt_02_error,
   PROCESS_A_createdAt_03_finished,
   PROCESS_B_createdAt_04_running,
+  PROCESS_B_createdAt_07_finished,
   PROCESS_C_createdAt_05_finished,
   PROCESS_C_createdAt_06_error,
-  PROCESS_B_createdAt_07_finished,
-  mapIds
+  getMockedProcessInstances,
+  mapIds,
 } from './test-mocks.test';
 
 describe('sorting process instances', () => {
@@ -42,7 +41,7 @@ describe('sorting process instances', () => {
         PROCESS_B_createdAt_04_running,
         PROCESS_C_createdAt_05_finished,
         PROCESS_C_createdAt_06_error,
-        PROCESS_B_createdAt_07_finished
+        PROCESS_B_createdAt_07_finished,
       ];
 
       assert.deepStrictEqual(mapIds(result), mapIds(expected));
@@ -58,7 +57,7 @@ describe('sorting process instances', () => {
         PROCESS_A_createdAt_03_finished,
         PROCESS_C_createdAt_05_finished,
         PROCESS_B_createdAt_07_finished,
-        PROCESS_B_createdAt_04_running
+        PROCESS_B_createdAt_04_running,
       ];
 
       assert.deepStrictEqual(mapIds(result), mapIds(expected));
@@ -74,7 +73,7 @@ describe('sorting process instances', () => {
         PROCESS_B_createdAt_04_running,
         PROCESS_A_createdAt_01_error,
         PROCESS_A_createdAt_02_error,
-        PROCESS_A_createdAt_03_finished
+        PROCESS_A_createdAt_03_finished,
       ];
 
       assert.deepStrictEqual(mapIds(result), mapIds(expected));
@@ -90,7 +89,7 @@ describe('sorting process instances', () => {
         PROCESS_B_createdAt_07_finished,
         PROCESS_B_createdAt_04_running,
         PROCESS_C_createdAt_06_error,
-        PROCESS_C_createdAt_05_finished
+        PROCESS_C_createdAt_05_finished,
       ];
 
       assert.deepStrictEqual(mapIds(result), mapIds(expected));
@@ -106,7 +105,7 @@ describe('sorting process instances', () => {
         PROCESS_B_createdAt_04_running,
         PROCESS_B_createdAt_07_finished,
         PROCESS_C_createdAt_05_finished,
-        PROCESS_C_createdAt_06_error
+        PROCESS_C_createdAt_06_error,
       ];
 
       assert.deepStrictEqual(mapIds(result), mapIds(expected));
@@ -122,7 +121,7 @@ describe('sorting process instances', () => {
         PROCESS_B_createdAt_07_finished,
         PROCESS_A_createdAt_01_error,
         PROCESS_A_createdAt_02_error,
-        PROCESS_A_createdAt_03_finished
+        PROCESS_A_createdAt_03_finished,
       ];
 
       assert.deepStrictEqual(mapIds(result), mapIds(expected));
@@ -138,7 +137,7 @@ describe('sorting process instances', () => {
         PROCESS_B_createdAt_07_finished,
         PROCESS_B_createdAt_04_running,
         PROCESS_C_createdAt_06_error,
-        PROCESS_C_createdAt_05_finished
+        PROCESS_C_createdAt_05_finished,
       ];
 
       assert.deepStrictEqual(mapIds(result), mapIds(expected));

@@ -1,16 +1,16 @@
-import { ApiClient, ProcessInstance } from '../../client/api_client';
-import { Session, loadSession } from '../../session/session';
+import { logJsonResult, logJsonResultAsTextTable, logNoValidSessionError } from '../../cli/logging';
 import { addJsonPipingHintToResultJson, createResultJson } from '../../cli/result_json';
+import { ApiClient, ProcessInstance } from '../../client/api_client';
 import {
   filterProcessInstancesByEndTimeAfter,
   filterProcessInstancesByEndTimeBefore,
   filterProcessInstancesByExecutionTime,
   filterProcessInstancesDateAfter,
-  filterProcessInstancesDateBefore
+  filterProcessInstancesDateBefore,
 } from '../../client/filtering';
-import { logJsonResult, logJsonResultAsTextTable, logNoValidSessionError } from '../../cli/logging';
-import { sortProcessInstances } from './sorting';
 import { OUTPUT_FORMAT_JSON, OUTPUT_FORMAT_TEXT } from '../../pc';
+import { Session, loadSession } from '../../session/session';
+import { sortProcessInstances } from './sorting';
 
 export async function listProcessInstances(
   pipedProcessInstanceIds: string[] | null,
@@ -30,7 +30,7 @@ export async function listProcessInstances(
   sortByCreatedAt: string,
   limit: number,
   showAllFields: boolean,
-  outputFormat: string
+  outputFormat: string,
 ) {
   const session = loadSession();
   if (session == null) {
@@ -55,7 +55,7 @@ export async function listProcessInstances(
     sortByProcessModelId,
     sortByState,
     sortByCreatedAt,
-    limit
+    limit,
   );
 
   let resultProcessInstances: any[];
@@ -74,7 +74,7 @@ export async function listProcessInstances(
     logJsonResultAsTextTable(
       resultJson,
       ['createdAt', 'finishedAt', 'processModelId', 'processInstanceId', 'state', 'correlationId'],
-      'List of Process Instances'
+      'List of Process Instances',
     );
   }
 }
@@ -96,7 +96,7 @@ async function getProcessInstances(
   sortByProcessModelId: string,
   sortByState: string,
   sortByCreatedAt: string,
-  limit: number
+  limit: number,
 ): Promise<ProcessInstance[]> {
   const apiClient = new ApiClient(session);
 
@@ -105,18 +105,18 @@ async function getProcessInstances(
     filterByProcessModelId,
     rejectByProcessModelId,
     filterByState,
-    rejectByState
+    rejectByState,
   );
 
   if (pipedProcessInstanceIds != null) {
     allProcessInstances = allProcessInstances.filter((processInstance: any) =>
-      pipedProcessInstanceIds.includes(processInstance.processInstanceId)
+      pipedProcessInstanceIds.includes(processInstance.processInstanceId),
     );
   }
 
   if (pipedProcessModelIds != null) {
     allProcessInstances = allProcessInstances.filter((processInstance: any) =>
-      pipedProcessModelIds.includes(processInstance.processModelId)
+      pipedProcessModelIds.includes(processInstance.processModelId),
     );
   }
 

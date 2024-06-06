@@ -13,7 +13,7 @@ type FilterableProcessInstance = {
 export function filterProcessInstancesDateAfter(
   processInstances: FilterableProcessInstance[],
   fieldName: string,
-  createdAfter: string
+  createdAfter: string,
 ): any[] {
   if (createdAfter == null) {
     return processInstances;
@@ -23,14 +23,14 @@ export function filterProcessInstancesDateAfter(
   const afterDate = dayjs(createdAfter);
 
   return processInstances.filter((processInstance: FilterableProcessInstance) =>
-    dayjs(processInstance[fieldName]).isAfter(afterDate)
+    dayjs(processInstance[fieldName]).isAfter(afterDate),
   );
 }
 
 export function filterProcessInstancesDateBefore(
   processInstances: FilterableProcessInstance[],
   fieldName: string,
-  createdBefore: string
+  createdBefore: string,
 ): any[] {
   if (createdBefore == null) {
     return processInstances;
@@ -40,13 +40,13 @@ export function filterProcessInstancesDateBefore(
   const beforeDate = dayjs(createdBefore);
 
   return processInstances.filter((processInstance: FilterableProcessInstance) =>
-    dayjs(processInstance[fieldName]).isBefore(beforeDate)
+    dayjs(processInstance[fieldName]).isBefore(beforeDate),
   );
 }
 
 export function filterProcessInstancesByState(
   processInstances: FilterableProcessInstance[],
-  filterByState: string[]
+  filterByState: string[],
 ): any[] {
   if (filterByState.length === 0) {
     return processInstances;
@@ -60,7 +60,7 @@ export function filterProcessInstancesByState(
 
 export function rejectProcessInstancesByState(
   processInstances: FilterableProcessInstance[],
-  rejectByState: string[]
+  rejectByState: string[],
 ): any[] {
   if (rejectByState.length === 0) {
     return processInstances;
@@ -74,7 +74,7 @@ export function rejectProcessInstancesByState(
 
 export function filterProcessInstancesByProcessModelId(
   processInstances: FilterableProcessInstance[],
-  filterByProcessModelId: string[]
+  filterByProcessModelId: string[],
 ): any[] {
   if (filterByProcessModelId.length === 0) {
     return processInstances;
@@ -90,7 +90,7 @@ export function filterProcessInstancesByProcessModelId(
 
 export function filterUserTasksByFlowNodeInstanceId(
   processInstances: FilterableProcessInstance[],
-  filterByFlowNodeInstanceId: string[]
+  filterByFlowNodeInstanceId: string[],
 ): any[] {
   if (filterByFlowNodeInstanceId.length === 0) {
     return processInstances;
@@ -100,7 +100,7 @@ export function filterUserTasksByFlowNodeInstanceId(
 
   return processInstances.filter((processInstance: FilterableProcessInstance) => {
     const anyFilterMatched = filterRegexes.some(
-      (regex: RegExp) => processInstance.flowNodeInstanceId.match(regex) != null
+      (regex: RegExp) => processInstance.flowNodeInstanceId.match(regex) != null,
     );
     return anyFilterMatched;
   });
@@ -108,7 +108,7 @@ export function filterUserTasksByFlowNodeInstanceId(
 
 export function rejectProcessInstancesByProcessModelId(
   processInstances: FilterableProcessInstance[],
-  filterByProcessModelId: string[]
+  filterByProcessModelId: string[],
 ): any[] {
   if (filterByProcessModelId.length === 0) {
     return processInstances;
@@ -137,7 +137,7 @@ export function filterProcessModelsById(processModels: any[], filterById: string
 
 export function filterProcessInstancesByEndTimeAfter(
   processInstances: FilterableProcessInstance[],
-  completedAfter: string
+  completedAfter: string,
 ): any[] {
   if (completedAfter == null) {
     return processInstances;
@@ -158,7 +158,7 @@ export function filterProcessInstancesByEndTimeAfter(
 
 export function filterProcessInstancesByEndTimeBefore(
   processInstances: FilterableProcessInstance[],
-  completedBefore: string
+  completedBefore: string,
 ): any[] {
   if (completedBefore == null) {
     return processInstances;
@@ -180,7 +180,7 @@ export function filterProcessInstancesByEndTimeBefore(
 
 export function filterProcessInstancesByExecutionTime(
   processInstances: FilterableProcessInstance[],
-  filterByExecutionTime: string
+  filterByExecutionTime: string,
 ): any[] {
   if (filterByExecutionTime == null) {
     return processInstances;
@@ -190,7 +190,7 @@ export function filterProcessInstancesByExecutionTime(
 
   if (executionTimeMatches == null) {
     throw new Error(
-      `Unable to parse completed-in parameter '${filterByExecutionTime}'. Format has to be "[<|>] [TIME] [d|h|m|s]". Please refer to 'lsi --help' for more detailed information.`
+      `Unable to parse completed-in parameter '${filterByExecutionTime}'. Format has to be "[<|>] [TIME] [d|h|m|s]". Please refer to 'lsi --help' for more detailed information.`,
     );
   }
 
@@ -203,7 +203,7 @@ export function filterProcessInstancesByExecutionTime(
   const unitOfTime = getUnitOfTimeForAbbreviation(parsedUnitOfTime);
 
   return processInstances.filter((processInstance: FilterableProcessInstance) =>
-    isCompletedIn(processInstance, parsedComparisonType, time, unitOfTime)
+    isCompletedIn(processInstance, parsedComparisonType, time, unitOfTime),
   );
 }
 
@@ -224,16 +224,12 @@ function isCompletedIn(
   processInstance: FilterableProcessInstance,
   comparisonType: string,
   time: number,
-  unitOfTime: dayjs.ManipulateType
+  unitOfTime: dayjs.ManipulateType,
 ): boolean {
   if (comparisonType === '>') {
-    return dayjs(processInstance.createdAt)
-      .add(time, unitOfTime)
-      .isBefore(processInstance.finishedAt);
+    return dayjs(processInstance.createdAt).add(time, unitOfTime).isBefore(processInstance.finishedAt);
   } else if (comparisonType === '<') {
-    return dayjs(processInstance.createdAt)
-      .add(time, unitOfTime)
-      .isAfter(processInstance.finishedAt);
+    return dayjs(processInstance.createdAt).add(time, unitOfTime).isAfter(processInstance.finishedAt);
   }
 
   throw new Error(`Unknown comparison type: '${comparisonType}'. It should be > or <.`);

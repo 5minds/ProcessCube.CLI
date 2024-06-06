@@ -1,13 +1,12 @@
 import chalk from 'chalk';
 import * as glob from 'fast-glob';
 
-import { DeployedProcessModelInfo } from '../../contracts/api_client_types';
-
-import { ApiClient } from '../../client/api_client';
-import { addJsonPipingHintToResultJson, createResultJson } from '../../cli/result_json';
-import { loadSession } from '../../session/session';
 import { logError, logJsonResult } from '../../cli/logging';
+import { addJsonPipingHintToResultJson, createResultJson } from '../../cli/result_json';
+import { ApiClient } from '../../client/api_client';
+import { DeployedProcessModelInfo } from '../../contracts/api_client_types';
 import { OUTPUT_FORMAT_JSON, OUTPUT_FORMAT_TEXT } from '../../pc';
+import { loadSession } from '../../session/session';
 
 export async function deployFiles(globPatterns: string[], outputFormat: string): Promise<void> {
   const session = loadSession();

@@ -1,9 +1,8 @@
-import { ApiClient } from '../../client/api_client';
-import { addJsonPipingHintToResultJson, createResultJson, useMessageForResultJsonErrors } from '../../cli/result_json';
-import { loadSession } from '../../session/session';
 import { logError, logJsonResult, logJsonResultAsTextTable } from '../../cli/logging';
-
+import { addJsonPipingHintToResultJson, createResultJson, useMessageForResultJsonErrors } from '../../cli/result_json';
+import { ApiClient } from '../../client/api_client';
 import { OUTPUT_FORMAT_JSON, OUTPUT_FORMAT_TEXT } from '../../pc';
+import { loadSession } from '../../session/session';
 
 export async function startProcessInstance(
   pipedProcessModelIds: string[] | null,
@@ -12,7 +11,7 @@ export async function startProcessInstance(
   correlationId: string,
   startToken: any,
   waitForProcessToFinish: boolean,
-  outputFormat: string
+  outputFormat: string,
 ): Promise<void> {
   const session = loadSession();
   if (session == null) {
@@ -43,7 +42,7 @@ export async function startProcessInstance(
     processModelId,
     startEventId,
     startRequestPayload,
-    waitForProcessToFinish
+    waitForProcessToFinish,
   );
   const processInstances = [processInstance];
 
@@ -58,7 +57,7 @@ export async function startProcessInstance(
       logJsonResultAsTextTable(
         resultJson,
         ['success', 'processModelId', 'startEventId', 'processInstanceId', 'correlationId', 'error'],
-        'Started Process Instances'
+        'Started Process Instances',
       );
       break;
   }

@@ -18,14 +18,14 @@ export async function useYargsForCommandLineInterface(cli: CommandLineInterface)
       heading('USAGE') +
         '\n  $0 <command> [options]\n\n' +
         heading('SYNOPSIS') +
-        '\n  ProcessCube CLI provides a rich interface to deploy and start process models as well as manage and inspect process instances and correlations for 5Minds Engine.'
+        '\n  ProcessCube CLI provides a rich interface to deploy and start process models as well as manage and inspect process instances and correlations for 5Minds Engine.',
     )
     .epilog(formatHelpText(epilogSnippetAtlas))
     .locale('en')
     .updateStrings({
       'Commands:': heading('COMMANDS'),
       'Positionals:': heading('ARGUMENTS'),
-      'Options:': heading('GENERAL OPTIONS')
+      'Options:': heading('GENERAL OPTIONS'),
     })
     .wrap(null)
     .strict()
@@ -58,7 +58,7 @@ export function registerCommandInYargs(cli: CommandLineInterface, command: Comma
         yargs.positional(arg.name, {
           description: arg.description,
           type: arg.type,
-          default: arg.default ?? defaultArgDefault
+          default: arg.default ?? defaultArgDefault,
         });
       });
 
@@ -69,7 +69,7 @@ export function registerCommandInYargs(cli: CommandLineInterface, command: Comma
           type: option.type,
           default: option.default,
           choices: option.choices,
-          hidden: option.deprecated === true
+          hidden: option.deprecated === true,
         });
       });
 
@@ -89,14 +89,14 @@ export function registerCommandInYargs(cli: CommandLineInterface, command: Comma
       const inputs = await convertYargsArgvToInputs(command, argv, cli);
 
       cli.executeCommand(command.name, inputs);
-    }
+    },
   );
 }
 
 function convertYargsArgvToInputs(command: Command, argv: any, cli: CommandLineInterface): Inputs {
   return {
     argv: getParsedFromYargsArgv(command, argv),
-    stdin: cli.stdin
+    stdin: cli.stdin,
   };
 }
 

@@ -1,5 +1,6 @@
-import 'mocha';
 import * as assert from 'assert';
+import 'mocha';
+
 import { execAsJson, execAsJsonPipes, execAsText, loginAsRoot } from '../exec_as';
 
 describe('list-process-models', () => {

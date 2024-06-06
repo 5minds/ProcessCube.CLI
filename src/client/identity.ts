@@ -9,7 +9,7 @@ export function getIdentity(session: Session): Identity {
   const identity = {
     // TODO: do we need a user id? what for?
     userId: session.idToken,
-    token: session.accessToken
+    token: session.accessToken,
   };
 
   return identity;

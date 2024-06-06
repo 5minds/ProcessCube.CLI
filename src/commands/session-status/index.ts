@@ -8,9 +8,9 @@ export async function onLoad(cli: CLI): Promise<void> {
       alias: 'st',
       description: 'Show status of the current session',
       descriptionLong: 'Shows status of the current session.',
-      examples: require('./examples.md')
+      examples: require('./examples.md'),
     },
-    runCommand
+    runCommand,
   );
 }
 

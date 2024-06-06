@@ -15,55 +15,55 @@ export async function onLoad(cli: CLI): Promise<void> {
           name: 'filter-by-correlation-id',
           description: 'Filter user tasks by <correlationId>',
           type: 'array',
-          default: []
+          default: [],
         },
         {
           name: 'filter-by-process-model-id',
           description: 'Filter user tasks by <pattern> (supports regular expressions)',
           type: 'array',
-          default: []
+          default: [],
         },
         {
           name: 'reject-by-process-model-id',
           description: 'Reject user tasks by <pattern> (supports regular expressions)',
           type: 'array',
-          default: []
+          default: [],
         },
         {
           name: 'filter-by-state',
           description: 'Filter user tasks by <state> (running, finished, error)',
           type: 'array',
-          default: []
+          default: [],
         },
         {
           name: 'filter-by-flow-node-instance-id',
           description: 'Filter user tasks by <flowNodeInstanceId>',
           type: 'array',
-          default: []
+          default: [],
         },
         {
           name: 'reject-by-state',
           description: 'Reject user tasks by <state> (running, finished, error)',
           type: 'array',
-          default: []
+          default: [],
         },
         {
           name: 'sort-by-process-model-id',
           description: 'Sort user tasks by their process model id in <direction> (asc, desc)',
           type: 'string',
-          choices: ['', 'asc', 'desc']
+          choices: ['', 'asc', 'desc'],
         },
         {
           name: 'sort-by-state',
           description: 'Sort user tasks by their state in <direction> (asc, desc)',
           type: 'string',
-          choices: ['', 'asc', 'desc']
+          choices: ['', 'asc', 'desc'],
         },
         {
           name: 'limit',
           description: 'List a maximum of <limit> user tasks',
-          type: 'number'
-        }
+          type: 'number',
+        },
       ],
       optionGroups: [
         {
@@ -74,20 +74,20 @@ export async function onLoad(cli: CLI): Promise<void> {
             'filter-by-state',
             'reject-by-process-model-id',
             'reject-by-state',
-            'limit'
-          ]
+            'limit',
+          ],
         },
         {
           heading: 'SORTING OPTIONS',
-          options: ['sort-by-process-model-id', 'sort-by-state']
+          options: ['sort-by-process-model-id', 'sort-by-state'],
         },
         {
           heading: 'OUTPUT OPTIONS',
-          options: ['output']
-        }
-      ]
+          options: ['output'],
+        },
+      ],
     },
-    runCommand
+    runCommand,
   );
 }
 
@@ -111,6 +111,6 @@ async function runCommand(inputs: Inputs): Promise<void> {
     sortByProcessModelId,
     sortByState,
     inputs.argv.limit,
-    inputs.argv.output
+    inputs.argv.output,
   );
 }

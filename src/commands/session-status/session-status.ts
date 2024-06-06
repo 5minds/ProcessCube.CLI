@@ -1,11 +1,10 @@
 import chalk from 'chalk';
 import dayjs from 'dayjs';
 
-import { Session, loadSession } from '../../session/session';
 import { logJsonResult, logWarning } from '../../cli/logging';
 import { addJsonPipingHintToResultJson } from '../../cli/result_json';
-
 import { OUTPUT_FORMAT_JSON, OUTPUT_FORMAT_TEXT } from '../../pc';
+import { Session, loadSession } from '../../session/session';
 
 export async function printSessionStatus(outputFormat: string): Promise<void> {
   const session = loadSession(true);
@@ -35,7 +34,7 @@ function sanitizeSensibleInformation(session: Session): Session {
   return {
     ...session,
     accessToken: `${session.accessToken.substr(0, 7)}...`,
-    idToken: session.idToken ? `${session.idToken.substr(0, 7)}...` : undefined
+    idToken: session.idToken ? `${session.idToken.substr(0, 7)}...` : undefined,
   };
 }
 
@@ -45,6 +44,6 @@ function log(session: Session): void {
   console.log(
     'Expires:  ',
     `${dayjs(session.expiresAt).format('YYYY-MM-DD hh:mm:ss')}`,
-    chalk.dim(`(${session.expiresIn?.inWords})`)
+    chalk.dim(`(${session.expiresIn?.inWords})`),
   );
 }

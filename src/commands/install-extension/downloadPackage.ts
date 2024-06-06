@@ -1,7 +1,8 @@
-import fs from '@npmcli/fs';
-import { join } from 'path';
 import { spawn } from 'child_process';
 import os from 'os';
+import { join } from 'path';
+
+import fs from '@npmcli/fs';
 
 export function downloadPackage(name: string): Promise<string> {
   return new Promise((resolve, reject) => {

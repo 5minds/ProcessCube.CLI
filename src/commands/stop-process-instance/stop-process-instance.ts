@@ -1,10 +1,9 @@
-import { ApiClient } from '../../client/api_client';
-import { addJsonPipingHintToResultJson, createResultJson } from '../../cli/result_json';
-import { loadSession } from '../../session/session';
 import { logError, logJsonResult, logJsonResultAsTextTable } from '../../cli/logging';
-
-import { OUTPUT_FORMAT_JSON, OUTPUT_FORMAT_TEXT } from '../../pc';
+import { addJsonPipingHintToResultJson, createResultJson } from '../../cli/result_json';
+import { ApiClient } from '../../client/api_client';
 import { StoppedProcessInstanceInfo } from '../../contracts/api_client_types';
+import { OUTPUT_FORMAT_JSON, OUTPUT_FORMAT_TEXT } from '../../pc';
+import { loadSession } from '../../session/session';
 
 export async function stopProcessInstance(processInstanceIds: string[], outputFormat: string): Promise<void> {
   const session = loadSession();
@@ -32,7 +31,7 @@ export async function stopProcessInstance(processInstanceIds: string[], outputFo
       logJsonResultAsTextTable(
         resultJson,
         ['success', 'processInstanceId', 'correlationId', 'error'],
-        'Stopped Process Instances'
+        'Stopped Process Instances',
       );
       break;
   }

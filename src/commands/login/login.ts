@@ -1,15 +1,14 @@
 import chalk from 'chalk';
 
+import { logError, logWarning } from '../../cli/logging';
+import { isUrlAvailable } from '../../client/is_url_available';
 import {
   ANONYMOUS_IDENTITY_SERVER_URL,
   ROOT_ACCESS_TOKEN_IDENTITY_SERVER_URL,
   Session,
   loadSession,
-  saveSession
+  saveSession,
 } from '../../session/session';
-
-import { isUrlAvailable } from '../../client/is_url_available';
-import { logError, logWarning } from '../../cli/logging';
 import { startServerToLoginAndWaitForAccessTokenFromIdentityServer } from './express_server';
 import { getAccessTokenFromIdentityServer } from './m2m';
 
@@ -27,7 +26,7 @@ export async function login(
   givenScope: string,
   tryAnonymousRootLogin: boolean,
   useRootAccessToken: string | null,
-  outputFormat: string
+  outputFormat: string,
 ): Promise<void> {
   let engineUrl = givenEngineUrl;
 
@@ -118,7 +117,7 @@ async function loginViaAnonymousRootAccess(engineUrl: string): Promise<Session> 
     identityServerUrl: ANONYMOUS_IDENTITY_SERVER_URL,
     idToken: '',
     accessToken: 'ZHVtbXlfdG9rZW4=',
-    expiresAt: Date.now() + ANONYMOUS_TOKEN_LIFETIME_IN_MILLISECONDS
+    expiresAt: Date.now() + ANONYMOUS_TOKEN_LIFETIME_IN_MILLISECONDS,
   };
 
   return newSession;
@@ -131,7 +130,7 @@ async function loginViaRootAccessToken(engineUrl: string, token: string): Promis
     identityServerUrl: ROOT_ACCESS_TOKEN_IDENTITY_SERVER_URL,
     idToken: '',
     accessToken: token,
-    expiresAt: Date.now() + ANONYMOUS_TOKEN_LIFETIME_IN_MILLISECONDS
+    expiresAt: Date.now() + ANONYMOUS_TOKEN_LIFETIME_IN_MILLISECONDS,
   };
 
   return newSession;
@@ -141,7 +140,7 @@ async function loginViaIdentityServerImplicitFlow(
   engineUrl: string,
   givenClientId: string,
   givenResponseType: string,
-  givenScope: string
+  givenScope: string,
 ): Promise<Session | null> {
   const identityServerUrl = await getIdentityServerUrlForEngine(engineUrl);
   if (identityServerUrl == null) {
@@ -154,13 +153,13 @@ async function loginViaIdentityServerImplicitFlow(
     console.warn('');
     if (identityServerUrl === DEFAULT_IDENTITY_SERVER_URL) {
       console.warn(
-        chalk.redBright.bold(`If you're in a development setting, your engine might also allow anonymous root access:`)
+        chalk.redBright.bold(`If you're in a development setting, your engine might also allow anonymous root access:`),
       );
       console.warn('');
       console.warn(chalk.redBright.bold(`  $ pc login ${engineUrl} --root`));
       console.warn('');
       console.warn(
-        chalk.redBright.bold(`If you're in a production setting, you should avoid enabling anonymous root access.`)
+        chalk.redBright.bold(`If you're in a production setting, you should avoid enabling anonymous root access.`),
       );
     } else {
       console.warn(chalk.redBright.bold(`To be able to login, please ensure the authority is reachable.`));
@@ -174,7 +173,7 @@ async function loginViaIdentityServerImplicitFlow(
     undefined,
     givenClientId,
     givenResponseType,
-    givenScope
+    givenScope,
   );
 
   const newSession: Session = {
@@ -183,7 +182,7 @@ async function loginViaIdentityServerImplicitFlow(
     identityServerUrl,
     accessToken,
     idToken,
-    expiresAt
+    expiresAt,
   };
 
   return newSession;
@@ -193,7 +192,7 @@ async function loginViaM2M(
   engineUrl: string,
   clientId: string,
   clientSecret: string,
-  scope?: string
+  scope?: string,
 ): Promise<Session | null> {
   const identityServerUrl = await getIdentityServerUrlForEngine(engineUrl);
   if (identityServerUrl == null) {
@@ -206,13 +205,13 @@ async function loginViaM2M(
     console.warn('');
     if (identityServerUrl === DEFAULT_IDENTITY_SERVER_URL) {
       console.warn(
-        chalk.redBright.bold(`If you're in a development setting, your engine might also allow anonymous root access:`)
+        chalk.redBright.bold(`If you're in a development setting, your engine might also allow anonymous root access:`),
       );
       console.warn('');
       console.warn(chalk.redBright.bold(`  $ pc login ${engineUrl} --root`));
       console.warn('');
       console.warn(
-        chalk.redBright.bold(`If you're in a production setting, you should avoid enabling anonymous root access.`)
+        chalk.redBright.bold(`If you're in a production setting, you should avoid enabling anonymous root access.`),
       );
     } else {
       console.warn(chalk.redBright.bold(`To be able to login, please ensure the authority is reachable.`));
@@ -225,7 +224,7 @@ async function loginViaM2M(
     identityServerUrl,
     clientId,
     clientSecret,
-    scope
+    scope,
   );
 
   const newSession: Session = {
@@ -234,7 +233,7 @@ async function loginViaM2M(
     identityServerUrl,
     accessToken,
     idToken,
-    expiresAt
+    expiresAt,
   };
 
   return newSession;

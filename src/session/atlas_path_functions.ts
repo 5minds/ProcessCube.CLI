@@ -1,6 +1,7 @@
-import { join, resolve } from 'path';
-import * as os from 'os';
 import { existsSync } from 'fs';
+import * as os from 'os';
+import { join, resolve } from 'path';
+
 import { logWarning } from '../cli/logging';
 
 const ATLAS_HOME_DIRNAME_LEGACY = '.atlas';
@@ -24,12 +25,12 @@ export function getCliHomeDir(): string {
   if (existsLegacyDir) {
     if (existsDir) {
       throw new Error(
-        `Found both ${homeDir}/.processcube/cli and ${homeDir}/.atlas/cli as home directory.\n\nPlease rename/remove ${homeDir}/.atlas/cli in favor of ${homeDir}/.processcube/cli.`
+        `Found both ${homeDir}/.processcube/cli and ${homeDir}/.atlas/cli as home directory.\n\nPlease rename/remove ${homeDir}/.atlas/cli in favor of ${homeDir}/.processcube/cli.`,
       );
     }
 
     logWarning(
-      `Found a ${homeDir}/.atlas/cli home directory.\n\nPlease rename ${homeDir}/.atlas/cli to ${homeDir}/.processcube/cli.`
+      `Found a ${homeDir}/.atlas/cli home directory.\n\nPlease rename ${homeDir}/.atlas/cli to ${homeDir}/.processcube/cli.`,
     );
 
     return legacyDir;

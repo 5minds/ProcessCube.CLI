@@ -1,10 +1,10 @@
 import { UserTaskInstance } from '@5minds/processcube_engine_sdk';
 
-import { ApiClient } from '../../client/api_client';
-import { Session, loadSession } from '../../session/session';
-import { addJsonPipingHintToResultJson, createResultJson } from '../../cli/result_json';
 import { logJsonResult, logJsonResultAsTextTable, logNoValidSessionError } from '../../cli/logging';
+import { addJsonPipingHintToResultJson, createResultJson } from '../../cli/result_json';
+import { ApiClient } from '../../client/api_client';
 import { OUTPUT_FORMAT_JSON, OUTPUT_FORMAT_TEXT } from '../../pc';
+import { Session, loadSession } from '../../session/session';
 import { sortUserTasks } from '../list-user-tasks/sorting';
 
 export async function listUserTasks(
@@ -19,7 +19,7 @@ export async function listUserTasks(
   sortByProcessModelId: string,
   sortByState: string,
   limit: number,
-  outputFormat: string
+  outputFormat: string,
 ) {
   const session = loadSession();
   if (session == null) {
@@ -39,7 +39,7 @@ export async function listUserTasks(
     rejectByState,
     sortByProcessModelId,
     sortByState,
-    limit
+    limit,
   );
 
   let resultJson = createResultJson('user-tasks', userTasks);
@@ -51,7 +51,7 @@ export async function listUserTasks(
     logJsonResultAsTextTable(
       resultJson,
       ['flowNodeInstanceId', 'flowNodeName', 'state', 'processModelId', 'processInstanceId', 'correlationId'],
-      'List of User Tasks'
+      'List of User Tasks',
     );
   }
 }
@@ -68,7 +68,7 @@ async function getUserTasks(
   rejectByState: string[],
   sortByProcessModelId: string,
   sortByState: string,
-  limit: number
+  limit: number,
 ): Promise<UserTaskInstance[]> {
   const apiClient = new ApiClient(session);
 
@@ -78,18 +78,18 @@ async function getUserTasks(
     rejectByProcessModelId,
     filterByState,
     flowNodeInstanceId,
-    rejectByState
+    rejectByState,
   );
 
   if (pipedProcessInstanceIds != null) {
     allUserTasks = allUserTasks.filter((processInstance: any) =>
-      pipedProcessInstanceIds.includes(processInstance.processInstanceId)
+      pipedProcessInstanceIds.includes(processInstance.processInstanceId),
     );
   }
 
   if (pipedProcessModelIds != null) {
     allUserTasks = allUserTasks.filter((processInstance: any) =>
-      pipedProcessModelIds.includes(processInstance.processModelId)
+      pipedProcessModelIds.includes(processInstance.processModelId),
     );
   }
   allUserTasks = sortUserTasks(allUserTasks, sortByProcessModelId, sortByState);
