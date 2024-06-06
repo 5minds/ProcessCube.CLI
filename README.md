@@ -11,14 +11,14 @@ Automatisierung.
 
 ### Voraussetzungen
 
-* Node `>= 10.0.0`
-* npm `>= 6.0.0`
+* Node `>= 18.0.0`
+* npm `>= 10.0.0`
 
 
 ### Setup/Installation
 
 ```shell
-$ npm install @atlas-engine/cli
+$ npm install @5minds/processcube_cli
 ```
 
 ## Wie kann ich das Projekt benutzen?
