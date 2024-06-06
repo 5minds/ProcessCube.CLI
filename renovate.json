@@ -1,0 +1,43 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [":dependencyDashboard", ":semanticPrefixFixDepsChoreOthers", ":ignoreModulesAndTests", "group:monorepos", "group:recommended", "replacements:all", "workarounds:all"],
+  "schedule": ["before 7am on Monday"],
+  "prHourlyLimit": 5,
+  "prConcurrentLimit": 10,
+  "reviewers": ["S3bastianGriesa", "ElRaptorus"],
+  "ignoreDeprecated": true,
+  "ignoreUnstable": true,
+  "ignoreDeps": ["@5minds/processcube_engine_sdk", "@5minds/processcube_engine_client"],
+  "updateLockFiles": true,
+  "automerge": true,
+  "packageRules": [
+    {
+      "groupName": "Type Updates",
+      "groupSlug": "types-minor",
+      "matchPackagePatterns": ["@types/*"],
+      "matchUpdateTypes": ["major", "minor", "patch"],
+      "automerge": true
+    },
+    {
+      "groupName": "Prettier",
+      "groupSlug": "prettier",
+      "matchPackagePatterns": ["prettier", "@trivago/prettier-plugin-sort-imports"],
+      "matchUpdateTypes": ["major", "minor", "patch"],
+      "automerge": true
+    },
+    {
+      "groupName": "Tests",
+      "groupSlug": "tests-minor",
+      "matchPackagePatterns": ["mocha", "choma"],
+      "matchUpdateTypes": ["major", "minor", "patch"],
+      "automerge": true
+    },
+    {
+      "groupName": "Typescript",
+      "groupSlug": "typescript",
+      "matchPackagePatterns": ["typescript", "ts-mocha"],
+      "matchUpdateTypes": ["minor", "patch"],
+      "automerge": true
+    }
+  ]
+}
