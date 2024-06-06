@@ -1,9 +1,8 @@
-import { AtlasEngineClient, IIdentity } from '@atlas-engine/atlas_engine_client';
+import { EngineClient, Identity } from '@5minds/processcube_engine_client';
 import { Session as SessionFromInternalModule } from '../session/session';
 
 export type Session = SessionFromInternalModule;
 
-// eslint-disable-next-line
 export interface CLI {
   executeCommand(commandName: string, inputs: Inputs): any;
 
@@ -17,9 +16,9 @@ export interface CLI {
   saveSession(session: Session): void;
   removeSession(): void;
 
-  getIdentityFromSession(): IIdentity | null;
+  getIdentityFromSession(): Identity | null;
 
-  getEngineClient(givenEngineUrl?: string, identity?: IIdentity): AtlasEngineClient;
+  getEngineClient(givenEngineUrl?: string, identity?: Identity): EngineClient;
 }
 
 export type Command = {

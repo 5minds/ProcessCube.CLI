@@ -2,7 +2,7 @@ import chalk from 'chalk';
 import { getBorderCharacters, table } from 'table';
 import mapValues from 'lodash.mapvalues';
 
-import marked from 'marked';
+import { marked } from 'marked';
 import { MarkdownRenderer } from './MarkdownRenderer';
 
 const HTML_ENTITY_REGEX = /&(#(?:\d+)|(?:#x[0-9A-Fa-f]+)|(?:\w+));?/gi;
@@ -130,7 +130,7 @@ export function formatHelpText(originalText: string): string {
 }
 
 function formatMarkdown(text: string): string {
-  const stillContainingSomeHtml = marked(text, { renderer: new MarkdownRenderer() });
+  const stillContainingSomeHtml = marked(text, { renderer: new MarkdownRenderer(), async: false }) as string;
 
   return unescapeHtmlEntities(stillContainingSomeHtml);
 }

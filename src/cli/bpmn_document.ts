@@ -4,17 +4,9 @@ export class BpmnDocument {
   private definitions: any;
 
   async loadXml(xml: string): Promise<void> {
-    return new Promise((resolve, reject) => {
-      const moddle = new BpmnModdle();
-      moddle.fromXML(xml, (err, definitions) => {
-        if (err) {
-          reject(err);
-        }
-
-        this.definitions = definitions;
-        resolve();
-      });
-    });
+    const moddle = new BpmnModdle();
+    const { rootElement: definitions } = await moddle.fromXML(xml);
+    this.definitions = definitions;
   }
 
   getProcessModelId(): string | null {

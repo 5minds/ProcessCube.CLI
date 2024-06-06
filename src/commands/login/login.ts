@@ -1,5 +1,4 @@
 import chalk from 'chalk';
-import fetch, { FetchError } from 'node-fetch';
 
 import {
   ANONYMOUS_IDENTITY_SERVER_URL,
@@ -251,8 +250,8 @@ async function getIdentityServerUrlForEngine(engineUrl: string): Promise<string>
 
     result = authority;
   } catch (error) {
-    switch (error.constructor) {
-      case FetchError:
+    switch (error.name) {
+      case 'FetchError':
         return null;
       default:
         console.error(error);

@@ -1,3 +1,4 @@
+import 'mocha';
 import * as assert from 'assert';
 import { execAsJson, execAsJsonPipes, execAsText, loginAsRoot } from '../exec_as';
 
@@ -61,9 +62,9 @@ describe('deploy start/stop/remove', () => {
           'deploy-files fixtures/wait-demo.bpmn',
           `start-process-model wait_demo StartEvent_1 --start-token '{"seconds": 1}' --correlation-id ${correlationId}`,
           'list-process-instances --all-fields --limit 1',
-          'show-process-instance'
+          'show-process-instance',
         ],
-        correlationId
+        correlationId,
       );
     });
   });

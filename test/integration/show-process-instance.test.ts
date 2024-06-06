@@ -1,3 +1,4 @@
+import 'mocha';
 import * as assert from 'assert';
 import { execAsJson, execAsText, loginAsRoot } from '../exec_as';
 
@@ -10,10 +11,10 @@ describe('show-process-instance', () => {
       execAsJson(
         `start-process-model Wartung.StringUmdrehen StartEvent_1 \
           --correlation-id ${correlationId} \
-          --wait`
+          --wait`,
       );
       const resultStart = execAsJson(
-        'list-process-instances --filter-by-process-model-id Wartung.StringUmdrehen --limit 1'
+        'list-process-instances --filter-by-process-model-id Wartung.StringUmdrehen --limit 1',
       );
       const processInstanceId = resultStart?.result[0]?.processInstanceId;
       assert.notEqual(processInstanceId, null);
@@ -27,7 +28,7 @@ describe('show-process-instance', () => {
         `show-process-instance \
           --correlation ${correlationId} \
           -F`,
-        /"xml": "[^.]+/
+        /"xml": "[^.]+/,
       );
       assert.strictEqual(resultByCorrelation?.result[0]?.state, 'finished', 'state was supposed to be `finished`');
     });

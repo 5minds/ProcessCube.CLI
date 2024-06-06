@@ -1,8 +1,8 @@
-import { AtlasEngineClient } from '@atlas-engine/atlas_engine_client';
-import { IIdentity } from '@atlas-engine/iam.contracts';
+import { EngineClient } from '@5minds/processcube_engine_client';
 import { CLI, Command, CommandOption, Inputs } from './contracts/cli_types';
 import { Session, loadSession, removeSession, saveSession } from './session/session';
 import { StdinPipeReader } from './StdinPipeReader';
+import { Identity } from './client/identity';
 
 type CommandWithCallbacks = Command & {
   executeCallbackFn: Function;
@@ -101,7 +101,7 @@ export class CommandLineInterface implements CLI {
     removeSession();
   }
 
-  getIdentityFromSession(): IIdentity | null {
+  getIdentityFromSession(): Identity | null {
     const session = this.loadSession();
     if (session == null) {
       return null;
@@ -113,7 +113,7 @@ export class CommandLineInterface implements CLI {
     };
   }
 
-  getEngineClient(givenEngineUrl?: string, identity?: IIdentity): AtlasEngineClient {
+  getEngineClient(givenEngineUrl?: string, identity?: Identity): EngineClient {
     let engineUrl = givenEngineUrl;
     if (engineUrl == null) {
       const session = this.loadSession();
@@ -125,6 +125,6 @@ export class CommandLineInterface implements CLI {
       }
     }
 
-    return new AtlasEngineClient(engineUrl, identity || this.getIdentityFromSession());
+    return new EngineClient(engineUrl, identity || this.getIdentityFromSession());
   }
 }

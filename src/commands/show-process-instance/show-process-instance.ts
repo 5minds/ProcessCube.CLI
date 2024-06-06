@@ -4,15 +4,15 @@ import relativeTime from 'dayjs/plugin/relativeTime';
 
 dayjs.extend(relativeTime);
 
+import { FlowNodeInstance, ProcessInstance } from '@5minds/processcube_engine_sdk';
+
 import { addJsonPipingHintToResultJson, createResultJson } from '../../cli/result_json';
 import { loadSession } from '../../session/session';
 import { OUTPUT_FORMAT_JSON, OUTPUT_FORMAT_TEXT } from '../../pc';
 import { BpmnDocument } from '../../cli/bpmn_document';
 import { sortProcessInstances } from '../list-process-instances/sorting';
 import { logError, logJsonResult } from '../../cli/logging';
-import { ApiClient, ProcessInstance, ProcessInstanceWithFlowNodeInstances } from '../../client/api_client';
-import { FlowNodeInstance } from '@atlas-engine/atlas_engine_client/dist/types/data_models/flow_node_instance';
-import { FlowNode } from 'bpmn-moddle';
+import { ApiClient, ProcessInstanceWithFlowNodeInstances } from '../../client/api_client';
 
 export async function showProcessInstance(
   processInstanceOrCorrelationIds: string[],
@@ -124,9 +124,9 @@ async function logHistory(processInstance: ProcessInstanceWithFlowNodeInstances)
   )?.flowNodeName;
   const lastTokenFlowNodeName = processInstance.flowNodeInstances.find((fni) => fni.flowNodeId === lastTokenFlowNodeId)
     ?.flowNodeName;
-  const firstToken = findToken(processInstance, firstTokenFlowNodeId, 'onEnter');
-  const lastTokenOnExit = findToken(processInstance, lastTokenFlowNodeId, 'onExit');
-  const lastTokenOnEnter = findToken(processInstance, lastTokenFlowNodeId, 'onEnter');
+  const firstToken = findToken(processInstance, firstTokenFlowNodeId, 'startToken');
+  const lastTokenOnExit = findToken(processInstance, lastTokenFlowNodeId, 'endToken');
+  const lastTokenOnEnter = findToken(processInstance, lastTokenFlowNodeId, 'startToken');
 
   console.log('');
   console.log('--- HISTORY -----------------------------------------------------------------------');
@@ -151,27 +151,27 @@ async function logHistory(processInstance: ProcessInstanceWithFlowNodeInstances)
     console.log('');
     console.log('Input', chalk.cyanBright(`"${firstTokenFlowNodeName}"`), chalk.dim(`(${firstTokenFlowNodeId})`));
     console.log('');
-    printMultiLineString(JSON.stringify(firstToken.payload, null, 2), '    ');
+    printMultiLineString(JSON.stringify(firstToken, null, 2), '    ');
   }
 
   if (processInstance.error != null) {
     console.log('');
     console.log('Input', chalk.cyanBright(`"${lastTokenFlowNodeName}"`), chalk.dim(`(${lastTokenFlowNodeId})`));
     console.log('');
-    printMultiLineString(JSON.stringify(lastTokenOnEnter.payload, null, 2), '    ');
+    printMultiLineString(JSON.stringify(lastTokenOnEnter, null, 2), '    ');
   }
 
   if (lastTokenOnExit != null) {
     console.log('');
     console.log('Output', chalk.cyanBright(`"${lastTokenFlowNodeName}"`), chalk.dim(`(${lastTokenFlowNodeId})`));
     console.log('');
-    printMultiLineString(JSON.stringify(lastTokenOnExit.payload, null, 2), '    ');
+    printMultiLineString(JSON.stringify(lastTokenOnExit, null, 2), '    ');
   }
 }
 
 function getFlowNodeIdsInChronologicalOrder(processInstance: ProcessInstanceWithFlowNodeInstances): string[] {
   return processInstance.flowNodeInstances
-    .sort((a: FlowNodeInstance, b: FlowNodeInstance) => (a.tokens[0].createdAt > b.tokens[0].createdAt ? 1 : -1))
+    .sort((a: FlowNodeInstance, b: FlowNodeInstance) => (a.startedAt > b.startedAt ? 1 : -1))
     .map((x) => x.flowNodeId);
 }
 
@@ -205,7 +205,7 @@ function stateToColoredString(state: string): string {
 function findToken(
   processInstance: ProcessInstanceWithFlowNodeInstances,
   flowNodeId: string,
-  tokenEventType: string
+  tokenEventType: 'startToken' | 'endToken'
 ): any | null {
   const flowNodeInstance = processInstance.flowNodeInstances.find(
     (flowNodeInstance) => flowNodeInstance.flowNodeId === flowNodeId
@@ -213,9 +213,7 @@ function findToken(
   if (flowNodeInstance == null) {
     return null;
   }
-  const tokenHistoryEntries = flowNodeInstance.tokens;
-
-  return tokenHistoryEntries.find((entry) => entry.type === tokenEventType);
+  return flowNodeInstance[tokenEventType];
 }
 
 function printMultiLineString(text: string | string[], linePrefix: string = ''): void {

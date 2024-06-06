@@ -1,7 +1,6 @@
 import express from 'express';
 import open = require('open');
 import { getModalHtml } from './html_message';
-import fetch from 'node-fetch';
 
 export type IdTokenAccessTokenAndExpiresAt = {
   accessToken: string;

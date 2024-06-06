@@ -1,3 +1,4 @@
+import 'mocha';
 import * as assert from 'assert';
 import { execAsJson, execAsText, loginAsRoot } from '../exec_as';
 
@@ -8,7 +9,7 @@ describe('retry-process-instance', () => {
 
       execAsJson('start-process-model Maintenance.RetryProcessInstance StartEvent_1 --wait');
       const resultStart = execAsJson(
-        'list-process-instances --filter-by-process-model-id Maintenance.RetryProcessInstance --limit 1'
+        'list-process-instances --filter-by-process-model-id Maintenance.RetryProcessInstance --limit 1',
       );
       const processInstanceId = resultStart?.result[0]?.processInstanceId;
       assert.notEqual(processInstanceId, null);

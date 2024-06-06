@@ -1,7 +1,15 @@
 import * as fs from 'fs';
 
-import { EngineClient } from '@atlas-engine/atlas_engine_client';
-import { DataModels as AtlasEngineDataModels, FlowNodeInstanceState } from '@atlas-engine/atlas_engine_sdk/';
+import { EngineClient } from '@5minds/processcube_engine_client';
+import {
+  FlowNodeInstanceState,
+  FlowNodeInstance,
+  ProcessInstance,
+  ProcessInstanceSortableColumns,
+  ProcessInstanceState,
+  ProcessModel,
+  UserTaskInstance,
+} from '@5minds/processcube_engine_sdk/';
 
 import { getIdentity } from './identity';
 
@@ -27,11 +35,8 @@ import { isUrlAvailable } from './is_url_available';
 // TODO: missing IIdentity here
 type Identity = any;
 
-type UserTask = AtlasEngineDataModels.FlowNodeInstances.UserTaskInstance;
-
-export type ProcessInstance = AtlasEngineDataModels.ProcessInstances.ProcessInstance;
 export type ProcessInstanceWithFlowNodeInstances = ProcessInstance & {
-  flowNodeInstances: AtlasEngineDataModels.FlowNodeInstances.FlowNodeInstance[];
+  flowNodeInstances: FlowNodeInstance[];
 };
 
 export class ApiClient {
@@ -182,7 +187,7 @@ export class ApiClient {
   async getProcessModels(
     offset?: number,
     limit?: number
-  ): Promise<AtlasEngineDataModels.ProcessDefinitions.ProcessModel[]> {
+  ): Promise<ProcessModel[]> {
     try {
       const result = await this.engineClient.processDefinitions.getAll({
         identity: this.identity,
@@ -252,8 +257,8 @@ export class ApiClient {
     filterByState: string[],
     filterByFlowNodeInstanceId: string[],
     rejectByState: string[]
-  ): Promise<UserTask[]> {
-    let allUserTasks: UserTask[];
+  ): Promise<UserTaskInstance[]> {
+    let allUserTasks: UserTaskInstance[];
     try {
       const userTaskList = await this.engineClient.userTasks.query(this.identity);
       allUserTasks = userTaskList.userTasks;
@@ -297,7 +302,7 @@ export class ApiClient {
     }
   }
 
-  async getAllUserTasksViaCorrelations(correlationIds: string[]): Promise<UserTask[]> {
+  async getAllUserTasksViaCorrelations(correlationIds: string[]): Promise<UserTaskInstance[]> {
     try {
       const result = await this.engineClient.userTasks.query({
         correlationId: correlationIds
@@ -310,7 +315,7 @@ export class ApiClient {
     }
   }
 
-  private async getAllUserTasksViaAllProcessModels(filterByProcessModelId: string[]): Promise<UserTask[]> {
+  private async getAllUserTasksViaAllProcessModels(filterByProcessModelId: string[]): Promise<UserTaskInstance[]> {
     const allProcessModels = await this.getProcessModels();
 
     const processModels = filterProcessModelsById(allProcessModels, filterByProcessModelId);
@@ -333,7 +338,7 @@ export class ApiClient {
     return allUserTasks;
   }
 
-  private async getAllUserTasksViaState(filterByState: string[]): Promise<UserTask[]> {
+  private async getAllUserTasksViaState(filterByState: string[]): Promise<UserTaskInstance[]> {
     try {
       const result = await this.engineClient.userTasks.query({
         state: (filterByState as unknown) as FlowNodeInstanceState[]
@@ -346,7 +351,7 @@ export class ApiClient {
     }
   }
 
-  async getAllUserTasksViaFlowNodeInstances(flowNodeInstanceId: string[]): Promise<UserTask[]> {
+  async getAllUserTasksViaFlowNodeInstances(flowNodeInstanceId: string[]): Promise<UserTaskInstance[]> {
     try {
       const result = await this.engineClient.userTasks.query({
         flowNodeInstanceId: flowNodeInstanceId
@@ -388,7 +393,7 @@ export class ApiClient {
         {
           identity: this.identity,
           sortSettings: {
-            sortBy: AtlasEngineDataModels.ProcessInstances.ProcessInstanceSortableColumns.createdAt,
+            sortBy: ProcessInstanceSortableColumns.createdAt,
             sortDir: 'DESC'
           }
         }
@@ -396,7 +401,7 @@ export class ApiClient {
 
       /*
       {}, this.identity, undefined, 1, {
-        sortBy: AtlasEngineDataModels.ProcessInstances.ProcessInstanceSortableColumns.createdAt,
+        sortBy: ProcessInstanceSortableColumns.createdAt,
         sortDir: 'DESC'
       }); */
       return result.processInstances[0];
@@ -456,7 +461,7 @@ export class ApiClient {
   }
 
   private async getAllProcessInstancesViaState(filterByState: string[]): Promise<ProcessInstance[]> {
-    const states = filterByState as AtlasEngineDataModels.ProcessInstances.ProcessInstanceState[];
+    const states = filterByState as ProcessInstanceState[];
 
     let allProcessInstances: ProcessInstance[] = [];
     for (const state of states) {
