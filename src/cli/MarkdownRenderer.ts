@@ -1,5 +1,5 @@
-import marked from 'marked';
 import chalk from 'chalk';
+import { marked } from 'marked';
 
 import { padLeftMultiline } from './logging';
 
@@ -25,7 +25,7 @@ export class MarkdownRenderer extends marked.Renderer {
     return html;
   }
 
-  heading(text: string, level: 1 | 2 | 3 | 4 | 5 | 6, raw: string, slugger: marked.Slugger): string {
+  heading(text: string, level: number, raw: string): string {
     return chalk.bold(text) + '\n\n';
   }
 

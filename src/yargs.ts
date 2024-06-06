@@ -1,6 +1,6 @@
-import { options } from 'yargs';
-import { Command, CommandLineInterface, Inputs } from './cli';
+import { CommandLineInterface } from './cli';
 import { formatHelpText, heading, usageString } from './cli/logging';
+import { Command, Inputs } from './contracts/cli_types';
 import epilogSnippetAtlas from './snippets/atlas.epilog.md';
 
 const SCRIPT_NAME = 'pc';

@@ -1,5 +1,4 @@
-import chalk from 'chalk';
-import { DataModels as AtlasEngineDataModels } from '@atlas-engine/atlas_engine_client';
+import { UserTaskInstance } from '@5minds/processcube_engine_sdk';
 
 import { ApiClient } from '../../client/api_client';
 import { Session, loadSession } from '../../session/session';
@@ -7,9 +6,6 @@ import { addJsonPipingHintToResultJson, createResultJson } from '../../cli/resul
 import { logJsonResult, logJsonResultAsTextTable, logNoValidSessionError } from '../../cli/logging';
 import { OUTPUT_FORMAT_JSON, OUTPUT_FORMAT_TEXT } from '../../pc';
 import { sortUserTasks } from '../list-user-tasks/sorting';
-
-export type FlowNodeInstance = AtlasEngineDataModels.FlowNodeInstances.FlowNodeInstance;
-export type UserTask = AtlasEngineDataModels.FlowNodeInstances.UserTask;
 
 export async function listUserTasks(
   pipedProcessInstanceIds: string[] | null,
@@ -73,7 +69,7 @@ async function getUserTasks(
   sortByProcessModelId: string,
   sortByState: string,
   limit: number
-): Promise<UserTask[]> {
+): Promise<UserTaskInstance[]> {
   const apiClient = new ApiClient(session);
 
   let allUserTasks = await apiClient.getAllUserTasks(

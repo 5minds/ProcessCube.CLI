@@ -1,5 +1,5 @@
 import chalk from 'chalk';
-import * as glob from 'glob';
+import * as glob from 'fast-glob';
 
 import { DeployedProcessModelInfo } from '../../contracts/api_client_types';
 
