@@ -1,3 +1,4 @@
+import 'mocha';
 import * as assert from 'assert';
 import { execAsJson, execAsText } from '../exec_as';
 

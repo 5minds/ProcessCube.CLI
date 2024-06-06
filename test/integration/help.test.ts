@@ -1,3 +1,4 @@
+import 'mocha';
 import * as assert from 'assert';
 import { execAsText } from '../exec_as';
 

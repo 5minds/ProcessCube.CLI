@@ -1,3 +1,4 @@
+import 'mocha';
 import * as assert from 'assert';
 import { assertCorrelationIdInResult, execAsJson, execAsJsonPipes, execAsText, loginAsRoot } from '../exec_as';
 
@@ -20,7 +21,7 @@ describe('list-process-instances', () => {
         `start-process-model wait_demo StartEvent_1 \
           --start-token '{"seconds": 2}' \
           --correlation-id ${correlationId1} \
-          --wait`
+          --wait`,
       );
       const correlationId2 = 'b' + Date.now() + Math.random();
       execAsJson(`start-process-model Wartung.StringUmdrehen StartEvent_1 --correlation-id ${correlationId2} --wait`);
@@ -42,7 +43,7 @@ describe('list-process-instances', () => {
         `start-process-model wait_demo StartEvent_1 \
           --start-token '{"seconds": 2}' \
           --correlation-id ${correlationId1} \
-          --wait`
+          --wait`,
       );
 
       const dateString2 = new Date().toISOString();
@@ -53,7 +54,7 @@ describe('list-process-instances', () => {
 
       const result1 = execAsJson(`list-process-instances --created-before ${dateString2}`);
       const result2 = execAsJson(
-        `list-process-instances --created-after ${dateString2} --created-before ${dateString3}`
+        `list-process-instances --created-after ${dateString2} --created-before ${dateString3}`,
       );
       const result3 = execAsJson(`list-process-instances --created-after ${dateString3}`);
 
@@ -73,7 +74,7 @@ describe('list-process-instances', () => {
         `start-process-model wait_demo StartEvent_1 \
           --start-token '{"seconds": 2}' \
           --correlation-id ${correlationId1} \
-          --wait`
+          --wait`,
       );
 
       const dateString2 = new Date().toISOString();
@@ -84,7 +85,7 @@ describe('list-process-instances', () => {
 
       const result1 = execAsJson(`list-process-instances --completed-before ${dateString2}`);
       const result2 = execAsJson(
-        `list-process-instances --completed-after ${dateString1} --completed-before ${dateString3}`
+        `list-process-instances --completed-after ${dateString1} --completed-before ${dateString3}`,
       );
       const result3 = execAsJson(`list-process-instances --completed-after ${dateString3}`);
 
@@ -105,14 +106,14 @@ describe('list-process-instances', () => {
         `start-process-model Wartung.StringUmdrehen StartEvent_1 \
           --start-token '{"string": "5Minds"}' \
           --correlation-id ${correlationId} \
-          --wait`
+          --wait`,
       );
 
       const result = execAsJsonPipes([
         'list-process-instances --reject-by-state error',
         'list-process-instances --filter-by-state finished',
         'list-process-instances --filter-by-process-model-id String',
-        `list-process-instances --reject-by-process-model-id Maintenance --filter-by-correlation-id ${correlationId}`
+        `list-process-instances --reject-by-process-model-id Maintenance --filter-by-correlation-id ${correlationId}`,
       ]);
       assert.equal(result?.result?.length, 1);
       assert.equal(result.result[0].processModelId, 'Wartung.StringUmdrehen');
