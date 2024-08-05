@@ -24,7 +24,7 @@ jobs:
       atlas_engine:
         image: 5minds/processcube_engine:17
         ports:
-          - 10560:10560
+          - 10560:80
         options: --health-cmd true --health-interval 10s --health-timeout 5s --health-retries 5
 
     steps:
