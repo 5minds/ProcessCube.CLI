@@ -155,7 +155,8 @@ async function moveExtensionToDestination(
 ): Promise<string> {
   const extensionDirForType = givenExtensionsDir || EXTENSION_DIRS[type];
   const newPath = join(extensionDirForType, name);
-
+  console.log('1: ', cacheDirOfExtension);
+  console.log('2: ', givenExtensionsDir);
   if (existsSync(newPath)) {
     if (autoYes !== true) {
       const yes = await yesno({
