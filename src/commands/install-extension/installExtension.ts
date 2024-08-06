@@ -187,12 +187,12 @@ function getPath(newPath: string): string {
   var finalPath = newPath;
   const homedir = require('os').homedir();
 
-  if (newPath.charAt(0) === '~') {
+  if (newPath.startsWith('~')) {
     const pathFromHome = newPath.replace('~/', '');
     finalPath = path.join(homedir, pathFromHome);
   }
 
-  while (newPath.substring(0, 3) === '../') {
+  while (newPath.startsWith('../')) {
     newDir = resolve(newDir, '..');
     newPath = newPath.substring(3, newPath.length);
     finalPath = path.join(newDir, newPath);
