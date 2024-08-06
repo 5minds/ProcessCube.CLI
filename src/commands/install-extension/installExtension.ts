@@ -3,8 +3,9 @@ import chalk from 'chalk';
 import { createWriteStream, existsSync, mkdirSync, readFileSync, readdirSync, rename, rmSync } from 'fs';
 import http from 'http';
 import https from 'https';
-import os from 'os';
-import { join } from 'path';
+import os, { homedir } from 'os';
+import { join, resolve } from 'path';
+import path from 'path';
 import tar from 'tar';
 import yesno from 'yesno';
 
@@ -13,6 +14,8 @@ import fs from '@npmcli/fs';
 import { logError, logWarning } from '../../cli/logging';
 import { downloadPackage } from './downloadPackage';
 import { isPackage } from './isPackage';
+
+const process = require('process');
 
 const EXTENSION_DIRS = {
   cli: join(os.homedir(), '.processcube', 'cli', 'extensions'),
@@ -155,12 +158,14 @@ async function moveExtensionToDestination(
 ): Promise<string> {
   const extensionDirForType = givenExtensionsDir || EXTENSION_DIRS[type];
   const newPath = join(extensionDirForType, name);
-  console.log('1: ', cacheDirOfExtension);
-  console.log('2: ', givenExtensionsDir);
-  if (existsSync(newPath)) {
+  console.log('1: ', newPath);
+
+  const finalPath = getPath(newPath);
+
+  if (existsSync(finalPath)) {
     if (autoYes !== true) {
       const yes = await yesno({
-        question: `Extension path already exists: ${newPath}. Overwrite it? [Yn]`,
+        question: `Extension path already exists: ${finalPath}. Overwrite it? [Yn]`,
       });
 
       if (yes !== true) {
@@ -169,14 +174,36 @@ async function moveExtensionToDestination(
       }
     }
 
-    rmSync(newPath, { recursive: true });
+    rmSync(finalPath, { recursive: true });
   }
 
   ensureDir(extensionDirForType);
 
-  await fs.moveFile(cacheDirOfExtension, newPath);
+  await fs.moveFile(cacheDirOfExtension, finalPath);
 
-  return newPath;
+  return finalPath;
+}
+
+function getPath(newPath: string): string {
+  var newDir = __dirname; //= resolve(__dirname, '..');
+  var finalPath = newPath;
+  const homedir = require('os').homedir();
+  console.log('p: ', process.cwd());
+  if (newPath.charAt(0) === '~') {
+    const pathFromHome = newPath.replace('~/', '');
+    finalPath = path.join(homedir, pathFromHome);
+  }
+
+  while (newPath.substring(0, 3) === '../') {
+    console.log(newDir);
+    //newDir = resolve(newDir, '..');
+    console.log(newDir);
+    newPath = newPath.substring(3, newPath.length);
+    finalPath = path.join(newDir, newPath);
+  }
+
+  console.log('## ', finalPath);
+  return finalPath;
 }
 
 function ensureDir(dir: string): void {
