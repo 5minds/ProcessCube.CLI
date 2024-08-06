@@ -158,8 +158,6 @@ async function moveExtensionToDestination(
 ): Promise<string> {
   const extensionDirForType = givenExtensionsDir || EXTENSION_DIRS[type];
   const newPath = join(extensionDirForType, name);
-  console.log('1: ', newPath);
-
   const finalPath = getPath(newPath);
 
   if (existsSync(finalPath)) {
@@ -185,24 +183,21 @@ async function moveExtensionToDestination(
 }
 
 function getPath(newPath: string): string {
-  var newDir = __dirname; //= resolve(__dirname, '..');
+  var newDir = process.cwd();
   var finalPath = newPath;
   const homedir = require('os').homedir();
-  console.log('p: ', process.cwd());
+
   if (newPath.charAt(0) === '~') {
     const pathFromHome = newPath.replace('~/', '');
     finalPath = path.join(homedir, pathFromHome);
   }
 
   while (newPath.substring(0, 3) === '../') {
-    console.log(newDir);
-    //newDir = resolve(newDir, '..');
-    console.log(newDir);
+    newDir = resolve(newDir, '..');
     newPath = newPath.substring(3, newPath.length);
     finalPath = path.join(newDir, newPath);
   }
 
-  console.log('## ', finalPath);
   return finalPath;
 }
 
