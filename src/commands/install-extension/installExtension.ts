@@ -3,8 +3,8 @@ import chalk from 'chalk';
 import { createWriteStream, existsSync, mkdirSync, readFileSync, readdirSync, rename, rmSync } from 'fs';
 import http from 'http';
 import https from 'https';
-import os, { homedir } from 'os';
-import { join, resolve } from 'path';
+import os from 'os';
+import { join } from 'path';
 import path from 'path';
 import tar from 'tar';
 import yesno from 'yesno';
@@ -14,8 +14,6 @@ import fs from '@npmcli/fs';
 import { logError, logWarning } from '../../cli/logging';
 import { downloadPackage } from './downloadPackage';
 import { isPackage } from './isPackage';
-
-const process = require('process');
 
 const EXTENSION_DIRS = {
   cli: join(os.homedir(), '.processcube', 'cli', 'extensions'),
@@ -183,19 +181,14 @@ async function moveExtensionToDestination(
 }
 
 function getPath(newPath: string): string {
-  var newDir = process.cwd();
   var finalPath = newPath;
-  const homedir = require('os').homedir();
+  const homedir = os.homedir();
 
   if (newPath.startsWith('~')) {
     const pathFromHome = newPath.replace('~/', '');
     finalPath = path.join(homedir, pathFromHome);
-  }
-
-  while (newPath.startsWith('../')) {
-    newDir = resolve(newDir, '..');
-    newPath = newPath.substring(3, newPath.length);
-    finalPath = path.join(newDir, newPath);
+  } else {
+    finalPath = path.resolve(finalPath);
   }
 
   return finalPath;
