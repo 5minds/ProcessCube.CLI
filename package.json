@@ -40,7 +40,7 @@
     "@types/yargs": "^17.0.32",
     "adm-zip": "^0.5.14",
     "bpmn-moddle": "^9.0.1",
-    "chalk": "^4.0.0",
+    "chalk": "^5.0.0",
     "choma": "^1.2.1",
     "dayjs": "^1.11.11",
     "esbuild": "^0.23.0",
