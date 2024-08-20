@@ -5,6 +5,7 @@ import http from 'http';
 import https from 'https';
 import os from 'os';
 import { join } from 'path';
+import path from 'path';
 import tar from 'tar';
 import yesno from 'yesno';
 
@@ -155,11 +156,12 @@ async function moveExtensionToDestination(
 ): Promise<string> {
   const extensionDirForType = givenExtensionsDir || EXTENSION_DIRS[type];
   const newPath = join(extensionDirForType, name);
+  const finalPath = getPath(newPath);
 
-  if (existsSync(newPath)) {
+  if (existsSync(finalPath)) {
     if (autoYes !== true) {
       const yes = await yesno({
-        question: `Extension path already exists: ${newPath}. Overwrite it? [Yn]`,
+        question: `Extension path already exists: ${finalPath}. Overwrite it? [Yn]`,
       });
 
       if (yes !== true) {
@@ -168,14 +170,28 @@ async function moveExtensionToDestination(
       }
     }
 
-    rmSync(newPath, { recursive: true });
+    rmSync(finalPath, { recursive: true });
   }
 
   ensureDir(extensionDirForType);
 
-  await fs.moveFile(cacheDirOfExtension, newPath);
+  await fs.moveFile(cacheDirOfExtension, finalPath);
 
-  return newPath;
+  return finalPath;
+}
+
+function getPath(newPath: string): string {
+  var finalPath = newPath;
+  const homedir = os.homedir();
+
+  if (newPath.startsWith('~')) {
+    const pathFromHome = newPath.replace('~/', '');
+    finalPath = path.join(homedir, pathFromHome);
+  } else {
+    finalPath = path.resolve(finalPath);
+  }
+
+  return finalPath;
 }
 
 function ensureDir(dir: string): void {
