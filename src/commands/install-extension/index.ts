@@ -1,3 +1,4 @@
+import { logError } from '../../cli/logging';
 import { CLI, Inputs } from '../../contracts/cli_types';
 import { installExtension } from './installExtension';
 
@@ -34,6 +35,12 @@ export async function onLoad(cli: CLI): Promise<void> {
           description: 'Overwrite default extensions dir',
           type: 'string',
         },
+        {
+          name: 'insiders',
+          description: 'Install extension to studio-insiders',
+          type: 'boolean',
+          default: false,
+        },
       ],
     },
     runCommand,
@@ -41,11 +48,19 @@ export async function onLoad(cli: CLI): Promise<void> {
 }
 
 async function runCommand(inputs: Inputs): Promise<void> {
+  const { insiders, extensionsDir } = inputs.argv;
+
+  if (insiders && extensionsDir) {
+    logError("The options '--insiders' and '--extensions-dir' cannot be used together. Only one option can be used.");
+    process.exit(1);
+  }
+
   await installExtension(
     inputs.argv.urlOrFilename,
     inputs.argv.type,
     inputs.argv.yes,
     inputs.argv.extensionsDir,
+    inputs.argv.insiders,
     inputs.argv.output,
   );
 }

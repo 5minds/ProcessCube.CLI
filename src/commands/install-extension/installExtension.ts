@@ -34,6 +34,7 @@ export async function installExtension(
   givenType: string,
   autoYes: boolean,
   givenExtensionsDir: string,
+  useInsiders: boolean,
   output: string,
 ): Promise<void> {
   console.log(`Fetching file/package ${urlOrFilenameOrPackage} ...`);
@@ -76,7 +77,14 @@ Replace \`<type>\` with any of: ${VALID_TYPES.join(', ')}
       logError(`Expected \`type\` to be one of ${JSON.stringify(VALID_TYPES)}, got: ${type}`);
     }
 
-    const newPath = await moveExtensionToDestination(cacheDirOfExtension, type, name, autoYes, givenExtensionsDir);
+    const newPath = await moveExtensionToDestination(
+      cacheDirOfExtension,
+      type,
+      name,
+      autoYes,
+      givenExtensionsDir,
+      useInsiders,
+    );
 
     console.log(
       EXTENSION_TYPE_TO_WORDING[type],
@@ -153,9 +161,17 @@ async function moveExtensionToDestination(
   name: string,
   autoYes: boolean,
   givenExtensionsDir: string,
+  useInsiders: boolean,
 ): Promise<string> {
-  const extensionDirForType = givenExtensionsDir || EXTENSION_DIRS[type];
+  const extensionDirForType = useInsiders
+    ? join(os.homedir(), '.processcube', 'studio-insiders', 'extensions')
+    : givenExtensionsDir || EXTENSION_DIRS[type];
+  console.log('#', extensionDirForType);
   const newPath = join(extensionDirForType, name);
+  if (useInsiders) {
+    console.log('jabadabadu');
+  }
+  console.log(newPath);
   const finalPath = getPath(newPath);
 
   if (existsSync(finalPath)) {
