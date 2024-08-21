@@ -166,12 +166,7 @@ async function moveExtensionToDestination(
   const extensionDirForType = useInsiders
     ? join(os.homedir(), '.processcube', 'studio-insiders', 'extensions')
     : givenExtensionsDir || EXTENSION_DIRS[type];
-  console.log('#', extensionDirForType);
   const newPath = join(extensionDirForType, name);
-  if (useInsiders) {
-    console.log('jabadabadu');
-  }
-  console.log(newPath);
   const finalPath = getPath(newPath);
 
   if (existsSync(finalPath)) {
