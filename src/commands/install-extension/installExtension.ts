@@ -1,6 +1,6 @@
 import AdmZip from 'adm-zip';
 import chalk from 'chalk';
-import { createWriteStream, existsSync, mkdirSync, readFileSync, readdirSync, rename, rmSync } from 'fs';
+import { createWriteStream, existsSync, mkdirSync, readFileSync, readdirSync, rmSync } from 'fs';
 import fs from 'fs-extra';
 import http from 'http';
 import https from 'https';
@@ -10,7 +10,7 @@ import path from 'path';
 import tar from 'tar';
 import yesno from 'yesno';
 
-import { logError, logJsonResult, logWarning } from '../../cli/logging';
+import { logError, logWarning } from '../../cli/logging';
 import { downloadPackage } from './downloadPackage';
 import { isPackage } from './isPackage';
 
