@@ -41,6 +41,18 @@ export async function onLoad(cli: CLI): Promise<void> {
           type: 'boolean',
           default: false,
         },
+        {
+          name: 'stable',
+          description: "Install extension for studio as well if '--insiders' is used",
+          type: 'boolean',
+          default: false,
+        },
+        {
+          name: 'dev',
+          description: "Install extension for studio-dev as well if '--insiders' is used",
+          type: 'boolean',
+          default: false,
+        },
       ],
     },
     runCommand,
@@ -48,10 +60,15 @@ export async function onLoad(cli: CLI): Promise<void> {
 }
 
 async function runCommand(inputs: Inputs): Promise<void> {
-  const { insiders, extensionsDir } = inputs.argv;
+  const { dev, stable, insiders, extensionsDir } = inputs.argv;
 
   if (insiders && extensionsDir) {
     logError("The options '--insiders' and '--extensions-dir' cannot be used together. Only one option can be used.");
+    process.exit(1);
+  }
+
+  if ((!insiders && stable) || (!insiders && dev)) {
+    logError("The options '--stable' and '--dev' can only be used with '--insiders' option.");
     process.exit(1);
   }
 
@@ -59,8 +76,10 @@ async function runCommand(inputs: Inputs): Promise<void> {
     inputs.argv.urlOrFilename,
     inputs.argv.type,
     inputs.argv.yes,
-    inputs.argv.extensionsDir,
-    inputs.argv.insiders,
+    extensionsDir,
+    insiders,
+    stable,
+    dev,
     inputs.argv.output,
   );
 }
