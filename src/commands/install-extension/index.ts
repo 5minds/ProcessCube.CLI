@@ -43,13 +43,13 @@ export async function onLoad(cli: CLI): Promise<void> {
         },
         {
           name: 'stable',
-          description: "Install extension for studio as well if '--insiders' is used",
+          description: 'Install extension for studio as well if insiders is used',
           type: 'boolean',
           default: false,
         },
         {
           name: 'dev',
-          description: "Install extension for studio-dev as well if '--insiders' is used",
+          description: 'Install extension for studio-dev as well if insiders is used',
           type: 'boolean',
           default: false,
         },
