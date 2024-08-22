@@ -41,12 +41,6 @@ export async function onLoad(cli: CLI): Promise<void> {
           type: 'boolean',
           default: false,
         },
-        {
-          name: 'stable',
-          description: 'Install extension to studio too if --insiders is used',
-          type: 'boolean',
-          default: false,
-        },
       ],
     },
     runCommand,
