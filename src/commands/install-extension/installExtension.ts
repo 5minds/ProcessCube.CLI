@@ -42,13 +42,6 @@ export async function installExtension(
   useDevAndInsiders: boolean,
   output: string,
 ): Promise<void> {
-  if (useInsiders && !urlOrFilenameOrPackage.includes('studio')) {
-    logError(
-      `The package ${urlOrFilenameOrPackage} cannot be installed for studio-insiders. It is not a studio extension.`,
-    );
-    process.exit(1);
-  }
-
   console.log(`Fetching file/package ${urlOrFilenameOrPackage} ...`);
 
   const filename = await download(urlOrFilenameOrPackage);
