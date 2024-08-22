@@ -18,25 +18,25 @@ Installiert eine Extension für die verschiedenen ProcessCube-Produkte.
 
 ## Argumente
 
-| Name           | Obligatorisch | Beschreibung                                                      |
-| -------------- | ------------- | ----------------------------------------------------------------- |
-| nameOrLocation  | Ja            | NPM-Paketname, URL oder lokaler Dateipfad eines [Extension-ZIP](#extension-zip) |
+| Name           | Obligatorisch | Beschreibung                                                                    |
+| -------------- | ------------- | ------------------------------------------------------------------------------- |
+| nameOrLocation | Ja            | NPM-Paketname, URL oder lokaler Dateipfad eines [Extension-ZIP](#extension-zip) |
 
 ## Optionen
 
-| Name, Kürzel        | Default | Beschreibung                                                                      |
-| ------------------- | ------- | --------------------------------------------------------------------------------- |
-| --extensions-dir    |         | Überschreibt das Extension-Verzeichnis                                            |
-| --type              |         | Typ der Extension: `cli`, `engine`, `portal` oder `studio`                        |
-| --output, -o        | text    | Steuert das Ausgabeformat: `text` oder `json`                                     |
-| --yes, -y           |         | Existierende Extension ohne Nachfrage überschreiben                               |
+| Name, Kürzel     | Default | Beschreibung                                                         |
+| ---------------- | ------- | -------------------------------------------------------------------- |
+| --extensions-dir |         | Überschreibt das Extension-Verzeichnis                               |
+| --type           |         | Typ der Extension: `cli`, `engine`, `portal` oder `studio`           |
+| --output, -o     | text    | Steuert das Ausgabeformat: `text` oder `json`                        |
+| --yes, -y        |         | Existierende Extension ohne Nachfrage überschreiben                  |
+| --insiders       |         | Installiert Studio Extensions direkt in den `studio-insiders` Ordner |
 
 ## Extension-ZIP
 
 Extensions sind technisch gesehen NPM-Pakete.
 
 "Extension-ZIP" bezeichnet eine einfache ZIP-Datei, die ein NPM-Paket enthält, welches eine Extension darstellt.
-
 
 :::tip
 
