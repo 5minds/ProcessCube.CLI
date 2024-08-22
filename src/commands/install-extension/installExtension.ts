@@ -22,7 +22,6 @@ const EXTENSION_DIRS = {
   studioInsiders: join(os.homedir(), '.processcube', 'studio-insiders', 'extensions'),
   studioDev: join(os.homedir(), '.processcube', 'studio-dev', 'extensions'),
 };
-const TEST = ['cli', 'engine', 'portal'];
 const VALID_TYPES = ['cli', 'engine', 'portal', 'studio', 'studioInsiders', 'studioDev'];
 const EXTENSION_TYPE_TO_WORDING = {
   cli: 'CLI Extension',
