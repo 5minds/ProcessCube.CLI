@@ -32,12 +32,12 @@ export async function onLoad(cli: CLI): Promise<void> {
         },
         {
           name: 'extensions-dir',
-          description: 'Overwrite default extensions dir',
+          description: 'Overwrite default extensions dir. Cannot be used with insiders',
           type: 'string',
         },
         {
           name: 'insiders',
-          description: 'Install extension to studio-insiders',
+          description: 'Install extension for studio-insiders. Cannot be used with extensions-dir',
           type: 'boolean',
           default: false,
         },
