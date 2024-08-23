@@ -63,7 +63,7 @@ async function runCommand(inputs: Inputs): Promise<void> {
   const { dev, stable, insiders, extensionsDir } = inputs.argv;
 
   if (extensionsDir && (insiders || stable || dev)) {
-    logError("The option '--extensions-dir' cannot be used with '--insiders', '--stable' or '--dev'.");
+    logError("The option '--extensions-dir' cannot be used with '--insiders', '--stable' or '--dev'");
     process.exit(1);
   }
 
