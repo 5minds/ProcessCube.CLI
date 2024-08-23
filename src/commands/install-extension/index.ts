@@ -37,19 +37,22 @@ export async function onLoad(cli: CLI): Promise<void> {
         },
         {
           name: 'insiders',
-          description: 'Install extension for studio-insiders. Cannot be used with extensions-dir',
+          description:
+            'Install Studio extension for the Insiders Edition. Only works forStudio Extensions. Cannot be used with extensions-dir',
           type: 'boolean',
           default: false,
         },
         {
           name: 'stable',
-          description: 'Install extension for studio. Cannot be used with extension-dir',
+          description:
+            'Install Studio extension for the Stable Edition. Only works for Studio Extensions. Cannot be used with extension-dir',
           type: 'boolean',
           default: false,
         },
         {
           name: 'dev',
-          description: 'Install extension for studio-dev. Cannot be used with extensions-dir',
+          description:
+            'Install Studio extension for locally build Studios. Only works for Studio Extensions. Cannot be used with extensions-dir',
           type: 'boolean',
           default: false,
         },
