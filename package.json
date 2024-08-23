@@ -29,8 +29,8 @@
   "author": "5Minds IT-Solutions GmbH & Co. KG",
   "license": "MIT",
   "devDependencies": {
-    "@5minds/processcube_engine_sdk": "^5.0.0",
     "@5minds/processcube_engine_client": "^5.0.0",
+    "@5minds/processcube_engine_sdk": "^5.0.0",
     "@npmcli/fs": "^3.1.1",
     "@trivago/prettier-plugin-sort-imports": "^4.3.0",
     "@types/lodash.mapvalues": "^4.6.9",
@@ -46,6 +46,7 @@
     "esbuild": "^0.23.0",
     "express": "^4.19.2",
     "fast-glob": "^3.3.2",
+    "fs-extra": "^11.2.0",
     "json5": "^2.2.3",
     "lodash.mapvalues": "^4.6.0",
     "marked": "^12.0.2",

@@ -1,6 +1,7 @@
 import AdmZip from 'adm-zip';
 import chalk from 'chalk';
-import { createWriteStream, existsSync, mkdirSync, readFileSync, readdirSync, rename, rmSync } from 'fs';
+import { createWriteStream, existsSync, mkdirSync, readFileSync, readdirSync, rmSync } from 'fs';
+import fs from 'fs-extra';
 import http from 'http';
 import https from 'https';
 import os from 'os';
@@ -8,8 +9,6 @@ import { join } from 'path';
 import path from 'path';
 import tar from 'tar';
 import yesno from 'yesno';
-
-import fs from '@npmcli/fs';
 
 import { logError, logWarning } from '../../cli/logging';
 import { downloadPackage } from './downloadPackage';
@@ -20,13 +19,17 @@ const EXTENSION_DIRS = {
   engine: join(os.homedir(), '.processcube', 'engine', 'extensions'),
   portal: join(os.homedir(), '.processcube', 'portal', 'extensions'),
   studio: join(os.homedir(), '.processcube', 'studio', 'extensions'),
+  studioInsiders: join(os.homedir(), '.processcube', 'studio-insiders', 'extensions'),
+  studioDev: join(os.homedir(), '.processcube', 'studio-dev', 'extensions'),
 };
-const VALID_TYPES = ['cli', 'engine', 'portal', 'studio'];
+const VALID_TYPES = ['cli', 'engine', 'portal', 'studio', 'studioInsiders', 'studioDev'];
 const EXTENSION_TYPE_TO_WORDING = {
   cli: 'CLI Extension',
   engine: 'Engine Extension',
   portal: 'Portal Extension',
   studio: 'Studio Extension',
+  studioInsiders: 'Studio Extension',
+  studioDev: 'Studio Extension',
 };
 
 export async function installExtension(
@@ -34,6 +37,9 @@ export async function installExtension(
   givenType: string,
   autoYes: boolean,
   givenExtensionsDir: string,
+  useInsiders: boolean,
+  useStable: boolean,
+  useDev: boolean,
   output: string,
 ): Promise<void> {
   console.log(`Fetching file/package ${urlOrFilenameOrPackage} ...`);
@@ -50,11 +56,26 @@ export async function installExtension(
     const packageJson = readPackageJson(cacheDirOfExtension);
     const name = packageNameToPath(packageJson.name);
     const engines = packageJson.engines || {};
-    let type = givenType || Object.keys(engines)[0];
+    let types = [];
 
-    if (type == null) {
-      logWarning(
-        `Package ${name} does not specify its type.
+    if (useStable) {
+      types.push('studio');
+    }
+    if (useDev) {
+      types.push('studioDev');
+    }
+    if (useInsiders) {
+      types.push('studioInsiders');
+    }
+    if (!useStable && !useDev && !useInsiders) {
+      console.log('x');
+      types.push(givenType || Object.keys(engines)[0]);
+    }
+
+    for (let type of types) {
+      if (type == null) {
+        logWarning(
+          `Package ${name} does not specify its type.
 
 If you are the author, please specify it under \`engines\` in \`package.json\`:
 
@@ -68,23 +89,27 @@ If you are the author, please specify it under \`engines\` in \`package.json\`:
 
 Replace \`<type>\` with any of: ${VALID_TYPES.join(', ')}
 `.trim(),
+        );
+        type = 'cli';
+      }
+
+      if (!VALID_TYPES.includes(type)) {
+        logError(`Expected \`type\` to be one of ${JSON.stringify(VALID_TYPES)}, got: ${type}`);
+      }
+
+      console.log('\r');
+      const newPath = await moveExtensionToDestination(cacheDirOfExtension, type, name, autoYes, givenExtensionsDir);
+
+      console.log(
+        EXTENSION_TYPE_TO_WORDING[type],
+        chalk.greenBright(
+          `${name} (${packageJson.version ? 'v' + packageJson.version : 'version missing'})`,
+          chalk.reset(`has been installed to ${newPath}`),
+        ),
       );
-      type = 'cli';
     }
 
-    if (!VALID_TYPES.includes(type)) {
-      logError(`Expected \`type\` to be one of ${JSON.stringify(VALID_TYPES)}, got: ${type}`);
-    }
-
-    const newPath = await moveExtensionToDestination(cacheDirOfExtension, type, name, autoYes, givenExtensionsDir);
-
-    console.log(
-      EXTENSION_TYPE_TO_WORDING[type],
-      chalk.greenBright(
-        `${name} (${packageJson.version ? 'v' + packageJson.version : 'version missing'})`,
-        chalk.reset(`has been installed to ${newPath}`),
-      ),
-    );
+    await fs.remove(cacheDirOfExtension);
   }
 
   rmSync(cacheDir, { recursive: true });
@@ -175,7 +200,7 @@ async function moveExtensionToDestination(
 
   ensureDir(extensionDirForType);
 
-  await fs.moveFile(cacheDirOfExtension, finalPath);
+  await fs.copy(cacheDirOfExtension, finalPath);
 
   return finalPath;
 }
