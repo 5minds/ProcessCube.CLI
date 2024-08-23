@@ -38,8 +38,8 @@ export async function installExtension(
   autoYes: boolean,
   givenExtensionsDir: string,
   useInsiders: boolean,
-  useStableAndInsiders: boolean,
-  useDevAndInsiders: boolean,
+  useStable: boolean,
+  useDev: boolean,
   output: string,
 ): Promise<void> {
   console.log(`Fetching file/package ${urlOrFilenameOrPackage} ...`);
@@ -58,15 +58,17 @@ export async function installExtension(
     const engines = packageJson.engines || {};
     let types = [];
 
-    if (useStableAndInsiders) {
+    if (useStable) {
       types.push('studio');
     }
-    if (useDevAndInsiders) {
+    if (useDev) {
       types.push('studioDev');
     }
     if (useInsiders) {
       types.push('studioInsiders');
-    } else {
+    }
+    if (!useStable && !useDev && !useInsiders) {
+      console.log('x');
       types.push(givenType || Object.keys(engines)[0]);
     }
 

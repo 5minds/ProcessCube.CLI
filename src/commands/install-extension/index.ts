@@ -32,7 +32,7 @@ export async function onLoad(cli: CLI): Promise<void> {
         },
         {
           name: 'extensions-dir',
-          description: 'Overwrite default extensions dir. Cannot be used with insiders',
+          description: 'Overwrite default extensions dir. Cannot be used with insiders, stable or dev',
           type: 'string',
         },
         {
@@ -43,13 +43,13 @@ export async function onLoad(cli: CLI): Promise<void> {
         },
         {
           name: 'stable',
-          description: 'Install extension for studio as well if insiders is used',
+          description: 'Install extension for studio. Cannot be used with extension-dir',
           type: 'boolean',
           default: false,
         },
         {
           name: 'dev',
-          description: 'Install extension for studio-dev as well if insiders is used',
+          description: 'Install extension for studio-dev. Cannot be used with extensions-dir',
           type: 'boolean',
           default: false,
         },
@@ -62,13 +62,8 @@ export async function onLoad(cli: CLI): Promise<void> {
 async function runCommand(inputs: Inputs): Promise<void> {
   const { dev, stable, insiders, extensionsDir } = inputs.argv;
 
-  if (insiders && extensionsDir) {
-    logError("The options '--insiders' and '--extensions-dir' cannot be used together. Only one option can be used.");
-    process.exit(1);
-  }
-
-  if ((!insiders && stable) || (!insiders && dev)) {
-    logError("The options '--stable' and '--dev' can only be used with '--insiders' option.");
+  if (extensionsDir && (insiders || stable || dev)) {
+    logError("The option '--extensions-dir' cannot be used with '--insiders', '--stable' or '--dev'.");
     process.exit(1);
   }
 
