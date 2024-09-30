@@ -31,7 +31,7 @@
   "devDependencies": {
     "@5minds/processcube_engine_client": "^5.0.0",
     "@5minds/processcube_engine_sdk": "^5.0.0",
-    "@npmcli/fs": "^3.1.1",
+    "@npmcli/fs": "^4.0.0",
     "@trivago/prettier-plugin-sort-imports": "^4.3.0",
     "@types/lodash.mapvalues": "^4.6.9",
     "@types/mocha": "^10.0.6",
