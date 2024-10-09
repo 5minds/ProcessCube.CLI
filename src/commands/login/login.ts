@@ -240,14 +240,16 @@ async function loginViaM2M(
 }
 
 async function getIdentityServerUrlForEngine(engineUrl: string): Promise<string> {
+  return await useInfoApiToGetAuthorityUrl(engineUrl);
+}
+
+async function useInfoApiToGetAuthorityUrl(engineUrl: string): Promise<string> {
   let result = null;
 
   try {
-    const authorityResponse = await fetch(`${engineUrl}/process_engine/security/authority`);
-    const authorityJson = await authorityResponse.json();
-    const authority = authorityJson.authority;
-
-    result = authority;
+    const response = await fetch(`${engineUrl}/atlas_engine/api/v1/info`);
+    const json = (await response.json()) as any;
+    result = json.authorityUrl;
   } catch (error) {
     switch (error.name) {
       case 'FetchError':
