@@ -236,8 +236,6 @@ async function loginViaM2M(
     expiresAt,
   };
 
-  console.log('3', newSession);
-
   return newSession;
 }
 
