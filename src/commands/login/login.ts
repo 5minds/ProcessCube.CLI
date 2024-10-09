@@ -236,18 +236,47 @@ async function loginViaM2M(
     expiresAt,
   };
 
+  console.log('3', newSession);
+
   return newSession;
 }
 
 async function getIdentityServerUrlForEngine(engineUrl: string): Promise<string> {
+  let authorityUrl = await useInfoApiToGetAuthorityUrl(engineUrl);
+
+  if (!authorityUrl) {
+    authorityUrl = await useLegacyApiToGetAuthorityUrl(engineUrl);
+  }
+
+  return authorityUrl;
+}
+
+async function useInfoApiToGetAuthorityUrl(engineUrl: string): Promise<string> {
   let result = null;
 
   try {
-    const authorityResponse = await fetch(`${engineUrl}/process_engine/security/authority`);
-    const authorityJson = await authorityResponse.json();
-    const authority = authorityJson.authority;
+    const response = await fetch(`${engineUrl}/atlas_engine/api/v1/info`);
+    const json = (await response.json()) as any;
+    result = json.authorityUrl;
+  } catch (error) {
+    switch (error.name) {
+      case 'FetchError':
+        return null;
+      default:
+        console.error(error);
+    }
+  }
 
-    result = authority;
+  return result;
+}
+
+async function useLegacyApiToGetAuthorityUrl(engineUrl: string): Promise<string> {
+  let result = null;
+
+  try {
+    const response = await fetch(`${engineUrl}/process_engine/security/authority`);
+    const json = (await response.json()) as any;
+    result = json.authority;
   } catch (error) {
     switch (error.name) {
       case 'FetchError':
