@@ -12,7 +12,6 @@ export async function useYargsForCommandLineInterface(cli: CommandLineInterface)
   program
     .version(VERSION)
     .scriptName(SCRIPT_NAME)
-    .showHelpOnFail(true)
     .demandCommand(1, '')
     .usage(
       heading('USAGE') +
@@ -29,7 +28,17 @@ export async function useYargsForCommandLineInterface(cli: CommandLineInterface)
     })
     .wrap(null)
     .strict()
-    .recommendCommands();
+    .recommendCommands()
+    .fail((msg, err, yargs) => {
+      if (msg) {
+        console.error(`${msg}\n`);
+      }
+      yargs.showHelp();
+      if (err) {
+        throw err;
+      }
+      process.exit(1);
+    });
 
   cli.forEachCommand((command) => registerCommandInYargs(cli, command, program));
 
