@@ -69,6 +69,7 @@ jobs:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
 
       - name: 'Publish version'
+        if: "!startsWith(github.ref_name, 'renovate')"
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: ci_tools publish-npm-package --create-tag-from-branch-name
