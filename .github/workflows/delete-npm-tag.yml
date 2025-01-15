@@ -2,7 +2,7 @@ name: Delete NPM tag on Branch Deletion
 on: delete
 
 env:
-  CI_TOOLS_VERSION: '^4.3.0'
+  CI_TOOLS_VERSION: '^5.0.0'
 
 jobs:
   delete_npm_tag_for_branch:
