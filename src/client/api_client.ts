@@ -80,10 +80,10 @@ export class ApiClient {
 
   async removeProcessModel(processModelId: string): Promise<RemovedProcessModelInfo> {
     try {
-      const processDefinition = await this.engineClient.processDefinitions.getByProcessModelId(
-        processModelId,
-        this.identity,
-      );
+      const processDefinition = await this.engineClient.processDefinitions.getByProcessModelId(processModelId, {
+        identity: this.identity,
+        includeXml: false,
+      });
       await this.engineClient.processDefinitions.deleteById(processDefinition.processDefinitionId);
 
       return { success: true, processModelId };
@@ -183,10 +183,11 @@ export class ApiClient {
     }
   }
 
-  async getProcessModels(offset?: number, limit?: number): Promise<ProcessModel[]> {
+  async getProcessModels(offset?: number, limit?: number, includeXml: boolean = false): Promise<ProcessModel[]> {
     try {
       const result = await this.engineClient.processDefinitions.getAll({
         identity: this.identity,
+        includeXml: includeXml,
         offset: offset,
         limit: limit,
       });
