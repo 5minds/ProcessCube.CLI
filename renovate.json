@@ -9,13 +9,18 @@
     "replacements:all",
     "workarounds:all"
   ],
-  "schedule": ["before 7am on Monday"],
+  "schedule": ["* 0-7 1 * *"],
   "prHourlyLimit": 5,
   "prConcurrentLimit": 10,
   "reviewers": ["S3bastianGriesa", "ElRaptorus"],
   "ignoreDeprecated": true,
   "ignoreUnstable": true,
   "ignoreDeps": [
+    "chalk",
+    "open",
+    "tar",
+    "marked",
+    "openid-client",
     "@5minds/processcube_engine_sdk",
     "@5minds/processcube_engine_client"
   ],
@@ -23,35 +28,36 @@
   "automerge": true,
   "packageRules": [
     {
-      "groupName": "Type Updates",
-      "groupSlug": "types-minor",
-      "matchUpdateTypes": ["major", "minor", "patch"],
+      "groupName": "All Dev Dependencies Minor",
+      "groupSlug": "dev-minor",
+      "matchDepTypes": ["devDependencies"],
       "automerge": true,
-      "matchPackageNames": ["/@types/*/"]
-    },
-    {
-      "groupName": "Prettier",
-      "groupSlug": "prettier",
-      "matchUpdateTypes": ["major", "minor", "patch"],
-      "automerge": true,
-      "matchPackageNames": [
-        "/prettier/",
-        "/@trivago/prettier-plugin-sort-imports/"
-      ]
-    },
-    {
-      "groupName": "Tests",
-      "groupSlug": "tests-minor",
-      "matchUpdateTypes": ["major", "minor", "patch"],
-      "automerge": true,
-      "matchPackageNames": ["/mocha/", "/choma/"]
-    },
-    {
-      "groupName": "Typescript",
-      "groupSlug": "typescript",
       "matchUpdateTypes": ["minor", "patch"],
+      "matchPackageNames": ["*"]
+    },
+    {
+      "groupName": "All Dev Dependencies Major",
+      "groupSlug": "dev-major",
+      "matchDepTypes": ["devDependencies"],
       "automerge": true,
-      "matchPackageNames": ["/typescript/", "/ts-mocha/"]
+      "matchUpdateTypes": ["major"],
+      "matchPackageNames": ["*"]
+    },
+    {
+      "groupName": "All Prod Dependencies Minor",
+      "groupSlug": "prod-minor",
+      "matchDepTypes": ["dependencies"],
+      "automerge": true,
+      "matchUpdateTypes": ["minor", "patch"],
+      "matchPackageNames": ["*"]
+    },
+    {
+      "groupName": "All Prod Dependencies Major",
+      "groupSlug": "prod-major",
+      "matchDepTypes": ["dependencies"],
+      "automerge": true,
+      "matchUpdateTypes": ["major"],
+      "matchPackageNames": ["*"]
     }
   ]
 }
