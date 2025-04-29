@@ -133,7 +133,7 @@ async function download(filename: string): Promise<string> {
   const file = createWriteStream(localFilename);
   const httpClient = filename.match(/^https:/) == null ? http : https;
 
-  await new Promise((resolve) =>
+  await new Promise<void>((resolve) =>
     httpClient.get(filename, function (response) {
       response.pipe(file);
       file.on('finish', resolve);

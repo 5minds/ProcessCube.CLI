@@ -1,8 +1,8 @@
 import { readFileSync } from 'fs';
 import * as JSON5 from 'json5';
 
-import { CLI, Inputs } from '../../cli';
 import { LegacyStdinPipeReader } from '../../cli/LegacyStdinPipeReader';
+import { CLI, Inputs } from '../../contracts/cli_types';
 import { startProcessInstance } from './start-process-model';
 
 export async function onLoad(cli: CLI): Promise<void> {

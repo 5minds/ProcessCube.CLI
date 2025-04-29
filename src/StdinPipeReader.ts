@@ -46,7 +46,7 @@ export class StdinPipeReader {
 
   private async readPipedDataIfAny(): Promise<string | null> {
     return new Promise((resolve, reject) => {
-      const self = process.openStdin();
+      const self = process.stdin;
       let receivedData: string | null = null;
       self.on('data', function (chunk) {
         receivedData = (receivedData || '') + chunk;

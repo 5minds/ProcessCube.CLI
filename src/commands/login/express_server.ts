@@ -43,7 +43,7 @@ export function startServerToLoginAndWaitForAccessTokenFromIdentityServer(
       const discoveryUri = `${identityServerUrl.replace(/\/$/, '')}/.well-known/openid-configuration`;
 
       const result = await fetch(discoveryUri);
-      const payload = await result.json();
+      const payload = (await result.json()) as Record<string, string>;
 
       const connectUri = `${payload.authorization_endpoint}?${params}`;
 

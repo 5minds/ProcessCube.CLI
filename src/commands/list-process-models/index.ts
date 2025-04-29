@@ -1,5 +1,5 @@
-import { CLI, Inputs } from '../../cli';
 import { LegacyStdinPipeReader } from '../../cli/LegacyStdinPipeReader';
+import { CLI, Inputs } from '../../contracts/cli_types';
 import { listProcessModels } from './list-process-models';
 
 export async function onLoad(cli: CLI): Promise<void> {

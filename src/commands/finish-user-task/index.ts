@@ -1,9 +1,9 @@
 import { readFileSync } from 'fs';
 import * as JSON5 from 'json5';
 
-import { CLI, Inputs } from '../../cli';
 import { LegacyStdinPipeReader } from '../../cli/LegacyStdinPipeReader';
 import { logWarning } from '../../cli/logging';
+import { CLI, Inputs } from '../../contracts/cli_types';
 import { finishUserTask } from './finish-user-task';
 
 export async function onLoad(cli: CLI): Promise<void> {

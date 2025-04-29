@@ -1,4 +1,4 @@
-import { Stdin } from '../cli';
+import { Stdin } from '../contracts/cli_types';
 
 export class LegacyStdinPipeReader {
   private pipedJson: any | null;
