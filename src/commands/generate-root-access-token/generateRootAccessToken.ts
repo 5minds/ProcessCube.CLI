@@ -41,7 +41,7 @@ To use it for authorization, update your engine config like this:
 
 ... or start your engine by using the corresponding environment variable:
 
-    iam__rootAccessToken="${safeSecretColored}" atlas-engine
+    iam__rootAccessToken="${safeSecretColored}" processcube-engine
 
 By doing this, you ensure that only clients using this secret token can utilize the API.
 `.trim(),
