@@ -38,7 +38,7 @@ export async function onLoad(cli: CLI): Promise<void> {
         {
           name: 'insiders',
           description:
-            'Install Studio extension for the Insiders Edition. Only works forStudio Extensions. Cannot be used with extensions-dir',
+            'Install Studio extension for the Insiders Edition. Only works for Studio Extensions. Cannot be used with extensions-dir',
           type: 'boolean',
           default: false,
         },
