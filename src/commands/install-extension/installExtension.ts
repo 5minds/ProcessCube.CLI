@@ -68,8 +68,11 @@ export async function installExtension(
       types.push('studioInsiders');
     }
     if (!useStable && !useDev && !useInsiders) {
-      console.log('x');
-      types.push(givenType || Object.keys(engines)[0]);
+      types.push(...(givenType ? [givenType] : Object.keys(engines).filter((engine) => VALID_TYPES.includes(engine))));
+    }
+
+    if (types.length === 0) {
+      types.push(null);
     }
 
     for (let type of types) {
