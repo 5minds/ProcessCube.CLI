@@ -10,7 +10,7 @@
   "scripts": {
     "clean": "rm -rf dist",
     "reinstall": "./reinstall.sh",
-    "build": "esbuild src/pc.ts --bundle --outfile=dist/pc.js --platform=node --target=node18 --loader:.md=text",
+    "build": "esbuild src/pc.ts --bundle --outfile=dist/pc.js --platform=node --target=node18 --loader:.md=text && tsc --noEmit",
     "start": "node dist/pc.js",
     "lint": "prettier --write --config ./.prettierrc.json ./src ./test",
     "test": "npm run test:unit",
