@@ -21,7 +21,7 @@ export async function onLoad(cli: CLI): Promise<void> {
           name: 'type',
           description: 'Type of the extension',
           type: 'string',
-          choices: ['cli', 'engine', 'portal', 'studio'],
+          choices: ['cli', 'engine', 'portal', 'studio', 'studioInsiders', 'studioDev'],
         },
         {
           name: 'yes',
