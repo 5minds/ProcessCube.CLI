@@ -90,7 +90,7 @@ If you are the author, please specify it under \`engines\` in \`package.json\`:
         ...
       }
 
-Replace \`<type>\` with any of: ${VALID_TYPES.join(', ')}
+Replace \`<type>\` with any of: ${VALID_TYPES.join(', ')}\nType will be set as \`cli\` by default.
 `.trim(),
         );
         type = 'cli';
