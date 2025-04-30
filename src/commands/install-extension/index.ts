@@ -56,6 +56,14 @@ export async function onLoad(cli: CLI): Promise<void> {
           type: 'boolean',
           default: false,
         },
+        {
+          name: 'lowcode',
+          alias: 'lc',
+          description:
+            'Install LowCode extension into Studio. Only works for the Studio types. Cannot be used with extensions-dir. Modifies the --stable --insiders and --dev flags to install the extension as a LowCode extension',
+          type: 'boolean',
+          default: false,
+        },
       ],
     },
     runCommand,
@@ -79,5 +87,6 @@ async function runCommand(inputs: Inputs): Promise<void> {
     stable,
     dev,
     inputs.argv.output,
+    inputs.argv.lowcode,
   );
 }
