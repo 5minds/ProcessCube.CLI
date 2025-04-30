@@ -21,6 +21,9 @@ const EXTENSION_DIRS = {
   studio: join(os.homedir(), '.processcube', 'studio', 'extensions'),
   studioInsiders: join(os.homedir(), '.processcube', 'studio-insiders', 'extensions'),
   studioDev: join(os.homedir(), '.processcube', 'studio-dev', 'extensions'),
+  studioLowcode: join(os.homedir(), '.processcube', 'studio', '__internal_studio_lowcode__', 'data'),
+  studioInsidersLowcode: join(os.homedir(), '.processcube', 'studio-insiders', '__internal_studio_lowcode__', 'data'),
+  studioDevLowcode: join(os.homedir(), '.processcube', 'studio-dev', '__internal_studio_lowcode__', 'data'),
 };
 const VALID_TYPES = ['cli', 'engine', 'portal', 'studio', 'studioInsiders', 'studioDev'];
 const EXTENSION_TYPE_TO_WORDING = {
@@ -30,6 +33,9 @@ const EXTENSION_TYPE_TO_WORDING = {
   studio: 'Studio Extension',
   studioInsiders: 'Studio Extension',
   studioDev: 'Studio Extension',
+  studioLowcode: 'LowCode Studio Extension',
+  studioInsidersLowcode: 'LowCode Studio Extension',
+  studioDevLowcode: 'LowCode Studio Extension',
 };
 
 export async function installExtension(
@@ -41,6 +47,7 @@ export async function installExtension(
   useStable: boolean,
   useDev: boolean,
   output: string,
+  lowcode: boolean,
 ): Promise<void> {
   console.log(`Fetching file/package ${urlOrFilenameOrPackage} ...`);
 
@@ -101,10 +108,17 @@ Replace \`<type>\` with any of: ${VALID_TYPES.join(', ')}\nType will be set as \
       }
 
       console.log('\r');
-      const newPath = await moveExtensionToDestination(cacheDirOfExtension, type, name, autoYes, givenExtensionsDir);
+      const newPath = await moveExtensionToDestination(
+        cacheDirOfExtension,
+        type,
+        name,
+        autoYes,
+        givenExtensionsDir,
+        lowcode,
+      );
 
       console.log(
-        EXTENSION_TYPE_TO_WORDING[type],
+        EXTENSION_TYPE_TO_WORDING[lowcode ? type + 'Lowcode' : type],
         chalk.greenBright(
           `${name} (${packageJson.version ? 'v' + packageJson.version : 'version missing'})`,
           chalk.reset(`has been installed to ${newPath}`),
@@ -181,8 +195,16 @@ async function moveExtensionToDestination(
   name: string,
   autoYes: boolean,
   givenExtensionsDir: string,
+  lowcode: boolean,
 ): Promise<string> {
-  const extensionDirForType = givenExtensionsDir || EXTENSION_DIRS[type];
+  console.log('arguments', arguments);
+  const extensionDirForType = givenExtensionsDir || EXTENSION_DIRS[lowcode ? type + 'Lowcode' : type];
+  if (!extensionDirForType && lowcode) {
+    logError(
+      `Expected \`type\` to be one of ${JSON.stringify(VALID_TYPES)}. Got \`${type}\`\n\`--lowcode\` flag is only supported for Studio extensions.`,
+    );
+    process.exit(1);
+  }
   const newPath = join(extensionDirForType, name);
   const finalPath = getPath(newPath);
 
