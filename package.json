@@ -24,7 +24,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git@github.com:atlas-engine/cli.git"
+    "url": "git+ssh://git@github.com/atlas-engine/cli.git"
   },
   "author": "5Minds IT-Solutions GmbH & Co. KG",
   "license": "MIT",
