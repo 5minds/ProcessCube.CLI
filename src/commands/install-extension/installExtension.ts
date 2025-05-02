@@ -1,5 +1,6 @@
 import AdmZip from 'adm-zip';
 import chalk from 'chalk';
+import { spawnSync } from 'child_process';
 import { createWriteStream, existsSync, mkdirSync, readFileSync, readdirSync, rmSync } from 'fs';
 import fs from 'fs-extra';
 import http from 'http';
@@ -61,7 +62,7 @@ export async function installExtension(
   const cacheDirOfExtensions = await extractExtensionToCacheDir(filename, cacheDir);
   for (const cacheDirOfExtension of cacheDirOfExtensions) {
     const packageJson = readPackageJson(cacheDirOfExtension);
-    const name = packageNameToPath(packageJson.name);
+    const name = lowcode ? packageJson.name : packageNameToPath(packageJson.name);
     const engines = packageJson.engines || {};
     let types = [];
 
@@ -115,6 +116,7 @@ Replace \`<type>\` with any of: ${VALID_TYPES.join(', ')}\nType will be set as \
         autoYes,
         givenExtensionsDir,
         lowcode,
+        filename,
       );
 
       console.log(
@@ -196,8 +198,8 @@ async function moveExtensionToDestination(
   autoYes: boolean,
   givenExtensionsDir: string,
   lowcode: boolean,
+  packageFilepath: string,
 ): Promise<string> {
-  console.log('arguments', arguments);
   const extensionDirForType = givenExtensionsDir || EXTENSION_DIRS[lowcode ? type + 'Lowcode' : type];
   if (!extensionDirForType && lowcode) {
     logError(
@@ -205,6 +207,11 @@ async function moveExtensionToDestination(
     );
     process.exit(1);
   }
+
+  if (lowcode) {
+    return installExtensionToPath(extensionDirForType, packageFilepath);
+  }
+
   const newPath = join(extensionDirForType, name);
   const finalPath = getPath(newPath);
 
@@ -228,6 +235,26 @@ async function moveExtensionToDestination(
   await fs.copy(cacheDirOfExtension, finalPath);
 
   return finalPath;
+}
+
+async function installExtensionToPath(extensionDir: string, packageFilepath: string): Promise<string> {
+  ensureDir(extensionDir);
+  const packageJsonExists = existsSync(join(extensionDir, 'package.json'));
+  if (!packageJsonExists) {
+    const init = spawnSync('npm', ['init', '-y'], { cwd: extensionDir });
+    if (init.status !== 0) {
+      logError(`Failed to initialize package.json in ${extensionDir}\n${init.output.toString()}`);
+      process.exit(1);
+    }
+  }
+
+  const result = spawnSync('npm', ['install', '--prefix', extensionDir, '--silent', packageFilepath]);
+  if (result.status !== 0) {
+    logError(`Failed to install extension in ${extensionDir}\n${result.output.toString()}`);
+    process.exit(1);
+  }
+
+  return extensionDir;
 }
 
 function getPath(newPath: string): string {
