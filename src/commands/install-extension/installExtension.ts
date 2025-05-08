@@ -65,13 +65,14 @@ export async function installExtension(
     const name = installToStudioLowCode ? packageJson.name : packageNameToPath(packageJson.name);
     const typesFromPackageJson = packageJson.engines || {};
 
-    let extensionTypes = getTargetExtensionTypes(
+    let extensionTypes = await getTargetExtensionTypes(
       typesFromPackageJson,
       givenType,
       useStable,
       useInsiders,
       useDev,
       installToStudioLowCode,
+      autoYes,
     );
 
     if (extensionTypes.length === 0) {
@@ -295,14 +296,15 @@ function packageNameToPath(name: string): string {
   return name.replace(/\//, '__');
 }
 
-function getTargetExtensionTypes(
+async function getTargetExtensionTypes(
   typesFromPackageJson: string[],
   givenType: string,
   useStable: boolean,
   useInsiders: boolean,
   useDev: boolean,
   installToStudioLowCode: boolean,
-): string[] {
+  autoYes = false,
+): Promise<string[]> {
   const declaredTypes = Object.keys(typesFromPackageJson).filter((declaredType) => VALID_TYPES.includes(declaredType));
 
   if (installToStudioLowCode && !(declaredTypes.includes('lowCode') || givenType == 'lowCode')) {
@@ -324,6 +326,16 @@ function getTargetExtensionTypes(
       logWarning(
         `NOTE: Extension is of type: ${declaredTypes[0] || givenType || 'unknown'}.\n--dev, --stable and --insiders currently only work for Studio Extensions.\nThe Extension will be treated as a Studio Extension accordingly.`,
       );
+      if (autoYes !== true) {
+        const yes = await yesno({
+          question: `Continue anyway? [Yn]`,
+        });
+
+        if (yes !== true) {
+          console.log('User cancelled operation. Aborting.');
+          process.exit(255);
+        }
+      }
     }
     return getExtensionTypeForReleaseChannel(useStable, useInsiders, useDev, installToStudioLowCode);
   }
