@@ -37,6 +37,13 @@ export async function loadExtensions(cli: CLI): Promise<void> {
         return;
       }
 
+      if (!packageJson.main) {
+        logWarning(
+          `Skipping Extension\nExpected 'main' script as entrypoint for extension '${subdir}' to be defined in package.json: ${filename}.\n`,
+        );
+        continue;
+      }
+
       const entrypoint = join(extensionsDir, subdir, packageJson.main);
       if (existsSync(entrypoint)) {
         try {
