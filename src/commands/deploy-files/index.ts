@@ -1,5 +1,5 @@
-import { CLI, Inputs } from '../../cli';
 import { logWarning } from '../../cli/logging';
+import { CLI, Inputs } from '../../contracts/cli_types';
 import { deployFiles } from './deploy-files';
 
 export async function onLoad(cli: CLI): Promise<void> {

@@ -21,7 +21,7 @@ export async function onLoad(cli: CLI): Promise<void> {
           name: 'type',
           description: 'Type of the extension',
           type: 'string',
-          choices: ['cli', 'engine', 'portal', 'studio'],
+          choices: ['cli', 'engine', 'portal', 'studio', 'lowCode'],
         },
         {
           name: 'yes',
@@ -38,7 +38,7 @@ export async function onLoad(cli: CLI): Promise<void> {
         {
           name: 'insiders',
           description:
-            'Install Studio extension for the Insiders Edition. Only works forStudio Extensions. Cannot be used with extensions-dir',
+            'Install Studio extension for the Insiders Edition. Only works for Studio Extensions. Cannot be used with extensions-dir',
           type: 'boolean',
           default: false,
         },
@@ -53,6 +53,14 @@ export async function onLoad(cli: CLI): Promise<void> {
           name: 'dev',
           description:
             'Install Studio extension for locally build Studios. Only works for Studio Extensions. Cannot be used with extensions-dir',
+          type: 'boolean',
+          default: false,
+        },
+        {
+          name: 'studio-lowcode',
+          alias: 'slc',
+          description:
+            'Install LowCode extension into Studio. Only works for the lowcode type. Cannot be used with extensions-dir. Modifies the --stable --insiders and --dev flags to install the extension as a LowCode extension',
           type: 'boolean',
           default: false,
         },
@@ -78,6 +86,6 @@ async function runCommand(inputs: Inputs): Promise<void> {
     insiders,
     stable,
     dev,
-    inputs.argv.output,
+    inputs.argv.studioLowcode,
   );
 }

@@ -1,4 +1,4 @@
-import { CLI, Inputs } from '../../cli';
+import { CLI, Inputs } from '../../contracts/cli_types';
 import { printSessionStatus } from './session-status';
 
 export async function onLoad(cli: CLI): Promise<void> {

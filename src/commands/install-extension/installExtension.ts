@@ -1,5 +1,6 @@
 import AdmZip from 'adm-zip';
 import chalk from 'chalk';
+import { spawnSync } from 'child_process';
 import { createWriteStream, existsSync, mkdirSync, readFileSync, readdirSync, rmSync } from 'fs';
 import fs from 'fs-extra';
 import http from 'http';
@@ -21,15 +22,22 @@ const EXTENSION_DIRS = {
   studio: join(os.homedir(), '.processcube', 'studio', 'extensions'),
   studioInsiders: join(os.homedir(), '.processcube', 'studio-insiders', 'extensions'),
   studioDev: join(os.homedir(), '.processcube', 'studio-dev', 'extensions'),
+  studioLowCode: join(os.homedir(), '.processcube', 'studio', '__internal_studio_lowcode__', 'data'),
+  studioInsidersLowCode: join(os.homedir(), '.processcube', 'studio-insiders', '__internal_studio_lowcode__', 'data'),
+  studioDevLowCode: join(os.homedir(), '.processcube', 'studio-dev', '__internal_studio_lowcode__', 'data'),
 };
-const VALID_TYPES = ['cli', 'engine', 'portal', 'studio', 'studioInsiders', 'studioDev'];
+const VALID_TYPES = Object.keys(EXTENSION_DIRS);
 const EXTENSION_TYPE_TO_WORDING = {
   cli: 'CLI Extension',
   engine: 'Engine Extension',
   portal: 'Portal Extension',
+  lowCode: 'LowCode Extension',
   studio: 'Studio Extension',
   studioInsiders: 'Studio Extension',
   studioDev: 'Studio Extension',
+  studioLowCode: 'Studio LowCode Extension',
+  studioInsidersLowCode: 'Studio LowCode Extension',
+  studioDevLowCode: 'Studio LowCode Extension',
 };
 
 export async function installExtension(
@@ -40,7 +48,7 @@ export async function installExtension(
   useInsiders: boolean,
   useStable: boolean,
   useDev: boolean,
-  output: string,
+  installToStudioLowCode: boolean,
 ): Promise<void> {
   console.log(`Fetching file/package ${urlOrFilenameOrPackage} ...`);
 
@@ -54,25 +62,24 @@ export async function installExtension(
   const cacheDirOfExtensions = await extractExtensionToCacheDir(filename, cacheDir);
   for (const cacheDirOfExtension of cacheDirOfExtensions) {
     const packageJson = readPackageJson(cacheDirOfExtension);
-    const name = packageNameToPath(packageJson.name);
-    const engines = packageJson.engines || {};
-    let types = [];
+    const name = installToStudioLowCode ? packageJson.name : packageNameToPath(packageJson.name);
+    const typesFromPackageJson = packageJson.engines || {};
 
-    if (useStable) {
-      types.push('studio');
-    }
-    if (useDev) {
-      types.push('studioDev');
-    }
-    if (useInsiders) {
-      types.push('studioInsiders');
-    }
-    if (!useStable && !useDev && !useInsiders) {
-      console.log('x');
-      types.push(givenType || Object.keys(engines)[0]);
+    let extensionTypes = await getTargetExtensionTypes(
+      typesFromPackageJson,
+      givenType,
+      useStable,
+      useInsiders,
+      useDev,
+      installToStudioLowCode,
+      autoYes,
+    );
+
+    if (extensionTypes.length === 0) {
+      extensionTypes = [null];
     }
 
-    for (let type of types) {
+    for (let type of extensionTypes) {
       if (type == null) {
         logWarning(
           `Package ${name} does not specify its type.
@@ -87,18 +94,33 @@ If you are the author, please specify it under \`engines\` in \`package.json\`:
         ...
       }
 
-Replace \`<type>\` with any of: ${VALID_TYPES.join(', ')}
+Replace \`<type>\` with any of: ${VALID_TYPES.join(', ')}\nAssuming type \`cli\` by default.
 `.trim(),
         );
         type = 'cli';
       }
 
       if (!VALID_TYPES.includes(type)) {
-        logError(`Expected \`type\` to be one of ${JSON.stringify(VALID_TYPES)}, got: ${type}`);
+        logError(`Expected \`type\` to be one of ${JSON.stringify(VALID_TYPES)}, got: ${type}.`);
+        process.exit(1);
+      }
+      if (!type.toLowerCase().includes('lowcode') && installToStudioLowCode) {
+        logError(`--studio-lowcode\` flag is allowed for LowCode extensions only.`);
+        process.exit(1);
       }
 
       console.log('\r');
-      const newPath = await moveExtensionToDestination(cacheDirOfExtension, type, name, autoYes, givenExtensionsDir);
+      const newPath = await moveExtensionToDestination(
+        cacheDirOfExtension,
+        type,
+        name,
+        autoYes,
+        givenExtensionsDir,
+        filename,
+        installToStudioLowCode,
+      );
+
+      console.log(type);
 
       console.log(
         EXTENSION_TYPE_TO_WORDING[type],
@@ -133,7 +155,7 @@ async function download(filename: string): Promise<string> {
   const file = createWriteStream(localFilename);
   const httpClient = filename.match(/^https:/) == null ? http : https;
 
-  await new Promise((resolve) =>
+  await new Promise<void>((resolve) =>
     httpClient.get(filename, function (response) {
       response.pipe(file);
       file.on('finish', resolve);
@@ -178,8 +200,15 @@ async function moveExtensionToDestination(
   name: string,
   autoYes: boolean,
   givenExtensionsDir: string,
+  packageFilepath: string,
+  installToStudioLowCode: boolean,
 ): Promise<string> {
   const extensionDirForType = givenExtensionsDir || EXTENSION_DIRS[type];
+
+  if (installToStudioLowCode) {
+    return installExtensionToPath(extensionDirForType, packageFilepath);
+  }
+
   const newPath = join(extensionDirForType, name);
   const finalPath = getPath(newPath);
 
@@ -203,6 +232,26 @@ async function moveExtensionToDestination(
   await fs.copy(cacheDirOfExtension, finalPath);
 
   return finalPath;
+}
+
+async function installExtensionToPath(extensionDir: string, packageFilepath: string): Promise<string> {
+  ensureDir(extensionDir);
+  const packageJsonExists = existsSync(join(extensionDir, 'package.json'));
+  if (!packageJsonExists) {
+    const init = spawnSync('npm', ['init', '-y'], { cwd: extensionDir });
+    if (init.status !== 0) {
+      logError(`Failed to initialize package.json in ${extensionDir}\n${init.output.toString()}`);
+      process.exit(1);
+    }
+  }
+
+  const result = spawnSync('npm', ['install', '--prefix', extensionDir, '--silent', packageFilepath]);
+  if (result.status !== 0) {
+    logError(`Failed to install extension in ${extensionDir}\n${result.output.toString()}`);
+    process.exit(1);
+  }
+
+  return extensionDir;
 }
 
 function getPath(newPath: string): string {
@@ -245,4 +294,82 @@ function readPackageJson(dir: string): any {
 
 function packageNameToPath(name: string): string {
   return name.replace(/\//, '__');
+}
+
+async function getTargetExtensionTypes(
+  typesFromPackageJson: string[],
+  givenType: string,
+  useStable: boolean,
+  useInsiders: boolean,
+  useDev: boolean,
+  installToStudioLowCode: boolean,
+  autoYes = false,
+): Promise<string[]> {
+  const declaredTypes = Object.keys(typesFromPackageJson).filter((declaredType) => VALID_TYPES.includes(declaredType));
+
+  if (installToStudioLowCode && !(declaredTypes.includes('lowCode') || givenType == 'lowCode')) {
+    logError(
+      `--studio-lowcode\` flag is allowed for LowCode extensions only.\nExtension is of type: ${declaredTypes[0] || givenType || 'unknown'}\nUse --type=lowCode to install Extension for Studio LowCode anyway.`,
+    );
+    process.exit(1);
+  }
+
+  if (!installToStudioLowCode && (declaredTypes.includes('lowCode') || givenType == 'lowCode')) {
+    logError(
+      `Installing LowCode Extensions is currently only supported for the Studio LowCode platform.\nUse --studio-lowcode to install as Studio LowCode Extension`,
+    );
+    process.exit(1);
+  }
+
+  if (useStable || useDev || useInsiders || installToStudioLowCode) {
+    if (!installToStudioLowCode && !(declaredTypes.includes('studio') || givenType == 'studio')) {
+      logWarning(
+        `NOTE: Extension is of type: ${declaredTypes[0] || givenType || 'unknown'}.\n--dev, --stable and --insiders currently only work for Studio Extensions.\nThe Extension will be treated as a Studio Extension accordingly.`,
+      );
+      if (autoYes !== true) {
+        const yes = await yesno({
+          question: `Continue anyway? [Yn]`,
+        });
+
+        if (yes !== true) {
+          console.log('User cancelled operation. Aborting.');
+          process.exit(255);
+        }
+      }
+    }
+    return getExtensionTypeForReleaseChannel(useStable, useInsiders, useDev, installToStudioLowCode);
+  }
+
+  if (givenType) {
+    return [givenType];
+  }
+
+  return declaredTypes;
+}
+
+function getExtensionTypeForReleaseChannel(
+  useStable: boolean,
+  useInsiders: boolean,
+  useDev: boolean,
+  installToStudioLowCode: boolean,
+): string[] {
+  const LowCodeSuffix = installToStudioLowCode ? 'LowCode' : '';
+
+  if (installToStudioLowCode && !(useStable || useInsiders || useDev)) {
+    return [`studio${LowCodeSuffix}`];
+  }
+
+  const types: string[] = [];
+
+  if (useStable) {
+    types.push(`studio${LowCodeSuffix}`);
+  }
+  if (useDev) {
+    types.push(`studioDev${LowCodeSuffix}`);
+  }
+  if (useInsiders) {
+    types.push(`studioInsiders${LowCodeSuffix}`);
+  }
+
+  return types;
 }

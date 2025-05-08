@@ -1,4 +1,4 @@
-import { CLI, Inputs } from '../../cli';
+import { CLI, Inputs } from '../../contracts/cli_types';
 import { generateRootAccessToken } from './generateRootAccessToken';
 
 export async function onLoad(cli: CLI): Promise<void> {

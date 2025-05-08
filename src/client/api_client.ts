@@ -31,6 +31,8 @@ import {
 import { getIdentity } from './identity';
 import { isUrlAvailable } from './is_url_available';
 
+export { ProcessInstance } from '@5minds/processcube_engine_sdk/';
+
 // TODO: missing IIdentity here
 type Identity = any;
 
