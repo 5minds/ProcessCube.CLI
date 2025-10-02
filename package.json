@@ -1,6 +1,6 @@
 {
   "name": "@5minds/processcube_cli",
-  "version": "2.9.0",
+  "version": "3.0.0",
   "description": "Command Line Utilities for 5Minds ProcessCube",
   "main": "dist/pc.js",
   "engines": {
@@ -10,8 +10,8 @@
   "scripts": {
     "clean": "rm -rf dist",
     "reinstall": "./reinstall.sh",
-    "build": "esbuild src/pc.ts --bundle --outfile=dist/pc.js --platform=node --target=node18 --loader:.md=text && tsc --noEmit",
-    "start": "node dist/pc.js",
+    "build": "esbuild src/pc.ts --bundle --outfile=dist/pc.js --platform=node --target=node18 --loader:.md=text --external:yargs --external:yargs/helpers && tsc --noEmit",
+    "start": "node --no-deprecation dist/pc.js",
     "lint": "prettier --write --config ./.prettierrc.json ./src ./test",
     "test": "npm run test:unit",
     "test:unit": "mocha -r ts-node/register -r choma \"src/**/*.test.ts\"",
@@ -28,6 +28,9 @@
   },
   "author": "5Minds IT-Solutions GmbH & Co. KG",
   "license": "MIT",
+  "dependencies": {
+    "yargs": "^18.0.0"
+  },
   "devDependencies": {
     "@5minds/processcube_engine_client": "6.0.0-beta.7",
     "@5minds/processcube_engine_sdk": "7.0.0-beta.6",
@@ -61,7 +64,6 @@
     "ts-node": "^10.9.2",
     "tsconfig": "^7.0.0",
     "typescript": "^5.4.5",
-    "yargs": "^18.0.0",
     "yesno": "^0.4.0"
   }
 }

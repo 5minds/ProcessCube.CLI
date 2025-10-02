@@ -7,7 +7,8 @@ const SCRIPT_NAME = 'pc';
 const VERSION = require('../package.json').version;
 
 export async function useYargsForCommandLineInterface(cli: CommandLineInterface): Promise<void> {
-  const program = require('yargs');
+  const yargs = require('yargs');
+  const program = yargs(process.argv.slice(2));
 
   program
     .version(VERSION)
