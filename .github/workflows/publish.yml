@@ -28,8 +28,8 @@ jobs:
       atlas_engine:
         image: ghcr.io/5minds/processcube_engine:19
         credentials:
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }} 
+          username: ${{ secrets.GH_CI_USER_NAME }}
+          password: ${{ secrets.GH_CI_USER_TOKEN }} 
         ports:
           - 10560:80
         options: --health-cmd true --health-interval 10s --health-timeout 5s --health-retries 5
