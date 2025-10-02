@@ -5,7 +5,7 @@ import { RetriedProcessInstanceInfo } from '../../contracts/api_client_types';
 import { OUTPUT_FORMAT_JSON, OUTPUT_FORMAT_TEXT } from '../../pc';
 import { loadSession } from '../../session/session';
 
-export async function retryProcessInstance(processInstanceIds: string[], outputFormat: string): Promise<void> {
+export async function retryProcessInstance(processInstanceIds: string[], update_latest_model: boolean, outputFormat: string): Promise<void> {
   const session = loadSession();
   if (session == null) {
     logError('No session found. Aborting.');
@@ -16,7 +16,7 @@ export async function retryProcessInstance(processInstanceIds: string[], outputF
 
   const results: RetriedProcessInstanceInfo[] = [];
   for (const processInstanceId of processInstanceIds) {
-    const result = await apiClient.retryProcessInstance(processInstanceId);
+    const result = await apiClient.retryProcessInstance(processInstanceId, update_latest_model);
     results.push(result);
   }
 

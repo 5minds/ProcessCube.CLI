@@ -1,6 +1,15 @@
 #!/usr/bin/env node
 import 'reflect-metadata';
 
+// Suppress punycode deprecation warning
+process.removeAllListeners('warning');
+process.on('warning', (warning) => {
+  if (warning.name === 'DeprecationWarning' && warning.message.includes('punycode')) {
+    return;
+  }
+  console.warn(warning);
+});
+
 import { CommandLineInterface } from './cli';
 import { logError } from './cli/logging';
 import { loadExtensions } from './loadExtensions';
