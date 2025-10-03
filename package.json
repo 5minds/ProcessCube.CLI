@@ -4,13 +4,17 @@
   "description": "Command Line Utilities for 5Minds ProcessCube",
   "main": "dist/pc.js",
   "engines": {
-    "node": ">=18.12.0"
+    "node": ">=20.0.0"
   },
   "files": [],
   "scripts": {
     "clean": "rm -rf dist",
     "reinstall": "./reinstall.sh",
-    "build": "esbuild src/pc.ts --bundle --outfile=dist/pc.js --platform=node --target=node18 --loader:.md=text --external:yargs --external:yargs/helpers && tsc --noEmit",
+    "build": "esbuild src/pc.ts --bundle --outfile=dist/pc.js --platform=node --target=node20 --loader:.md=text && tsc --noEmit",
+    "build:binary": "npm run build && pkg dist/pc.js --out-path=dist/binary --targets=latest-macos-arm64",
+    "build:sea": "npm run build && node --experimental-sea-config sea-config.json",
+    "build:sea:full": "npm run build:sea && cp $(which node) dist/binary/pc-sea && npx postject dist/binary/pc-sea NODE_SEA_BLOB dist/pc.blob --sentinel-fuse NODE_SEA_FUSE_fce680ab2cc467b6e072b8b5df1996b2 --macho-segment-name NODE_SEA",
+    "build:binary:all": "npm run build && pkg dist/pc.js --out-path=dist/binary --targets=latest-macos-x64,latest-macos-arm64,latest-linux-x64,latest-win-x64",
     "start": "node --no-deprecation dist/pc.js",
     "lint": "prettier --write --config ./.prettierrc.json ./src ./test",
     "test": "npm run test:unit",
@@ -28,9 +32,7 @@
   },
   "author": "5Minds IT-Solutions GmbH & Co. KG",
   "license": "MIT",
-  "dependencies": {
-    "yargs": "^18.0.0"
-  },
+  "dependencies": {},
   "devDependencies": {
     "@5minds/processcube_engine_client": "6.0.0-beta.7",
     "@5minds/processcube_engine_sdk": "7.0.0-beta.6",
@@ -57,6 +59,8 @@
     "mocha": "^11.0.0",
     "open": "^8.0.0",
     "openid-client": "^5.0.0",
+    "pkg": "^5.8.1",
+    "postject": "^1.0.0-alpha.6",
     "prettier": "^3.3.1",
     "reflect-metadata": "^0.2.2",
     "table": "^6.8.2",
@@ -64,6 +68,13 @@
     "ts-node": "^10.9.2",
     "tsconfig": "^7.0.0",
     "typescript": "^5.4.5",
+    "yargs": "^17.7.2",
     "yesno": "^0.4.0"
+  },
+  "pkg": {
+    "scripts": [
+      "dist/pc.js"
+    ],
+    "outputPath": "dist/binary"
   }
 }
