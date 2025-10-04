@@ -17,6 +17,13 @@ export async function onLoad(cli: CLI): Promise<void> {
           type: 'array',
         },
       ],
+      options: [
+        {
+          name: 'update_latest_model',
+          description: 'Retry the process instance on the latest version of the process model',
+          type: 'boolean',
+        },
+      ]
     },
     runCommand,
   );
@@ -31,5 +38,9 @@ async function runCommand(inputs: Inputs): Promise<void> {
     return;
   }
 
-  await retryProcessInstance(processInstanceIds, inputs.argv.output);
+  await retryProcessInstance(
+    processInstanceIds, 
+    inputs.argv.update_latest_model,
+    inputs.argv.output
+  );
 }

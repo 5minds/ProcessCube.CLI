@@ -1,0 +1,5 @@
+{
+  "main": "dist/pc.js",
+  "output": "dist/pc.blob",
+  "disableExperimentalSEAWarning": true
+}
