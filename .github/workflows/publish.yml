@@ -5,6 +5,10 @@ on:
     branches:
       - '*'
       - '*/*'
+      
+permissions:
+  contents: write  # Changed from 'read' to 'write' for releases
+  packages: read 
 
 env:
   CI_TOOLS_VERSION: '^5.0.0'
@@ -22,19 +26,22 @@ jobs:
 
     services:
       atlas_engine:
-        image: 5minds/processcube_engine:18
+        image: ghcr.io/5minds/processcube_engine:19
+        credentials:
+          username: ${{ secrets.GH_CI_USER_NAME }}
+          password: ${{ secrets.GH_CI_USER_TOKEN }} 
         ports:
           - 10560:80
         options: --health-cmd true --health-interval 10s --health-timeout 5s --health-retries 5
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           fetch-depth: 0
           token: ${{ secrets.GH_TOKEN }}
 
       - name: Use Node.js 22.x
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: 22.x
           registry-url: 'https://registry.npmjs.org'
@@ -54,6 +61,10 @@ jobs:
       - name: 'Build sources'
         run: npm run build
 
+      # NEW: Build cross-platform binaries
+      - name: 'Build cross-platform binaries'
+        run: npm run build:binary:all
+
       - name: 'Run unit tests'
         run: npm run test:unit
 
@@ -67,6 +78,59 @@ jobs:
         env:
           GH_USER: 'process-engine-ci'
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
+
+      # NEW: Upload binaries to GitHub Release
+      - name: 'Upload binaries to release'
+        if: "!startsWith(github.ref_name, 'renovate') && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/next' || github.ref == 'refs/heads/develop')"
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            dist/binary/pc-linux-x64
+            dist/binary/pc-macos-x64
+            dist/binary/pc-macos-arm64
+            dist/binary/pc-win-x64.exe
+          tag_name: ${{ github.ref_name }}
+          name: ProcessCube CLI ${{ github.ref_name }}
+          body: |
+            ## ProcessCube CLI Release
+            
+            ### 🚀 Standalone Binaries (No Node.js required)
+            
+            | Platform | Architecture | Download |
+            |----------|-------------|----------|
+            | Linux | x64 | `pc-linux-x64` |
+            | macOS | Intel (x64) | `pc-macos-x64` |
+            | macOS | Apple Silicon | `pc-macos-arm64` |
+            | Windows | x64 | `pc-win-x64.exe` |
+            
+            ### 📦 Quick Installation
+            
+            **Linux/macOS:**
+            ```bash
+            # Download and install
+            curl -L -o pc https://github.com/5minds/ProcessCube.CLI/releases/latest/download/pc-linux-x64
+            chmod +x pc
+            sudo mv pc /usr/local/bin/
+            pc --help
+            ```
+            
+            **Windows:**
+            ```powershell
+            # Download and run
+            Invoke-WebRequest -Uri "https://github.com/5minds/ProcessCube.CLI/releases/latest/download/pc-win-x64.exe" -OutFile "pc.exe"
+            .\pc.exe --help
+            ```
+            
+            ### ✨ Features
+            - ✅ No Node.js installation required
+            - ✅ All 19 CLI commands available
+            - ✅ Cross-platform compatibility
+            - ✅ Single file deployment
+            - ✅ Ready for enterprise use
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
 
       - name: 'Publish version'
         if: "!startsWith(github.ref_name, 'renovate')"
