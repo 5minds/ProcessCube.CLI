@@ -81,7 +81,7 @@ jobs:
 
       # NEW: Upload binaries to GitHub Release
       - name: 'Upload binaries to release'
-        if: "!startsWith(github.ref_name, 'renovate') && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || github.ref == 'refs/heads/develop')"
+        if: "!startsWith(github.ref_name, 'renovate') && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/next' || github.ref == 'refs/heads/develop')"
         uses: softprops/action-gh-release@v1
         with:
           files: |

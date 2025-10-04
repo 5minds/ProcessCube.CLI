@@ -9,19 +9,39 @@ Automatisierung.
 ## Wie kann ich das Projekt aufsetzen?
 
 
-### Voraussetzungen
+### 🚀 Standalone Binaries (No Node.js required)
 
-* Node `>= 18.0.0`
-* npm `>= 10.0.0`
+| Platform | Architecture | Download |
+|----------|-------------|----------|
+| Linux | x64 | `pc-linux-x64` |
+| macOS | Intel (x64) | `pc-macos-x64` |
+| macOS | Apple Silicon | `pc-macos-arm64` |
+| Windows | x64 | `pc-win-x64.exe` |
 
+### 📦 Quick Installation
 
-### Setup/Installation
-
-```shell
-$ npm install @5minds/processcube_cli
+**Linux/macOS:**
+```bash
+# Download and install
+curl -L -o pc https://github.com/5minds/ProcessCube.CLI/releases/latest/download/pc-linux-x64
+chmod +x pc
+sudo mv pc /usr/local/bin/
+pc --help
 ```
 
-## Wie kann ich das Projekt benutzen?
+**Windows:**
+```powershell
+# Download and run
+Invoke-WebRequest -Uri "https://github.com/5minds/ProcessCube.CLI/releases/latest/download/pc-win-x64.exe" -OutFile "pc.exe"
+.\pc.exe --help
+```
+
+### ✨ Features
+- ✅ No Node.js installation required
+- ✅ All 19 CLI commands available
+- ✅ Cross-platform compatibility
+- ✅ Single file deployment
+- ✅ Ready for enterprise use
 
 
 ### Benutzung
