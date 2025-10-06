@@ -1,10 +1,10 @@
 {
   "name": "@5minds/processcube_cli",
-  "version": "3.0.1",
+  "version": "3.0.2",
   "description": "Command Line Utilities for 5Minds ProcessCube",
   "main": "dist/pc.js",
   "engines": {
-    "node": ">=20.0.0"
+    "node": ">=22.0.0"
   },
   "files": [],
   "scripts": {
