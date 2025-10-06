@@ -79,6 +79,12 @@ jobs:
           GH_USER: 'process-engine-ci'
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
 
+      - name: Prepare Version Infos
+        id: get_version
+        run: |
+          echo "VERSION=$(ci_tools get-version)" >> $GITHUB_OUTPUT
+          echo "MAJOR_VERSION=$(ci_tools get-version --major)" >> $GITHUB_OUTPUT
+
       # NEW: Upload binaries to GitHub Release
       - name: 'Upload binaries to release'
         if: "!startsWith(github.ref_name, 'renovate') && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/next' || github.ref == 'refs/heads/develop')"
@@ -89,7 +95,7 @@ jobs:
             dist/binary/pc-macos-x64
             dist/binary/pc-macos-arm64
             dist/binary/pc-win-x64.exe
-          tag_name: v${{ ci_tools get-version }}
+          tag_name: v${{ steps.get_version.outputs.VERSION }}
           name: ProcessCube CLI ${{ github.ref_name }}
           body: |
             ## ProcessCube CLI Release
