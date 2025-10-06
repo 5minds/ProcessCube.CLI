@@ -89,7 +89,7 @@ jobs:
             dist/binary/pc-macos-x64
             dist/binary/pc-macos-arm64
             dist/binary/pc-win-x64.exe
-          tag_name: ${{ github.ref_name }}
+          tag_name: ${{ 'v' + ci_tools get-version }}
           name: ProcessCube CLI ${{ github.ref_name }}
           body: |
             ## ProcessCube CLI Release
