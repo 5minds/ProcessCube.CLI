@@ -1,6 +1,6 @@
 {
   "name": "@5minds/processcube_cli",
-  "version": "3.0.2",
+  "version": "4.0.0",
   "description": "Command Line Utilities for 5Minds ProcessCube",
   "main": "dist/pc.js",
   "engines": {
@@ -13,7 +13,12 @@
     "build": "esbuild src/pc.ts --bundle --outfile=dist/pc.js --platform=node --target=node20 --loader:.md=text && tsc --noEmit",
     "build:binary": "npm run build && pkg dist/pc.js --out-path=dist/binary --targets=latest-macos-arm64",
     "build:sea": "npm run build && node --experimental-sea-config sea-config.json",
-    "build:sea:full": "npm run build:sea && cp $(which node) dist/binary/pc-sea && npx postject dist/binary/pc-sea NODE_SEA_BLOB dist/pc.blob --sentinel-fuse NODE_SEA_FUSE_fce680ab2cc467b6e072b8b5df1996b2 --macho-segment-name NODE_SEA",
+    "build:sea:full": "npm run build:sea && cp $(which node) dist/binary/pc-sea && npx postject dist/binary/pc-sea NODE_SEA_BLOB dist/pc.blob --sentinel-fuse NODE_SEA_FUSE_fce680ab2cc467b6e072b8b5df1996b2 --macho-segment-name NODE_SEA --overwrite",
+    "build:sea:macos-x64": "npm run build:sea && mkdir -p dist/binary && cp $(which node) dist/binary/pc-macos-x64-sea && npx postject dist/binary/pc-macos-x64-sea NODE_SEA_BLOB dist/pc.blob --sentinel-fuse NODE_SEA_FUSE_fce680ab2cc467b6e072b8b5df1996b2 --macho-segment-name NODE_SEA --overwrite",
+    "build:sea:macos-arm64": "npm run build:sea && mkdir -p dist/binary && cp $(which node) dist/binary/pc-macos-arm64-sea && npx postject dist/binary/pc-macos-arm64-sea NODE_SEA_BLOB dist/pc.blob --sentinel-fuse NODE_SEA_FUSE_fce680ab2cc467b6e072b8b5df1996b2 --macho-segment-name NODE_SEA --overwrite",
+    "build:sea:linux-x64": "npm run build:sea && mkdir -p dist/binary && cp $(which node) dist/binary/pc-linux-x64-sea && npx postject dist/binary/pc-linux-x64-sea NODE_SEA_BLOB dist/pc.blob --sentinel-fuse NODE_SEA_FUSE_fce680ab2cc467b6e072b8b5df1996b2 --overwrite",
+    "build:sea:win-x64": "npm run build:sea && mkdir -p dist/binary && cp $(which node).exe dist/binary/pc-win-x64-sea.exe && npx postject dist/binary/pc-win-x64-sea.exe NODE_SEA_BLOB dist/pc.blob --sentinel-fuse NODE_SEA_FUSE_fce680ab2cc467b6e072b8b5df1996b2 --overwrite",
+    "build:sea:all": "npm run build:sea:macos-x64 && npm run build:sea:macos-arm64 && npm run build:sea:linux-x64 && npm run build:sea:win-x64",
     "build:binary:all": "npm run build && pkg dist/pc.js --out-path=dist/binary --targets=latest-macos-x64,latest-macos-arm64,latest-linux-x64,latest-win-x64",
     "start": "node --no-deprecation dist/pc.js",
     "lint": "prettier --write --config ./.prettierrc.json ./src ./test",
@@ -32,10 +37,9 @@
   },
   "author": "5Minds IT-Solutions GmbH & Co. KG",
   "license": "MIT",
-  "dependencies": {},
   "devDependencies": {
-    "@5minds/processcube_engine_client": "6.0.0-beta.7",
-    "@5minds/processcube_engine_sdk": "7.0.0-beta.6",
+    "@5minds/processcube_engine_client": "6.1.4",
+    "@5minds/processcube_engine_sdk": "7.1.2",
     "@npmcli/fs": "^4.0.0",
     "@trivago/prettier-plugin-sort-imports": "^5.0.0",
     "@types/lodash.mapvalues": "^4.6.9",
@@ -60,7 +64,6 @@
     "open": "^8.0.0",
     "openid-client": "^5.0.0",
     "pkg": "^5.8.1",
-    "postject": "^1.0.0-alpha.6",
     "prettier": "^3.3.1",
     "reflect-metadata": "^0.2.2",
     "table": "^6.8.2",
@@ -76,5 +79,8 @@
       "dist/pc.js"
     ],
     "outputPath": "dist/binary"
+  },
+  "dependencies": {
+    "postject": "^1.0.0-alpha.6"
   }
 }
