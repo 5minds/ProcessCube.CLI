@@ -61,9 +61,47 @@ jobs:
       - name: 'Build sources'
         run: npm run build
 
-      # NEW: Build cross-platform binaries
+      # Build binaries: Hybrid approach for macOS (SEA with PKG fallback), pkg for others  
       - name: 'Build cross-platform binaries'
-        run: npm run build:binary:all
+        run: |
+          # Build standard pkg binaries for Linux and Windows
+          npm run build && npx pkg dist/pc.js --out-path=dist/binary --targets=latest-linux-x64,latest-win-x64
+          
+          # Build macOS binaries using hybrid approach (SEA with PKG fallback)
+          npm run build:sea
+          mkdir -p dist/binary
+          
+          # Function to build macOS binary with SEA fallback to PKG
+          build_macos_binary() {
+            local arch=$1
+            local target_name="pc-macos-${arch}"
+            
+            echo "Building ${target_name}..."
+            
+            # Copy Node.js binary
+            cp $(which node) "dist/binary/${target_name}"
+            
+            # Try SEA injection with overwrite flag
+            if npx postject "dist/binary/${target_name}" NODE_SEA_BLOB dist/pc.blob \
+                --sentinel-fuse NODE_SEA_FUSE_fce680ab2cc467b6e072b8b5df1996b2 \
+                --macho-segment-name NODE_SEA \
+                --overwrite 2>/dev/null; then
+              echo "✅ SEA binary created for ${arch}"
+            else
+              echo "⚠️ SEA failed, falling back to PKG for ${arch}..."
+              rm -f "dist/binary/${target_name}"
+              npx pkg dist/pc.js --out-path=dist/binary --targets="latest-macos-${arch}"
+              # PKG creates binary with generic name, rename it
+              if [ -f dist/binary/pc ]; then
+                mv dist/binary/pc "dist/binary/${target_name}"
+                echo "✅ PKG fallback binary created for ${arch}"
+              fi
+            fi
+          }
+          
+          # Build for both architectures
+          build_macos_binary "x64"
+          build_macos_binary "arm64"
 
       - name: 'Run unit tests'
         run: npm run test:unit
@@ -79,6 +117,12 @@ jobs:
           GH_USER: 'process-engine-ci'
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
 
+      - name: Prepare Version Infos
+        id: get_version
+        run: |
+          echo "VERSION=$(ci_tools get-version)" >> "$GITHUB_OUTPUT"
+          echo "MAJOR_VERSION=$(ci_tools get-version --major)" >> "$GITHUB_OUTPUT"
+
       # NEW: Upload binaries to GitHub Release
       - name: 'Upload binaries to release'
         if: "!startsWith(github.ref_name, 'renovate') && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/next' || github.ref == 'refs/heads/develop')"
@@ -89,35 +133,58 @@ jobs:
             dist/binary/pc-macos-x64
             dist/binary/pc-macos-arm64
             dist/binary/pc-win-x64.exe
-          tag_name: ${{ github.ref_name }}
-          name: ProcessCube CLI ${{ github.ref_name }}
+          tag_name: v${{ steps.get_version.outputs.VERSION }}
+          name: ProcessCube CLI ${{ steps.get_version.outputs.VERSION }}
           body: |
             ## ProcessCube CLI Release
             
             ### 🚀 Standalone Binaries (No Node.js required)
             
-            | Platform | Architecture | Download |
-            |----------|-------------|----------|
-            | Linux | x64 | `pc-linux-x64` |
-            | macOS | Intel (x64) | `pc-macos-x64` |
-            | macOS | Apple Silicon | `pc-macos-arm64` |
-            | Windows | x64 | `pc-win-x64.exe` |
+            | Platform | Architecture | Binary Type | Download |
+            |----------|-------------|-------------|----------|
+            | Linux | x64 | PKG | `pc-linux-x64` |
+            | macOS | Intel (x64) | SEA/PKG* | `pc-macos-x64` |
+            | macOS | Apple Silicon | SEA/PKG* | `pc-macos-arm64` |
+            | Windows | x64 | PKG | `pc-win-x64.exe` |
+            
+            **\* Hybrid Build:** Prefers SEA (Single Executable Application), falls back to PKG if needed
             
             ### 📦 Quick Installation
             
-            **Linux/macOS:**
+            **Linux:**
             ```bash
             # Download and install
-            curl -L -o pc https://github.com/5minds/ProcessCube.CLI/releases/latest/download/pc-linux-x64
+            curl -L -o pc https://github.com/5minds/ProcessCube.CLI/releases/download/v${{ steps.get_version.outputs.VERSION }}/pc-linux-x64
             chmod +x pc
             sudo mv pc /usr/local/bin/
             pc --help
             ```
+
+            **macOS (Intel) - Optimized Binary:**
+            ```bash
+            # Download and install (optimized for macOS)
+            curl -L -o pc https://github.com/5minds/ProcessCube.CLI/releases/download/v${{ steps.get_version.outputs.VERSION }}/pc-macos-x64
+            chmod +x pc
+            # May show security dialog on first run - allow in System Preferences
+            sudo mv pc /usr/local/bin/
+            pc --help
+            ```
             
+            **macOS (ARM) - Optimized Binary:**
+            ```bash
+            # Download and install (optimized for macOS)
+            curl -L -o pc https://github.com/5minds/ProcessCube.CLI/releases/download/v${{ steps.get_version.outputs.VERSION }}/pc-macos-arm64
+            chmod +x pc
+            # May show security dialog on first run - allow in System Preferences
+            sudo mv pc /usr/local/bin/
+            pc --help
+            ```
+            
+
             **Windows:**
             ```powershell
             # Download and run
-            Invoke-WebRequest -Uri "https://github.com/5minds/ProcessCube.CLI/releases/latest/download/pc-win-x64.exe" -OutFile "pc.exe"
+            Invoke-WebRequest -Uri "https://github.com/5minds/ProcessCube.CLI/releases/download/v${{ steps.get_version.outputs.VERSION }}/pc-win-x64.exe" -OutFile "pc.exe"
             .\pc.exe --help
             ```
             
@@ -127,6 +194,8 @@ jobs:
             - ✅ Cross-platform compatibility
             - ✅ Single file deployment
             - ✅ Ready for enterprise use
+            - ✅ macOS optimized binaries (SEA preferred, PKG fallback)
+            - ✅ Minimized code signing issues
           draft: false
           prerelease: false
         env:

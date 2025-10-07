@@ -1,5 +1,7 @@
 {
   "main": "dist/pc.js",
   "output": "dist/pc.blob",
-  "disableExperimentalSEAWarning": true
+  "disableExperimentalSEAWarning": true,
+  "assets": {},
+  "useCodeCache": true
 }
