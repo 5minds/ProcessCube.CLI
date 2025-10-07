@@ -19,7 +19,12 @@ export async function onLoad(cli: CLI): Promise<void> {
       ],
       options: [
         {
-          name: 'update_latest_model',
+          name: 'flowNodeInstanceId',
+          description: 'Retry the process instance on the given flow node instance ID',
+          type: 'string',
+        },
+        {
+          name: 'updateProcessModel',
           description: 'Retry the process instance on the latest version of the process model',
           type: 'boolean',
         },
@@ -40,7 +45,8 @@ async function runCommand(inputs: Inputs): Promise<void> {
 
   await retryProcessInstance(
     processInstanceIds, 
-    inputs.argv.update_latest_model,
+    inputs.argv.flowNodeInstanceId,
+    inputs.argv.updateProcessModel,
     inputs.argv.output
   );
 }

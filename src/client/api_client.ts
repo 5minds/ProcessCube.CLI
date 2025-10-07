@@ -170,9 +170,10 @@ export class ApiClient {
     }
   }
 
-  async retryProcessInstance(processInstanceId: string, updateProcessModel: boolean): Promise<StoppedProcessInstanceInfo> {
+  async retryProcessInstance(processInstanceId: string, flowNodeInstanceId: string, updateProcessModel: boolean): Promise<StoppedProcessInstanceInfo> {
+    console.log(`Retrying process instance ${processInstanceId} at flow node instance ${flowNodeInstanceId} with updateProcessModel=${updateProcessModel}`);
     try {
-      await this.engineClient.processInstances.retryProcessInstance(processInstanceId, { updateProcessModel: updateProcessModel, identity: this.identity });
+      await this.engineClient.processInstances.retryProcessInstance(processInstanceId, { flowNodeInstanceId: flowNodeInstanceId, updateProcessModel: updateProcessModel, identity: this.identity });
 
       return {
         success: true,
